@@ -1,0 +1,12 @@
+//
+// Created by Leon P-S on 19/06/2023.
+//
+
+#ifndef ZONES_SCOPEDIMPULSERESPONSEIO_H
+#define ZONES_SCOPEDIMPULSERESPONSEIO_H
+
+class ScopedImpulseResponseIo
+{
+};
+
+#endif // ZONES_SCOPEDIMPULSERESPONSEIO_H
