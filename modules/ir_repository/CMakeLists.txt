@@ -13,5 +13,5 @@ zones_add_module(
   juce::juce_audio_basics
   lager)
 
-zones_add_test(MODULE ir_repository SOURCES test/TestTestModuleClass.cpp DEPS
+zones_add_test(MODULE ir_repository SOURCES test/io/IrReaderTests.cpp DEPS
                ir_repository)
