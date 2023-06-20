@@ -32,7 +32,7 @@ function(zones_add_test)
             ${ARGN}
     )
 
-    set(BINARY_TST ${PARSED_ARGS_MODULE}_tests)
+    set(BINARY_TST ${PARSED_ARGS_MODULE}_test)
     add_executable(${BINARY_TST})
     target_sources(${BINARY_TST} PRIVATE ${PARSED_ARGS_SOURCES})
     target_link_libraries(

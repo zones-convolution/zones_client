@@ -13,5 +13,5 @@ zones_add_module(
 zones_add_test(
         MODULE ir_repository
         SOURCES test/TestTestModuleClass.cpp
-        DEPS zones_test_module
+        DEPS ir_repository
 )

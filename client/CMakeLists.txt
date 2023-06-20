@@ -45,7 +45,7 @@ target_compile_options(${BINARY} INTERFACE
 #########################################################
 # TEST
 #########################################################
-set(BINARY_TST ${BINARY}_tst)
+set(BINARY_TST ${BINARY}_test)
 add_executable(${BINARY_TST} ../modules/browser/src/browser/Browser.cpp ../modules/browser/src/browser/Browser.h)
 target_include_directories(${BINARY_TST} PRIVATE src)
 target_sources(${BINARY_TST} PRIVATE ${SOURCES})
