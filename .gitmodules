@@ -1,3 +1,6 @@
 [submodule "lib/JUCE"]
 	path = lib/JUCE
 	url = git@github.com:juce-framework/JUCE.git
+[submodule "lib/lager"]
+	path = lib/lager
+	url = git@github.com:arximboldi/lager.git
