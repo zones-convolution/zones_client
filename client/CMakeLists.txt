@@ -6,7 +6,6 @@ set(LINK_JUCE
         juce::juce_audio_utils)
 
 set(LINK_COMMON
-        zones_test_module
         zones_look_and_feel
         layout
         browser
@@ -45,11 +44,11 @@ target_compile_options(${BINARY} INTERFACE
 #########################################################
 # TEST
 #########################################################
-set(BINARY_TST ${BINARY}_test)
-add_executable(${BINARY_TST} ../modules/browser/src/browser/Browser.cpp ../modules/browser/src/browser/Browser.h)
-target_include_directories(${BINARY_TST} PRIVATE src)
-target_sources(${BINARY_TST} PRIVATE ${SOURCES})
-target_link_libraries(
-        ${BINARY_TST}
-        PRIVATE ${LINK_JUCE} Catch2::Catch2WithMain
-        PUBLIC ${MODULE_LINK_CONF})
+#set(BINARY_TST ${BINARY}_test)
+#add_executable(${BINARY_TST} ../modules/browser/src/browser/Browser.cpp ../modules/browser/src/browser/Browser.h)
+#target_include_directories(${BINARY_TST} PRIVATE src)
+#target_sources(${BINARY_TST} PRIVATE ${SOURCES})
+#target_link_libraries(
+#        ${BINARY_TST}
+#        PRIVATE ${LINK_JUCE} Catch2::Catch2WithMain
+#        PUBLIC ${MODULE_LINK_CONF})

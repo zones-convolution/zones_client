@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="VcsDirectoryMappings">
-    <mapping directory="$PROJECT_DIR$/.." vcs="Git" />
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/lib/JUCE" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/lib/immer" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/lib/lager" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/lib/zug" vcs="Git" />
   </component>
 </project>
