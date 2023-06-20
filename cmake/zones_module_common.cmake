@@ -12,9 +12,9 @@ function(zones_add_module)
             ${ARGN}
     )
 
-    if(NOT PARSED_ARGS_MODULE)
+    if (NOT PARSED_ARGS_MODULE)
         message(FATAL_ERROR "You must provide a module name")
-    endif(NOT PARSED_ARGS_MODULE)
+    endif (NOT PARSED_ARGS_MODULE)
 
     add_library(${PARSED_ARGS_MODULE} STATIC ${PARSED_ARGS_SOURCES})
     target_include_directories(${PARSED_ARGS_MODULE} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
@@ -32,7 +32,7 @@ function(zones_add_test)
             ${ARGN}
     )
 
-    set(BINARY_TST ${PARSED_ARGS_MODULE}_tst)
+    set(BINARY_TST ${PARSED_ARGS_MODULE}_tests)
     add_executable(${BINARY_TST})
     target_sources(${BINARY_TST} PRIVATE ${PARSED_ARGS_SOURCES})
     target_link_libraries(
