@@ -2,22 +2,22 @@
 
 #include "PluginProcessor.h"
 
-AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (AudioPluginAudioProcessor & p)
-    : AudioProcessorEditor (&p)
-    , processorRef (p)
-    , m_sidebarLayout (m_sidebar, m_browser)
+AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (
+    AudioPluginAudioProcessor & processor)
+    : AudioProcessorEditor (&processor)
+    , processor_ (processor)
+    , sidebar_layout_ (sidebar_, browser_)
 {
-    juce::ignoreUnused (processorRef);
-    juce::LookAndFeel::setDefaultLookAndFeel (&m_zonesLookAndFeel);
+    juce::LookAndFeel::setDefaultLookAndFeel (&zones_look_and_feel_);
 
     setResizable (true, true);
-    setResizeLimits (m_windowMinimumWidth,
-                     static_cast<int> (m_windowMinimumWidth * m_preferredAspectRatio),
-                     m_windowMaxWidth,
-                     static_cast<int> (m_windowMaxWidth * m_preferredAspectRatio));
-    addAndMakeVisible (m_sidebarLayout);
+    setResizeLimits (kWindowMinimumWidth,
+                     static_cast<int> (kWindowMinimumWidth * kPreferredAspectRatio),
+                     kWindowMaxWidth,
+                     static_cast<int> (kWindowMaxWidth * kPreferredAspectRatio));
+    addAndMakeVisible (sidebar_layout_);
 
-    m_apiRequestService.beginRequest (
+    api_request_service_.beginRequest (
         zones::ApiRequest ()
             .withBaseUrl ("https://zones-convolution.vercel.app")
             .withMethod (zones::ApiRequest::HttpVerb::GET,
@@ -29,15 +29,13 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (AudioPluginAud
             .start = [] () { DBG ("START"); },
         });
 
-    addAndMakeVisible(spectrogram_visualiser_);
+    addAndMakeVisible (spectrogram_visualiser_);
 }
 
 void AudioPluginAudioProcessorEditor::resized ()
 {
-//    m_sidebarLayout.setBounds (
-//        juce::BorderSize (m_workingSafeArea).subtractedFrom (getLocalBounds ()));
-
-    spectrogram_visualiser_.setBounds (juce::BorderSize (m_workingSafeArea).subtractedFrom (getLocalBounds ()));
+    spectrogram_visualiser_.setBounds (
+        juce::BorderSize (kWorkingSafeArea).subtractedFrom (getLocalBounds ()));
 }
 
 void AudioPluginAudioProcessorEditor::paint (juce::Graphics & graphics)

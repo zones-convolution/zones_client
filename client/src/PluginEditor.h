@@ -13,24 +13,24 @@
 class AudioPluginAudioProcessorEditor : public juce::AudioProcessorEditor
 {
 public:
-    explicit AudioPluginAudioProcessorEditor (AudioPluginAudioProcessor &);
+    explicit AudioPluginAudioProcessorEditor (AudioPluginAudioProcessor & processor);
     ~AudioPluginAudioProcessorEditor () override = default;
 
 private:
-    static constexpr float m_preferredAspectRatio = 3.f / 4.f;
-    static constexpr int m_windowMinimumWidth = 600;
-    static constexpr int m_windowMaxWidth = 2000;
-    static constexpr int m_workingSafeArea = 10;
+    static constexpr float kPreferredAspectRatio = 3.f / 4.f;
+    static constexpr int kWindowMinimumWidth = 600;
+    static constexpr int kWindowMaxWidth = 2000;
+    static constexpr int kWorkingSafeArea = 10;
 
-    AudioPluginAudioProcessor & processorRef;
+    AudioPluginAudioProcessor & processor_;
 
-    zones::ApiRequestService m_apiRequestService {};
+    zones::ApiRequestService api_request_service_ {};
 
-    zones::Sidebar m_sidebar;
-    zones::Browser m_browser;
+    zones::Sidebar sidebar_;
+    zones::Browser browser_;
 
-    zones::ZonesLookAndFeel m_zonesLookAndFeel;
-    zones::SidebarLayout m_sidebarLayout;
+    zones::ZonesLookAndFeel zones_look_and_feel_;
+    zones::SidebarLayout sidebar_layout_;
 
     SpectrogramVisualiserComponent spectrogram_visualiser_;
 
