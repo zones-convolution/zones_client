@@ -10,4 +10,6 @@ class IrReader
 {
 public:
     static IrData ReadIrData (std::string load_path, std::string ir_identifier);
+
+private:
 };

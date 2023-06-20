@@ -13,5 +13,4 @@ public:
 
 private:
     const std::filesystem::path directory_path_;
-    lager::reader<int> test_reader;
 };
