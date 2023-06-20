@@ -8,7 +8,7 @@ namespace zones
 class ApiRequestService
 {
 public:
-    explicit ApiRequestService (int threadPriority);
+    explicit ApiRequestService (juce::Thread::Priority priority = juce::Thread::Priority::normal);
 
     juce::ThreadPoolJob * beginRequest (const ApiRequest & apiRequest,
                                         const ApiRequestJob::Callbacks & callbacks);

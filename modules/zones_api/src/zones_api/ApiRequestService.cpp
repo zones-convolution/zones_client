@@ -2,10 +2,9 @@
 
 namespace zones
 {
-ApiRequestService::ApiRequestService (int threadPriority)
-    : m_threadPool (m_numberOfThreads)
+ApiRequestService::ApiRequestService (juce::Thread::Priority priority)
+    : m_threadPool (m_numberOfThreads, 0, priority)
 {
-    m_threadPool.setThreadPriorities (threadPriority);
 }
 
 juce::ThreadPoolJob * ApiRequestService::beginRequest (const ApiRequest & apiRequest,

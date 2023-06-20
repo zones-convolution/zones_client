@@ -24,7 +24,7 @@ private:
 
     AudioPluginAudioProcessor & processorRef;
 
-    zones::ApiRequestService m_apiRequestService {0};
+    zones::ApiRequestService m_apiRequestService {};
 
     zones::Sidebar m_sidebar;
     zones::Browser m_browser;

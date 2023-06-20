@@ -4,7 +4,7 @@
 
 namespace zones
 {
-class Browser : public juce::WindowsWebView2WebBrowserComponent
+class Browser : public juce::WebBrowserComponent
 {
 public:
     Browser ();
