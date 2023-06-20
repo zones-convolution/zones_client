@@ -1,7 +1,6 @@
 name: zones_tests
 
 on:
-  workflow_dispatch:
   pull_request:
     branches: [ develop ]
 
