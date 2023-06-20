@@ -4,6 +4,7 @@
   <component name="CidrRootsConfiguration">
     <libraryRoots>
       <file path="$PROJECT_DIR$/cmake-build-debug/_deps" />
+      <file path="$PROJECT_DIR$/lib" />
     </libraryRoots>
   </component>
 </project>
