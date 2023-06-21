@@ -3,6 +3,7 @@
 #include "../IrData.h"
 
 #include <filesystem>
+#include <juce_audio_formats/juce_audio_formats.h>
 #include <juce_core/juce_core.h>
 #include <optional>
 #include <variant>
@@ -10,19 +11,24 @@
 class IrReader
 {
 public:
-    [[nodiscard]] static IrData ReadIrData (const std::filesystem::path & load_path,
-                                            const std::string & ir_identifier);
+    [[nodiscard]] static void ReadIrData (const std::filesystem::path & load_path,
+                                          const std::string & ir_identifier,
+                                          IrData & ir_data);
 
-    [[nodiscard]] static juce::AudioBuffer<float> ReadIr (const std::filesystem::path & load_path,
-                                                          const std::string & ir_identifier);
+    [[nodiscard]] static void ReadIr (const std::filesystem::path & load_path,
+                                      const std::string & ir_identifier,
+                                      juce::AudioBuffer<float> & ir_buffer);
 
-    [[nodiscard]] static juce::AudioBuffer<float>
-    ReadIrMetadata (const std::filesystem::path & load_path, const std::string & ir_identifier);
+    [[nodiscard]] static IrMetadata ReadIrMetadata (const std::filesystem::path & load_path,
+                                                    const std::string & ir_identifier);
 
 private:
-    [[nodiscard]] static std::string
+    static void ReadAudioFileToBuffer (const std::filesystem::path & audio_path,
+                                       juce::AudioBuffer<float> & audio_buffer);
+
+    [[nodiscard]] static std::filesystem::path
     GetMetadataFileNameForIdentifier (const std::string & ir_identifier);
-    [[nodiscard]] static std::string
+    [[nodiscard]] static std::filesystem::path
     GetImpulseResponseFileNameForIdentifier (const std::string & ir_identifier);
 
     static const std::string kMetadataExtension;
