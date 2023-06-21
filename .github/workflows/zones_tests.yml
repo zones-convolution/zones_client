@@ -18,7 +18,7 @@ jobs:
       - name: Setup vcpkg (it does not install any package yet)
         uses: lukka/run-vcpkg@v11
         with:
-          vcpkgJsonGlob: 'vcpkg.json'
+          vcpkgGitCommitId: f6a5d4e
 
       - name: Run CMake consuming CMakePreset.json and run vcpkg to build dependencies
         uses: lukka/run-cmake@v10
