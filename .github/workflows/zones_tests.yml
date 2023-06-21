@@ -15,3 +15,6 @@ jobs:
           submodules: true
       - name: Setup vcpkg (it does not install any package yet)
         uses: lukka/run-vcpkg@v11
+        with:
+          configurePreset: 'ninja-multi-vcpkg'
+          buildPreset: 'build-debug'
