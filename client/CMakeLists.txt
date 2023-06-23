@@ -31,11 +31,7 @@ juce_add_plugin(
   COPY_PLUGIN_AFTER_BUILD
   TRUE
   PRODUCT_NAME
-  Zones
-  NEEDS_CURL
-  TRUE
-  NEEDS_WEB_BROWSER
-  TRUE)
+  Zones)
 
 target_sources(${BINARY} PRIVATE ${SOURCES})
 
