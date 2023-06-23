@@ -22,7 +22,7 @@ private:
     static constexpr int kWindowMaxWidth = 2000;
     static constexpr int kWorkingSafeArea = 10;
 
-    AudioPluginAudioProcessor & processor_;
+    AudioPluginAudioProcessor & audio_processor_;
 
     zones::ApiRequestService api_request_service_ {};
 

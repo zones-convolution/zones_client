@@ -3,9 +3,9 @@
 #include "PluginProcessor.h"
 
 AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (
-    AudioPluginAudioProcessor & processor)
-    : AudioProcessorEditor (&processor)
-    , processor_ (processor)
+    AudioPluginAudioProcessor & audio_processor)
+    : AudioProcessorEditor (&audio_processor)
+    , audio_processor_ (audio_processor)
     , sidebar_layout_ (sidebar_, browser_)
 {
     juce::LookAndFeel::setDefaultLookAndFeel (&zones_look_and_feel_);
