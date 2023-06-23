@@ -6,12 +6,11 @@
 struct IrMetadata
 {
 public:
-    IrMetadata (const juce::DynamicObject dynamic_object);
-
     std::optional<std::string> name;
     std::optional<std::string> description;
 
-    juce::DynamicObject ToDynamic ();
+    static juce::DynamicObject ToDynamic (const IrMetadata & ir_metadata);
+    static IrMetadata FromDynamic (const juce::DynamicObject & ir_metadata_dynamic);
 
 private:
     static const juce::Identifier kNameIdentifier;

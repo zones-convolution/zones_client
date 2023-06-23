@@ -1,6 +1,6 @@
 add_subdirectory(JUCE)
 
-add_library(immer INTERFACE)
+add_library(immer INTERFACE ../modules/ir_repository/test/IrMetdataTests.cpp)
 target_include_directories(immer SYSTEM INTERFACE immer)
 
 add_library(zug INTERFACE)
