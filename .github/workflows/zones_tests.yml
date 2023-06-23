@@ -6,15 +6,30 @@ on:
 
 jobs:
   build_and_test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
-      - uses: lukka/get-cmake@latest
+      - name: Install JUCE's Linux Deps
+        uses: awalsh128/cache-apt-pkgs-action@latest
+        with:
+          packages: libasound2-dev libjack-jackd2-dev ladspa-sdk libcurl4-openssl-dev libfreetype6-dev libx11-dev libxcomposite-dev libxcursor-dev libxcursor-dev libxext-dev libxinerama-dev libxrandr-dev libxrender-dev libwebkit2gtk-4.0-dev libglu1-mesa-dev mesa-common-dev
+          version: 1.0
+
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          submodules: true
+          submodules: recursive
+          fetch-depth: 0
+
+      - uses: lukka/get-cmake@latest
+
       - name: Setup vcpkg (it does not install any package yet)
         uses: lukka/run-vcpkg@v11
+      #        with:
+      #          vcpkgGitCommitId: f6a5d4e8eb7476b8d7fc12a56dff300c1c986131
+
+      - name: Run CMake consuming CMakePreset.json and run vcpkg to build dependencies
+        uses: lukka/run-cmake@v10
         with:
           configurePreset: 'ninja-multi-vcpkg'
-          buildPreset: 'build-debug'
+          buildPreset: 'ninja-vcpkg-release'
+          testPreset: 'test-release'

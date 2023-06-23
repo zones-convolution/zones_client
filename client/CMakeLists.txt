@@ -1,7 +1,7 @@
 set(BINARY zones_client)
 
-set(LINK_JUCE juce::juce_gui_extra juce::juce_audio_devices
-              juce::juce_audio_utils)
+set(LINK_JUCE juce::juce_gui_basics juce::juce_audio_utils
+              juce::juce_audio_devices)
 
 set(LINK_COMMON
     zones_look_and_feel
@@ -31,7 +31,11 @@ juce_add_plugin(
   COPY_PLUGIN_AFTER_BUILD
   TRUE
   PRODUCT_NAME
-  Zones)
+  Zones
+  NEEDS_CURL
+  TRUE
+  NEEDS_WEB_BROWSER
+  TRUE)
 
 target_sources(${BINARY} PRIVATE ${SOURCES})
 

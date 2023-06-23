@@ -12,4 +12,4 @@
 	url = git@github.com:arximboldi/zug.git
 [submodule "vcpkg"]
 	path = vcpkg
-	url = https://github.com/Microsoft/vcpkg.git
+	url = git@github.com:microsoft/vcpkg.git

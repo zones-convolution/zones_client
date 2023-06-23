@@ -2,7 +2,7 @@
   "version": 3,
   "cmakeMinimumRequired": {
     "major": 3,
-    "minor": 20,
+    "minor": 21,
     "patch": 0
   },
   "configurePresets": [
@@ -25,18 +25,24 @@
   ],
   "buildPresets": [
     {
-      "name": "build-debug",
+      "name": "ninja-vcpkg-debug",
       "configurePreset": "ninja-multi-vcpkg",
       "displayName": "Build (Debug)",
       "description": "Build with Ninja/vcpkg (Debug)",
       "configuration": "Debug"
     },
     {
-      "name": "build-release",
+      "name": "ninja-vcpkg-release",
       "configurePreset": "ninja-multi-vcpkg",
       "displayName": "Build (Release)",
       "description": "Build with Ninja/vcpkg (Release)",
       "configuration": "Release"
+    },
+    {
+      "name": "ninja-vcpkg",
+      "configurePreset": "ninja-multi-vcpkg",
+      "displayName": "Build",
+      "description": "Build with Ninja/vcpkg"
     }
   ],
   "testPresets": [
