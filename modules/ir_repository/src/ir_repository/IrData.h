@@ -1,10 +1,8 @@
 #pragma once
 
-#include <juce_audio_basics/juce_audio_basics.h>
+#include "IrMetadata.h"
 
-struct IrMetadata
-{
-};
+#include <juce_audio_basics/juce_audio_basics.h>
 
 struct IrData
 {

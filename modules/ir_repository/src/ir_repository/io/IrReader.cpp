@@ -1,6 +1,6 @@
 #include "IrReader.h"
 
-const std::string IrReader::kMetadataExtension = ".zone_meta";
+const std::string IrReader::kMetadataExtension = ".json";
 const std::string IrReader::kImpulseResponseExtension = ".wav";
 
 std::filesystem::path IrReader::GetMetadataFileNameForIdentifier (const std::string & ir_identifier)
@@ -27,11 +27,18 @@ void IrReader::ReadIr (const std::filesystem::path & load_path,
     ReadAudioFileToBuffer (load_path / GetImpulseResponseFileNameForIdentifier (ir_identifier),
                            ir_buffer);
 }
+juce::DynamicObject ReadJsonFileToDynamic (const juce::File & json_file)
+{
+    auto metadata_string = json_file.loadFileAsString ();
+    auto metadata_var = juce::JSON::parse (metadata_string);
+    return *metadata_var.getDynamicObject ();
+}
 IrMetadata IrReader::ReadIrMetadata (const std::filesystem::path & load_path,
                                      const std::string & ir_identifier)
 {
-    IrMetadata irMetadata;
-    return irMetadata;
+    auto absolute_path = load_path / GetMetadataFileNameForIdentifier (ir_identifier);
+    juce::File metadata_file (absolute_path.string ());
+    return IrMetadata::FromDynamic (ReadJsonFileToDynamic (metadata_file));
 }
 void IrReader::ReadAudioFileToBuffer (const std::filesystem::path & audio_path,
                                       juce::AudioBuffer<float> & audio_buffer)
