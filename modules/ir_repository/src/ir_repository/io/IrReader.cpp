@@ -38,6 +38,10 @@ IrMetadata IrReader::ReadIrMetadata (const std::filesystem::path & load_path,
 {
     auto absolute_path = load_path / GetMetadataFileNameForIdentifier (ir_identifier);
     juce::File metadata_file (absolute_path.string ());
+
+    if (! metadata_file.existsAsFile ())
+        throw NoMetadataFileException ();
+
     return IrMetadata::FromDynamic (ReadJsonFileToDynamic (metadata_file));
 }
 void IrReader::ReadAudioFileToBuffer (const std::filesystem::path & audio_path,

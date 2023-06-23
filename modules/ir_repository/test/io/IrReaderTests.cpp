@@ -12,4 +12,11 @@ TEST_CASE ("ir_reader can read from disk", "[IrReader]")
         REQUIRE (ir_metadata.name == "valid_name");
         REQUIRE (ir_metadata.description == "valid_description");
     }
+
+    SECTION ("throws NoMetadataFileException when metadata file does not exist")
+    {
+        static const std::string kNonExistentIr = "this_does_not_exist";
+        REQUIRE_THROWS_AS (IrReader::ReadIrMetadata (kTestDataDirectory, kNonExistentIr),
+                           IrReader::NoMetadataFileException);
+    }
 }

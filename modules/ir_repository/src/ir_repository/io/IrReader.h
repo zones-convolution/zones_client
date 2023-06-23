@@ -22,6 +22,10 @@ public:
     [[nodiscard]] static IrMetadata ReadIrMetadata (const std::filesystem::path & load_path,
                                                     const std::string & ir_identifier);
 
+    struct NoMetadataFileException
+    {
+    };
+
 private:
     static void ReadAudioFileToBuffer (const std::filesystem::path & audio_path,
                                        juce::AudioBuffer<float> & audio_buffer);
