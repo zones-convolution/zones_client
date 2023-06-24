@@ -20,6 +20,7 @@ void IrReader::ReadIrData (const std::filesystem::path & load_path,
 {
     ReadIr (load_path, ir_identifier, ir_data.impulse_response);
 }
+
 void IrReader::ReadIr (const std::filesystem::path & load_path,
                        const std::string & ir_identifier,
                        juce::AudioBuffer<float> & ir_buffer)
@@ -27,12 +28,14 @@ void IrReader::ReadIr (const std::filesystem::path & load_path,
     ReadAudioFileToBuffer (load_path / GetImpulseResponseFileNameForIdentifier (ir_identifier),
                            ir_buffer);
 }
-juce::DynamicObject ReadJsonFileToDynamic (const juce::File & json_file)
+
+static juce::DynamicObject ReadJsonFileToDynamic (const juce::File & json_file)
 {
     auto metadata_string = json_file.loadFileAsString ();
     auto metadata_var = juce::JSON::parse (metadata_string);
     return *metadata_var.getDynamicObject ();
 }
+
 IrMetadata IrReader::ReadIrMetadata (const std::filesystem::path & load_path,
                                      const std::string & ir_identifier)
 {
@@ -40,10 +43,11 @@ IrMetadata IrReader::ReadIrMetadata (const std::filesystem::path & load_path,
     juce::File metadata_file (absolute_path.string ());
 
     if (! metadata_file.existsAsFile ())
-        throw NoMetadataFileException ();
+        throw NoMetadataFileException {};
 
     return IrMetadata::FromDynamic (ReadJsonFileToDynamic (metadata_file));
 }
+
 void IrReader::ReadAudioFileToBuffer (const std::filesystem::path & audio_path,
                                       juce::AudioBuffer<float> & audio_buffer)
 {

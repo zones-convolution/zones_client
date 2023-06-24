@@ -11,18 +11,18 @@
 class IrReader
 {
 public:
-    [[nodiscard]] static void ReadIrData (const std::filesystem::path & load_path,
-                                          const std::string & ir_identifier,
-                                          IrData & ir_data);
+    static void ReadIrData (const std::filesystem::path & load_path,
+                            const std::string & ir_identifier,
+                            IrData & ir_data);
 
-    [[nodiscard]] static void ReadIr (const std::filesystem::path & load_path,
-                                      const std::string & ir_identifier,
-                                      juce::AudioBuffer<float> & ir_buffer);
+    static void ReadIr (const std::filesystem::path & load_path,
+                        const std::string & ir_identifier,
+                        juce::AudioBuffer<float> & ir_buffer);
 
     [[nodiscard]] static IrMetadata ReadIrMetadata (const std::filesystem::path & load_path,
                                                     const std::string & ir_identifier);
 
-    struct NoMetadataFileException
+    struct NoMetadataFileException : std::exception
     {
     };
 
