@@ -24,23 +24,27 @@ TEST_CASE ("ir_reader can read from disk", "[IrReader]")
 
     SECTION ("reads valid ir")
     {
-        juce::AudioBuffer<float> ir_buffer;
-        IrReader::ReadIr (kTestDataDirectory, kValidIrIdentifier, ir_buffer);
-        REQUIRE (ir_buffer.getNumChannels () > 0);
-        REQUIRE (ir_buffer.getNumSamples () == 288000);
+        IrData ir_data;
+        IrReader::ReadIrData (kTestDataDirectory, kValidIrIdentifier, ir_data);
+
+        REQUIRE (ir_data.buffer.getNumChannels () > 0);
+        REQUIRE (ir_data.buffer.getNumSamples () == 288000);
+
+        REQUIRE (ir_data.bit_depth == 24);
+        REQUIRE (ir_data.sample_rate == 96000);
     }
 
     SECTION ("throws NoIrFileException when Ir file does not exist")
     {
-        juce::AudioBuffer<float> ir_buffer;
-        REQUIRE_THROWS_AS (IrReader::ReadIr (kTestDataDirectory, kNonExistentIr, ir_buffer),
+        IrData ir_data;
+        REQUIRE_THROWS_AS (IrReader::ReadIrData (kTestDataDirectory, kNonExistentIr, ir_data),
                            IrReader::NoIrFileException);
     }
 
     SECTION ("throws FailedToReadIrException when Wav file is invalid")
     {
-        juce::AudioBuffer<float> ir_buffer;
-        REQUIRE_THROWS_AS (IrReader::ReadIr (kTestDataDirectory, kInvalidIrFile, ir_buffer),
+        IrData ir_data;
+        REQUIRE_THROWS_AS (IrReader::ReadIrData (kTestDataDirectory, kInvalidIrFile, ir_data),
                            IrReader::FailedToReadIrException);
     }
 }

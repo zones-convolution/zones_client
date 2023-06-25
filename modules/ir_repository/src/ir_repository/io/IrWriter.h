@@ -2,6 +2,7 @@
 #include "../IrData.h"
 
 #include <filesystem>
+#include <juce_audio_formats/juce_audio_formats.h>
 
 class IrWriter
 {
@@ -9,6 +10,10 @@ public:
     static void WriteIrMetadata (const std::filesystem::path & write_path,
                                  const std::string & ir_identifier,
                                  const IrMetadata & ir_metadata);
+    static void WriteIr (const std::filesystem::path & write_path,
+                         const std::string & ir_identifier,
+                         const IrData & ir_data);
+
     struct DirectoryDoesNotExistException : std::exception
     {
     };

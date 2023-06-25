@@ -7,8 +7,9 @@
 
 struct IrData
 {
-    juce::AudioBuffer<float> impulse_response;
-    IrMetadata metadata;
+    juce::AudioBuffer<float> buffer;
+    double sample_rate;
+    double bit_depth;
 };
 
 class IrDataFormat

@@ -4,17 +4,8 @@ void IrReader::ReadIrData (const std::filesystem::path & load_path,
                            const std::string & ir_identifier,
                            IrData & ir_data)
 {
-    ReadIr (load_path, ir_identifier, ir_data.impulse_response);
-    ir_data.metadata = ReadIrMetadata (load_path, ir_identifier);
-}
-
-void IrReader::ReadIr (const std::filesystem::path & load_path,
-                       const std::string & ir_identifier,
-                       juce::AudioBuffer<float> & ir_buffer)
-{
-    ReadAudioFileToBuffer (
-        load_path / IrDataFormat::GetImpulseResponseFileNameForIdentifier (ir_identifier),
-        ir_buffer);
+    ReadAudioFileToIrData (
+        load_path / IrDataFormat::GetImpulseResponseFileNameForIdentifier (ir_identifier), ir_data);
 }
 
 static juce::DynamicObject ReadJsonFileToDynamic (const juce::File & json_file)
@@ -36,8 +27,7 @@ IrMetadata IrReader::ReadIrMetadata (const std::filesystem::path & load_path,
     return IrMetadata::FromDynamic (ReadJsonFileToDynamic (metadata_file));
 }
 
-void IrReader::ReadAudioFileToBuffer (const std::filesystem::path & audio_path,
-                                      juce::AudioBuffer<float> & audio_buffer)
+void IrReader::ReadAudioFileToIrData (const std::filesystem::path & audio_path, IrData & ir_data)
 {
     juce::AudioFormatManager audioFormatManager;
     audioFormatManager.registerBasicFormats ();
@@ -51,7 +41,9 @@ void IrReader::ReadAudioFileToBuffer (const std::filesystem::path & audio_path,
     if (reader.get () == nullptr)
         throw FailedToReadIrException {};
 
-    audio_buffer.setSize (reader->numChannels, reader->lengthInSamples);
+    ir_data.sample_rate = reader->sampleRate;
+    ir_data.bit_depth = reader->bitsPerSample;
 
-    reader->read (&audio_buffer, 0, reader->lengthInSamples, 0, true, true);
+    ir_data.buffer.setSize (reader->numChannels, reader->lengthInSamples);
+    reader->read (&ir_data.buffer, 0, reader->lengthInSamples, 0, true, true);
 }

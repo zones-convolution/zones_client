@@ -15,10 +15,6 @@ public:
                             const std::string & ir_identifier,
                             IrData & ir_data);
 
-    static void ReadIr (const std::filesystem::path & load_path,
-                        const std::string & ir_identifier,
-                        juce::AudioBuffer<float> & ir_buffer);
-
     [[nodiscard]] static IrMetadata ReadIrMetadata (const std::filesystem::path & load_path,
                                                     const std::string & ir_identifier);
 
@@ -35,6 +31,5 @@ public:
     };
 
 private:
-    static void ReadAudioFileToBuffer (const std::filesystem::path & audio_path,
-                                       juce::AudioBuffer<float> & audio_buffer);
+    static void ReadAudioFileToIrData (const std::filesystem::path & audio_path, IrData & ir_data);
 };
