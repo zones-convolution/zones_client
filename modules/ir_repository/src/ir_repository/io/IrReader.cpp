@@ -61,8 +61,11 @@ void IrReader::ReadAudioFileToBuffer (const std::filesystem::path & audio_path,
         throw NoIrFileException {};
 
     std::unique_ptr<juce::AudioFormatReader> reader (audioFormatManager.createReaderFor (ir_file));
+    if (reader.get () == nullptr)
+        throw FailedToReadIrException {};
 
     audio_buffer.setSize (reader->numChannels, reader->lengthInSamples);
+
     auto did_read_succeed = reader->read (&audio_buffer, 0, reader->lengthInSamples, 0, true, true);
     if (! did_read_succeed)
         throw FailedToReadIrException {};

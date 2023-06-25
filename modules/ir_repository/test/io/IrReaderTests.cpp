@@ -5,6 +5,7 @@ static std::filesystem::path kTestDataDirectory = TEST_DATA_DIRECTORY;
 
 static const std::string kValidIrIdentifier = "valid_ir";
 static const std::string kNonExistentIr = "this_does_not_exist";
+static const std::string kInvalidIrFile = "invalid_ir";
 
 TEST_CASE ("ir_reader can read from disk", "[IrReader]")
 {
@@ -34,5 +35,12 @@ TEST_CASE ("ir_reader can read from disk", "[IrReader]")
         juce::AudioBuffer<float> ir_buffer;
         REQUIRE_THROWS_AS (IrReader::ReadIr (kTestDataDirectory, kNonExistentIr, ir_buffer),
                            IrReader::NoIrFileException);
+    }
+
+    SECTION ("throws FailedToReadIrException when Wav file is invalid")
+    {
+        juce::AudioBuffer<float> ir_buffer;
+        REQUIRE_THROWS_AS (IrReader::ReadIr (kTestDataDirectory, kInvalidIrFile, ir_buffer),
+                           IrReader::FailedToReadIrException);
     }
 }
