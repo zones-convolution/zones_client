@@ -13,7 +13,7 @@ void IrWriter::WriteIrMetadata (const std::filesystem::path & write_path,
     IrMetadata::ToDynamic (ir_metadata).writeAsJSON (*output_stream, 0, true, 4);
 }
 
-void IrWriter::WriteIr (const std::filesystem::path & write_path,
+void IrWriter::WriteIrData (const std::filesystem::path & write_path,
                         const std::string & ir_identifier,
                         const IrData & ir_data)
 {

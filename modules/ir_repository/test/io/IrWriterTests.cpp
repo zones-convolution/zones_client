@@ -34,4 +34,38 @@ TEST_CASE ("ir writer can write to disk", "[IrWriter]")
         REQUIRE_THROWS_AS (IrWriter::WriteIrMetadata (temp_dir, ir_identifier, write_ir_metadata),
                            IrWriter::DirectoryDoesNotExistException);
     }
+
+    SECTION ("writes ir data")
+    {
+        IrData write_ir_data {.sample_rate = 44100, .bit_depth = 24};
+
+        static constexpr int kWriteNumChannels = 2;
+        static constexpr int kWriteNumSamples = 1024;
+        write_ir_data.buffer.setSize (kWriteNumChannels, kWriteNumSamples);
+        write_ir_data.buffer.getWritePointer (0) [0] = 1.f;
+
+        auto temp_dir =
+            juce::File::getSpecialLocation (juce::File::SpecialLocationType::tempDirectory)
+                .getFullPathName ()
+                .toStdString ();
+        auto ir_identifier = juce::Uuid ().toString ().toStdString ();
+
+        IrWriter::WriteIrData (temp_dir, ir_identifier, write_ir_data);
+
+        IrData read_ir_data {};
+        IrReader::ReadIrData (temp_dir, ir_identifier, read_ir_data);
+
+        REQUIRE (juce::approximatelyEqual (write_ir_data.sample_rate, read_ir_data.sample_rate));
+        REQUIRE (juce::approximatelyEqual (write_ir_data.bit_depth, read_ir_data.bit_depth));
+
+        REQUIRE (read_ir_data.buffer.getNumChannels () == write_ir_data.buffer.getNumChannels ());
+        REQUIRE (read_ir_data.buffer.getNumSamples () == write_ir_data.buffer.getNumSamples ());
+
+        REQUIRE (juce::approximatelyEqual (read_ir_data.buffer.getReadPointer (0) [0],
+                                           write_ir_data.buffer.getReadPointer (0) [0]));
+
+        auto absolute_path =
+            temp_dir / IrDataFormat::GetImpulseResponseFileNameForIdentifier (ir_identifier);
+        juce::File (absolute_path.string ()).moveToTrash ();
+    }
 }
