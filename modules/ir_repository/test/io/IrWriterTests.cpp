@@ -24,4 +24,14 @@ TEST_CASE ("ir writer can write to disk", "[IrWriter]")
             temp_dir / IrDataFormat::GetMetadataFileNameForIdentifier (ir_identifier);
         juce::File (absolute_path.string ()).moveToTrash ();
     }
+
+    SECTION ("fails to write when directory does not exist")
+    {
+        IrMetadata write_ir_metadata {.name = "name", .description = "description"};
+        auto temp_dir = "./this/directory/does/not/exist/hopefully";
+        auto ir_identifier = juce::Uuid ().toString ().toStdString ();
+
+        REQUIRE_THROWS_AS (IrWriter::WriteIrMetadata (temp_dir, ir_identifier, write_ir_metadata),
+                           IrWriter::DirectoryDoesNotExistException);
+    }
 }
