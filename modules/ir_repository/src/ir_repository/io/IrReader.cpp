@@ -1,19 +1,5 @@
 #include "IrReader.h"
 
-const std::string IrReader::kMetadataExtension = ".json";
-const std::string IrReader::kImpulseResponseExtension = ".wav";
-
-std::filesystem::path IrReader::GetMetadataFileNameForIdentifier (const std::string & ir_identifier)
-{
-    return ir_identifier + kMetadataExtension;
-}
-
-std::filesystem::path
-IrReader::GetImpulseResponseFileNameForIdentifier (const std::string & ir_identifier)
-{
-    return ir_identifier + kImpulseResponseExtension;
-}
-
 void IrReader::ReadIrData (const std::filesystem::path & load_path,
                            const std::string & ir_identifier,
                            IrData & ir_data)
@@ -26,8 +12,9 @@ void IrReader::ReadIr (const std::filesystem::path & load_path,
                        const std::string & ir_identifier,
                        juce::AudioBuffer<float> & ir_buffer)
 {
-    ReadAudioFileToBuffer (load_path / GetImpulseResponseFileNameForIdentifier (ir_identifier),
-                           ir_buffer);
+    ReadAudioFileToBuffer (
+        load_path / IrDataFormat::GetImpulseResponseFileNameForIdentifier (ir_identifier),
+        ir_buffer);
 }
 
 static juce::DynamicObject ReadJsonFileToDynamic (const juce::File & json_file)
@@ -40,7 +27,7 @@ static juce::DynamicObject ReadJsonFileToDynamic (const juce::File & json_file)
 IrMetadata IrReader::ReadIrMetadata (const std::filesystem::path & load_path,
                                      const std::string & ir_identifier)
 {
-    auto absolute_path = load_path / GetMetadataFileNameForIdentifier (ir_identifier);
+    auto absolute_path = load_path / IrDataFormat::GetMetadataFileNameForIdentifier (ir_identifier);
     juce::File metadata_file (absolute_path.string ());
 
     if (! metadata_file.existsAsFile ())
@@ -66,7 +53,5 @@ void IrReader::ReadAudioFileToBuffer (const std::filesystem::path & audio_path,
 
     audio_buffer.setSize (reader->numChannels, reader->lengthInSamples);
 
-    auto did_read_succeed = reader->read (&audio_buffer, 0, reader->lengthInSamples, 0, true, true);
-    if (! did_read_succeed)
-        throw FailedToReadIrException {};
+    reader->read (&audio_buffer, 0, reader->lengthInSamples, 0, true, true);
 }

@@ -37,12 +37,4 @@ public:
 private:
     static void ReadAudioFileToBuffer (const std::filesystem::path & audio_path,
                                        juce::AudioBuffer<float> & audio_buffer);
-
-    [[nodiscard]] static std::filesystem::path
-    GetMetadataFileNameForIdentifier (const std::string & ir_identifier);
-    [[nodiscard]] static std::filesystem::path
-    GetImpulseResponseFileNameForIdentifier (const std::string & ir_identifier);
-
-    static const std::string kMetadataExtension;
-    static const std::string kImpulseResponseExtension;
 };

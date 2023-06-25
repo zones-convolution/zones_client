@@ -9,6 +9,7 @@ zones_add_module(
         src/ir_repository/io/ScopedIrIO.h
         src/ir_repository/io/ScopedIrIO.cpp
         src/ir_repository/IrData.h
+        src/ir_repository/IrData.cpp
         src/ir_repository/IrMetadata.h
         src/ir_repository/IrMetadata.cpp
         DEPS
@@ -21,8 +22,11 @@ zones_add_test(
         ir_repository
         SOURCES
         test/io/IrReaderTests.cpp
+        test/io/IrWriterTests.cpp
         test/IrMetdataTests.cpp
         DEPS
         ir_repository)
 
-target_compile_definitions(ir_repository_test PUBLIC "TEST_DATA_DIRECTORY=\"${CMAKE_CURRENT_SOURCE_DIR}/test_data/\"")
+target_compile_definitions(
+        ir_repository_test
+        PUBLIC "TEST_DATA_DIRECTORY=\"${CMAKE_CURRENT_SOURCE_DIR}/test_data/\"")
