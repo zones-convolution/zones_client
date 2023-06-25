@@ -19,6 +19,7 @@ void IrReader::ReadIrData (const std::filesystem::path & load_path,
                            IrData & ir_data)
 {
     ReadIr (load_path, ir_identifier, ir_data.impulse_response);
+    ir_data.metadata = ReadIrMetadata (load_path, ir_identifier);
 }
 
 void IrReader::ReadIr (const std::filesystem::path & load_path,
@@ -54,9 +55,15 @@ void IrReader::ReadAudioFileToBuffer (const std::filesystem::path & audio_path,
     juce::AudioFormatManager audioFormatManager;
     audioFormatManager.registerBasicFormats ();
 
-    std::unique_ptr<juce::AudioFormatReader> reader (
-        audioFormatManager.createReaderFor (juce::File (audio_path.string ())));
+    auto ir_file = juce::File (audio_path.string ());
+
+    if (! ir_file.existsAsFile ())
+        throw NoIrFileException {};
+
+    std::unique_ptr<juce::AudioFormatReader> reader (audioFormatManager.createReaderFor (ir_file));
 
     audio_buffer.setSize (reader->numChannels, reader->lengthInSamples);
-    reader->read (&audio_buffer, 0, reader->lengthInSamples, 0, true, true);
+    auto did_read_succeed = reader->read (&audio_buffer, 0, reader->lengthInSamples, 0, true, true);
+    if (! did_read_succeed)
+        throw FailedToReadIrException {};
 }

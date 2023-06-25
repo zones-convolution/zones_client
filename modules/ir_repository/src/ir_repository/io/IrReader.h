@@ -26,6 +26,14 @@ public:
     {
     };
 
+    struct NoIrFileException : std::exception
+    {
+    };
+
+    struct FailedToReadIrException : std::exception
+    {
+    };
+
 private:
     static void ReadAudioFileToBuffer (const std::filesystem::path & audio_path,
                                        juce::AudioBuffer<float> & audio_buffer);
