@@ -12,10 +12,16 @@ zones_add_module(
         src/ir_repository/IrData.cpp
         src/ir_repository/IrMetadata.h
         src/ir_repository/IrMetadata.cpp
+        src/ir_repository/project/ProjectIrRepository.h
+        src/ir_repository/project/ProjectIrRepository.cpp
+        src/ir_repository/project/ProjectIrRepositoryModel.h
+        src/ir_repository/project/ProjectIrRepositoryAction.h
+        src/ir_repository/project/ProjectIrRepositoryAction.cpp
         DEPS
         juce::juce_audio_basics
         juce::juce_audio_formats
-        lager)
+        lager
+        immer)
 
 zones_add_test(
         MODULE
