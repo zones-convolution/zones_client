@@ -37,6 +37,11 @@ public:
 
 private:
     static bool IsPathValidDirectory (const std::filesystem::path & path);
+    void TransferIrToProject (std::filesystem::path original_path,
+                              std::filesystem::path project_path,
+                              std::string name,
+                              std::string description);
+
     lager::reader<ProjectIrRepositoryModel> reader_;
     ProjectIrPickerDelegate & project_ir_picker_delegate_;
     ProjectPathPickerDelegate & project_path_picker_delegate_;

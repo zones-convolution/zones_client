@@ -29,23 +29,33 @@ std::optional<std::filesystem::path> ProjectIrRepository::GetProjectPath ()
     return std::nullopt;
 }
 
+void ProjectIrRepository::TransferIrToProject (std::filesystem::path original_path,
+                                               std::filesystem::path project_path,
+                                               std::string name,
+                                               std::string description)
+{
+    IrData ir_data;
+    IrMetadata ir_metadata {.name = name, .description = description};
+
+    auto load_path = original_path.parent_path ();
+    auto original_identifier = original_path.stem ();
+
+    ir_reader_.ReadIrData (load_path, original_identifier, ir_data);
+
+    auto ir_identifier = name;
+    ir_writer_.WriteIrData (project_path, ir_identifier, ir_data);
+    ir_writer_.WriteIrMetadata (project_path, ir_identifier, ir_metadata);
+}
+
 void ProjectIrRepository::LoadNewProjectIr (ProjectIrRepository::LoadNewProjectIrCallback callback)
 {
     auto pick_ir_callback = [&] (ProjectIrPickerDelegate::Result ir_result)
     {
         auto load_ir = [&] (std::filesystem::path project_path)
         {
-            IrData ir_data;
-            IrMetadata ir_metadata {.name = ir_result.name, .description = ir_result.description};
-            auto load_path = ir_result.path.parent_path ();
-            auto original_identifier = ir_result.path.stem ();
-            ir_reader_.ReadIrData (load_path, original_identifier, ir_data);
-
-            auto ir_identifier = ir_result.name;
-            ir_writer_.WriteIrData (project_path, ir_identifier, ir_data);
-            ir_writer_.WriteIrMetadata (project_path, ir_identifier, ir_metadata);
-
-            callback (ir_identifier);
+            TransferIrToProject (
+                ir_result.path, project_path, ir_result.name, ir_result.description);
+            callback (ir_result.name);
         };
 
         auto project_path = GetProjectPath ();

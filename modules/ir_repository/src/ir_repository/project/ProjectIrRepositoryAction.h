@@ -3,6 +3,7 @@
 #include "ProjectIrRepositoryModel.h"
 
 #include <filesystem>
+#include <lager/effect.hpp>
 #include <lager/util.hpp>
 #include <variant>
 
@@ -17,5 +18,8 @@ struct RemoveProjectPathAction
 };
 
 using ProjectIrRepositoryAction = std::variant<AddProjectPathAction, RemoveProjectPathAction>;
+
+using ProjectIrRepositoryResult =
+    std::pair<ProjectIrRepositoryModel, lager::effect<ProjectIrRepositoryAction>>;
 
 ProjectIrRepositoryModel Update (ProjectIrRepositoryModel model, ProjectIrRepositoryAction action);
