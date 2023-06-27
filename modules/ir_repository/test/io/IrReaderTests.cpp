@@ -9,23 +9,24 @@ static const std::string kInvalidIrFile = "invalid_ir";
 
 TEST_CASE ("ir_reader can read from disk", "[IrReader]")
 {
+    IrReader ir_reader;
     SECTION ("reads valid metadata")
     {
-        auto ir_metadata = IrReader::ReadIrMetadata (kTestDataDirectory, kValidIrIdentifier);
+        auto ir_metadata = ir_reader.ReadIrMetadata (kTestDataDirectory, kValidIrIdentifier);
         REQUIRE (ir_metadata.name == "valid_name");
         REQUIRE (ir_metadata.description == "valid_description");
     }
 
     SECTION ("throws NoMetadataFileException when metadata file does not exist")
     {
-        REQUIRE_THROWS_AS (IrReader::ReadIrMetadata (kTestDataDirectory, kNonExistentIr),
+        REQUIRE_THROWS_AS (ir_reader.ReadIrMetadata (kTestDataDirectory, kNonExistentIr),
                            IrReader::NoMetadataFileException);
     }
 
     SECTION ("reads valid ir")
     {
         IrData ir_data;
-        IrReader::ReadIrData (kTestDataDirectory, kValidIrIdentifier, ir_data);
+        ir_reader.ReadIrData (kTestDataDirectory, kValidIrIdentifier, ir_data);
 
         REQUIRE (ir_data.buffer.getNumChannels () > 0);
         REQUIRE (ir_data.buffer.getNumSamples () == 288000);
@@ -37,14 +38,14 @@ TEST_CASE ("ir_reader can read from disk", "[IrReader]")
     SECTION ("throws NoIrFileException when Ir file does not exist")
     {
         IrData ir_data;
-        REQUIRE_THROWS_AS (IrReader::ReadIrData (kTestDataDirectory, kNonExistentIr, ir_data),
+        REQUIRE_THROWS_AS (ir_reader.ReadIrData (kTestDataDirectory, kNonExistentIr, ir_data),
                            IrReader::NoIrFileException);
     }
 
     SECTION ("throws FailedToReadIrException when Wav file is invalid")
     {
         IrData ir_data;
-        REQUIRE_THROWS_AS (IrReader::ReadIrData (kTestDataDirectory, kInvalidIrFile, ir_data),
+        REQUIRE_THROWS_AS (ir_reader.ReadIrData (kTestDataDirectory, kInvalidIrFile, ir_data),
                            IrReader::FailedToReadIrException);
     }
 }

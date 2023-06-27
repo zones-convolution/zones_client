@@ -7,12 +7,12 @@
 class IrWriter
 {
 public:
-    static void WriteIrMetadata (const std::filesystem::path & write_path,
-                                 const std::string & ir_identifier,
-                                 const IrMetadata & ir_metadata);
-    static void WriteIrData (const std::filesystem::path & write_path,
-                         const std::string & ir_identifier,
-                         const IrData & ir_data);
+    virtual void WriteIrMetadata (const std::filesystem::path & write_path,
+                                  const std::string & ir_identifier,
+                                  const IrMetadata & ir_metadata);
+    virtual void WriteIrData (const std::filesystem::path & write_path,
+                              const std::string & ir_identifier,
+                              const IrData & ir_data);
 
     struct DirectoryDoesNotExistException : std::exception
     {

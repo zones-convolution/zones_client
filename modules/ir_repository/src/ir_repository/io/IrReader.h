@@ -11,12 +11,12 @@
 class IrReader
 {
 public:
-    static void ReadIrData (const std::filesystem::path & load_path,
-                            const std::string & ir_identifier,
-                            IrData & ir_data);
+    virtual void ReadIrData (const std::filesystem::path & load_path,
+                             const std::string & ir_identifier,
+                             IrData & ir_data);
 
-    [[nodiscard]] static IrMetadata ReadIrMetadata (const std::filesystem::path & load_path,
-                                                    const std::string & ir_identifier);
+    [[nodiscard]] virtual IrMetadata ReadIrMetadata (const std::filesystem::path & load_path,
+                                                     const std::string & ir_identifier);
 
     struct NoMetadataFileException : std::exception
     {

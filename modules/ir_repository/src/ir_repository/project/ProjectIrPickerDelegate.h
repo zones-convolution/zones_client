@@ -7,8 +7,9 @@ class ProjectIrPickerDelegate
 public:
     struct Result
     {
-        std::optional<std::string> ir_name;
-        std::filesystem::path ir_path;
+        std::string name;
+        std::filesystem::path path;
+        std::string description;
     };
 
     using ProjectIrPickerCallback = std::function<void (Result)>;

@@ -6,6 +6,8 @@
 
 TEST_CASE ("ir writer can write to disk", "[IrWriter]")
 {
+    IrWriter ir_writer;
+    IrReader ir_reader;
     SECTION ("writes valid metadata")
     {
         IrMetadata write_ir_metadata {.name = "name", .description = "description"};
@@ -14,9 +16,9 @@ TEST_CASE ("ir writer can write to disk", "[IrWriter]")
                 .getFullPathName ()
                 .toStdString ();
         auto ir_identifier = juce::Uuid ().toString ().toStdString ();
-        IrWriter::WriteIrMetadata (temp_dir, ir_identifier, write_ir_metadata);
+        ir_writer.WriteIrMetadata (temp_dir, ir_identifier, write_ir_metadata);
 
-        auto read_ir_metadata = IrReader::ReadIrMetadata (temp_dir, ir_identifier);
+        auto read_ir_metadata = ir_reader.ReadIrMetadata (temp_dir, ir_identifier);
         REQUIRE (read_ir_metadata.name == write_ir_metadata.name);
         REQUIRE (read_ir_metadata.description == write_ir_metadata.description);
 
@@ -31,7 +33,7 @@ TEST_CASE ("ir writer can write to disk", "[IrWriter]")
         auto temp_dir = "./this/directory/does/not/exist/hopefully";
         auto ir_identifier = juce::Uuid ().toString ().toStdString ();
 
-        REQUIRE_THROWS_AS (IrWriter::WriteIrMetadata (temp_dir, ir_identifier, write_ir_metadata),
+        REQUIRE_THROWS_AS (ir_writer.WriteIrMetadata (temp_dir, ir_identifier, write_ir_metadata),
                            IrWriter::DirectoryDoesNotExistException);
     }
 
@@ -50,10 +52,10 @@ TEST_CASE ("ir writer can write to disk", "[IrWriter]")
                 .toStdString ();
         auto ir_identifier = juce::Uuid ().toString ().toStdString ();
 
-        IrWriter::WriteIrData (temp_dir, ir_identifier, write_ir_data);
+        ir_writer.WriteIrData (temp_dir, ir_identifier, write_ir_data);
 
         IrData read_ir_data {};
-        IrReader::ReadIrData (temp_dir, ir_identifier, read_ir_data);
+        ir_reader.ReadIrData (temp_dir, ir_identifier, read_ir_data);
 
         REQUIRE (juce::approximatelyEqual (write_ir_data.sample_rate, read_ir_data.sample_rate));
         REQUIRE (juce::approximatelyEqual (write_ir_data.bit_depth, read_ir_data.bit_depth));
