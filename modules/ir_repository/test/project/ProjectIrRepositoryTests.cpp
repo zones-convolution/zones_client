@@ -109,11 +109,12 @@ TEST_CASE ("loading new impulse responses to project", "[ProjectIrRepository]")
                                                    ir_reader_mock_,
                                                    ir_writer_mock_};
 
-        REQUIRE (ir_writer_mock_.did_write_ir_data_);
-        REQUIRE (ir_writer_mock_.did_write_ir_metadata_);
-
         project_ir_repository.LoadNewProjectIr (
             [&] (std::string ir_identifier)
-            { REQUIRE (ir_identifier == ir_picker_delegate_mock.result_.name); });
+            {
+                REQUIRE (ir_identifier == ir_picker_delegate_mock.result_.name);
+                REQUIRE (ir_writer_mock_.did_write_ir_data_);
+                REQUIRE (ir_writer_mock_.did_write_ir_metadata_);
+            });
     }
 }

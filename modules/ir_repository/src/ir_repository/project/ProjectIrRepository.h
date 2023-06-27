@@ -26,14 +26,14 @@ public:
                          ProjectPathPickerDelegate & project_path_picker_delegate,
                          IrReader & ir_reader,
                          IrWriter & ir_writer);
-    //
-    //    void LinkProjectPath (const std::filesystem::path & project_path);
-    //    std::optional<std::filesystem::path> GetProjectPath ();
+
+    void LinkProjectPath (const std::filesystem::path & project_path);
+    std::optional<std::filesystem::path> GetProjectPath ();
 
     void LoadNewProjectIr (LoadNewProjectIrCallback ir_result);
-    //
-    //    [[nodiscard]] IrMetadata LoadIrMetaData (const std::string & ir_identifier);
-    //    void LoadIrData (const std::string & ir_identifier, IrData & ir_data);
+
+    [[nodiscard]] IrMetadata LoadIrMetaData (const std::string & ir_identifier);
+    void LoadIrData (const std::string & ir_identifier, IrData & ir_data);
 
 private:
     static bool IsPathValidDirectory (const std::filesystem::path & path);
