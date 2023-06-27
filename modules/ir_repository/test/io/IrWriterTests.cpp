@@ -1,4 +1,3 @@
-
 #include "ir_repository/io/IrReader.h"
 #include "ir_repository/io/IrWriter.h"
 

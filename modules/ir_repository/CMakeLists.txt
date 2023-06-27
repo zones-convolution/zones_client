@@ -30,6 +30,7 @@ zones_add_test(
         test/io/IrReaderTests.cpp
         test/io/IrWriterTests.cpp
         test/IrMetdataTests.cpp
+        test/project/ProjectIrRepositoryTests.cpp
         DEPS
         ir_repository)
 
