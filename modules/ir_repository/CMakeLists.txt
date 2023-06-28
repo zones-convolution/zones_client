@@ -33,6 +33,7 @@ zones_add_test(
         test/IrMetdataTests.cpp
         test/project/ProjectIrPathsTests.cpp
         test/project/ProjectIrRepositoryTests.cpp
+        test/project/ProjectIrRepositoryActionTests.cpp
         DEPS
         ir_repository)
 

@@ -3,12 +3,12 @@
 #include <iostream>
 #include <juce_core/juce_core.h>
 
-ProjectIrRepositoryEffect string_effect = [] (const ProjectIrRepositoryEffect::context_t & ctx)
-{
-    ctx.dispatch (RemoveProjectPathAction {});
-    auto & string = lager::get<std::string> (ctx);
-    DBG (string);
-};
+// ProjectIrRepositoryEffect string_effect = [] (const ProjectIrRepositoryEffect::context_t & ctx)
+//{
+//     ctx.dispatch (RemoveProjectPathAction {});
+//     auto & string = lager::get<std::string> (ctx);
+//     DBG (string);
+// };
 
 ProjectIrRepositoryResult Update (ProjectIrRepositoryModel model, ProjectIrRepositoryAction action)
 {
@@ -25,7 +25,7 @@ ProjectIrRepositoryResult Update (ProjectIrRepositoryModel model, ProjectIrRepos
             {
                 model.project_paths =
                     model.project_paths.erase (remove_project_path_action.remove_at_index);
-                return {model, string_effect};
+                return {model, lager::noop};
             }},
         action);
 }
