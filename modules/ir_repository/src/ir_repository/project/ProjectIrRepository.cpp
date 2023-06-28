@@ -12,21 +12,6 @@ ProjectIrRepository::ProjectIrRepository (lager::reader<ProjectIrRepositoryModel
 {
 }
 
-void ProjectIrRepository::LinkProjectPath (const std::filesystem::path & project_path)
-{
-}
-
-std::optional<std::filesystem::path> ProjectIrRepository::GetProjectPath ()
-{
-    auto model = reader_.get ();
-
-    for (auto & project_path : model.project_paths)
-        if (IsPathValidDirectory (project_path))
-            return project_path;
-
-    return std::nullopt;
-}
-
 void ProjectIrRepository::TransferIrToProject (std::filesystem::path original_path,
                                                std::filesystem::path project_path,
                                                std::string name,
@@ -56,13 +41,14 @@ void ProjectIrRepository::LoadNewProjectIr (const std::filesystem::path & ir_pat
         callback (name);
     };
 
-    auto project_path = GetProjectPath ();
-
-    if (! project_path.has_value ())
-        project_path_picker_delegate_.PickPath ([&] (ProjectPathPickerDelegate::Result path_result)
-                                                { load_ir (path_result.path); });
-    else
-        load_ir (project_path.value ());
+    // auto project_path = GetAvailableProjectPath ();
+    //
+    //    if (! project_path.has_value ())
+    //        project_path_picker_delegate_.PickPath ([&] (ProjectPathPickerDelegate::Result
+    //        path_result)
+    //                                                { load_ir (path_result.path); });
+    //    else
+    //        load_ir (project_path.value ());
 }
 
 IrMetadata ProjectIrRepository::LoadIrMetaData (const std::string & ir_identifier)
@@ -72,10 +58,4 @@ IrMetadata ProjectIrRepository::LoadIrMetaData (const std::string & ir_identifie
 
 void ProjectIrRepository::LoadIrData (const std::string & ir_identifier, IrData & ir_data)
 {
-}
-
-bool ProjectIrRepository::IsPathValidDirectory (const std::filesystem::path & path)
-{
-    juce::File file_path (path.string ());
-    return file_path.exists () and file_path.isDirectory ();
 }

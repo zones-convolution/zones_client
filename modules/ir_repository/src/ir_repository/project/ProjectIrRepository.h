@@ -25,9 +25,6 @@ public:
                          IrReader & ir_reader,
                          IrWriter & ir_writer);
 
-    void LinkProjectPath (const std::filesystem::path & project_path);
-    std::optional<std::filesystem::path> GetProjectPath ();
-
     void LoadNewProjectIr (const std::filesystem::path & ir_path,
                            const std::string & name,
                            const std::string & description,
@@ -37,7 +34,6 @@ public:
     void LoadIrData (const std::string & ir_identifier, IrData & ir_data);
 
 private:
-    static bool IsPathValidDirectory (const std::filesystem::path & path);
     void TransferIrToProject (std::filesystem::path original_path,
                               std::filesystem::path project_path,
                               std::string name,

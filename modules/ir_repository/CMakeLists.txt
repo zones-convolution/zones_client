@@ -11,6 +11,8 @@ zones_add_module(
         src/ir_repository/IrMetadata.h
         src/ir_repository/IrMetadata.cpp
         src/ir_repository/project/ProjectPathPickerDelegate.h
+        src/ir_repository/project/ProjectIrPaths.h
+        src/ir_repository/project/ProjectIrPaths.cpp
         src/ir_repository/project/ProjectIrRepository.h
         src/ir_repository/project/ProjectIrRepository.cpp
         src/ir_repository/project/ProjectIrRepositoryModel.h
@@ -29,6 +31,7 @@ zones_add_test(
         test/io/IrReaderTests.cpp
         test/io/IrWriterTests.cpp
         test/IrMetdataTests.cpp
+        test/project/ProjectIrPathsTests.cpp
         test/project/ProjectIrRepositoryTests.cpp
         DEPS
         ir_repository)
