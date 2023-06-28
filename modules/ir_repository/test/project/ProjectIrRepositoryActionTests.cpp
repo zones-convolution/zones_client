@@ -55,3 +55,55 @@ TEST_CASE ("add and remove project path actions")
         REQUIRE (model.project_paths.size () == 1);
     }
 }
+
+TEST_CASE ("project ir import actions")
+{
+    SECTION ("import action updates target ir and sets state to pending")
+    {
+        auto model = ProjectIrRepositoryModel {.importing_project_ir_state =
+                                                   ImportingProjectIrState::kSuccess};
+        auto import_action = ImportProjectIrAction {
+            .import_project_ir = {
+                .ir_path = "path/to/ir.wav", .name = "ir_name", .description = "ir_description"}};
+        auto update_result = Update (model, import_action);
+        model = update_result.first;
+
+        REQUIRE (model.import_project_ir.has_value ());
+        REQUIRE (model.import_project_ir->ir_path == import_action.import_project_ir.ir_path);
+        REQUIRE (model.import_project_ir->name == import_action.import_project_ir.name);
+        REQUIRE (model.import_project_ir->description ==
+                 import_action.import_project_ir.description);
+        REQUIRE (model.importing_project_ir_state == ImportingProjectIrState::kPending);
+    }
+
+    SECTION ("loading action sets loading state and clears target ir")
+    {
+        auto model = ProjectIrRepositoryModel {.importing_project_ir_state =
+                                                   ImportingProjectIrState::kSuccess};
+        auto update_result = Update (model, ImportProjectIrLoadingAction {});
+        model = update_result.first;
+
+        REQUIRE (model.import_project_ir == std::nullopt);
+        REQUIRE (model.importing_project_ir_state == ImportingProjectIrState::kLoading);
+    }
+
+    SECTION ("success action sets success state")
+    {
+        auto model = ProjectIrRepositoryModel {.importing_project_ir_state =
+                                                   ImportingProjectIrState::kLoading};
+        auto update_result = Update (model, ImportProjectIrSuccessAction {});
+        model = update_result.first;
+
+        REQUIRE (model.importing_project_ir_state == ImportingProjectIrState::kSuccess);
+    }
+
+    SECTION ("failure action sets failure state")
+    {
+        auto model = ProjectIrRepositoryModel {.importing_project_ir_state =
+                                                   ImportingProjectIrState::kLoading};
+        auto update_result = Update (model, ImportProjectIrFailureAction {});
+        model = update_result.first;
+
+        REQUIRE (model.importing_project_ir_state == ImportingProjectIrState::kFailure);
+    }
+}

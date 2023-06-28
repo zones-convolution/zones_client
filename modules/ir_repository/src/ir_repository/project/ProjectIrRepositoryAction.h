@@ -17,7 +17,29 @@ struct RemoveProjectPathAction
     size_t remove_at_index;
 };
 
-using ProjectIrRepositoryAction = std::variant<AddProjectPathAction, RemoveProjectPathAction>;
+struct ImportProjectIrAction
+{
+    ImportProjectIr import_project_ir;
+};
+
+struct ImportProjectIrLoadingAction
+{
+};
+
+struct ImportProjectIrSuccessAction
+{
+};
+
+struct ImportProjectIrFailureAction
+{
+};
+
+using ProjectIrRepositoryAction = std::variant<AddProjectPathAction,
+                                               RemoveProjectPathAction,
+                                               ImportProjectIrAction,
+                                               ImportProjectIrLoadingAction,
+                                               ImportProjectIrSuccessAction,
+                                               ImportProjectIrFailureAction>;
 
 using ProjectIrRepositoryEffect =
     lager::effect<ProjectIrRepositoryAction, lager::deps<std::string &>>;
