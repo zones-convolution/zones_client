@@ -12,34 +12,16 @@ ProjectIrRepository::ProjectIrRepository (lager::reader<ProjectIrRepositoryModel
 {
 }
 
-void ProjectIrRepository::TransferIrToProject (std::filesystem::path original_path,
-                                               std::filesystem::path project_path,
-                                               std::string name,
-                                               std::string description)
-{
-    IrData ir_data;
-    IrMetadata ir_metadata {.name = name, .description = description};
-
-    auto load_path = original_path.parent_path ();
-    auto original_identifier = original_path.stem ();
-
-    ir_reader_.ReadIrData (load_path, original_identifier, ir_data);
-
-    auto ir_identifier = name;
-    ir_writer_.WriteIrData (project_path, ir_identifier, ir_data);
-    ir_writer_.WriteIrMetadata (project_path, ir_identifier, ir_metadata);
-}
-
 void ProjectIrRepository::LoadNewProjectIr (const std::filesystem::path & ir_path,
                                             const std::string & name,
                                             const std::string & description,
                                             ProjectIrRepository::LoadNewProjectIrCallback callback)
 {
-    auto load_ir = [&] (const std::filesystem::path & project_path)
-    {
-        TransferIrToProject (ir_path, project_path, name, description);
-        callback (name);
-    };
+    //    auto load_ir = [&] (const std::filesystem::path & project_path)
+    //    {
+    //        TransferIrToProject (ir_path, project_path, name, description);
+    //        callback (name);
+    //    };
 
     // auto project_path = GetAvailableProjectPath ();
     //

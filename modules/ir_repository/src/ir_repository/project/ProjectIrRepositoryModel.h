@@ -19,9 +19,11 @@ enum class ImportingProjectIrState
     kLoading
 };
 
+using ImportProjectIrOptional = std::optional<ImportProjectIr>;
+
 struct ProjectIrRepositoryModel
 {
     immer::flex_vector<std::filesystem::path> project_paths;
-    std::optional<ImportProjectIr> import_project_ir;
+    ImportProjectIrOptional import_project_ir;
     ImportingProjectIrState importing_project_ir_state;
 };

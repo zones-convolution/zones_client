@@ -18,6 +18,8 @@ zones_add_module(
         src/ir_repository/project/ProjectIrRepositoryModel.h
         src/ir_repository/project/ProjectIrRepositoryAction.h
         src/ir_repository/project/ProjectIrRepositoryAction.cpp
+        src/ir_repository/project/ProjectIrImportController.h
+        src/ir_repository/project/ProjectIrImportController.cpp
         DEPS
         juce::juce_audio_basics
         juce::juce_audio_formats

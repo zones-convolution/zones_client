@@ -34,11 +34,6 @@ public:
     void LoadIrData (const std::string & ir_identifier, IrData & ir_data);
 
 private:
-    void TransferIrToProject (std::filesystem::path original_path,
-                              std::filesystem::path project_path,
-                              std::string name,
-                              std::string description);
-
     lager::reader<ProjectIrRepositoryModel> reader_;
     ProjectPathPickerDelegate & project_path_picker_delegate_;
     IrReader & ir_reader_;

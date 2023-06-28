@@ -8,7 +8,7 @@
 class ProjectIrPaths
 {
 public:
-    ProjectIrPaths (lager::reader<ProjectIrRepositoryModel> reader);
+    explicit ProjectIrPaths (lager::reader<ProjectIrRepositoryModel> reader);
     std::optional<std::filesystem::path> GetAvailableProjectPath ();
 
 private:
