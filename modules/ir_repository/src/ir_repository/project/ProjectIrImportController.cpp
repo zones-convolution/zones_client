@@ -4,14 +4,18 @@
 
 ProjectIrImportController::ProjectIrImportController (
     const lager::reader<ProjectIrRepositoryModel> & model,
+    lager::context<ProjectIrRepositoryAction> & context,
     IrReader & ir_reader,
     IrWriter & ir_writer)
     : model_ (model)
+    , context_ (context)
     , ir_reader_ (ir_reader)
     , ir_writer_ (ir_writer)
 {
     import_project_ir_reader_ =
         model.zoom (lager::lenses::attr (&ProjectIrRepositoryModel::import_project_ir));
+
+    context.dispatch (ImportProjectIrLoadingAction {});
 
     lager::watch (import_project_ir_reader_,
                   [&] (ImportProjectIrOptional import_project_ir)
