@@ -19,7 +19,9 @@ struct RemoveProjectPathAction
 
 using ProjectIrRepositoryAction = std::variant<AddProjectPathAction, RemoveProjectPathAction>;
 
-using ProjectIrRepositoryResult =
-    std::pair<ProjectIrRepositoryModel, lager::effect<ProjectIrRepositoryAction>>;
+using ProjectIrRepositoryEffect =
+    lager::effect<ProjectIrRepositoryAction, lager::deps<std::string &>>;
 
-ProjectIrRepositoryModel Update (ProjectIrRepositoryModel model, ProjectIrRepositoryAction action);
+using ProjectIrRepositoryResult = std::pair<ProjectIrRepositoryModel, ProjectIrRepositoryEffect>;
+
+ProjectIrRepositoryResult Update (ProjectIrRepositoryModel model, ProjectIrRepositoryAction action);
