@@ -2,12 +2,10 @@
 
 ProjectIrRepository::ProjectIrRepository (lager::reader<ProjectIrRepositoryModel> reader,
                                           lager::context<ProjectIrRepositoryAction> context,
-                                          ProjectIrPickerDelegate & project_ir_picker_delegate,
                                           ProjectPathPickerDelegate & project_path_picker_delegate,
                                           IrReader & ir_reader,
                                           IrWriter & ir_writer)
     : reader_ (reader)
-    , project_ir_picker_delegate_ (project_ir_picker_delegate)
     , project_path_picker_delegate_ (project_path_picker_delegate)
     , ir_reader_ (ir_reader)
     , ir_writer_ (ir_writer)
@@ -47,27 +45,24 @@ void ProjectIrRepository::TransferIrToProject (std::filesystem::path original_pa
     ir_writer_.WriteIrMetadata (project_path, ir_identifier, ir_metadata);
 }
 
-void ProjectIrRepository::LoadNewProjectIr (ProjectIrRepository::LoadNewProjectIrCallback callback)
+void ProjectIrRepository::LoadNewProjectIr (const std::filesystem::path & ir_path,
+                                            const std::string & name,
+                                            const std::string & description,
+                                            ProjectIrRepository::LoadNewProjectIrCallback callback)
 {
-    auto pick_ir_callback = [&] (ProjectIrPickerDelegate::Result ir_result)
+    auto load_ir = [&] (const std::filesystem::path & project_path)
     {
-        auto load_ir = [&] (std::filesystem::path project_path)
-        {
-            TransferIrToProject (
-                ir_result.path, project_path, ir_result.name, ir_result.description);
-            callback (ir_result.name);
-        };
-
-        auto project_path = GetProjectPath ();
-        if (! project_path.has_value ())
-            project_path_picker_delegate_.PickPath (
-                [&] (ProjectPathPickerDelegate::Result path_result)
-                { load_ir (path_result.path); });
-        else
-            load_ir (project_path.value ());
+        TransferIrToProject (ir_path, project_path, name, description);
+        callback (name);
     };
 
-    project_ir_picker_delegate_.PickIr (pick_ir_callback);
+    auto project_path = GetProjectPath ();
+
+    if (! project_path.has_value ())
+        project_path_picker_delegate_.PickPath ([&] (ProjectPathPickerDelegate::Result path_result)
+                                                { load_ir (path_result.path); });
+    else
+        load_ir (project_path.value ());
 }
 
 IrMetadata ProjectIrRepository::LoadIrMetaData (const std::string & ir_identifier)

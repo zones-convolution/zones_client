@@ -10,7 +10,6 @@ zones_add_module(
         src/ir_repository/IrData.cpp
         src/ir_repository/IrMetadata.h
         src/ir_repository/IrMetadata.cpp
-        src/ir_repository/project/ProjectIrPickerDelegate.h
         src/ir_repository/project/ProjectPathPickerDelegate.h
         src/ir_repository/project/ProjectIrRepository.h
         src/ir_repository/project/ProjectIrRepository.cpp

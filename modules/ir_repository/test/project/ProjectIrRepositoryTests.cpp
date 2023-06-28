@@ -1,6 +1,5 @@
 #include "ir_repository/io/IrReader.h"
 #include "ir_repository/io/IrWriter.h"
-#include "ir_repository/project/ProjectIrPickerDelegate.h"
 #include "ir_repository/project/ProjectIrRepository.h"
 #include "ir_repository/project/ProjectIrRepositoryAction.h"
 #include "ir_repository/project/ProjectIrRepositoryModel.h"
@@ -9,25 +8,6 @@
 #include <catch2/catch_test_macros.hpp>
 #include <lager/context.hpp>
 #include <lager/state.hpp>
-
-class IrPickerDelegateMock : public ProjectIrPickerDelegate
-{
-public:
-    virtual ~IrPickerDelegateMock () = default;
-    void PickIr (ProjectIrPickerCallback callback) override
-    {
-        did_pick_ir_ = true;
-        callback (result_);
-    }
-
-    Result result_ {
-        .name = "mock_name",
-        .path = "/mock/path/ir.wav",
-        .description = "mock_description",
-    };
-
-    bool did_pick_ir_ = false;
-};
 
 class ProjectPathPickerDelegateMock : public ProjectPathPickerDelegate
 {
@@ -92,7 +72,6 @@ public:
 
 TEST_CASE ("loading new impulse responses to project", "[ProjectIrRepository]")
 {
-    IrPickerDelegateMock ir_picker_delegate_mock;
     ProjectPathPickerDelegateMock project_path_picker_delegate_mock;
     IrReaderMock ir_reader_mock_;
     IrWriterMock ir_writer_mock_;
@@ -104,17 +83,21 @@ TEST_CASE ("loading new impulse responses to project", "[ProjectIrRepository]")
     {
         ProjectIrRepository project_ir_repository {model_state,
                                                    context,
-                                                   ir_picker_delegate_mock,
                                                    project_path_picker_delegate_mock,
                                                    ir_reader_mock_,
                                                    ir_writer_mock_};
 
-        project_ir_repository.LoadNewProjectIr (
-            [&] (std::string ir_identifier)
-            {
-                REQUIRE (ir_identifier == ir_picker_delegate_mock.result_.name);
-                REQUIRE (ir_writer_mock_.did_write_ir_data_);
-                REQUIRE (ir_writer_mock_.did_write_ir_metadata_);
-            });
+        static const std::string ir_name = "name_of_ir";
+
+        project_ir_repository.LoadNewProjectIr ("path/to/ir.wav",
+                                                ir_name,
+                                                "description_of_ir",
+                                                [&] (std::string ir_identifier)
+                                                {
+                                                    REQUIRE (ir_identifier == ir_name);
+                                                    REQUIRE (ir_writer_mock_.did_write_ir_data_);
+                                                    REQUIRE (
+                                                        ir_writer_mock_.did_write_ir_metadata_);
+                                                });
     }
 }
