@@ -24,7 +24,10 @@ ProjectIrImportController::ProjectIrImportController (
                       auto project_ir_path = ProjectIrPaths (model_).GetAvailableProjectPath ();
 
                       if (! project_ir_path.has_value ())
+                      {
                           context.dispatch (ImportProjectIrFailureAction {});
+                          return;
+                      }
 
                       try
                       {
