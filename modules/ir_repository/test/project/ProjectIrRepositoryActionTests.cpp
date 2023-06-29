@@ -67,7 +67,7 @@ TEST_CASE ("project ir import actions")
                 .ir_path = "path/to/ir.wav", .name = "ir_name", .description = "ir_description"}};
         auto update_result = Update (model, import_action);
         model = update_result.first;
-
+        
         REQUIRE (model.import_project_ir.has_value ());
         REQUIRE (model.import_project_ir->ir_path == import_action.import_project_ir.ir_path);
         REQUIRE (model.import_project_ir->name == import_action.import_project_ir.name);

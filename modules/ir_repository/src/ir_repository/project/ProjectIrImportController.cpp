@@ -15,17 +15,30 @@ ProjectIrImportController::ProjectIrImportController (
     import_project_ir_reader_ =
         model.zoom (lager::lenses::attr (&ProjectIrRepositoryModel::import_project_ir));
 
-    context.dispatch (ImportProjectIrLoadingAction {});
-
     lager::watch (import_project_ir_reader_,
                   [&] (ImportProjectIrOptional import_project_ir)
                   {
                       if (import_project_ir.has_value ())
                       {
+                          context.dispatch (ImportProjectIrLoadingAction {});
                           auto project_ir_path = ProjectIrPaths (model_).GetAvailableProjectPath ();
                           if (project_ir_path.has_value ())
-                              TransferIrToProject (project_ir_path.value (),
-                                                   import_project_ir.value ());
+                          {
+                              try
+                              {
+                                  TransferIrToProject (project_ir_path.value (),
+                                                       import_project_ir.value ());
+                                  context.dispatch (ImportProjectIrSuccessAction {});
+                              }
+                              catch (...)
+                              {
+                                  context.dispatch (ImportProjectIrFailureAction {});
+                              }
+                          }
+                          else
+                          {
+                              context.dispatch (ImportProjectIrLoadingAction {});
+                          }
                       }
                   });
 }
