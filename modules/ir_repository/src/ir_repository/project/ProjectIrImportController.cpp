@@ -9,12 +9,11 @@ ProjectIrImportController::ProjectIrImportController (
     IrWriter & ir_writer)
     : model_ (model)
     , context_ (context)
+    , import_project_ir_reader_ (
+          model.zoom (lager::lenses::attr (&ProjectIrRepositoryModel::import_project_ir)))
     , ir_reader_ (ir_reader)
     , ir_writer_ (ir_writer)
 {
-    import_project_ir_reader_ =
-        model.zoom (lager::lenses::attr (&ProjectIrRepositoryModel::import_project_ir));
-
     lager::watch (import_project_ir_reader_,
                   [&] (ImportProjectIrOptional import_project_ir)
                   {

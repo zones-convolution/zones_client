@@ -74,30 +74,31 @@ TEST_CASE ("imports project ir", "[ProjectIrImportController]")
     //        ProjectIrImportController project_ir_import_controller {
     //            model_state, context, ir_reader_mock_, ir_writer_mock_};
     //    }
-    //    SECTION ("sets loading state when target ir is set")
-    //    {
-    //        auto model_state = lager::make_state (ProjectIrRepositoryModel {});
-    //
-    //        ProjectIrRepositoryAction last_action;
-    //        auto context = lager::context<ProjectIrRepositoryAction> {[&] (const auto & action)
-    //                                                                  {
-    //                                                                      last_action = action;
-    //                                                                      return lager::future {};
-    //                                                                  },
-    //                                                                  loop,
-    //                                                                  {}};
-    //
-    //        ProjectIrImportController project_ir_import_controller {
-    //            model_state, context, ir_reader_mock_, ir_writer_mock_};
-    //
-    //        auto model =
-    //            Update (model_state.get (),
-    //                    ImportProjectIrAction {.import_project_ir = {.ir_path = "path/to/ir.wav",
-    //                                                                 .name = "name",
-    //                                                                 .description =
-    //                                                                 "description"}});
-    //        model_state.set (model.first);
-    //        const auto * loading_action = std::get_if<ImportProjectIrLoadingAction>
-    //        (&last_action); REQUIRE (loading_action != nullptr);
-    //    }
+
+    SECTION ("sets loading state when target ir is set")
+    {
+        auto model_state = lager::make_state (ProjectIrRepositoryModel {}, lager::automatic_tag {});
+
+        ProjectIrRepositoryAction last_action;
+        auto context = lager::context<ProjectIrRepositoryAction> {[&] (const auto & action)
+                                                                  {
+                                                                      last_action = action;
+                                                                      return lager::future {};
+                                                                  },
+                                                                  loop,
+                                                                  {}};
+
+        ProjectIrImportController project_ir_import_controller {
+            model_state, context, ir_reader_mock_, ir_writer_mock_};
+
+        auto model =
+            Update (model_state.get (),
+                    ImportProjectIrAction {.import_project_ir = {.ir_path = "path/to/ir.wav",
+                                                                 .name = "name",
+                                                                 .description = "description"}});
+        model_state.set (model.first);
+
+        const auto * loading_action = std::get_if<ImportProjectIrLoadingAction> (&last_action);
+        REQUIRE (loading_action != nullptr);
+    }
 }
