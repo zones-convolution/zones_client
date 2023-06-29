@@ -11,7 +11,7 @@ struct ImportProjectIr
     std::string description;
 };
 
-enum class ImportingProjectIrState
+enum class ProjectIrLoadingState
 {
     kSuccess,
     kFailure,
@@ -20,10 +20,14 @@ enum class ImportingProjectIrState
 };
 
 using ImportProjectIrOptional = std::optional<ImportProjectIr>;
+using CurrentProjectIrOptional = std::optional<std::string>;
 
 struct ProjectIrRepositoryModel
 {
     immer::flex_vector<std::filesystem::path> project_paths;
     ImportProjectIrOptional import_project_ir;
-    ImportingProjectIrState importing_project_ir_state;
+    ProjectIrLoadingState importing_project_ir_state;
+
+    CurrentProjectIrOptional current_project_ir;
+    ProjectIrLoadingState current_project_ir_state;
 };

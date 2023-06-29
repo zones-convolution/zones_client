@@ -31,23 +31,29 @@ ProjectIrRepositoryResult Update (ProjectIrRepositoryModel model, ProjectIrRepos
                 const ImportProjectIrAction & import_project_ir_action) -> ProjectIrRepositoryResult
             {
                 model.import_project_ir = import_project_ir_action.import_project_ir;
-                model.importing_project_ir_state = ImportingProjectIrState::kPending;
+                model.importing_project_ir_state = ProjectIrLoadingState::kPending;
                 return {model, lager::noop};
             },
             [&] (const ImportProjectIrLoadingAction &) -> ProjectIrRepositoryResult
             {
                 model.import_project_ir = std::nullopt;
-                model.importing_project_ir_state = ImportingProjectIrState::kLoading;
+                model.importing_project_ir_state = ProjectIrLoadingState::kLoading;
                 return {model, lager::noop};
             },
             [&] (const ImportProjectIrSuccessAction &) -> ProjectIrRepositoryResult
             {
-                model.importing_project_ir_state = ImportingProjectIrState::kSuccess;
+                model.importing_project_ir_state = ProjectIrLoadingState::kSuccess;
                 return {model, lager::noop};
             },
             [&] (const ImportProjectIrFailureAction &) -> ProjectIrRepositoryResult
             {
-                model.importing_project_ir_state = ImportingProjectIrState::kFailure;
+                model.importing_project_ir_state = ProjectIrLoadingState::kFailure;
+                return {model, lager::noop};
+            },
+            [&] (const LoadProjectIrAction & load_project_ir_action) -> ProjectIrRepositoryResult
+            {
+                model.current_project_ir = load_project_ir_action.ir_identifier;
+                model.current_project_ir_state = ProjectIrLoadingState::kPending;
                 return {model, lager::noop};
             },
         },

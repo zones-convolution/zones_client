@@ -20,6 +20,8 @@ zones_add_module(
         src/ir_repository/project/ProjectIrRepositoryAction.cpp
         src/ir_repository/project/ProjectIrImportController.h
         src/ir_repository/project/ProjectIrImportController.cpp
+        src/ir_repository/project/ProjectIrLoadController.h
+        src/ir_repository/project/ProjectIrLoadController.cpp
         DEPS
         juce::juce_audio_basics
         juce::juce_audio_formats
@@ -36,6 +38,7 @@ zones_add_test(
         test/project/ProjectIrPathsTests.cpp
         test/project/ProjectIrRepositoryActionTests.cpp
         test/project/ProjectIrImportControllerTests.cpp
+        test/project/ProjectIrLoadControllerTests.cpp
         test/project/ReaderWriterMocks.h
         DEPS
         ir_repository)

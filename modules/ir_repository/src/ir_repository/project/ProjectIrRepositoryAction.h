@@ -34,12 +34,18 @@ struct ImportProjectIrFailureAction
 {
 };
 
+struct LoadProjectIrAction
+{
+    std::string ir_identifier;
+};
+
 using ProjectIrRepositoryAction = std::variant<AddProjectPathAction,
                                                RemoveProjectPathAction,
                                                ImportProjectIrAction,
                                                ImportProjectIrLoadingAction,
                                                ImportProjectIrSuccessAction,
-                                               ImportProjectIrFailureAction>;
+                                               ImportProjectIrFailureAction,
+                                               LoadProjectIrAction>;
 
 using ProjectIrRepositoryEffect =
     lager::effect<ProjectIrRepositoryAction, lager::deps<std::string &>>;
