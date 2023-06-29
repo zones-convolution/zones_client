@@ -17,27 +17,24 @@ ProjectIrImportController::ProjectIrImportController (
     lager::watch (import_project_ir_reader_,
                   [&] (ImportProjectIrOptional import_project_ir)
                   {
-                      if (import_project_ir.has_value ())
+                      if (! import_project_ir.has_value ())
+                          return;
+
+                      context.dispatch (ImportProjectIrLoadingAction {});
+                      auto project_ir_path = ProjectIrPaths (model_).GetAvailableProjectPath ();
+
+                      if (! project_ir_path.has_value ())
+                          context.dispatch (ImportProjectIrFailureAction {});
+
+                      try
                       {
-                          context.dispatch (ImportProjectIrLoadingAction {});
-                          auto project_ir_path = ProjectIrPaths (model_).GetAvailableProjectPath ();
-                          if (project_ir_path.has_value ())
-                          {
-                              try
-                              {
-                                  TransferIrToProject (project_ir_path.value (),
-                                                       import_project_ir.value ());
-                                  context.dispatch (ImportProjectIrSuccessAction {});
-                              }
-                              catch (...)
-                              {
-                                  context.dispatch (ImportProjectIrFailureAction {});
-                              }
-                          }
-                          else
-                          {
-                              context.dispatch (ImportProjectIrFailureAction {});
-                          }
+                          TransferIrToProject (project_ir_path.value (),
+                                               import_project_ir.value ());
+                          context.dispatch (ImportProjectIrSuccessAction {});
+                      }
+                      catch (...)
+                      {
+                          context.dispatch (ImportProjectIrFailureAction {});
                       }
                   });
 }
