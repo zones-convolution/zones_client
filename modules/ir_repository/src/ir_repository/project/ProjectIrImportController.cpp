@@ -36,7 +36,7 @@ ProjectIrImportController::ProjectIrImportController (
                           }
                           else
                           {
-                              context.dispatch (ImportProjectIrLoadingAction {});
+                              context.dispatch (ImportProjectIrFailureAction {});
                           }
                       }
                   });

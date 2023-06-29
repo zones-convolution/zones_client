@@ -18,15 +18,19 @@ public:
                      const std::string & ir_identifier,
                      IrData & ir_data) override
     {
+        did_read_ir_data_ = true;
     }
 
     IrMetadata ReadIrMetadata (const std::filesystem::path & load_path,
                                const std::string & ir_identifier) override
     {
+        did_read_ir_metadata_ = true;
         return ir_metadata_;
     }
 
     IrMetadata ir_metadata_;
+    bool did_read_ir_data_ = false;
+    bool did_read_ir_metadata_ = false;
 };
 
 class IrWriterMock : public IrWriter
@@ -58,35 +62,19 @@ TEST_CASE ("imports project ir", "[ProjectIrImportController]")
     IrWriterMock ir_writer_mock_;
     auto loop = lager::with_manual_event_loop {};
 
-    //    SECTION ("loads project ir")
-    //    {
-    //        auto model_state = lager::make_state (ProjectIrRepositoryModel {});
-    //
-    //        auto context = lager::context<ProjectIrRepositoryAction> {
-    //            [&] (const auto & action)
-    //            {
-    //                const auto * loading_action = std::get_if<ImportProjectIrLoadingAction>
-    //                (&action); REQUIRE (loading_action != nullptr); return lager::future {};
-    //            },
-    //            loop,
-    //            {}};
-    //
-    //        ProjectIrImportController project_ir_import_controller {
-    //            model_state, context, ir_reader_mock_, ir_writer_mock_};
-    //    }
-
-    SECTION ("sets loading state when target ir is set")
+    SECTION ("dispatches failure action when no valid project paths exist")
     {
         auto model_state = lager::make_state (ProjectIrRepositoryModel {}, lager::automatic_tag {});
 
-        ProjectIrRepositoryAction last_action;
-        auto context = lager::context<ProjectIrRepositoryAction> {[&] (const auto & action)
-                                                                  {
-                                                                      last_action = action;
-                                                                      return lager::future {};
-                                                                  },
-                                                                  loop,
-                                                                  {}};
+        std::vector<ProjectIrRepositoryAction> dispatched_actions;
+        auto context =
+            lager::context<ProjectIrRepositoryAction> {[&] (const auto & action)
+                                                       {
+                                                           dispatched_actions.push_back (action);
+                                                           return lager::future {};
+                                                       },
+                                                       loop,
+                                                       {}};
 
         ProjectIrImportController project_ir_import_controller {
             model_state, context, ir_reader_mock_, ir_writer_mock_};
@@ -98,7 +86,55 @@ TEST_CASE ("imports project ir", "[ProjectIrImportController]")
                                                                  .description = "description"}});
         model_state.set (model.first);
 
-        const auto * loading_action = std::get_if<ImportProjectIrLoadingAction> (&last_action);
+        const auto * loading_action =
+            std::get_if<ImportProjectIrLoadingAction> (&dispatched_actions [0]);
         REQUIRE (loading_action != nullptr);
+
+        const auto * failure_action =
+            std::get_if<ImportProjectIrFailureAction> (&dispatched_actions [1]);
+        REQUIRE (failure_action != nullptr);
+    }
+
+    SECTION ("dispatches success action when no valid project paths exist")
+    {
+        auto valid_dir =
+            juce::File::getSpecialLocation (juce::File::SpecialLocationType::tempDirectory);
+
+        auto model_state = lager::make_state (
+            ProjectIrRepositoryModel {
+                .project_paths = {valid_dir.getFullPathName ().toStdString ()}},
+            lager::automatic_tag {});
+
+        std::vector<ProjectIrRepositoryAction> dispatched_actions;
+        auto context =
+            lager::context<ProjectIrRepositoryAction> {[&] (const auto & action)
+                                                       {
+                                                           dispatched_actions.push_back (action);
+                                                           return lager::future {};
+                                                       },
+                                                       loop,
+                                                       {}};
+
+        ProjectIrImportController project_ir_import_controller {
+            model_state, context, ir_reader_mock_, ir_writer_mock_};
+
+        auto model =
+            Update (model_state.get (),
+                    ImportProjectIrAction {.import_project_ir = {.ir_path = "path/to/ir.wav",
+                                                                 .name = "name",
+                                                                 .description = "description"}});
+        model_state.set (model.first);
+
+        const auto * loading_action =
+            std::get_if<ImportProjectIrLoadingAction> (&dispatched_actions [0]);
+        REQUIRE (loading_action != nullptr);
+
+        const auto * success_action =
+            std::get_if<ImportProjectIrSuccessAction> (&dispatched_actions [1]);
+        REQUIRE (success_action != nullptr);
+
+        REQUIRE (ir_writer_mock_.did_write_ir_data_);
+        REQUIRE (ir_writer_mock_.did_write_ir_metadata_);
+        REQUIRE (ir_reader_mock_.did_read_ir_data_);
     }
 }
