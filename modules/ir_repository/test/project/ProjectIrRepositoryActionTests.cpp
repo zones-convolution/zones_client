@@ -110,7 +110,7 @@ TEST_CASE ("project ir import actions")
 
 TEST_CASE ("project ir load actions")
 {
-    SECTION ("load action updates ir to load and sets state to pending")
+    SECTION ("set load action updates ir to load and sets state to pending")
     {
         auto model = ProjectIrRepositoryModel {};
         auto load_project_ir_action = LoadProjectIrAction {.ir_identifier = "ir_identifier"};
@@ -120,5 +120,33 @@ TEST_CASE ("project ir load actions")
         REQUIRE (model.current_project_ir.has_value ());
         REQUIRE (model.current_project_ir == load_project_ir_action.ir_identifier);
         REQUIRE (model.current_project_ir_state == ProjectIrLoadingState::kPending);
+    }
+
+    SECTION ("loading action sets loading state")
+    {
+        auto model =
+            ProjectIrRepositoryModel {.current_project_ir_state = ProjectIrLoadingState::kPending};
+        auto update_result = Update (model, LoadProjectIrLoadingAction {});
+        model = update_result.first;
+
+        REQUIRE (model.current_project_ir_state == ProjectIrLoadingState::kLoading);
+    }
+    SECTION ("success action sets success state")
+    {
+        auto model =
+            ProjectIrRepositoryModel {.current_project_ir_state = ProjectIrLoadingState::kLoading};
+        auto update_result = Update (model, LoadProjectIrSuccessAction {});
+        model = update_result.first;
+
+        REQUIRE (model.current_project_ir_state == ProjectIrLoadingState::kSuccess);
+    }
+    SECTION ("failure action sets failure state")
+    {
+        auto model =
+            ProjectIrRepositoryModel {.current_project_ir_state = ProjectIrLoadingState::kLoading};
+        auto update_result = Update (model, LoadProjectIrFailureAction {});
+        model = update_result.first;
+
+        REQUIRE (model.current_project_ir_state == ProjectIrLoadingState::kFailure);
     }
 }

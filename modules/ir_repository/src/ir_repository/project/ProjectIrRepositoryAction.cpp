@@ -56,6 +56,21 @@ ProjectIrRepositoryResult Update (ProjectIrRepositoryModel model, ProjectIrRepos
                 model.current_project_ir_state = ProjectIrLoadingState::kPending;
                 return {model, lager::noop};
             },
+            [&] (const LoadProjectIrLoadingAction &) -> ProjectIrRepositoryResult
+            {
+                model.current_project_ir_state = ProjectIrLoadingState::kLoading;
+                return {model, lager::noop};
+            },
+            [&] (const LoadProjectIrSuccessAction &) -> ProjectIrRepositoryResult
+            {
+                model.current_project_ir_state = ProjectIrLoadingState::kSuccess;
+                return {model, lager::noop};
+            },
+            [&] (const LoadProjectIrFailureAction &) -> ProjectIrRepositoryResult
+            {
+                model.current_project_ir_state = ProjectIrLoadingState::kFailure;
+                return {model, lager::noop};
+            },
         },
         action);
 }
