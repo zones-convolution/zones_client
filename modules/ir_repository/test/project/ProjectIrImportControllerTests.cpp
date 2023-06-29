@@ -32,16 +32,16 @@ public:
 
 TEST_CASE ("imports project ir", "[ProjectIrImportController]")
 {
-    IrReaderMock ir_reader_mock_;
-    IrWriterMock ir_writer_mock_;
-
     SECTION ("dispatches failure action when no valid project paths exist")
     {
+        IrReaderMock ir_reader_mock;
+        IrWriterMock ir_writer_mock;
+
         auto model_state = lager::make_state (ProjectIrRepositoryModel {}, lager::automatic_tag {});
         TrackingContext<ProjectIrRepositoryAction> tracking_context;
 
         ProjectIrImportController project_ir_import_controller {
-            model_state, tracking_context.context_, ir_reader_mock_, ir_writer_mock_};
+            model_state, tracking_context.context_, ir_reader_mock, ir_writer_mock};
 
         auto [model, effect] =
             Update (model_state.get (),
@@ -59,6 +59,9 @@ TEST_CASE ("imports project ir", "[ProjectIrImportController]")
 
     SECTION ("dispatches success action when no valid project paths exist")
     {
+        IrReaderMock ir_reader_mock;
+        IrWriterMock ir_writer_mock;
+
         auto valid_dir =
             juce::File::getSpecialLocation (juce::File::SpecialLocationType::tempDirectory);
 
@@ -69,7 +72,7 @@ TEST_CASE ("imports project ir", "[ProjectIrImportController]")
 
         TrackingContext<ProjectIrRepositoryAction> tracking_context;
         ProjectIrImportController project_ir_import_controller {
-            model_state, tracking_context.context_, ir_reader_mock_, ir_writer_mock_};
+            model_state, tracking_context.context_, ir_reader_mock, ir_writer_mock};
 
         auto [model, effect] =
             Update (model_state.get (),
@@ -84,8 +87,8 @@ TEST_CASE ("imports project ir", "[ProjectIrImportController]")
         RequireDispatchedAt<ProjectIrRepositoryAction, ImportProjectIrSuccessAction> (
             1, tracking_context.dispatched_actions_);
 
-        REQUIRE (ir_writer_mock_.did_write_ir_data_);
-        REQUIRE (ir_writer_mock_.did_write_ir_metadata_);
-        REQUIRE (ir_reader_mock_.did_read_ir_data_);
+        REQUIRE (ir_writer_mock.did_write_ir_data_);
+        REQUIRE (ir_writer_mock.did_write_ir_metadata_);
+        REQUIRE (ir_reader_mock.did_read_ir_data_);
     }
 }
