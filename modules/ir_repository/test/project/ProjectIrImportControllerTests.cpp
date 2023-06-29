@@ -1,5 +1,4 @@
-#include "ir_repository/io/IrReader.h"
-#include "ir_repository/io/IrWriter.h"
+#include "ReaderWriterMocks.h"
 #include "ir_repository/project/ProjectIrImportController.h"
 #include "ir_repository/project/ProjectIrRepositoryAction.h"
 #include "ir_repository/project/ProjectIrRepositoryModel.h"
@@ -9,90 +8,53 @@
 #include <lager/event_loop/manual.hpp>
 #include <lager/state.hpp>
 
-class IrReaderMock : public IrReader
+template <typename ActionType, typename TargetActionType>
+void RequireDispatchedAt (size_t position, const std::vector<ActionType> & actions)
+{
+    const auto * action = std::get_if<TargetActionType> (&actions [position]);
+    REQUIRE (action != nullptr);
+}
+
+template <typename ActionType>
+class TrackingContext
 {
 public:
-    virtual ~IrReaderMock () = default;
-
-    void ReadIrData (const std::filesystem::path & load_path,
-                     const std::string & ir_identifier,
-                     IrData & ir_data) override
-    {
-        did_read_ir_data_ = true;
-    }
-
-    IrMetadata ReadIrMetadata (const std::filesystem::path & load_path,
-                               const std::string & ir_identifier) override
-    {
-        did_read_ir_metadata_ = true;
-        return ir_metadata_;
-    }
-
-    IrMetadata ir_metadata_;
-    bool did_read_ir_data_ = false;
-    bool did_read_ir_metadata_ = false;
-};
-
-class IrWriterMock : public IrWriter
-{
-public:
-    virtual ~IrWriterMock () = default;
-
-    void WriteIrMetadata (const std::filesystem::path & write_path,
-                          const std::string & ir_identifier,
-                          const IrMetadata & ir_metadata) override
-    {
-        did_write_ir_metadata_ = true;
-    }
-
-    void WriteIrData (const std::filesystem::path & write_path,
-                      const std::string & ir_identifier,
-                      const IrData & ir_data) override
-    {
-        did_write_ir_data_ = true;
-    }
-
-    bool did_write_ir_data_ = false;
-    bool did_write_ir_metadata_ = false;
+    lager::with_manual_event_loop loop {};
+    std::vector<ActionType> dispatched_actions_;
+    lager::context<ActionType> context_ = {[&] (const auto & action)
+                                           {
+                                               dispatched_actions_.push_back (action);
+                                               return lager::future {};
+                                           },
+                                           loop,
+                                           {}};
 };
 
 TEST_CASE ("imports project ir", "[ProjectIrImportController]")
 {
     IrReaderMock ir_reader_mock_;
     IrWriterMock ir_writer_mock_;
-    auto loop = lager::with_manual_event_loop {};
 
     SECTION ("dispatches failure action when no valid project paths exist")
     {
         auto model_state = lager::make_state (ProjectIrRepositoryModel {}, lager::automatic_tag {});
-
-        std::vector<ProjectIrRepositoryAction> dispatched_actions;
-        auto context =
-            lager::context<ProjectIrRepositoryAction> {[&] (const auto & action)
-                                                       {
-                                                           dispatched_actions.push_back (action);
-                                                           return lager::future {};
-                                                       },
-                                                       loop,
-                                                       {}};
+        TrackingContext<ProjectIrRepositoryAction> tracking_context;
 
         ProjectIrImportController project_ir_import_controller {
-            model_state, context, ir_reader_mock_, ir_writer_mock_};
+            model_state, tracking_context.context_, ir_reader_mock_, ir_writer_mock_};
 
-        auto model =
+        auto [model, effect] =
             Update (model_state.get (),
                     ImportProjectIrAction {.import_project_ir = {.ir_path = "path/to/ir.wav",
                                                                  .name = "name",
                                                                  .description = "description"}});
-        model_state.set (model.first);
+        model_state.set (model);
 
-        const auto * loading_action =
-            std::get_if<ImportProjectIrLoadingAction> (&dispatched_actions [0]);
-        REQUIRE (loading_action != nullptr);
+        RequireDispatchedAt<ProjectIrRepositoryAction, ImportProjectIrLoadingAction> (
+            0, tracking_context.dispatched_actions_);
 
-        const auto * failure_action =
-            std::get_if<ImportProjectIrFailureAction> (&dispatched_actions [1]);
-        REQUIRE (failure_action != nullptr);
+        RequireDispatchedAt<ProjectIrRepositoryAction, ImportProjectIrFailureAction> (
+            1, tracking_context.dispatched_actions_);
     }
 
     SECTION ("dispatches success action when no valid project paths exist")
@@ -105,33 +67,22 @@ TEST_CASE ("imports project ir", "[ProjectIrImportController]")
                 .project_paths = {valid_dir.getFullPathName ().toStdString ()}},
             lager::automatic_tag {});
 
-        std::vector<ProjectIrRepositoryAction> dispatched_actions;
-        auto context =
-            lager::context<ProjectIrRepositoryAction> {[&] (const auto & action)
-                                                       {
-                                                           dispatched_actions.push_back (action);
-                                                           return lager::future {};
-                                                       },
-                                                       loop,
-                                                       {}};
-
+        TrackingContext<ProjectIrRepositoryAction> tracking_context;
         ProjectIrImportController project_ir_import_controller {
-            model_state, context, ir_reader_mock_, ir_writer_mock_};
+            model_state, tracking_context.context_, ir_reader_mock_, ir_writer_mock_};
 
-        auto model =
+        auto [model, effect] =
             Update (model_state.get (),
                     ImportProjectIrAction {.import_project_ir = {.ir_path = "path/to/ir.wav",
                                                                  .name = "name",
                                                                  .description = "description"}});
-        model_state.set (model.first);
+        model_state.set (model);
 
-        const auto * loading_action =
-            std::get_if<ImportProjectIrLoadingAction> (&dispatched_actions [0]);
-        REQUIRE (loading_action != nullptr);
+        RequireDispatchedAt<ProjectIrRepositoryAction, ImportProjectIrLoadingAction> (
+            0, tracking_context.dispatched_actions_);
 
-        const auto * success_action =
-            std::get_if<ImportProjectIrSuccessAction> (&dispatched_actions [1]);
-        REQUIRE (success_action != nullptr);
+        RequireDispatchedAt<ProjectIrRepositoryAction, ImportProjectIrSuccessAction> (
+            1, tracking_context.dispatched_actions_);
 
         REQUIRE (ir_writer_mock_.did_write_ir_data_);
         REQUIRE (ir_writer_mock_.did_write_ir_metadata_);
