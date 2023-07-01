@@ -15,7 +15,7 @@ public:
                              IrReader & ir_reader);
 
     const IrData * GetCurrentProjectIrData () const;
-    const IrMetadata * GetCurrentProjectIrMetadata () const;
+    const IrMetadata & GetCurrentProjectIrMetadata () const;
 
 private:
     void LoadProjectIr (const std::filesystem::path & project_path,

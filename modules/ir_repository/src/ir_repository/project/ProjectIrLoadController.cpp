@@ -44,9 +44,9 @@ const IrData * ProjectIrLoadController::GetCurrentProjectIrData () const
     return &current_project_ir_data_;
 }
 
-const IrMetadata * ProjectIrLoadController::GetCurrentProjectIrMetadata () const
+const IrMetadata & ProjectIrLoadController::GetCurrentProjectIrMetadata () const
 {
-    return &current_project_ir_metadata_;
+    return current_project_ir_metadata_;
 }
 
 void ProjectIrLoadController::LoadProjectIr (const std::filesystem::path & project_path,

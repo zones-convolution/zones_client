@@ -38,6 +38,7 @@ zones_add_test(
         test/project/ProjectIrImportControllerTests.cpp
         test/project/ProjectIrLoadControllerTests.cpp
         test/project/ReaderWriterMocks.h
+        test/project/LagerTestUtils.h
         DEPS
         ir_repository)
 
