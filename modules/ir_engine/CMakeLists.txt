@@ -6,6 +6,11 @@ zones_add_module(
         src/ir_engine/IrEngine.h
         src/ir_engine/IrGraph.cpp
         src/ir_engine/IrGraph.h
+        src/ir_engine/processors/TestProcessor.h
+        src/ir_engine/processors/TestProcessor.cpp
+        src/ir_engine/IrGraphHashing.cpp
+        src/ir_engine/IrGraphHashing.h
+        src/ir_engine/IrGraphProcessor.h
         DEPS
         juce::juce_core
         juce::juce_dsp)
