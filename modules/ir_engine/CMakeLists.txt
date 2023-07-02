@@ -17,4 +17,5 @@ zones_add_module(
 
 zones_add_test(MODULE ir_engine SOURCES
         test/IrEngineTests.cpp
+        test/IrGraphHashingTests.cpp
         DEPS ir_engine)
