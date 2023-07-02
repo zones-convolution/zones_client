@@ -15,7 +15,8 @@ class IrGraphCachePolicyWeird
 public:
     [[nodiscard]] std::size_t GetHashForState (const GraphState & state) const
     {
-        return std::hash<std::string> {}(policy_identifier);
+        //        return std::hash<std::string> {}(policy_identifier);
+        return 0;
     }
 
     bool StatesMatchWRTPolicy (const GraphState & s1, const GraphState & s2) const
@@ -31,19 +32,40 @@ public:
     std::string policy_identifier;
 };
 
+struct CachedProcessorState
+{
+    IrGraphCachePolicyWeird cache_policy;
+    int processor_index;
+};
+
 struct CachedGraphProcessorState
 {
-    int processor_index;
     GraphState graph_state;
-    IrGraphCachePolicyWeird cache_policy;
+    std::vector<CachedProcessorState> cached_graph;
 
     bool operator== (const CachedGraphProcessorState & p) const
     {
-        auto process_index_match = p.processor_index == processor_index;
-        auto cache_policies_match = p.cache_policy == cache_policy;
-        auto is_cached_state = cache_policy.StatesMatchWRTPolicy (p.graph_state, graph_state);
+        if (p.cached_graph.size () != cached_graph.size ())
+            return false;
 
-        return process_index_match && cache_policies_match && is_cached_state;
+        for (auto i = 0; i < cached_graph.size (); ++i)
+        {
+            auto cached_state = cached_graph [i];
+            auto other_cached_state = p.cached_graph [i];
+
+            auto process_index_match =
+                other_cached_state.processor_index == cached_state.processor_index;
+            auto cache_policies_match =
+                other_cached_state.cache_policy == cached_state.cache_policy;
+
+            auto is_cached_state =
+                cached_state.cache_policy.StatesMatchWRTPolicy (p.graph_state, graph_state);
+
+            if (! (process_index_match && cache_policies_match && is_cached_state))
+                return false;
+        }
+
+        return true;
     }
 };
 
@@ -51,19 +73,37 @@ struct GraphProcessorStateHashFn
 {
     std::size_t operator() (const CachedGraphProcessorState & p) const
     {
-        std::size_t h1 = std::hash<int> () (p.processor_index);
-        std::size_t h2 = p.cache_policy.GetHashForState (p.graph_state);
+        const auto & last_proc = p.cached_graph.back ();
+        std::size_t h1 = std::hash<int> () (last_proc.processor_index);
+        std::size_t h2 = last_proc.cache_policy.GetHashForState (p.graph_state);
         return h1 ^ h2;
     }
 };
 
 TEST_CASE ("asdasd asdasdasd asdasd")
 {
-    auto gps_key_1 = CachedGraphProcessorState {.processor_index = 1};
-    auto gps_key_2 = CachedGraphProcessorState {.processor_index = 2};
+    auto gps_key_1 =
+        CachedGraphProcessorState {.cached_graph = {CachedProcessorState {.processor_index = 1}}};
+
+    auto k1 = GraphProcessorStateHashFn () (gps_key_1);
+
+    auto gps_key_2 =
+        CachedGraphProcessorState {.cached_graph = {CachedProcessorState {.processor_index = 2}}};
+
+    auto k2 = GraphProcessorStateHashFn () (gps_key_2);
+
     auto gps_key_3 = CachedGraphProcessorState {
-        .processor_index = 1, .cache_policy = IrGraphCachePolicyWeird {.policy_identifier = "3"}};
-    auto gps_key_4 = CachedGraphProcessorState {.processor_index = 4};
+        .cached_graph = {CachedProcessorState {
+            .cache_policy = IrGraphCachePolicyWeird {.policy_identifier = "3"},
+            .processor_index = 1,
+        }}};
+
+    auto k3 = GraphProcessorStateHashFn () (gps_key_3);
+
+    auto gps_key_4 =
+        CachedGraphProcessorState {.cached_graph = {CachedProcessorState {.processor_index = 4}}};
+
+    auto k4 = GraphProcessorStateHashFn () (gps_key_4);
 
     std::unordered_map<CachedGraphProcessorState, int, GraphProcessorStateHashFn> u_map = {
         {gps_key_1, 4}, {gps_key_2, 8}, {gps_key_3, 6}, {gps_key_4, 20}};
