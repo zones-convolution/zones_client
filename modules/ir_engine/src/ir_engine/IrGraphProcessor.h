@@ -18,6 +18,7 @@ public:
 class IrGraphProcessor
 {
 public:
-    virtual void Process (juce::dsp::ProcessContextNonReplacing<float> & process_context) = 0;
+    virtual void Process (juce::dsp::ProcessContextNonReplacing<float> & process_context,
+                          const IrGraphState & state) = 0;
     virtual ~IrGraphProcessor () = default;
 };

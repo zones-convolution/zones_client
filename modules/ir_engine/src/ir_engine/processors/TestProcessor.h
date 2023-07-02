@@ -11,5 +11,6 @@ public:
 class TestProcessor : public IrGraphProcessor
 {
 public:
-    void Process (juce::dsp::ProcessContextNonReplacing<float> & process_context) override;
+    void Process (juce::dsp::ProcessContextNonReplacing<float> & process_context,
+                  const IrGraphState & state) override;
 };
