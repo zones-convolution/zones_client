@@ -4,8 +4,11 @@ zones_add_module(
         SOURCES
         src/ir_engine/IrEngine.cpp
         src/ir_engine/IrEngine.h
+        src/ir_engine/IrGraph.cpp
+        src/ir_engine/IrGraph.h
         DEPS
-        juce::juce_core)
+        juce::juce_core
+        juce::juce_dsp)
 
 zones_add_test(MODULE ir_engine SOURCES
         test/IrEngineTests.cpp
