@@ -13,6 +13,8 @@ zones_add_module(
         src/ir_engine/IrGraphProcessor.h
         src/ir_engine/IrGraphCachePolicy.h
         src/ir_engine/IrGraphCachePolicy.cpp
+        src/ir_engine/IrGraphStateKey.h
+        src/ir_engine/IrGraphStateKey.cpp
         DEPS
         immer
         juce::juce_core
@@ -22,5 +24,5 @@ zones_add_test(MODULE ir_engine SOURCES
         test/IrGraphCachePolicyTests.cpp
         test/IrEngineTests.cpp
         test/IrGraphHashingTests.cpp
-        test/TestWeirdCache.cpp
+        test/IrGraphStateKeyTests.cpp
         DEPS ir_engine)

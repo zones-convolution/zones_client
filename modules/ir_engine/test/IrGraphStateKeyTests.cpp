@@ -1,58 +1,9 @@
 #include "ir_engine/IrGraphCachePolicy.h"
 #include "ir_engine/IrGraphProcessor.h"
+#include "ir_engine/IrGraphStateKey.h"
 
 #include <catch2/catch_test_macros.hpp>
-#include <functional>
 #include <string>
-
-struct IndexedGraphPolicy
-{
-    IrGraphCachePolicy cache_policy;
-    int processor_index;
-};
-
-struct GraphStateKey
-{
-    IrGraphState graph_state;
-    std::vector<IndexedGraphPolicy> policies;
-
-    bool operator== (const GraphStateKey & other) const
-    {
-        if (other.policies.size () != policies.size ())
-            return false;
-
-        for (auto i = 0; i < policies.size (); ++i)
-        {
-            auto indexed_policy = policies [i];
-            auto other_indexed_policy = other.policies [i];
-
-            if (other_indexed_policy.processor_index != indexed_policy.processor_index)
-                return false;
-
-            if (other_indexed_policy.cache_policy != indexed_policy.cache_policy)
-                return false;
-
-            if (! indexed_policy.cache_policy.StatesMatchWRTPolicy (other.graph_state, graph_state))
-                return false;
-        }
-
-        return true;
-    }
-};
-
-struct GraphStateKeyHashFn
-{
-    std::size_t operator() (const GraphStateKey & p) const
-    {
-        if (p.policies.empty ())
-            return 0;
-
-        const auto & last_proc = p.policies.back ();
-        std::size_t h1 = std::hash<int> () (last_proc.processor_index);
-        std::size_t h2 = last_proc.cache_policy.GetHashForState (p.graph_state);
-        return h1 ^ h2; // SHOULD BE COMBINE HASHES...
-    }
-};
 
 TEST_CASE ("empty keys are equal and have the same hash")
 {

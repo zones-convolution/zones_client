@@ -14,6 +14,4 @@ public:
     [[nodiscard]] static std::vector<std::size_t>
     GetHashesForState (const IrGraphState & ir_graph_state,
                        const std::vector<IrGraphCachePolicy *> & cache_policies);
-
-    [[nodiscard]] static std::size_t CombineHashes (size_t lhs, size_t rhs);
 };
