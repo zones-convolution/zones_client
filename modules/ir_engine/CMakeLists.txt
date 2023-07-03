@@ -11,7 +11,10 @@ zones_add_module(
         src/ir_engine/IrGraphHashing.cpp
         src/ir_engine/IrGraphHashing.h
         src/ir_engine/IrGraphProcessor.h
+        src/ir_engine/IrGraphCachePolicy.h
+        src/ir_engine/IrGraphCachePolicy.cpp
         DEPS
+        immer
         juce::juce_core
         juce::juce_dsp)
 

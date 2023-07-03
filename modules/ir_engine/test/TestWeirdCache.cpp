@@ -1,46 +1,20 @@
+#include "ir_engine/IrGraphCachePolicy.h"
+#include "ir_engine/IrGraphProcessor.h"
+
 #include <catch2/catch_test_macros.hpp>
 #include <functional>
 #include <string>
 #include <unordered_map>
 
-struct GraphState
-{
-    int param_1;
-    int param_2;
-    int param_3;
-};
-
-class IrGraphCachePolicyWeird
-{
-public:
-    [[nodiscard]] std::size_t GetHashForState (const GraphState & state) const
-    {
-        //        return std::hash<std::string> {}(policy_identifier);
-        return 0;
-    }
-
-    bool StatesMatchWRTPolicy (const GraphState & s1, const GraphState & s2) const
-    {
-        return true;
-    }
-
-    bool operator== (const IrGraphCachePolicyWeird & p) const
-    {
-        return policy_identifier == p.policy_identifier;
-    }
-
-    std::string policy_identifier;
-};
-
 struct CachedProcessorState
 {
-    IrGraphCachePolicyWeird cache_policy;
+    IrGraphCachePolicy cache_policy;
     int processor_index;
 };
 
 struct CachedGraphProcessorState
 {
-    GraphState graph_state;
+    IrGraphState graph_state;
     std::vector<CachedProcessorState> cached_graph;
 
     bool operator== (const CachedGraphProcessorState & p) const
@@ -94,7 +68,7 @@ TEST_CASE ("asdasd asdasdasd asdasd")
 
     auto gps_key_3 = CachedGraphProcessorState {
         .cached_graph = {CachedProcessorState {
-            .cache_policy = IrGraphCachePolicyWeird {.policy_identifier = "3"},
+            //.cache_policy = IrGraphCachePolicy {.policy_identifier_ = "3"},
             .processor_index = 1,
         }}};
 

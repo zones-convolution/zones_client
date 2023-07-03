@@ -8,13 +8,6 @@ struct IrGraphState
     std::string param_3;
 };
 
-class IrGraphCachePolicy
-{
-public:
-    [[nodiscard]] virtual std::size_t GetHashForState (const IrGraphState & state) const = 0;
-    virtual ~IrGraphCachePolicy () = default;
-};
-
 class IrGraphProcessor
 {
 public:

@@ -1,4 +1,5 @@
 #pragma once
+#include "IrGraphCachePolicy.h"
 #include "IrGraphHashing.h"
 #include "IrGraphProcessor.h"
 #include "processors/TestProcessor.h"
@@ -13,8 +14,8 @@ class IrGraph
 {
 public:
 private:
-    TestCachePolicy test_cache_policy_;
     TestProcessor test_processor_;
+    IrGraphCachePolicy test_cache_policy_;
 
     std::array<ProcessorWithCachePolicy, 1> processors_ {
         ProcessorWithCachePolicy {test_cache_policy_, test_processor_}};
