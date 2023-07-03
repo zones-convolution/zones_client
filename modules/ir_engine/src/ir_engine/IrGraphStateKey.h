@@ -5,7 +5,7 @@
 
 struct IndexedGraphPolicy
 {
-    IrGraphCachePolicy cache_policy;
+    IrGraphCachePolicy<IrGraphState> cache_policy;
     int processor_index;
 };
 

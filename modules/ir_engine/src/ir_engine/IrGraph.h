@@ -8,15 +8,15 @@
 #include <juce_dsp/juce_dsp.h>
 #include <string>
 
-using ProcessorWithCachePolicy = std::pair<IrGraphCachePolicy &, IrGraphProcessor &>;
+using ProcessorWithCachePolicy = std::pair<IrGraphCachePolicy<IrGraphState> &, IrGraphProcessor &>;
 
 class IrGraph
 {
 public:
 private:
     TestProcessor test_processor_;
-    IrGraphCachePolicy test_cache_policy_ =
-        IrGraphCachePolicy ().WithPolicyIdentifier ("test_processor");
+    IrGraphCachePolicy<IrGraphState> test_cache_policy_ =
+        IrGraphCachePolicy<IrGraphState> ().WithPolicyIdentifier ("test_processor");
 
     std::array<ProcessorWithCachePolicy, 1> processors_ {
         ProcessorWithCachePolicy {test_cache_policy_, test_processor_}};

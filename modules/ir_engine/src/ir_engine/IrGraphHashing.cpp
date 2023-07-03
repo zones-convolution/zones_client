@@ -1,16 +1,18 @@
 #include "IrGraphHashing.h"
 
-std::size_t IrGraphHashing::GetHashForCachePolicy (const IrGraphCachePolicy * cache_policy,
-                                                   size_t previous_processor_hash,
-                                                   const IrGraphState & ir_graph_state)
+std::size_t
+IrGraphHashing::GetHashForCachePolicy (const IrGraphCachePolicy<IrGraphState> * cache_policy,
+                                       size_t previous_processor_hash,
+                                       const IrGraphState & ir_graph_state)
 {
     HashCombine (previous_processor_hash, cache_policy->GetHashForState (ir_graph_state));
     return previous_processor_hash;
+    return 0;
 }
 
-std::vector<std::size_t>
-IrGraphHashing::GetHashesForState (const IrGraphState & ir_graph_state,
-                                   const std::vector<IrGraphCachePolicy *> & cache_policies)
+std::vector<std::size_t> IrGraphHashing::GetHashesForState (
+    const IrGraphState & ir_graph_state,
+    const std::vector<IrGraphCachePolicy<IrGraphState> *> & cache_policies)
 {
     std::size_t last_hash = 0;
     std::vector<std::size_t> hashes_for_state;
