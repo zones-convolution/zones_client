@@ -1,4 +1,5 @@
 #pragma once
+#include "IrGraphCachePolicy.h"
 #include "IrGraphProcessor.h"
 
 #include <vector>

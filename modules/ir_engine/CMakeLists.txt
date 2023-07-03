@@ -19,6 +19,7 @@ zones_add_module(
         juce::juce_dsp)
 
 zones_add_test(MODULE ir_engine SOURCES
+        test/IrGraphCachePolicyTests.cpp
         test/IrEngineTests.cpp
         test/IrGraphHashingTests.cpp
         test/TestWeirdCache.cpp

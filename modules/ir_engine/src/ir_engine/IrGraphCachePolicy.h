@@ -2,7 +2,7 @@
 #include "IrGraphProcessor.h"
 
 #include <immer/box.hpp>
-#include <immer/flex_vector.hpp>
+#include <immer/set.hpp>
 
 class IrGraphCachePolicy
 {
@@ -16,7 +16,13 @@ public:
     [[nodiscard]] IrGraphCachePolicy
     WithPolicyIdentifier (const std::string & policy_identifier) const;
 
+    [[nodiscard]] IrGraphCachePolicy CacheParam1 (bool is_cached) const;
+    [[nodiscard]] IrGraphCachePolicy CacheParam2 (bool is_cached) const;
+    [[nodiscard]] IrGraphCachePolicy CacheParam3 (bool is_cached) const;
+
 private:
     immer::box<std::string> policy_identifier_;
-    immer::flex_vector<int IrGraphState::*> members_;
+    bool param_1_cached_ = false;
+    bool param_2_cached_ = false;
+    bool param_3_cached_ = false;
 };
