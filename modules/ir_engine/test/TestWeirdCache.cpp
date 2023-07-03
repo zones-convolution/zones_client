@@ -87,3 +87,29 @@ TEST_CASE ("asdasd asdasdasd asdasd")
     REQUIRE (u_map [gps_key_3] == 6);
     REQUIRE (u_map [gps_key_4] == 20);
 }
+
+// #include <iostream>
+//
+// struct MyStruct {
+//     int member_1;
+//     int member_2;
+// };
+//
+// class MyClass {
+// public:
+//     bool isMemberDifferent(const MyStruct& myStruct, int MyStruct::* memberPtr, int newValue) {
+//         return myStruct.*memberPtr != newValue;
+//     }
+// };
+//
+// int main() {
+//     MyStruct myStruct = { 10, 20 };
+//     MyClass myClass;
+//
+//     std::cout << "Is member_1 different? " << std::boolalpha <<
+//     myClass.isMemberDifferent(myStruct, &MyStruct::member_1, 5) << std::endl; std::cout << "Is
+//     member_2 different? " << std::boolalpha << myClass.isMemberDifferent(myStruct,
+//     &MyStruct::member_2, 20) << std::endl;
+//
+//     return 0;
+// }
