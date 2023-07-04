@@ -10,7 +10,7 @@
 #include <string>
 #include <vector>
 
-class IrGraph
+class IrGraph : public IrGraphProcessor
 {
 public:
     using CachePolicy = IrGraphCachePolicy<IrGraphState>;
@@ -19,6 +19,8 @@ public:
     [[nodiscard]] std::vector<GraphStateKey> GetKeysForState (const IrGraphState & state) const;
 
     [[nodiscard]] IrGraph WithProcessor (const ProcessorWithCachePolicy & processor) const;
+    void Process (juce::dsp::ProcessContextNonReplacing<float> & process_context,
+                  const IrGraphState & state) override;
 
 private:
     immer::flex_vector<ProcessorWithCachePolicy> processors_;

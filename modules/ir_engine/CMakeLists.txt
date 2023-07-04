@@ -8,6 +8,8 @@ zones_add_module(
         src/ir_engine/IrGraph.h
         src/ir_engine/processors/TestProcessor.h
         src/ir_engine/processors/TestProcessor.cpp
+        src/ir_engine/ProcessResultPool.h
+        src/ir_engine/ProcessResultPool.cpp
         src/ir_engine/IrGraphProcessor.h
         src/ir_engine/IrGraphCachePolicy.h
         src/ir_engine/IrGraphCachePolicy.cpp

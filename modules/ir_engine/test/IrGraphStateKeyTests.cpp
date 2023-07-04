@@ -201,7 +201,6 @@ TEST_CASE ("test with map... not done")
 
     std::unordered_map<GraphStateKey, int, GraphStateKeyHashFn> u_map = {
         {gps_key_1, 4}, {gps_key_2, 8}, {gps_key_3, 6}, {gps_key_4, 20}, {gps_key_5, 550}};
-
     REQUIRE (u_map [gps_key_1] == 4);
     REQUIRE (u_map [gps_key_2] == 8);
     REQUIRE (u_map [gps_key_3] == 6);

@@ -22,3 +22,14 @@ IrGraph IrGraph::WithProcessor (const ProcessorWithCachePolicy & processor) cons
     graph.processors_ = graph.processors_.push_back (processor);
     return graph;
 }
+
+void IrGraph::Process (juce::dsp::ProcessContextNonReplacing<float> & process_context,
+                       const IrGraphState & state)
+{
+    auto keys = GetKeysForState (state);
+
+    for (auto processor_index = 0; processor_index < processors_.size (); ++processor_index)
+    {
+        auto result = pool [keys [processor_index]];
+    }
+}
