@@ -40,11 +40,11 @@ TEST_CASE ("two of the same graph state keys are equal and have the same hash")
     auto test_policy = GraphStateCachePolicy ().WithPolicyIdentifier ("test_policy");
 
     auto graph_state_key_1 =
-        GraphStateKey ().WithPolicy ({.cache_policy = test_policy, .processor_index = 1});
+        GraphStateKey ().WithIndexedPolicy ({.cache_policy = test_policy, .processor_index = 1});
     auto hash_1 = GraphStateKeyHashFn () (graph_state_key_1);
 
     auto graph_state_key_2 =
-        GraphStateKey ().WithPolicy ({.cache_policy = test_policy, .processor_index = 1});
+        GraphStateKey ().WithIndexedPolicy ({.cache_policy = test_policy, .processor_index = 1});
     auto hash_2 = GraphStateKeyHashFn () (graph_state_key_2);
 
     REQUIRE (hash_1 == hash_2);
@@ -55,11 +55,11 @@ TEST_CASE ("graph state keys with different policies dont match")
 {
     auto test_policy_1 = GraphStateCachePolicy ().WithPolicyIdentifier ("test_policy_1");
     auto graph_state_key_1 =
-        GraphStateKey ().WithPolicy ({.cache_policy = test_policy_1, .processor_index = 1});
+        GraphStateKey ().WithIndexedPolicy ({.cache_policy = test_policy_1, .processor_index = 1});
 
     auto test_policy_2 = GraphStateCachePolicy ().WithPolicyIdentifier ("test_policy_2");
     auto graph_state_key_2 =
-        GraphStateKey ().WithPolicy ({.cache_policy = test_policy_2, .processor_index = 1});
+        GraphStateKey ().WithIndexedPolicy ({.cache_policy = test_policy_2, .processor_index = 1});
 
     REQUIRE (graph_state_key_1 != graph_state_key_2);
 }
@@ -68,10 +68,10 @@ TEST_CASE ("graph state keys with different indexes but matching policies dont m
 {
     auto test_policy = GraphStateCachePolicy ().WithPolicyIdentifier ("test_policy");
     auto graph_state_key_1 =
-        GraphStateKey ().WithPolicy ({.cache_policy = test_policy, .processor_index = 1});
+        GraphStateKey ().WithIndexedPolicy ({.cache_policy = test_policy, .processor_index = 1});
 
     auto graph_state_key_2 =
-        GraphStateKey ().WithPolicy ({.cache_policy = test_policy, .processor_index = 2});
+        GraphStateKey ().WithIndexedPolicy ({.cache_policy = test_policy, .processor_index = 2});
 
     REQUIRE (graph_state_key_1 != graph_state_key_2);
 }
@@ -80,11 +80,11 @@ TEST_CASE ("when states are equal but cache policies dont match equality compari
 {
     auto test_policy = GraphStateCachePolicy ().WithPolicyIdentifier ("test_policy");
 
-    auto graph_state_key_1 = GraphStateKey ().WithPolicy (
+    auto graph_state_key_1 = GraphStateKey ().WithIndexedPolicy (
         {.cache_policy = test_policy.WithCachedHandle (&CacheParam1), .processor_index = 1});
 
     auto graph_state_key_2 =
-        GraphStateKey ().WithPolicy ({.cache_policy = test_policy, .processor_index = 1});
+        GraphStateKey ().WithIndexedPolicy ({.cache_policy = test_policy, .processor_index = 1});
 
     REQUIRE (graph_state_key_1 != graph_state_key_2);
 }
@@ -95,13 +95,15 @@ TEST_CASE ("when policies match but states differ wrt to the policy the equality
                            .WithPolicyIdentifier ("test_policy")
                            .WithCachedHandle (&CacheParam1);
 
-    auto graph_state_key_1 = GraphStateKey ()
-                                 .WithGraphState ({.param_1 = 1.f})
-                                 .WithPolicy ({.cache_policy = test_policy, .processor_index = 1});
+    auto graph_state_key_1 =
+        GraphStateKey ()
+            .WithGraphState ({.param_1 = 1.f})
+            .WithIndexedPolicy ({.cache_policy = test_policy, .processor_index = 1});
 
-    auto graph_state_key_2 = GraphStateKey ()
-                                 .WithGraphState ({.param_1 = 2.f})
-                                 .WithPolicy ({.cache_policy = test_policy, .processor_index = 1});
+    auto graph_state_key_2 =
+        GraphStateKey ()
+            .WithGraphState ({.param_1 = 2.f})
+            .WithIndexedPolicy ({.cache_policy = test_policy, .processor_index = 1});
 
     REQUIRE (graph_state_key_1 != graph_state_key_2);
 }
@@ -113,13 +115,15 @@ TEST_CASE (
                            .WithPolicyIdentifier ("test_policy")
                            .WithCachedHandle (&CacheParam2);
 
-    auto graph_state_key_1 = GraphStateKey ()
-                                 .WithGraphState ({.param_1 = 1.f})
-                                 .WithPolicy ({.cache_policy = test_policy, .processor_index = 1});
+    auto graph_state_key_1 =
+        GraphStateKey ()
+            .WithGraphState ({.param_1 = 1.f})
+            .WithIndexedPolicy ({.cache_policy = test_policy, .processor_index = 1});
 
-    auto graph_state_key_2 = GraphStateKey ()
-                                 .WithGraphState ({.param_1 = 2.f})
-                                 .WithPolicy ({.cache_policy = test_policy, .processor_index = 1});
+    auto graph_state_key_2 =
+        GraphStateKey ()
+            .WithGraphState ({.param_1 = 2.f})
+            .WithIndexedPolicy ({.cache_policy = test_policy, .processor_index = 1});
 
     REQUIRE (graph_state_key_1 == graph_state_key_2);
 }
@@ -130,12 +134,12 @@ TEST_CASE ("when the number of policies are different, keys equality comparison 
         .cache_policy = GraphStateCachePolicy ().WithPolicyIdentifier ("test_policy"),
         .processor_index = 1};
     auto graph_state_key_1 =
-        GraphStateKey ().WithPolicy (indexed_policy).WithPolicy (indexed_policy);
+        GraphStateKey ().WithIndexedPolicy (indexed_policy).WithIndexedPolicy (indexed_policy);
 
     auto graph_state_key_2 = GraphStateKey ()
-                                 .WithPolicy (indexed_policy)
-                                 .WithPolicy (indexed_policy)
-                                 .WithPolicy (indexed_policy);
+                                 .WithIndexedPolicy (indexed_policy)
+                                 .WithIndexedPolicy (indexed_policy)
+                                 .WithIndexedPolicy (indexed_policy);
 
     REQUIRE (graph_state_key_1 != graph_state_key_2);
 }
@@ -154,12 +158,12 @@ TEST_CASE (
                             .processor_index = 1};
 
     auto graph_state_key_1 = GraphStateKey ()
-                                 .WithPolicy (state_independent_indexed_policy)
-                                 .WithPolicy (state_dependent_indexed_policy);
+                                 .WithIndexedPolicy (state_independent_indexed_policy)
+                                 .WithIndexedPolicy (state_dependent_indexed_policy);
 
     auto graph_state_key_2 = GraphStateKey ()
-                                 .WithPolicy (state_independent_indexed_policy)
-                                 .WithPolicy (state_dependent_indexed_policy);
+                                 .WithIndexedPolicy (state_independent_indexed_policy)
+                                 .WithIndexedPolicy (state_dependent_indexed_policy);
 
     REQUIRE (graph_state_key_1 == graph_state_key_2);
     auto hash_1 = GraphStateKeyHashFn () (graph_state_key_1);
@@ -180,17 +184,18 @@ TEST_CASE ("test with map... not done")
     auto gps_key_2 = GraphStateKey {.policies = {IndexedGraphPolicy {.processor_index = 2}}};
     auto k2 = GraphStateKeyHashFn () (gps_key_2);
 
-    auto gps_key_3 = GraphStateKey ().WithPolicy ({
+    auto gps_key_3 = GraphStateKey ().WithIndexedPolicy ({
         .cache_policy = GraphStateCachePolicy ().WithPolicyIdentifier ("identifier"),
         .processor_index = 1,
     });
     auto k3 = GraphStateKeyHashFn () (gps_key_3);
 
-    auto gps_key_4 = GraphStateKey ().WithPolicy ({.processor_index = 4});
+    auto gps_key_4 = GraphStateKey ().WithIndexedPolicy ({.processor_index = 4});
     auto k4 = GraphStateKeyHashFn () (gps_key_4);
 
-    auto gps_key_5 =
-        GraphStateKey ().WithPolicy ({.processor_index = 3}).WithPolicy ({.processor_index = 1});
+    auto gps_key_5 = GraphStateKey ()
+                         .WithIndexedPolicy ({.processor_index = 3})
+                         .WithIndexedPolicy ({.processor_index = 1});
     auto k5 = GraphStateKeyHashFn () (gps_key_5);
     REQUIRE (k5 == k1);
 

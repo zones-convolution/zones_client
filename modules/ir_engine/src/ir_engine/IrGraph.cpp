@@ -8,8 +8,8 @@ std::vector<GraphStateKey> IrGraph::GetKeysForState (const IrGraphState & state)
     for (auto processor_index = 0; processor_index < processors_.size (); ++processor_index)
     {
         const auto [policy, _] = processors_ [processor_index];
-        last_key =
-            last_key.WithPolicy ({.cache_policy = policy, .processor_index = processor_index});
+        last_key = last_key.WithIndexedPolicy (
+            {.cache_policy = policy, .processor_index = processor_index});
         keys.push_back (last_key);
     }
 

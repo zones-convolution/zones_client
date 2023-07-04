@@ -30,7 +30,7 @@ GraphStateKey GraphStateKey::WithGraphState (const IrGraphState & state) const
     return graph_state_key;
 }
 
-GraphStateKey GraphStateKey::WithPolicy (const IndexedGraphPolicy & policy) const
+GraphStateKey GraphStateKey::WithIndexedPolicy (const IndexedGraphPolicy & policy) const
 {
     auto graph_state_key = *this;
     graph_state_key.policies = graph_state_key.policies.push_back (policy);

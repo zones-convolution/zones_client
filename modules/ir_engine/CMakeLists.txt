@@ -8,8 +8,6 @@ zones_add_module(
         src/ir_engine/IrGraph.h
         src/ir_engine/processors/TestProcessor.h
         src/ir_engine/processors/TestProcessor.cpp
-        src/ir_engine/IrGraphHashing.cpp
-        src/ir_engine/IrGraphHashing.h
         src/ir_engine/IrGraphProcessor.h
         src/ir_engine/IrGraphCachePolicy.h
         src/ir_engine/IrGraphCachePolicy.cpp
@@ -22,7 +20,7 @@ zones_add_module(
 
 zones_add_test(MODULE ir_engine SOURCES
         test/IrGraphCachePolicyTests.cpp
+        test/IrGraphTests.cpp
         test/IrEngineTests.cpp
-        test/IrGraphHashingTests.cpp
         test/IrGraphStateKeyTests.cpp
         DEPS ir_engine)
