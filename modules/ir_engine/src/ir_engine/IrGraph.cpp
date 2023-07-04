@@ -15,3 +15,10 @@ std::vector<GraphStateKey> IrGraph::GetKeysForState (const IrGraphState & state)
 
     return keys;
 }
+
+IrGraph IrGraph::WithProcessor (const ProcessorWithCachePolicy & processor) const
+{
+    auto graph = *this;
+    graph.processors_ = graph.processors_.push_back (processor);
+    return graph;
+}

@@ -6,21 +6,21 @@
 #include "processors/TestProcessor.h"
 
 #include <array>
+#include <immer/flex_vector.hpp>
 #include <juce_dsp/juce_dsp.h>
 #include <string>
+#include <vector>
 
-using ProcessorWithCachePolicy = std::pair<IrGraphCachePolicy<IrGraphState> &, IrGraphProcessor &>;
+using ProcessorWithCachePolicy =
+    std::pair<IrGraphCachePolicy<IrGraphState>, std::weak_ptr<IrGraphProcessor>>;
 
 class IrGraph
 {
 public:
     [[nodiscard]] std::vector<GraphStateKey> GetKeysForState (const IrGraphState & state) const;
 
-private:
-    TestProcessor test_processor_;
-    IrGraphCachePolicy<IrGraphState> test_cache_policy_ =
-        IrGraphCachePolicy<IrGraphState> ().WithPolicyIdentifier ("test_processor");
+    [[nodiscard]] IrGraph WithProcessor (const ProcessorWithCachePolicy & processor) const;
 
-    std::array<ProcessorWithCachePolicy, 1> processors_ {
-        ProcessorWithCachePolicy {test_cache_policy_, test_processor_}};
+private:
+    immer::flex_vector<ProcessorWithCachePolicy> processors_;
 };

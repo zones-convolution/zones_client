@@ -96,13 +96,13 @@ TEST_CASE ("when policies match but states differ wrt to the policy the equality
                            .WithPolicyIdentifier ("test_policy")
                            .WithCachedHandle (&CacheParam1);
 
-    auto graph_state_key_1 = GraphStateKey {
-        .graph_state = {.param_1 = 1.f},
-        .policies = {IndexedGraphPolicy {.cache_policy = test_policy, .processor_index = 1}}};
+    auto graph_state_key_1 = GraphStateKey ()
+                                 .WithGraphState ({.param_1 = 1.f})
+                                 .WithPolicy ({.cache_policy = test_policy, .processor_index = 1});
 
-    auto graph_state_key_2 = GraphStateKey {
-        .graph_state = {.param_1 = 2.f},
-        .policies = {IndexedGraphPolicy {.cache_policy = test_policy, .processor_index = 1}}};
+    auto graph_state_key_2 = GraphStateKey ()
+                                 .WithGraphState ({.param_1 = 2.f})
+                                 .WithPolicy ({.cache_policy = test_policy, .processor_index = 1});
 
     REQUIRE (graph_state_key_1 != graph_state_key_2);
 }
@@ -114,13 +114,13 @@ TEST_CASE (
                            .WithPolicyIdentifier ("test_policy")
                            .WithCachedHandle (&CacheParam2);
 
-    auto graph_state_key_1 = GraphStateKey {
-        .graph_state = {.param_1 = 1.f},
-        .policies = {IndexedGraphPolicy {.cache_policy = test_policy, .processor_index = 1}}};
+    auto graph_state_key_1 = GraphStateKey ()
+                                 .WithGraphState ({.param_1 = 1.f})
+                                 .WithPolicy ({.cache_policy = test_policy, .processor_index = 1});
 
-    auto graph_state_key_2 = GraphStateKey {
-        .graph_state = {.param_1 = 2.f},
-        .policies = {IndexedGraphPolicy {.cache_policy = test_policy, .processor_index = 1}}};
+    auto graph_state_key_2 = GraphStateKey ()
+                                 .WithGraphState ({.param_1 = 2.f})
+                                 .WithPolicy ({.cache_policy = test_policy, .processor_index = 1});
 
     REQUIRE (graph_state_key_1 == graph_state_key_2);
 }
@@ -162,8 +162,8 @@ TEST_CASE (
     auto hash_2 = GraphStateKeyHashFn () (graph_state_key_2);
     REQUIRE (hash_1 == hash_2);
 
-    graph_state_key_1.graph_state = {.param_3 = "equal not are these"};
-    graph_state_key_2.graph_state = {.param_3 = "these are not equal"};
+    graph_state_key_1 = graph_state_key_1.WithGraphState ({.param_3 = "equal not are these"});
+    graph_state_key_2 = graph_state_key_2.WithGraphState ({.param_3 = "these are not equal"});
 
     REQUIRE (graph_state_key_1 != graph_state_key_2);
 }

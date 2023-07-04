@@ -1,6 +1,5 @@
 #pragma once
 
-#include "IrGraph.h"
 #include "IrGraphCachePolicy.h"
 
 #include <immer/box.hpp>
