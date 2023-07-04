@@ -41,7 +41,7 @@ TEST_CASE ("ir graph cache policies")
         state_2.member_2 = 20;
         REQUIRE (cache_policy.StatesMatchWRTPolicy (state_1, state_2));
 
-        cache_policy = cache_policy.WithCachedHandle (CacheMember2);
+        cache_policy = cache_policy.WithCachedHandle (&CacheMember2);
         REQUIRE_FALSE (cache_policy.StatesMatchWRTPolicy (state_1, state_2));
     }
 
@@ -60,8 +60,8 @@ TEST_CASE ("ir graph cache policies")
     SECTION ("cache policies with different cached params are not equal")
     {
         ExampleState state {};
-        auto cache_policy_one = ExampleStateCachePolicy ().WithCachedHandle (CacheMember2);
-        auto cache_policy_two = ExampleStateCachePolicy ().WithCachedHandle (CacheMember1);
+        auto cache_policy_one = ExampleStateCachePolicy ().WithCachedHandle (&CacheMember2);
+        auto cache_policy_two = ExampleStateCachePolicy ().WithCachedHandle (&CacheMember1);
 
         REQUIRE_FALSE (cache_policy_one.GetHashForState (state) ==
                        cache_policy_two.GetHashForState (state));

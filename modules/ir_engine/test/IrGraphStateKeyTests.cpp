@@ -72,8 +72,8 @@ TEST_CASE ("when states are equal but cache policies dont match equality compari
     auto test_policy = GraphStateCachePolicy ().WithPolicyIdentifier ("test_policy");
 
     auto graph_state_key_1 = GraphStateKey {
-        .policies = {IndexedGraphPolicy {.cache_policy = test_policy.WithCachedHandle (CacheParam1),
-                                         .processor_index = 1}}};
+        .policies = {IndexedGraphPolicy {
+            .cache_policy = test_policy.WithCachedHandle (&CacheParam1), .processor_index = 1}}};
 
     auto graph_state_key_2 = GraphStateKey {
         .policies = {IndexedGraphPolicy {.cache_policy = test_policy, .processor_index = 1}}};
@@ -85,7 +85,7 @@ TEST_CASE ("when policies match but states differ wrt to the policy the equality
 {
     auto test_policy = GraphStateCachePolicy ()
                            .WithPolicyIdentifier ("test_policy")
-                           .WithCachedHandle (CacheParam1);
+                           .WithCachedHandle (&CacheParam1);
 
     auto graph_state_key_1 = GraphStateKey {
         .graph_state = {.param_1 = 1.f},
@@ -103,7 +103,7 @@ TEST_CASE (
 {
     auto test_policy = GraphStateCachePolicy ()
                            .WithPolicyIdentifier ("test_policy")
-                           .WithCachedHandle (CacheParam2);
+                           .WithCachedHandle (&CacheParam2);
 
     auto graph_state_key_1 = GraphStateKey {
         .graph_state = {.param_1 = 1.f},
@@ -139,7 +139,7 @@ TEST_CASE (
     auto state_dependent_indexed_policy =
         IndexedGraphPolicy {.cache_policy = GraphStateCachePolicy ()
                                                 .WithPolicyIdentifier ("test_policy")
-                                                .WithCachedHandle (CacheParam1),
+                                                .WithCachedHandle (&CacheParam1),
                             .processor_index = 1};
 
     auto graph_state_key_1 = GraphStateKey {
