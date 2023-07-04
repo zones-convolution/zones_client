@@ -2,6 +2,7 @@
 #include "IrGraphCachePolicy.h"
 #include "IrGraphHashing.h"
 #include "IrGraphProcessor.h"
+#include "IrGraphStateKey.h"
 #include "processors/TestProcessor.h"
 
 #include <array>
@@ -13,6 +14,8 @@ using ProcessorWithCachePolicy = std::pair<IrGraphCachePolicy<IrGraphState> &, I
 class IrGraph
 {
 public:
+    [[nodiscard]] std::vector<GraphStateKey> GetKeysForState (const IrGraphState & state) const;
+
 private:
     TestProcessor test_processor_;
     IrGraphCachePolicy<IrGraphState> test_cache_policy_ =

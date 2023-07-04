@@ -3,6 +3,9 @@
 #include "IrGraph.h"
 #include "IrGraphCachePolicy.h"
 
+#include <immer/box.hpp>
+#include <immer/flex_vector.hpp>
+
 struct IndexedGraphPolicy
 {
     IrGraphCachePolicy<IrGraphState> cache_policy;
@@ -11,10 +14,13 @@ struct IndexedGraphPolicy
 
 struct GraphStateKey
 {
-    IrGraphState graph_state;
-    std::vector<IndexedGraphPolicy> policies;
-
     bool operator== (const GraphStateKey & other) const;
+
+    [[nodiscard]] GraphStateKey WithGraphState (const IrGraphState & state) const;
+    [[nodiscard]] GraphStateKey WithPolicy (const IndexedGraphPolicy & policy) const;
+
+    immer::box<IrGraphState> graph_state;
+    immer::flex_vector<IndexedGraphPolicy> policies;
 };
 
 struct GraphStateKeyHashFn

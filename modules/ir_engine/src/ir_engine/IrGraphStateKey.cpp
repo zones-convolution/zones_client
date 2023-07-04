@@ -23,6 +23,20 @@ bool GraphStateKey::operator== (const GraphStateKey & other) const
     return true;
 }
 
+GraphStateKey GraphStateKey::WithGraphState (const IrGraphState & state) const
+{
+    auto graph_state_key = *this;
+    graph_state_key.graph_state = state;
+    return graph_state_key;
+}
+
+GraphStateKey GraphStateKey::WithPolicy (const IndexedGraphPolicy & policy) const
+{
+    auto graph_state_key = *this;
+    graph_state_key.policies = graph_state_key.policies.push_back (policy);
+    return graph_state_key;
+}
+
 std::size_t GraphStateKeyHashFn::operator() (const GraphStateKey & p) const
 {
     if (p.policies.empty ())
