@@ -7,11 +7,20 @@
 
 using GraphStateCachePolicy = IrGraphCachePolicy<IrGraphState>;
 
-static const GraphStateCachePolicy::IntStateHandle CacheParam1 = [] (auto && state)
-{ return state.param_2; };
+static float CacheParam1 (const IrGraphState & state)
+{
+    return state.param_1;
+}
 
-static const GraphStateCachePolicy::FloatStateHandle CacheParam2 = [] (auto && state)
-{ return state.param_1; };
+static int CacheParam2 (const IrGraphState & state)
+{
+    return state.param_2;
+}
+
+static const std::string & CacheParam3 (const IrGraphState & state)
+{
+    return state.param_3;
+}
 
 TEST_CASE ("empty keys are equal and have the same hash")
 {
@@ -139,7 +148,7 @@ TEST_CASE (
     auto state_dependent_indexed_policy =
         IndexedGraphPolicy {.cache_policy = GraphStateCachePolicy ()
                                                 .WithPolicyIdentifier ("test_policy")
-                                                .WithCachedHandle (&CacheParam1),
+                                                .WithCachedHandle (&CacheParam3),
                             .processor_index = 1};
 
     auto graph_state_key_1 = GraphStateKey {
