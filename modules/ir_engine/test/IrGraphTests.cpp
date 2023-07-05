@@ -47,3 +47,47 @@ TEST_CASE ("getting keys for different state", "[IrGraph]")
         REQUIRE (indexed_policy_2_previous.processor_index == 0);
     }
 }
+
+SCENARIO ("graphs can be processed")
+{
+    GIVEN ("an empty graph")
+    {
+        auto empty_graph = IrGraph ();
+        WHEN ("process is called")
+        {
+            ProcessResultPool process_result_pool;
+            auto process_result = empty_graph.Process ({}, process_result_pool);
+            THEN ("it yields no result")
+            {
+                REQUIRE (process_result == std::nullopt);
+            }
+        }
+    }
+
+    GIVEN ("a graph with a single processor")
+    {
+        auto test_processor = std::make_shared<TestProcessor> ();
+        auto test_processor_policy =
+            IrGraph::CachePolicy ().WithPolicyIdentifier ("test_processor");
+        auto ir_graph = IrGraph ().WithProcessor ({test_processor_policy, test_processor});
+
+        WHEN ("process is called")
+        {
+            ProcessResultPool process_result_pool;
+
+            auto process_result = ir_graph.Process ({}, process_result_pool);
+            auto graph_keys = ir_graph.GetKeysForState ({});
+
+            THEN ("a valid shared buffer is yielded")
+            {
+                REQUIRE (process_result.has_value ());
+            }
+
+            THEN ("a result is cached in the pool")
+            {
+                REQUIRE (process_result_pool.GetPoolSize () == 1);
+                REQUIRE (process_result_pool.GetResult (graph_keys.back ()) == process_result);
+            }
+        }
+    }
+}

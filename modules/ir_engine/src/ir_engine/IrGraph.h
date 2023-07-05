@@ -2,6 +2,7 @@
 #include "IrGraphCachePolicy.h"
 #include "IrGraphProcessor.h"
 #include "IrGraphStateKey.h"
+#include "ProcessResultPool.h"
 #include "processors/TestProcessor.h"
 
 #include <array>
@@ -10,7 +11,7 @@
 #include <string>
 #include <vector>
 
-class IrGraph : public IrGraphProcessor
+class IrGraph
 {
 public:
     using CachePolicy = IrGraphCachePolicy<IrGraphState>;
@@ -19,8 +20,8 @@ public:
     [[nodiscard]] std::vector<GraphStateKey> GetKeysForState (const IrGraphState & state) const;
 
     [[nodiscard]] IrGraph WithProcessor (const ProcessorWithCachePolicy & processor) const;
-    void Process (juce::dsp::ProcessContextNonReplacing<float> & process_context,
-                  const IrGraphState & state) override;
+    std::optional<ProcessResultPool::SharedBuffer>
+    Process (const IrGraphState & state, ProcessResultPool & process_result_pool);
 
 private:
     immer::flex_vector<ProcessorWithCachePolicy> processors_;
