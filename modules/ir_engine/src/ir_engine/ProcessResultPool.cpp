@@ -25,3 +25,7 @@ void ProcessResultPool::RemoveUnusedKeys (const std::vector<GraphStateKey> & use
                               used_keys.end ();
                    });
 }
+int ProcessResultPool::GetPoolSize () const
+{
+    return process_results_.size ();
+}

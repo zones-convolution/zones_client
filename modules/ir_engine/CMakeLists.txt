@@ -25,4 +25,5 @@ zones_add_test(MODULE ir_engine SOURCES
         test/IrGraphTests.cpp
         test/IrEngineTests.cpp
         test/IrGraphStateKeyTests.cpp
+        test/ProcessResultPoolTests.cpp
         DEPS ir_engine)

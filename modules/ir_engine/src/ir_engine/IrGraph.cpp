@@ -28,8 +28,8 @@ void IrGraph::Process (juce::dsp::ProcessContextNonReplacing<float> & process_co
 {
     auto keys = GetKeysForState (state);
 
-    for (auto processor_index = 0; processor_index < processors_.size (); ++processor_index)
-    {
-        auto result = pool [keys [processor_index]];
-    }
+    //    for (auto processor_index = 0; processor_index < processors_.size (); ++processor_index)
+    //    {
+    //        auto result = pool [keys [processor_index]];
+    //    }
 }

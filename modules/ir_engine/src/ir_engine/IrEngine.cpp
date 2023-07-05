@@ -22,7 +22,6 @@ IrEngine::Job::Job (const IrGraph & ir_graph, const IrGraphState & state)
 juce::ThreadPoolJob::JobStatus IrEngine::Job::runJob ()
 {
     auto keys = ir_graph_.GetKeysForState (state_);
-    ir_graph_.
 
-        return jobHasFinished;
+    return jobHasFinished;
 }

@@ -13,6 +13,7 @@ public:
     std::optional<SharedBuffer> GetResult (const GraphStateKey & key);
     void CacheResult (const GraphStateKey & key, const SharedBuffer & buffer);
     void RemoveUnusedKeys (const std::vector<GraphStateKey> & used_keys);
+    [[nodiscard]] int GetPoolSize () const;
 
 private:
     std::mutex mutex_;
