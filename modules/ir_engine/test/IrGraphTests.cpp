@@ -227,9 +227,17 @@ SCENARIO ("graph uses cached results in process call", "[IrGraph]")
         processor_2->buffer_to_copy_from.setSize (1, 1);
         processor_2->buffer_to_copy_from.setSample (0, 0, kSampleToCopyP2);
 
+        auto processor_3 = std::make_shared<MockProcessor> ();
+        auto policy_3 = IrGraph::CachePolicy ().WithPolicyIdentifier ("processor_3");
+
+        static const float kSampleToCopyP3 = 2.f;
+        processor_3->buffer_to_copy_from.setSize (1, 1);
+        processor_3->buffer_to_copy_from.setSample (0, 0, kSampleToCopyP3);
+
         auto ir_graph = IrGraph ()
                             .WithProcessor ({policy_1, processor_1})
-                            .WithProcessor ({policy_2, processor_2});
+                            .WithProcessor ({policy_2, processor_2})
+                            .WithProcessor ({policy_3, processor_3});
 
         WHEN ("process is called with an initial state")
         {
@@ -237,42 +245,43 @@ SCENARIO ("graph uses cached results in process call", "[IrGraph]")
             auto process_result = ir_graph.Process ({}, process_result_pool);
             auto last_graph_keys = ir_graph.GetKeysForState ({});
 
-            THEN ("the result pool is populated with 2 results")
+            THEN ("the result pool is populated with 3 results")
             {
-                REQUIRE (process_result_pool.GetPoolSize () == 2);
+                REQUIRE (process_result_pool.GetPoolSize () == 3);
             }
 
-            AND_WHEN ("the state is updated WRT policy_2")
+            AND_WHEN ("the state is updated with respect to policy_2")
             {
                 auto new_state = IrGraphState {.param_1 = 10.f};
                 auto graph_keys = ir_graph.GetKeysForState (new_state);
                 process_result = ir_graph.Process (new_state, process_result_pool);
 
-                THEN ("processor_1 is not re-processed")
+                THEN ("the correct processors are re-processed")
                 {
                     REQUIRE (processor_1->process_call_count == 1);
-                }
-
-                THEN ("processor_2 is re-processed")
-                {
                     REQUIRE (processor_2->process_call_count == 2);
+                    REQUIRE (processor_3->process_call_count == 2);
                 }
 
-                THEN ("keys update correctly")
+                THEN ("the correct keys have updated")
                 {
                     REQUIRE (graph_keys [0] == last_graph_keys [0]);
                     REQUIRE (graph_keys [1] != last_graph_keys [1]);
+                    REQUIRE (graph_keys [2] != last_graph_keys [2]);
                 }
 
-                THEN ("process result pool contains three keys")
+                THEN ("the process result pool contains 5 results")
                 {
-                    REQUIRE (process_result_pool.GetPoolSize () == 3);
+                    REQUIRE (process_result_pool.GetPoolSize () == 5);
                 }
 
-                THEN ("processor_2 is given the correct input")
+                THEN ("processors are given the correct input")
                 {
                     REQUIRE (processor_2->last_input_buffer.impl () ==
                              process_result_pool.GetResult (graph_keys [0])->impl ());
+
+                    REQUIRE (processor_3->last_input_buffer.impl () ==
+                             process_result_pool.GetResult (graph_keys [1])->impl ());
                 }
 
                 THEN ("the correct process result is yielded")
