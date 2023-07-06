@@ -42,9 +42,10 @@ IrGraph::Process (const IrGraphState & state, ProcessResultPool & process_result
 
         auto & [_, processor] = processors_ [processor_index];
         juce::AudioBuffer<float> process_result;
-        auto a = IrGraphProcessor::BoxedBuffer (juce::AudioBuffer<float> {});
+
+        auto empty_buffer = IrGraphProcessor::BoxedBuffer (juce::AudioBuffer<float> {});
         processor.lock ()->Process (
-            last_result.has_value () ? last_result.value () : a, process_result, state);
+            last_result.has_value () ? last_result.value () : empty_buffer, process_result, state);
 
         auto boxed_result = IrGraphProcessor::BoxedBuffer (std::move (process_result));
         process_result_pool.CacheResult (key, boxed_result);

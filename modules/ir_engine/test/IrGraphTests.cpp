@@ -3,30 +3,30 @@
 
 #include <catch2/catch_test_macros.hpp>
 
-// class MockProcessor : public IrGraphProcessor
-//{
-// public:
-//     void Process (const BoxedBuffer & input_buffer,
-//                   juce::AudioBuffer<float> & output_buffer,
-//                   const IrGraphState & state) override
-//     {
-//         process_call_count += 1;
-//
-//         juce::dsp::AudioBlock<float> copy_block {buffer_to_copy_from};
-//         juce::dsp::AudioBlock<float> last_input_block {last_input_buffer};
-//
-//         auto output_block = process_context.getOutputBlock ();
-//         auto input_block = process_context.getInputBlock ();
-//
-//         output_block.copyFrom (copy_block);
-//         last_input_block.copyFrom (input_block);
-//     }
-//
-//     int process_call_count = 0;
-//     juce::AudioBuffer<float> last_input_buffer;
-//     juce::AudioBuffer<float> buffer_to_copy_from;
-// };
-//
+class MockProcessor : public IrGraphProcessor
+{
+public:
+    void Process (BoxedBuffer & input_buffer,
+                  juce::AudioBuffer<float> & output_buffer,
+                  const IrGraphState & state) override
+    {
+        process_call_count += 1;
+
+        juce::dsp::AudioBlock<float> copy_block {buffer_to_copy_from};
+        juce::dsp::AudioBlock<float> last_input_block {last_input_buffer};
+
+        auto output_block = process_context.getOutputBlock ();
+        auto input_block = process_context.getInputBlock ();
+
+        output_block.copyFrom (copy_block);
+        last_input_block.copyFrom (input_block);
+    }
+
+    int process_call_count = 0;
+    juce::AudioBuffer<float> last_input_buffer;
+    juce::AudioBuffer<float> buffer_to_copy_from;
+};
+
 // TEST_CASE ("getting keys for different state", "[IrGraph]")
 //{
 //     SECTION ("when graph has no processors there are no keys")
