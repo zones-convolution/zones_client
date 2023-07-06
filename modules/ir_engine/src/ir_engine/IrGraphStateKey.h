@@ -1,6 +1,7 @@
 #pragma once
 
 #include "IrGraphCachePolicy.h"
+#include "IrGraphProcessor.h"
 
 #include <immer/box.hpp>
 #include <immer/flex_vector.hpp>

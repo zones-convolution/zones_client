@@ -1,6 +1,6 @@
-
 #include "ProcessResultPool.h"
-std::optional<ProcessResultPool::SharedBuffer>
+
+std::optional<IrGraphProcessor::BoxedBuffer>
 ProcessResultPool::GetResult (const GraphStateKey & key)
 {
     std::lock_guard guard (mutex_);
@@ -8,12 +8,14 @@ ProcessResultPool::GetResult (const GraphStateKey & key)
         return process_results_ [key];
     return std::nullopt;
 }
+
 void ProcessResultPool::CacheResult (const GraphStateKey & key,
-                                     const ProcessResultPool::SharedBuffer & buffer)
+                                     const IrGraphProcessor::BoxedBuffer & buffer)
 {
     std::lock_guard guard (mutex_);
     process_results_ [key] = buffer;
 }
+
 void ProcessResultPool::RemoveUnusedKeys (const std::vector<GraphStateKey> & used_keys)
 {
     std::lock_guard guard (mutex_);
@@ -25,6 +27,7 @@ void ProcessResultPool::RemoveUnusedKeys (const std::vector<GraphStateKey> & use
                               used_keys.end ();
                    });
 }
+
 int ProcessResultPool::GetPoolSize () const
 {
     return process_results_.size ();

@@ -20,8 +20,8 @@ public:
     [[nodiscard]] std::vector<GraphStateKey> GetKeysForState (const IrGraphState & state) const;
 
     [[nodiscard]] IrGraph WithProcessor (const ProcessorWithCachePolicy & processor) const;
-    std::optional<ProcessResultPool::SharedBuffer>
-    Process (const IrGraphState & state, ProcessResultPool & process_result_pool);
+    std::optional<IrGraphProcessor::BoxedBuffer> Process (const IrGraphState & state,
+                                                          ProcessResultPool & process_result_pool);
 
 private:
     immer::flex_vector<ProcessorWithCachePolicy> processors_;

@@ -1,6 +1,7 @@
 #include "TestProcessor.h"
 
-void TestProcessor::Process (juce::dsp::ProcessContextNonReplacing<float> & process_context,
+void TestProcessor::Process (BoxedBuffer & input_buffer,
+                             juce::AudioBuffer<float> & output_buffer,
                              const IrGraphState & state)
 {
 }

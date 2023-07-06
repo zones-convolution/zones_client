@@ -25,7 +25,7 @@ SCENARIO ("pool can cache results", "[ProcessResultPool]")
             auto key = GraphStateKey ().WithGraphState ({}).WithIndexedPolicy (
                 {.cache_policy = {IrGraph::CachePolicy ().WithPolicyIdentifier ("test_policy")},
                  .processor_index = 0});
-            ProcessResultPool::SharedBuffer result = std::make_shared<juce::AudioBuffer<float>> ();
+            IrGraphProcessor::BoxedBuffer result {};
             process_result_pool.CacheResult (key, result);
 
             THEN ("its value can be retrieved using the same key")
@@ -38,12 +38,9 @@ SCENARIO ("pool can cache results", "[ProcessResultPool]")
                     {.cache_policy = {IrGraph::CachePolicy ().WithPolicyIdentifier (
                          "test_policy_2")},
                      .processor_index = 1});
-                ProcessResultPool::SharedBuffer result_different =
-                    std::make_shared<juce::AudioBuffer<float>> ();
+                IrGraphProcessor::BoxedBuffer result_different {};
 
-                REQUIRE (result != result_different);
-
-                process_result_pool.CacheResult (key_different, result_different);
+                REQUIRE (result.impl () != result_different.impl ());
 
                 THEN ("both values can be retrieved with their respective keys")
                 {
@@ -61,7 +58,7 @@ SCENARIO ("pool can cache results", "[ProcessResultPool]")
         auto key_1 = GraphStateKey ().WithGraphState ({}).WithIndexedPolicy (
             {.cache_policy = {IrGraph::CachePolicy ().WithPolicyIdentifier ("test_policy_1")},
              .processor_index = 0});
-        ProcessResultPool::SharedBuffer result_1 = std::make_shared<juce::AudioBuffer<float>> ();
+        IrGraphProcessor::BoxedBuffer result_1 {};
         process_result_pool.CacheResult (key_1, result_1);
 
         THEN ("the pool size is 1")
@@ -86,8 +83,7 @@ SCENARIO ("pool can cache results", "[ProcessResultPool]")
 
         WHEN ("the same key is added with a different result")
         {
-            ProcessResultPool::SharedBuffer result_2 =
-                std::make_shared<juce::AudioBuffer<float>> ();
+            IrGraphProcessor::BoxedBuffer result_2 {};
             process_result_pool.CacheResult (key_1, result_2);
 
             THEN ("the pool size is 1")
@@ -127,13 +123,13 @@ SCENARIO ("pool can clear unused values", "[ProcessResultPool]")
         auto key_1 = GraphStateKey ().WithGraphState ({}).WithIndexedPolicy (
             {.cache_policy = {IrGraph::CachePolicy ().WithPolicyIdentifier ("test_policy_1")},
              .processor_index = 0});
-        ProcessResultPool::SharedBuffer result_1 = std::make_shared<juce::AudioBuffer<float>> ();
+        IrGraphProcessor::BoxedBuffer result_1 {};
         process_result_pool.CacheResult (key_1, result_1);
 
         auto key_2 = GraphStateKey ().WithGraphState ({}).WithIndexedPolicy (
             {.cache_policy = {IrGraph::CachePolicy ().WithPolicyIdentifier ("test_policy_2")},
              .processor_index = 0});
-        ProcessResultPool::SharedBuffer result_2 = std::make_shared<juce::AudioBuffer<float>> ();
+        IrGraphProcessor::BoxedBuffer result_2 {};
         process_result_pool.CacheResult (key_2, result_2);
 
         WHEN ("unused results are cleared and no keys are preserved")

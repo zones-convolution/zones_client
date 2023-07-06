@@ -1,9 +1,9 @@
 #pragma once
-#include "IrGraphProcessor.h"
 
 #include <functional>
 #include <immer/box.hpp>
 #include <immer/flex_vector.hpp>
+#include <juce_core/juce_core.h>
 
 template <class T>
 static inline void HashCombine (std::size_t & seed, const T & v)
