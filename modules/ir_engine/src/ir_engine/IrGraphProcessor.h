@@ -12,7 +12,7 @@ struct IrGraphState
 class IrGraphProcessor
 {
 public:
-    using BoxedBuffer = immer::box<const juce::AudioBuffer<float>>;
+    using BoxedBuffer = immer::box<juce::AudioBuffer<float>>;
 
     virtual void Process (BoxedBuffer & input_buffer,
                           juce::AudioBuffer<float> & output_buffer,

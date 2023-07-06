@@ -30,8 +30,9 @@ SCENARIO ("pool can cache results", "[ProcessResultPool]")
 
             THEN ("its value can be retrieved using the same key")
             {
-                REQUIRE (process_result_pool.GetResult (key) == result);
+                REQUIRE (process_result_pool.GetResult (key)->impl () == result.impl ());
             }
+
             AND_WHEN ("a different result is cached")
             {
                 auto key_different = GraphStateKey ().WithGraphState ({}).WithIndexedPolicy (
@@ -39,13 +40,15 @@ SCENARIO ("pool can cache results", "[ProcessResultPool]")
                          "test_policy_2")},
                      .processor_index = 1});
                 IrGraphProcessor::BoxedBuffer result_different {};
+                process_result_pool.CacheResult (key_different, result_different);
 
                 REQUIRE (result.impl () != result_different.impl ());
 
                 THEN ("both values can be retrieved with their respective keys")
                 {
-                    REQUIRE (process_result_pool.GetResult (key) == result);
-                    REQUIRE (process_result_pool.GetResult (key_different) == result_different);
+                    REQUIRE (process_result_pool.GetResult (key)->impl () == result.impl ());
+                    REQUIRE (process_result_pool.GetResult (key_different)->impl () ==
+                             result_different.impl ());
                 }
             }
         }
@@ -77,7 +80,7 @@ SCENARIO ("pool can cache results", "[ProcessResultPool]")
 
             THEN ("key_1 can be retrieved")
             {
-                REQUIRE (process_result_pool.GetResult (key_1) == result_1);
+                REQUIRE (process_result_pool.GetResult (key_1)->impl () == result_1.impl ());
             }
         }
 
@@ -93,7 +96,7 @@ SCENARIO ("pool can cache results", "[ProcessResultPool]")
 
             THEN ("key_1 retrieves result_2")
             {
-                REQUIRE (process_result_pool.GetResult (key_1) == result_2);
+                REQUIRE (process_result_pool.GetResult (key_1)->impl () == result_2.impl ());
             }
         }
     }
@@ -158,7 +161,7 @@ SCENARIO ("pool can clear unused values", "[ProcessResultPool]")
 
             THEN ("key_2 can be retrieved")
             {
-                REQUIRE (process_result_pool.GetResult (key_2) == result_2);
+                REQUIRE (process_result_pool.GetResult (key_2)->impl () == result_2.impl ());
             }
 
             THEN ("key_1 cannot be retrieved")
