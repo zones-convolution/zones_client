@@ -24,13 +24,18 @@ IrGraph IrGraph::WithProcessor (const ProcessorWithCachePolicy & processor) cons
 }
 
 std::optional<IrGraphProcessor::BoxedBuffer>
-IrGraph::Process (const IrGraphState & state, ProcessResultPool & process_result_pool)
+IrGraph::Process (const IrGraphState & state,
+                  ProcessResultPool & process_result_pool,
+                  AbortCallback abort_callback)
 {
     auto keys = GetKeysForState (state);
     std::optional<IrGraphProcessor::BoxedBuffer> last_result;
 
     for (auto processor_index = 0; processor_index < processors_.size (); ++processor_index)
     {
+        if (abort_callback ())
+            return std::nullopt;
+
         auto key = keys [processor_index];
         auto result = process_result_pool.GetResult (key);
 

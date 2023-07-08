@@ -8,27 +8,27 @@ class IrEngine
 public:
     IrEngine ();
 
-    void RenderState (const IrGraphState & state);
+    using RenderFinishedCallback = std::function<void (IrGraphProcessor::BoxedBuffer)>;
+    void RenderState (const IrGraphState & state, RenderFinishedCallback callback);
 
-private:
     class Job : public juce::ThreadPoolJob
     {
     public:
-        using RenderFinishedCallback = std::function<void (IrGraphProcessor::BoxedBuffer)>;
         Job (const IrGraph & ir_graph,
              const IrGraphState & state,
              ProcessResultPool & result_pool,
              RenderFinishedCallback callback);
 
-    private:
         JobStatus runJob () override;
 
+    private:
         RenderFinishedCallback callback_;
         ProcessResultPool & result_pool_;
         IrGraph ir_graph_;
         IrGraphState state_;
     };
 
+private:
     void CleanPool ();
 
     static constexpr int kJobTimeout = 200;

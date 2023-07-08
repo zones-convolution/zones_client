@@ -18,7 +18,8 @@ zones_add_module(
         DEPS
         immer
         juce::juce_core
-        juce::juce_dsp)
+        juce::juce_dsp
+        juce::juce_events)
 
 zones_add_test(MODULE ir_engine SOURCES
         test/IrGraphCachePolicyTests.cpp
@@ -26,4 +27,5 @@ zones_add_test(MODULE ir_engine SOURCES
         test/IrEngineTests.cpp
         test/IrGraphStateKeyTests.cpp
         test/ProcessResultPoolTests.cpp
+        test/MockProcessor.h
         DEPS ir_engine)

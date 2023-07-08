@@ -1,29 +1,10 @@
+#include "MockProcessor.h"
 #include "ir_engine/IrGraph.h"
 #include "ir_engine/processors/TestProcessor.h"
 
 #include <catch2/catch_test_macros.hpp>
 
-class MockProcessor : public IrGraphProcessor
-{
-public:
-    void Process (BoxedBuffer & input_buffer,
-                  juce::AudioBuffer<float> & output_buffer,
-                  const IrGraphState & state) override
-    {
-        process_call_count += 1;
-        last_input_buffer = input_buffer;
-
-        const juce::dsp::AudioBlock<float> copy_block {buffer_to_copy_from};
-        output_buffer.setSize (buffer_to_copy_from.getNumChannels (),
-                               buffer_to_copy_from.getNumSamples ());
-        auto output_block = juce::dsp::AudioBlock<float> (output_buffer);
-        output_block.copyFrom (copy_block);
-    }
-
-    int process_call_count = 0;
-    BoxedBuffer last_input_buffer;
-    juce::AudioBuffer<float> buffer_to_copy_from;
-};
+auto never_abort_callback = [] () { return false; };
 
 TEST_CASE ("getting keys for different state", "[IrGraph]")
 {
@@ -78,7 +59,8 @@ SCENARIO ("graphs can be processed", "[IrGraph]")
         WHEN ("process is called")
         {
             ProcessResultPool process_result_pool;
-            auto process_result = empty_graph.Process ({}, process_result_pool);
+            auto process_result =
+                empty_graph.Process ({}, process_result_pool, never_abort_callback);
             THEN ("it yields no result")
             {
                 REQUIRE (process_result == std::nullopt);
@@ -102,7 +84,7 @@ SCENARIO ("graphs can be processed", "[IrGraph]")
         {
             ProcessResultPool process_result_pool;
 
-            auto process_result = ir_graph.Process ({}, process_result_pool);
+            auto process_result = ir_graph.Process ({}, process_result_pool, never_abort_callback);
             auto graph_keys = ir_graph.GetKeysForState ({});
 
             THEN ("an empty buffer is given as input to the first processor")
@@ -150,7 +132,7 @@ SCENARIO ("graphs can be processed", "[IrGraph]")
         WHEN ("process is called")
         {
             ProcessResultPool process_result_pool;
-            auto process_result = ir_graph.Process ({}, process_result_pool);
+            auto process_result = ir_graph.Process ({}, process_result_pool, never_abort_callback);
             auto graph_keys = ir_graph.GetKeysForState ({});
 
             THEN ("the pool is populated with two results")
@@ -187,7 +169,7 @@ SCENARIO ("graphs can be processed", "[IrGraph]")
 
             AND_WHEN ("process is called again with the same state")
             {
-                process_result = ir_graph.Process ({}, process_result_pool);
+                process_result = ir_graph.Process ({}, process_result_pool, never_abort_callback);
 
                 THEN ("processors are not re-processed")
                 {
@@ -242,7 +224,7 @@ SCENARIO ("graph uses cached results in process call", "[IrGraph]")
         WHEN ("process is called with an initial state")
         {
             ProcessResultPool process_result_pool;
-            auto process_result = ir_graph.Process ({}, process_result_pool);
+            auto process_result = ir_graph.Process ({}, process_result_pool, never_abort_callback);
             auto last_graph_keys = ir_graph.GetKeysForState ({});
 
             THEN ("the result pool is populated with 3 results")
@@ -254,7 +236,8 @@ SCENARIO ("graph uses cached results in process call", "[IrGraph]")
             {
                 auto new_state = IrGraphState {.param_1 = 10.f};
                 auto graph_keys = ir_graph.GetKeysForState (new_state);
-                process_result = ir_graph.Process (new_state, process_result_pool);
+                process_result =
+                    ir_graph.Process (new_state, process_result_pool, never_abort_callback);
 
                 THEN ("the correct processors are re-processed")
                 {
@@ -291,6 +274,62 @@ SCENARIO ("graph uses cached results in process call", "[IrGraph]")
                     REQUIRE (juce::approximatelyEqual (process_result->get ().getSample (0, 0),
                                                        kSampleToCopyP2));
                 }
+            }
+        }
+    }
+}
+
+SCENARIO ("graph obeys abort callback")
+{
+    GIVEN ("a graph")
+    {
+        ProcessResultPool process_result_pool;
+
+        std::shared_ptr<IrGraphProcessor> processor_1 = std::make_shared<TestProcessor> ();
+        auto policy_1 = IrGraph::CachePolicy ().WithPolicyIdentifier ("processor_1");
+
+        std::shared_ptr<IrGraphProcessor> processor_2 = std::make_shared<TestProcessor> ();
+        auto policy_2 = IrGraph::CachePolicy ().WithPolicyIdentifier ("processor_2");
+
+        auto ir_graph = IrGraph ()
+                            .WithProcessor ({policy_1, processor_1})
+                            .WithProcessor ({policy_2, processor_2});
+
+        int abort_callback_call_count = 0;
+
+        WHEN ("process is called with an aborting callback")
+        {
+            auto result = ir_graph.Process ({},
+                                            process_result_pool,
+                                            [&] ()
+                                            {
+                                                abort_callback_call_count += 1;
+                                                return true;
+                                            });
+            THEN ("the result is empty")
+            {
+                REQUIRE (result == std::nullopt);
+            }
+
+            THEN ("the callback is only called once")
+            {
+                REQUIRE (abort_callback_call_count == 1);
+            }
+        }
+
+        WHEN ("process is called")
+        {
+            auto result = ir_graph.Process ({},
+                                            process_result_pool,
+                                            [&] ()
+                                            {
+                                                abort_callback_call_count += 1;
+                                                return false;
+                                            });
+
+            THEN ("the callback is called twice")
+            {
+                REQUIRE (abort_callback_call_count == 2);
             }
         }
     }

@@ -1,34 +1,42 @@
 #include "IrEngine.h"
 
 #include <juce_events/juce_events.h>
+#include <utility>
 
 IrEngine::IrEngine ()
     : thread_pool_ ()
 {
 }
 
-void IrEngine::RenderState (const IrGraphState & state)
+void IrEngine::RenderState (const IrGraphState & state, RenderFinishedCallback callback)
 {
     ++jobs_since_last_clean_;
     last_rendered_state_ = state;
 
     if (jobs_since_last_clean_ < kMaxNumberOfJobsSinceLastClean)
+    {
         thread_pool_.removeAllJobs (true, 0);
+    }
     else
+    {
+        thread_pool_.removeAllJobs (true, kJobTimeout);
         CleanPool ();
+    }
 
-    auto render_job =
-        new Job (ir_graph_,
-                 state,
-                 result_pool_,
-                 [&] (IrGraphProcessor::BoxedBuffer process_result) { CleanPool (); });
-
+    auto render_job = new Job (ir_graph_,
+                               state,
+                               result_pool_,
+                               [&] (IrGraphProcessor::BoxedBuffer process_result)
+                               {
+                                   CleanPool ();
+                                   juce::MessageManager::callAsync (
+                                       [&] () { callback (std::move (process_result)); });
+                               });
     thread_pool_.addJob (render_job, true);
 }
 
 void IrEngine::CleanPool ()
 {
-    thread_pool_.removeAllJobs (true, kJobTimeout);
     result_pool_.RemoveUnusedKeys (ir_graph_.GetKeysForState (last_rendered_state_));
     jobs_since_last_clean_ = 0;
 }
@@ -47,9 +55,10 @@ IrEngine::Job::Job (const IrGraph & ir_graph,
 
 juce::ThreadPoolJob::JobStatus IrEngine::Job::runJob ()
 {
-    auto process_result = ir_graph_.Process (state_, result_pool_);
+    auto process_result =
+        ir_graph_.Process (state_, result_pool_, [&] () { return shouldExit (); });
     if (process_result.has_value ())
-        juce::MessageManager::callAsync ([&] () { callback_ (process_result.value ()); });
+        callback_ (process_result.value ());
 
     return jobHasFinished;
 }
