@@ -3,6 +3,7 @@
 #include "PluginProcessor.h"
 #include "ProjectImportComponent.h"
 #include "zones_look_and_feel/LookAndFeel.h"
+#include "zones_look_and_feel/components/PanelComponent.h"
 
 #include <juce_gui_basics/juce_gui_basics.h>
 
@@ -24,7 +25,9 @@ private:
     lager::context<ProjectIrRepositoryAction> context_;
 
     LookAndFeel look_and_feel_;
+
     ProjectImportComponent project_import_component_ {model_, context_};
+    PanelComponent project_import_panel_ {project_import_component_};
 
     void resized () override;
     void paint (juce::Graphics & graphics) override;
