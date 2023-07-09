@@ -29,7 +29,7 @@ void LookAndFeel::drawRotarySlider (juce::Graphics & g,
                                     float sliderPos,
                                     const float rotaryStartAngle,
                                     const float rotaryEndAngle,
-                                    juce::Slider &)
+                                    juce::Slider & slider)
 {
     auto halfWidth = width * 0.5f;
     auto halfHeight = height * 0.5f;
@@ -44,17 +44,19 @@ void LookAndFeel::drawRotarySlider (juce::Graphics & g,
     const float angle = rotaryStartAngle + sliderPos * (rotaryEndAngle - rotaryStartAngle);
 
     static constexpr float innerCircleProportionalSize = 0.92f;
+    auto secondary_colour = slider.findColour (ColourIds::kSecondary);
 
     auto secondaryGrad = juce::ColourGradient::horizontal (
-        Pallette::secondary.darker (0.1f), 0.0f, Pallette::secondary.brighter (0.1f), width);
+        secondary_colour.darker (0.1f), 0.0f, secondary_colour.brighter (0.1f), width);
     g.setGradientFill (secondaryGrad);
     juce::Path filledArc;
     filledArc.addPieSegment (
         rx, ry, rw, rw, rotaryStartAngle, rotaryEndAngle, innerCircleProportionalSize);
     g.fillPath (filledArc);
 
+    auto primary_colour = slider.findColour (ColourIds::kPrimary);
     auto primaryGrad = juce::ColourGradient::horizontal (
-        Pallette::primary.darker (0.1f), 0.0f, Pallette::primary.brighter (0.1f), width);
+        primary_colour.darker (0.1f), 0.0f, primary_colour.brighter (0.1f), width);
     g.setGradientFill (primaryGrad);
     juce::Path filledArc1;
     filledArc1.addPieSegment (rx, ry, rw, rw, rotaryStartAngle, angle, innerCircleProportionalSize);
@@ -63,9 +65,9 @@ void LookAndFeel::drawRotarySlider (juce::Graphics & g,
 
 void LookAndFeel::drawPopupMenuBackground (juce::Graphics & g, int width, int height)
 {
-    auto popupMenuPanelBackgroundColour = findColour (ColourID::kPopupMenuPanelBackgroundId);
+    auto popup_menu_panel_background_colour = findColour (ColourIds::kPrimary);
     juce::Rectangle<float> bounds (0.f, 0.f, float (width), float (height));
-    g.setColour (popupMenuPanelBackgroundColour);
+    g.setColour (popup_menu_panel_background_colour);
     g.fillRoundedRectangle (bounds, kCallOutBoxCornerRounding);
 }
 

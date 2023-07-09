@@ -136,7 +136,7 @@ bool AudioPluginAudioProcessor::hasEditor () const
 
 juce::AudioProcessorEditor * AudioPluginAudioProcessor::createEditor ()
 {
-    return new AudioPluginAudioProcessorEditor (*this);
+    return new AudioPluginAudioProcessorEditor (*this, project_ir_store_, project_ir_store_);
 }
 
 void AudioPluginAudioProcessor::getStateInformation (juce::MemoryBlock & destData)

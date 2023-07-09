@@ -18,6 +18,8 @@ public:
     static constexpr float kCallOutBoxCornerRounding = 8.f;
     static constexpr float kButtonCornerRounding = 8.f;
 
+    static constexpr float kComponentInset = 4.f;
+
     static constexpr float kHoverAlpha = 0.6f;
     static constexpr float kHoverBrightnessMultiplier = 0.1f;
 
