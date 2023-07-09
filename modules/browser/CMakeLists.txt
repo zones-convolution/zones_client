@@ -1,9 +1,0 @@
-zones_add_module(
-  MODULE
-  browser
-  SOURCES
-  src/browser/Browser.cpp
-  src/browser/Browser.h
-  DEPS
-  juce::juce_gui_basics
-  juce::juce_gui_extra)
