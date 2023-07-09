@@ -6,7 +6,7 @@
 #include "sidebar/Sidebar.h"
 #include "spectrogram_visualiser/SpectrogramVisualiserComponent.h"
 #include "zones_api/ApiRequestService.h"
-#include "zones_look_and_feel/ZonesLookAndFeel.h"
+#include "zones_look_and_feel/LookAndFeel.h"
 
 #include <juce_gui_basics/juce_gui_basics.h>
 
