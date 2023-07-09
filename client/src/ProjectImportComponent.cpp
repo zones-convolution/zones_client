@@ -1,5 +1,7 @@
 #include "ProjectImportComponent.h"
 
+const juce::String ProjectImportComponent::kProjectPickerDialogTitle = "PickProjectDirectory";
+
 ProjectImportComponent::ProjectImportComponent (
     const lager::reader<ProjectIrRepositoryModel> & model,
     lager::context<ProjectIrRepositoryAction> & context)
@@ -22,7 +24,18 @@ ProjectImportComponent::ProjectImportComponent (
                   });
 
     add_project_path_button_.onClick = [&]
-    { context_.dispatch (AddProjectPathAction {.project_path = "test"}); };
+    {
+        directory_picker_ = std::make_unique<juce::FileChooser> (kProjectPickerDialogTitle);
+        auto directory_flags =
+            juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectDirectories;
+        directory_picker_->launchAsync (
+            directory_flags,
+            [&] (const juce::FileChooser & chooser)
+            {
+                context_.dispatch (AddProjectPathAction {
+                    .project_path = chooser.getResult ().getFullPathName ().toStdString ()});
+            });
+    };
 }
 
 void ProjectImportComponent::resized ()

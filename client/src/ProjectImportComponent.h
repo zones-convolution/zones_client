@@ -20,6 +20,8 @@ public:
 private:
     juce::TextButton add_project_path_button_ {"Add Project Path"};
     juce::Label current_project_paths_;
+    static const juce::String kProjectPickerDialogTitle;
+    std::unique_ptr<juce::FileChooser> directory_picker_;
 
     lager::reader<ProjectIrRepositoryModel> model_;
     lager::reader<immer::flex_vector<std::filesystem::path>> project_paths_reader_;
