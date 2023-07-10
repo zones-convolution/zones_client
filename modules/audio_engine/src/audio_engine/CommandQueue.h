@@ -55,7 +55,7 @@ public:
     void RTService ();
 
 private:
-    static constexpr int kMaxQueueSize = 400;
+    static constexpr int kMaxQueueSizeInBytes = 16000;
 
     Delegate & delegate_;
     choc::fifo::VariableSizeFIFO command_queue_;

@@ -3,7 +3,7 @@
 CommandQueue::CommandQueue (Delegate & delegate)
     : delegate_ (delegate)
 {
-    command_queue_.reset (kMaxQueueSize);
+    command_queue_.reset (kMaxQueueSizeInBytes);
 }
 
 void CommandQueue::RTService ()
