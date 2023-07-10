@@ -13,3 +13,6 @@
 [submodule "vcpkg"]
 	path = vcpkg
 	url = https://github.com/Microsoft/vcpkg.git
+[submodule "lib/choc/choc"]
+	path = lib/choc/choc
+	url = git@github.com:Tracktion/choc.git
