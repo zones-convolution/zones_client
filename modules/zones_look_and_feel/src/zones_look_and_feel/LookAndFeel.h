@@ -7,7 +7,7 @@ class LookAndFeel : public juce::LookAndFeel_V4
 public:
     LookAndFeel ();
 
-    static constexpr float kGap = 4.f;
+    static constexpr float kGap = 8.f;
     static constexpr float kHalfGap = 0.5f * kGap;
     static constexpr float kDoubleGap = 2.f * kGap;
 
