@@ -114,19 +114,21 @@ void AudioPluginAudioProcessor::processBlock (juce::AudioBuffer<float> & buffer,
                                               juce::MidiBuffer & midiMessages)
 {
     juce::ignoreUnused (midiMessages);
+    juce::ScopedNoDenormals no_denormals;
 
-    juce::ScopedNoDenormals noDenormals;
-    auto totalNumInputChannels = getTotalNumInputChannels ();
-    auto totalNumOutputChannels = getTotalNumOutputChannels ();
+    auto total_num_input_channels = getTotalNumInputChannels ();
+    auto total_num_output_channels = getTotalNumOutputChannels ();
 
-    for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
+    for (auto i = total_num_input_channels; i < total_num_output_channels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples ());
 
-    for (int channel = 0; channel < totalNumInputChannels; ++channel)
-    {
-        auto * channelData = buffer.getWritePointer (channel);
-        juce::ignoreUnused (channelData);
-    }
+    juce::dsp::AudioBlock<float> process_block {buffer};
+    juce::dsp::ProcessContextReplacing<float> process_context {
+        process_block,
+    };
+    
+    command_queue_.RTService ();
+    graph_.process (process_context);
 }
 
 bool AudioPluginAudioProcessor::hasEditor () const

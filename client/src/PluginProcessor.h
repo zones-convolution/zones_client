@@ -1,5 +1,7 @@
 #pragma once
 
+#include "audio_engine/AudioGraph.h"
+#include "audio_engine/CommandQueue.h"
 #include "ir_repository/io/IrReader.h"
 #include "ir_repository/io/IrWriter.h"
 #include "ir_repository/project/ProjectIrImportController.h"
@@ -8,6 +10,7 @@
 #include "ir_repository/project/ProjectIrRepositoryModel.h"
 
 #include <juce_audio_processors/juce_audio_processors.h>
+#include <juce_dsp/juce_dsp.h>
 #include <lager/event_loop/manual.hpp>
 #include <lager/store.hpp>
 
@@ -63,6 +66,9 @@ private:
                                                              project_ir_store_,
                                                              ir_reader_,
                                                              ir_writer_};
+
+    AudioGraph graph_;
+    CommandQueue command_queue_ {graph_};
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioPluginAudioProcessor)
 };

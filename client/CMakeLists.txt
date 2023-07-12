@@ -6,7 +6,8 @@ set(LINK_JUCE juce::juce_gui_extra juce::juce_audio_devices
 set(LINK_COMMON
         ir_repository
         ir_engine
-        zones_look_and_feel)
+        zones_look_and_feel
+        audio_engine)
 
 # ##############################################################################
 # SRC
