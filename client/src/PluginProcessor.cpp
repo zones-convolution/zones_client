@@ -10,7 +10,11 @@ AudioPluginAudioProcessor::AudioPluginAudioProcessor ()
     #endif
                           .withOutput ("Output", juce::AudioChannelSet::stereo (), true)
 #endif
-      )
+                          )
+    , audio_engine_ (command_queue_,
+                     project_ir_load_controller_,
+                     project_ir_store_.zoom (
+                         lager::lenses::attr (&ProjectIrRepositoryModel::current_project_ir)))
 {
 }
 
@@ -126,7 +130,7 @@ void AudioPluginAudioProcessor::processBlock (juce::AudioBuffer<float> & buffer,
     juce::dsp::ProcessContextReplacing<float> process_context {
         process_block,
     };
-    
+
     command_queue_.RTService ();
     graph_.process (process_context);
 }

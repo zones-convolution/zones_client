@@ -1,5 +1,6 @@
 #pragma once
 
+#include "audio_engine/AudioEngine.h"
 #include "audio_engine/AudioGraph.h"
 #include "audio_engine/CommandQueue.h"
 #include "ir_repository/io/IrReader.h"
@@ -69,6 +70,7 @@ private:
 
     AudioGraph graph_;
     CommandQueue command_queue_ {graph_};
+    AudioEngine audio_engine_;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioPluginAudioProcessor)
 };
