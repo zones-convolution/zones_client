@@ -8,12 +8,12 @@ class AudioEngine
 {
 public:
     explicit AudioEngine (CommandQueue & command_queue,
-                          const ProjectIrLoadController & load_controller,
-                          lager::reader<CurrentProjectIrOptional> current_ir_reader);
+                          const ProjectIrLoadController & load_controller);
+
+    void LoadIr (const IrData & ir_data);
 
 private:
     CommandQueue & command_queue_;
-    lager::reader<CurrentProjectIrOptional> current_ir_reader_;
     const ProjectIrLoadController & load_controller_;
     std::unique_ptr<IrData> ir_data_;
 };

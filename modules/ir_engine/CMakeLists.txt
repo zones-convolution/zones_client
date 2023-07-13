@@ -21,6 +21,7 @@ zones_add_module(
         src/ir_engine/IrWatchController.cpp
         DEPS
         ir_repository
+        audio_engine
         lager
         immer
         juce::juce_core

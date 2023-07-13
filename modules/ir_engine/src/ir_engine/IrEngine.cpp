@@ -26,12 +26,13 @@ void IrEngine::RenderState (const IrGraphState & state, RenderFinishedCallback c
     auto render_job = new Job (ir_graph_,
                                state,
                                result_pool_,
-                               [&] (IrGraphProcessor::BoxedBuffer process_result)
+                               [&, callback] (IrGraphProcessor::BoxedBuffer process_result)
                                {
                                    CleanPool ();
-                                   juce::MessageManager::callAsync (
-                                       [&] () { callback (std::move (process_result)); });
+                                   juce::MessageManager::callAsync ([process_result, callback] ()
+                                                                    { callback (process_result); });
                                });
+
     thread_pool_.addJob (render_job, true);
 }
 

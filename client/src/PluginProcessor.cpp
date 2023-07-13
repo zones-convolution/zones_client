@@ -11,11 +11,9 @@ AudioPluginAudioProcessor::AudioPluginAudioProcessor ()
                           .withOutput ("Output", juce::AudioChannelSet::stereo (), true)
 #endif
                           )
-    , audio_engine_ (command_queue_,
-                     project_ir_load_controller_,
-                     project_ir_store_.zoom (
-                         lager::lenses::attr (&ProjectIrRepositoryModel::current_project_ir)))
-    , ir_watch_controller_ (ir_engine_,
+    , audio_engine_ (command_queue_, project_ir_load_controller_)
+    , ir_watch_controller_ (audio_engine_,
+                            ir_engine_,
                             project_ir_load_controller_,
                             project_ir_store_.zoom (lager::lenses::attr (
                                 &ProjectIrRepositoryModel::current_project_ir)))
