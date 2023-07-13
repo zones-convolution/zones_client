@@ -14,7 +14,7 @@ public:
     void process (const juce::dsp::ProcessContextReplacing<float> & replacing) override;
     void reset () override;
 
-    void RTLoadIr (const IrData * ir_data) override;
+    void RTLoadIr (IrData * ir_data) override;
     void RTUpdateParameters () override;
 
 private:

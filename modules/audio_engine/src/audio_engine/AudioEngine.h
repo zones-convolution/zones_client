@@ -15,4 +15,5 @@ private:
     CommandQueue & command_queue_;
     lager::reader<CurrentProjectIrOptional> current_ir_reader_;
     const ProjectIrLoadController & load_controller_;
+    std::unique_ptr<IrData> ir_data_;
 };

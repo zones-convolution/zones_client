@@ -11,7 +11,7 @@ class CommandQueue
 public:
     struct Delegate
     {
-        virtual void RTLoadIr (const IrData * ir_data) = 0;
+        virtual void RTLoadIr (IrData * ir_data) = 0;
         virtual void RTUpdateParameters () = 0;
     };
 
@@ -46,10 +46,10 @@ public:
 
     explicit CommandQueue (Delegate & delegate);
 
-    using LoadIrCommand = CommandBase<CommandID::kLoadIr, const IrData *>;
+    using LoadIrCommand = CommandBase<CommandID::kLoadIr, IrData *>;
     using UpdateParametersCommand = CommandID;
 
-    void LoadIr (const IrData * ir_data);
+    void LoadIr (IrData * ir_data);
     void UpdateParameters ();
 
     void RTService ();

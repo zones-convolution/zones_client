@@ -29,7 +29,7 @@ void CommandQueue::RTService ()
         });
 }
 
-void CommandQueue::LoadIr (const IrData * ir_data)
+void CommandQueue::LoadIr (IrData * ir_data)
 {
     auto load_ir_command = LoadIrCommand (ir_data);
     command_queue_.push (&load_ir_command, sizeof (load_ir_command));

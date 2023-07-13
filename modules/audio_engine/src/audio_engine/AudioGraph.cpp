@@ -19,13 +19,12 @@ void AudioGraph::reset ()
     processor_chain_.reset ();
 }
 
-void AudioGraph::RTLoadIr (const IrData * ir_data)
+void AudioGraph::RTLoadIr (IrData * ir_data)
 {
     juce::AudioBuffer<float> ir_buffer {};
-    ir_buffer.setDataToReferTo (
-        const_cast<float * const *> (ir_data->buffer.getArrayOfReadPointers ()),
-        ir_data->buffer.getNumChannels (),
-        ir_data->buffer.getNumSamples ()); // SUPER SUPER BAD JUST TO GET THIS WORKING...
+    ir_buffer.setDataToReferTo (ir_data->buffer.getArrayOfWritePointers (),
+                                ir_data->buffer.getNumChannels (),
+                                ir_data->buffer.getNumSamples ());
 
     auto & convolver = processor_chain_.get<0> ();
     convolver.loadImpulseResponse (std::move (ir_buffer),
