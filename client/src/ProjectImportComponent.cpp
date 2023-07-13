@@ -92,6 +92,12 @@ ProjectImportComponent::ProjectImportComponent (
                                      }});
                                  });
     };
+
+    project_ir_combo_box_.onChange = [&]
+    {
+        context.dispatch (
+            LoadProjectIrAction {.ir_identifier = project_ir_combo_box_.getText ().toStdString ()});
+    };
 }
 
 void ProjectImportComponent::resized ()

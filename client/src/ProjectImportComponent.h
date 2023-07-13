@@ -22,7 +22,7 @@ private:
     juce::TextButton add_project_path_button_ {"Add Project Path"};
     juce::TextButton import_project_ir_button_ {"Import Project Ir"};
 
-    juce::ComboBox project_ir_combo_box_;
+    juce::ComboBox project_ir_combo_box_ {};
 
     juce::Label current_project_paths_;
     juce::Label current_ir_;
