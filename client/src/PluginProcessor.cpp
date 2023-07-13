@@ -152,12 +152,22 @@ juce::AudioProcessorEditor * AudioPluginAudioProcessor::createEditor ()
 
 void AudioPluginAudioProcessor::getStateInformation (juce::MemoryBlock & destData)
 {
-    juce::ignoreUnused (destData);
+    if (! project_ir_store_->project_paths.empty ())
+    {
+        auto state = std::make_unique<juce::XmlElement> ("Zones");
+        state->setAttribute (juce::Identifier {"project_path"},
+                             project_ir_store_->project_paths.front ().string ());
+        copyXmlToBinary (*state, destData);
+    }
 }
 
 void AudioPluginAudioProcessor::setStateInformation (const void * data, int sizeInBytes)
 {
-    juce::ignoreUnused (data, sizeInBytes);
+    std::unique_ptr<juce::XmlElement> state (getXmlFromBinary (data, sizeInBytes));
+    auto project_path = state->getStringAttribute ("project_path", "");
+    if (project_path.isNotEmpty ())
+        project_ir_store_.dispatch (
+            AddProjectPathAction {.project_path = project_path.toStdString ()});
 }
 
 juce::AudioProcessor * JUCE_CALLTYPE createPluginFilter ()

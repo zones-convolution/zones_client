@@ -1,5 +1,7 @@
 #pragma once
 
+#include "ir_repository/io/IrReader.h"
+#include "ir_repository/project/ProjectIrPaths.h"
 #include "ir_repository/project/ProjectIrRepositoryAction.h"
 #include "ir_repository/project/ProjectIrRepositoryModel.h"
 #include "zones_look_and_feel/LookAndFeel.h"
@@ -16,13 +18,16 @@ public:
 
     void resized () override;
 
-    void UpdateIrList ();
-
 private:
+    void UpdateIrList ();
+    void DisplayProjectPaths ();
+    void DisplayCurrentIr ();
+
     juce::TextButton add_project_path_button_ {"Add Project Path"};
     juce::TextButton import_project_ir_button_ {"Import Project Ir"};
 
     juce::ComboBox project_ir_combo_box_ {};
+    IrReader::ProjectData project_data_;
 
     juce::Label current_project_paths_;
     juce::Label current_ir_;

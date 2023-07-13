@@ -1,8 +1,5 @@
 #include "ProjectImportComponent.h"
 
-#include "ir_repository/io/IrReader.h"
-#include "ir_repository/project/ProjectIrPaths.h"
-
 const juce::String ProjectImportComponent::kProjectPickerDialogTitle = "Pick Project Directory";
 const juce::String ProjectImportComponent::kIrPickerDialogTitle = "Pick Ir Directory";
 
@@ -27,27 +24,21 @@ ProjectImportComponent::ProjectImportComponent (
 
     import_project_ir_button_.setEnabled (false);
 
+    UpdateIrList ();
+    DisplayProjectPaths ();
+    DisplayCurrentIr ();
+
     lager::watch (project_paths_reader_,
-                  [&] (immer::flex_vector<std::filesystem::path> project_paths)
+                  [&] (const auto &)
                   {
-                      std::string path_list = "Project Paths: ";
-                      for (auto & project_path : project_paths)
-                          path_list += project_path.string () + ",";
-
-                      current_project_paths_.setText (path_list, juce::dontSendNotification);
-                      if (project_paths.size () > 0)
-                          import_project_ir_button_.setEnabled (true);
-
+                      DisplayProjectPaths ();
                       UpdateIrList ();
                   });
 
     lager::watch (current_ir_reader_,
-                  [&] (const CurrentProjectIrOptional & current_project_ir)
+                  [&] (const auto &)
                   {
-                      if (current_project_ir.has_value ())
-                          current_ir_.setText ("Current Ir: " + current_project_ir.value (),
-                                               juce::dontSendNotification);
-
+                      DisplayCurrentIr ();
                       UpdateIrList ();
                   });
 
@@ -95,8 +86,8 @@ ProjectImportComponent::ProjectImportComponent (
 
     project_ir_combo_box_.onChange = [&]
     {
-        context.dispatch (
-            LoadProjectIrAction {.ir_identifier = project_ir_combo_box_.getText ().toStdString ()});
+        auto & [identifier, _] = project_data_ [project_ir_combo_box_.getSelectedItemIndex ()];
+        context.dispatch (LoadProjectIrAction {.ir_identifier = identifier});
     };
 }
 
@@ -127,10 +118,31 @@ void ProjectImportComponent::UpdateIrList ()
     if (! load_path.has_value ())
         return;
     auto ir_list = ir_reader.GetIrsInPath (load_path.value ());
+    project_data_ = ir_list;
 
     for (auto item_number = 0; item_number < ir_list.size (); ++item_number)
     {
         auto identifier = ir_list [item_number].first;
         project_ir_combo_box_.addItem (identifier, item_number + 1);
     }
+}
+
+void ProjectImportComponent::DisplayProjectPaths ()
+{
+    auto project_paths = project_paths_reader_.get ();
+    std::string path_list = "Project Paths: ";
+    for (auto & project_path : project_paths)
+        path_list += project_path.string () + ",";
+
+    current_project_paths_.setText (path_list, juce::dontSendNotification);
+    if (project_paths.size () > 0)
+        import_project_ir_button_.setEnabled (true);
+}
+
+void ProjectImportComponent::DisplayCurrentIr ()
+{
+    auto current_project_ir = current_ir_reader_.get ();
+    if (current_project_ir.has_value ())
+        current_ir_.setText ("Current Ir: " + current_project_ir.value (),
+                             juce::dontSendNotification);
 }
