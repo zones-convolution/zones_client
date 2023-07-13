@@ -18,7 +18,7 @@ void CommandQueue::RTService ()
                     {
                         jassert (size == sizeof (LoadIrCommand));
                         auto load_ir_command = static_cast<LoadIrCommand *> (data);
-                        delegate_.RTLoadIr (std::move (load_ir_command->GetData ()));
+                        delegate_.RTLoadIr (load_ir_command->GetData ());
                     }
                     break;
                 case kUpdateParameters:
@@ -29,9 +29,9 @@ void CommandQueue::RTService ()
         });
 }
 
-void CommandQueue::LoadIr (IrData && ir_data)
+void CommandQueue::LoadIr (const IrData * ir_data)
 {
-    auto load_ir_command = LoadIrCommand (std::move (ir_data));
+    auto load_ir_command = LoadIrCommand (ir_data);
     command_queue_.push (&load_ir_command, sizeof (load_ir_command));
 }
 

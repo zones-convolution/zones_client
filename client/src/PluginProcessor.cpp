@@ -87,11 +87,15 @@ void AudioPluginAudioProcessor::changeProgramName (int index, const juce::String
 
 void AudioPluginAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
-    juce::ignoreUnused (sampleRate, samplesPerBlock);
+    graph_.prepare (
+        juce::dsp::ProcessSpec {sampleRate,
+                                static_cast<juce::uint32> (samplesPerBlock),
+                                static_cast<juce::uint32> (getTotalNumOutputChannels ())});
 }
 
 void AudioPluginAudioProcessor::releaseResources ()
 {
+    graph_.reset ();
 }
 
 bool AudioPluginAudioProcessor::isBusesLayoutSupported (const BusesLayout & layouts) const
@@ -126,10 +130,11 @@ void AudioPluginAudioProcessor::processBlock (juce::AudioBuffer<float> & buffer,
     for (auto i = total_num_input_channels; i < total_num_output_channels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples ());
 
-    juce::dsp::AudioBlock<float> process_block {buffer};
-    juce::dsp::ProcessContextReplacing<float> process_context {
-        process_block,
-    };
+    const auto num_channels = juce::jmax (total_num_input_channels, total_num_output_channels);
+
+    auto process_block =
+        juce::dsp::AudioBlock<float> (buffer).getSubsetChannelBlock (0, (size_t) num_channels);
+    juce::dsp::ProcessContextReplacing<float> process_context (process_block);
 
     command_queue_.RTService ();
     graph_.process (process_context);

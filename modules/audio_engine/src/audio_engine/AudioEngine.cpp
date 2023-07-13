@@ -13,9 +13,7 @@ AudioEngine::AudioEngine (CommandQueue & command_queue,
         {
             if (current_project_ir.has_value ())
             {
-                auto current_ir = *load_controller.GetCurrentProjectIrData ();
-
-                command_queue.LoadIr (std::move (current_ir));
+                command_queue.LoadIr (load_controller.GetCurrentProjectIrData ());
             }
         });
 }
