@@ -1,5 +1,8 @@
 #include "ProjectImportComponent.h"
 
+#include "ir_repository/io/IrReader.h"
+#include "ir_repository/project/ProjectIrPaths.h"
+
 const juce::String ProjectImportComponent::kProjectPickerDialogTitle = "Pick Project Directory";
 const juce::String ProjectImportComponent::kIrPickerDialogTitle = "Pick Ir Directory";
 
@@ -20,6 +23,7 @@ ProjectImportComponent::ProjectImportComponent (
     addAndMakeVisible (current_ir_);
     addAndMakeVisible (add_project_path_button_);
     addAndMakeVisible (import_project_ir_button_);
+    addAndMakeVisible (project_ir_combo_box_);
 
     import_project_ir_button_.setEnabled (false);
 
@@ -33,6 +37,8 @@ ProjectImportComponent::ProjectImportComponent (
                       current_project_paths_.setText (path_list, juce::dontSendNotification);
                       if (project_paths.size () > 0)
                           import_project_ir_button_.setEnabled (true);
+
+                      UpdateIrList ();
                   });
 
     lager::watch (current_ir_reader_,
@@ -41,6 +47,8 @@ ProjectImportComponent::ProjectImportComponent (
                       if (current_project_ir.has_value ())
                           current_ir_.setText ("Current Ir: " + current_project_ir.value (),
                                                juce::dontSendNotification);
+
+                      UpdateIrList ();
                   });
 
     add_project_path_button_.onClick = [&]
@@ -98,6 +106,25 @@ void ProjectImportComponent::resized ()
     layout.items.add (juce::FlexItem (import_project_ir_button_).withFlex (1.f));
     layout.items.add (LookAndFeel::kFlexSpacer);
     layout.items.add (juce::FlexItem (current_ir_).withFlex (1.f));
+    layout.items.add (LookAndFeel::kFlexSpacer);
+    layout.items.add (juce::FlexItem (project_ir_combo_box_).withFlex (1.f));
 
     layout.performLayout (getLocalBounds ().toFloat ().reduced (LookAndFeel::kPadding));
+}
+
+void ProjectImportComponent::UpdateIrList ()
+{
+    IrReader ir_reader;
+    project_ir_combo_box_.clear (juce::NotificationType::dontSendNotification);
+
+    auto load_path = ProjectIrPaths (model_).GetAvailableProjectPath ();
+    if (! load_path.has_value ())
+        return;
+    auto ir_list = ir_reader.GetIrsInPath (load_path.value ());
+
+    for (auto item_number = 0; item_number < ir_list.size (); ++item_number)
+    {
+        auto identifier = ir_list [item_number].first;
+        project_ir_combo_box_.addItem (identifier, item_number + 1);
+    }
 }
