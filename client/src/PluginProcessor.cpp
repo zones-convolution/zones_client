@@ -15,6 +15,10 @@ AudioPluginAudioProcessor::AudioPluginAudioProcessor ()
                      project_ir_load_controller_,
                      project_ir_store_.zoom (
                          lager::lenses::attr (&ProjectIrRepositoryModel::current_project_ir)))
+    , ir_watch_controller_ (ir_engine_,
+                            project_ir_load_controller_,
+                            project_ir_store_.zoom (lager::lenses::attr (
+                                &ProjectIrRepositoryModel::current_project_ir)))
 {
 }
 

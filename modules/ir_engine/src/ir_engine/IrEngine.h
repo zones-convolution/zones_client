@@ -1,6 +1,8 @@
 #pragma once
+
 #include "IrGraph.h"
 #include "juce_core/juce_core.h"
+#include "processors/BaseIrProcessor.h"
 #include "processors/TestProcessor.h"
 
 class IrEngine
@@ -39,7 +41,15 @@ private:
     ProcessResultPool result_pool_;
     juce::ThreadPool thread_pool_;
 
+    std::shared_ptr<BaseIrProcessor> base_ir_processor_ = std::make_shared<BaseIrProcessor> ();
     std::shared_ptr<IrGraphProcessor> test_processor_ = std::make_shared<TestProcessor> ();
-    IrGraph ir_graph_ = IrGraph ().WithProcessor (
-        {IrGraph::CachePolicy ().WithPolicyIdentifier ("test_processor"), test_processor_});
+
+    IrGraph ir_graph_ =
+        IrGraph ()
+            .WithProcessor ({IrGraph::CachePolicy ()
+                                 .WithPolicyIdentifier ("base_ir_processor")
+                                 .WithCachedHandle (&IrGraphState::CacheBaseIr),
+                             base_ir_processor_})
+            .WithProcessor (
+                {IrGraph::CachePolicy ().WithPolicyIdentifier ("test_processor"), test_processor_});
 };

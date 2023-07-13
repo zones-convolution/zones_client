@@ -8,6 +8,8 @@ zones_add_module(
         src/ir_engine/IrGraph.h
         src/ir_engine/processors/TestProcessor.h
         src/ir_engine/processors/TestProcessor.cpp
+        src/ir_engine/processors/BaseIrProcessor.h
+        src/ir_engine/processors/BaseIrProcessor.cpp
         src/ir_engine/ProcessResultPool.h
         src/ir_engine/ProcessResultPool.cpp
         src/ir_engine/IrGraphProcessor.h
@@ -15,7 +17,11 @@ zones_add_module(
         src/ir_engine/IrGraphCachePolicy.cpp
         src/ir_engine/IrGraphStateKey.h
         src/ir_engine/IrGraphStateKey.cpp
+        src/ir_engine/IrWatchController.h
+        src/ir_engine/IrWatchController.cpp
         DEPS
+        ir_repository
+        lager
         immer
         juce::juce_core
         juce::juce_dsp
