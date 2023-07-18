@@ -18,7 +18,9 @@ target_sources(storyboard
         storyboard/StoryboardComponent.h
         storyboard/StoryboardComponent.cpp
         storyboard/Buttons.h
-        storyboard/Buttons.cpp)
+        storyboard/Buttons.cpp
+        storyboard/Combos.h
+        storyboard/Combos.cpp)
 
 target_compile_definitions(storyboard
         PRIVATE

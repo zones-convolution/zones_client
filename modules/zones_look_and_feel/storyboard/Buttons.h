@@ -13,4 +13,5 @@ private:
     juce::Label buttons_label_;
     juce::TextButton button_primary_ {"Primary Button"};
     juce::TextButton button_secondary_ {"Secondary Button"};
+    juce::TextButton button_disabled_ {"Disabled Button"};
 };

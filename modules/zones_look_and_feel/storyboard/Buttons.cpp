@@ -8,6 +8,9 @@ Buttons::Buttons ()
     addAndMakeVisible (buttons_label_);
     addAndMakeVisible (button_primary_);
     addAndMakeVisible (button_secondary_);
+
+    button_disabled_.setEnabled (false);
+    addAndMakeVisible (button_disabled_);
 }
 
 void Buttons::resized ()
@@ -21,6 +24,8 @@ void Buttons::resized ()
     layout.items.add (juce::FlexItem (button_primary_).withFlex (1.f));
     layout.items.add (LookAndFeel::kFlexSpacer);
     layout.items.add (juce::FlexItem (button_secondary_).withFlex (1.f));
+    layout.items.add (LookAndFeel::kFlexSpacer);
+    layout.items.add (juce::FlexItem (button_disabled_).withFlex (1.f));
 
     layout.performLayout (getLocalBounds ().toFloat ().reduced (LookAndFeel::kPadding));
 }

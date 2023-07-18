@@ -7,13 +7,19 @@ const juce::FlexItem LookAndFeel::kDoubleFlexSpacer =
 
 LookAndFeel::LookAndFeel ()
 {
-    setColour (juce::ResizableWindow::backgroundColourId, juce::Colour (23, 26, 29));
     setColour (ColourIds::kPanel, juce::Colour (29, 32, 37));
     setColour (ColourIds::kPrimary, juce::Colour (149, 213, 178));
     setColour (ColourIds::kSecondary, juce::Colours::pink);
 
+    setColour (juce::ResizableWindow::backgroundColourId, juce::Colour (23, 26, 29));
+
+    setColour (juce::ComboBox::backgroundColourId, findColour (ColourIds::kPanel).brighter (0.1f));
+    setColour (juce::PopupMenu::highlightedBackgroundColourId,
+               findColour (ColourIds::kPanel).brighter (0.2f));
+    setColour (juce::PopupMenu::backgroundColourId, juce::Colours::transparentWhite);
+
+    setColour (juce::TextButton::buttonColourId, findColour (ColourIds::kPanel));
     setColour (juce::Slider::trackColourId, findColour (ColourIds::kPrimary));
-    setDefaultSansSerifTypefaceName ("DM Sans");
 }
 
 juce::Font LookAndFeel::getLabelFont (juce::Label & label)
@@ -31,44 +37,45 @@ void LookAndFeel::drawRotarySlider (juce::Graphics & g,
                                     const float rotaryEndAngle,
                                     juce::Slider & slider)
 {
-    auto halfWidth = width * 0.5f;
-    auto halfHeight = height * 0.5f;
-    const float radius = juce::jmin (halfWidth, halfHeight);
-    const float centreX = x + halfWidth;
-    const float centreY = y + halfHeight;
+    auto half_width = width * 0.5f;
+    auto half_height = height * 0.5f;
+    const float radius = juce::jmin (half_width, half_height);
+    const float centre_x = x + half_width;
+    const float centre_y = y + half_height;
 
-    const float rx = centreX - radius;
-    const float ry = centreY - radius;
+    const float rx = centre_x - radius;
+    const float ry = centre_y - radius;
     const float rw = radius * 2.0f;
 
     const float angle = rotaryStartAngle + sliderPos * (rotaryEndAngle - rotaryStartAngle);
 
-    static constexpr float innerCircleProportionalSize = 0.92f;
+    static constexpr float inner_circle_proportional_size = 0.92f;
     auto secondary_colour = slider.findColour (ColourIds::kSecondary);
 
-    auto secondaryGrad = juce::ColourGradient::horizontal (
+    auto secondary_grad = juce::ColourGradient::horizontal (
         secondary_colour.darker (0.1f), 0.0f, secondary_colour.brighter (0.1f), width);
-    g.setGradientFill (secondaryGrad);
-    juce::Path filledArc;
-    filledArc.addPieSegment (
-        rx, ry, rw, rw, rotaryStartAngle, rotaryEndAngle, innerCircleProportionalSize);
-    g.fillPath (filledArc);
+    g.setGradientFill (secondary_grad);
+    juce::Path filled_arc;
+    filled_arc.addPieSegment (
+        rx, ry, rw, rw, rotaryStartAngle, rotaryEndAngle, inner_circle_proportional_size);
+    g.fillPath (filled_arc);
 
     auto primary_colour = slider.findColour (ColourIds::kPrimary);
-    auto primaryGrad = juce::ColourGradient::horizontal (
+    auto primary_grad = juce::ColourGradient::horizontal (
         primary_colour.darker (0.1f), 0.0f, primary_colour.brighter (0.1f), width);
-    g.setGradientFill (primaryGrad);
-    juce::Path filledArc1;
-    filledArc1.addPieSegment (rx, ry, rw, rw, rotaryStartAngle, angle, innerCircleProportionalSize);
-    g.fillPath (filledArc1);
+    g.setGradientFill (primary_grad);
+    juce::Path filled_arc_1;
+    filled_arc_1.addPieSegment (
+        rx, ry, rw, rw, rotaryStartAngle, angle, inner_circle_proportional_size);
+    g.fillPath (filled_arc_1);
 }
 
 void LookAndFeel::drawPopupMenuBackground (juce::Graphics & g, int width, int height)
 {
-    auto popup_menu_panel_background_colour = findColour (ColourIds::kPrimary);
+    auto popup_menu_panel_background_colour = findColour (juce::ComboBox::backgroundColourId);
     juce::Rectangle<float> bounds (0.f, 0.f, float (width), float (height));
     g.setColour (popup_menu_panel_background_colour);
-    g.fillRoundedRectangle (bounds, kCallOutBoxCornerRounding);
+    g.fillRoundedRectangle (bounds, kPopupMenuCornerRounding);
 }
 
 void LookAndFeel::getIdealPopupMenuItemSize (const juce::String & text,
@@ -97,31 +104,43 @@ void LookAndFeel::drawComboBox (juce::Graphics & g,
                                 int,
                                 juce::ComboBox & box)
 {
-    juce::Rectangle<int> boxBounds (0, 0, width, height);
+    juce::Rectangle<int> box_bounds (0, 0, width, height);
 
-    auto backgroundColour = box.findColour (juce::ComboBox::backgroundColourId);
+    auto background_colour = box.findColour (juce::ComboBox::backgroundColourId);
     if (box.isMouseOver () && box.isEnabled ())
-        backgroundColour =
-            backgroundColour.brighter (kHoverBrightnessMultiplier).withAlpha (kHoverAlpha);
+        background_colour =
+            background_colour.brighter (kHoverBrightnessMultiplier).withAlpha (kHoverAlpha);
 
-    g.setColour (backgroundColour);
-    g.fillRoundedRectangle (boxBounds.toFloat (), kComboBoxCornerRounding);
+    g.setColour (background_colour);
+    g.fillRoundedRectangle (box_bounds.toFloat (), kComboBoxCornerRounding);
 
-    juce::Rectangle<int> arrowZone (width - height - 4, 0, height, height);
-    arrowZone.reduce (kComponentInset, kComponentInset);
-    auto floatArrowZone = arrowZone.toFloat ();
+    auto font_height = juce::LookAndFeel_V4::getComboBoxFont (box).getHeight ();
+
+    juce::FlexBox layout;
+    layout.flexDirection = juce::FlexBox::Direction::row;
+    layout.justifyContent = juce::FlexBox::JustifyContent::flexEnd;
+    layout.alignItems = juce::FlexBox::AlignItems::center;
+
+    layout.items.add (juce::FlexItem ().withWidth (font_height).withHeight (font_height / 2.f));
+    layout.items.add (kDoubleFlexSpacer);
+
+    layout.performLayout (box_bounds);
+    auto arrow_bounds = layout.items [0].currentBounds;
+
     juce::Path path;
-    path.startNewSubPath (floatArrowZone.getX (),
-                          floatArrowZone.getCentreY () - (floatArrowZone.getHeight () / 4));
-    path.lineTo (floatArrowZone.getCentreX (),
-                 floatArrowZone.getCentreY () + (floatArrowZone.getHeight () / 4));
-    path.lineTo (floatArrowZone.getRight (),
-                 floatArrowZone.getCentreY () - (floatArrowZone.getHeight () / 4));
+    auto top_left = arrow_bounds.getTopLeft ();
+    path.startNewSubPath (top_left);
 
-    const auto arrowColour = box.findColour (juce::ComboBox::arrowColourId);
+    auto middle_bottom = juce::Point<float> (arrow_bounds.getCentreX (), arrow_bounds.getBottom ());
+    path.lineTo (middle_bottom);
 
-    g.setColour (arrowColour.withAlpha ((box.isEnabled () ? 1.0f : 0.2f)));
-    g.strokePath (path, juce::PathStrokeType (2.0f));
+    auto top_right = arrow_bounds.getTopRight ();
+    path.lineTo (top_right);
+
+    const auto arrow_colour = box.findColour (juce::ComboBox::arrowColourId);
+
+    g.setColour (arrow_colour.withAlpha ((box.isEnabled () ? 1.0f : 0.2f)));
+    g.strokePath (path, juce::PathStrokeType (4.0f));
 }
 
 void LookAndFeel::positionComboBoxText (juce::ComboBox & box, juce::Label & label)
@@ -161,30 +180,18 @@ void LookAndFeel::drawButtonBackground (juce::Graphics & g,
                                         bool isMouseOverButton,
                                         bool isButtonDown)
 {
-    static constexpr float kButtonStrokeThickness = 1.f;
     if (button.getClickingTogglesState ())
         isButtonDown = button.getToggleState ();
 
-    auto cornerSize = kButtonCornerRounding;
+    auto corner_size = kButtonCornerRounding;
     auto bounds = button.getLocalBounds ().toFloat ().reduced (0.5f, 0.5f);
 
-    auto highlight = button.findColour (juce::TextButton::ColourIds::buttonOnColourId);
-
     juce::Colour button_colour = button.findColour (juce::TextButton::ColourIds::buttonColourId);
-    //    if (isButtonDown)
-    //        background_colour = highlight;
-    //    if (button.getToggleState ())
-    //        background_colour = highlight;
-    //    if (isMouseOverButton)
-    //        background_colour = background_colour.brighter (0.25f);
 
     juce::Path button_path;
-    button_path.addRoundedRectangle (bounds, cornerSize);
+    button_path.addRoundedRectangle (bounds, corner_size);
 
-    g.setColour (button_colour);
-    g.strokePath (button_path, juce::PathStrokeType (kButtonStrokeThickness));
-
-    auto fill_alpha = isButtonDown ? 0.2f : isMouseOverButton ? 0.1f : 0.f;
-    g.setColour (button_colour.withAlpha (fill_alpha));
+    auto brightness = isButtonDown ? 0.32f : isMouseOverButton ? 0.16f : 0.08f;
+    g.setColour (button_colour.brighter (brightness));
     g.fillPath (button_path);
 }

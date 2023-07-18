@@ -14,9 +14,9 @@ public:
     static constexpr float kPadding = 16.f;
     static constexpr float kRounding = 8.f;
 
-    static constexpr float kComboBoxCornerRounding = 8.f;
-    static constexpr float kCallOutBoxCornerRounding = 8.f;
-    static constexpr float kButtonCornerRounding = 8.f;
+    static constexpr float kComboBoxCornerRounding = kRounding;
+    static constexpr float kPopupMenuCornerRounding = kRounding;
+    static constexpr float kButtonCornerRounding = kRounding;
 
     static constexpr float kComponentInset = 4.f;
 
@@ -44,6 +44,7 @@ public:
                            const float rotaryStartAngle,
                            const float rotaryEndAngle,
                            juce::Slider &) override;
+
     void drawButtonBackground (juce::Graphics & graphics,
                                juce::Button & button,
                                const juce::Colour & backgroundColour,
@@ -51,6 +52,7 @@ public:
                                bool shouldDrawButtonAsDown) override;
 
     void drawPopupMenuBackground (juce::Graphics & g, int width, int height) override;
+
     void getIdealPopupMenuItemSize (const juce::String & text,
                                     const bool isSeparator,
                                     int standardMenuItemHeight,
@@ -66,8 +68,11 @@ public:
                        int buttonW,
                        int buttonH,
                        juce::ComboBox &) override;
+
     void positionComboBoxText (juce::ComboBox & box, juce::Label & label) override;
+
     juce::Label * createComboBoxTextBox (juce::ComboBox & combo) override;
+    
     juce::PopupMenu::Options getOptionsForComboBoxPopupMenu (juce::ComboBox & box,
                                                              juce::Label & label) override;
 };
