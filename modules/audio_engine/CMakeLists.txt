@@ -8,8 +8,6 @@ zones_add_module(
         src/audio_engine/AudioGraph.cpp
         src/audio_engine/VisitorQueue.h
         src/audio_engine/CommandQueue.h
-        src/audio_engine/NotificationQueue.h
-        src/audio_engine/NotificationQueue.cpp
         DEPS
         ir_repository
         choc

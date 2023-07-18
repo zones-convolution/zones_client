@@ -43,7 +43,7 @@ SCENARIO ("queues commands", "[CommandQueue]")
 
         WHEN ("servicing the queue")
         {
-            visitor_queue.RTService ();
+            visitor_queue.Service ();
             THEN ("then the corresponding command was visited")
             {
                 REQUIRE (visitor.foo_visits.size () == 1);
@@ -68,7 +68,7 @@ SCENARIO ("queues commands", "[CommandQueue]")
 
         WHEN ("servicing the queue")
         {
-            visitor_queue.RTService ();
+            visitor_queue.Service ();
             THEN ("commands are in the correct order")
             {
                 for (auto command_index = 0; command_index < kNumFooCommandsToQueue;

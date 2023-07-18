@@ -42,53 +42,58 @@ ProjectImportComponent::ProjectImportComponent (
                       UpdateIrList ();
                   });
 
-    add_project_path_button_.onClick = [&]
-    {
-        directory_picker_ = std::make_unique<juce::FileChooser> (kProjectPickerDialogTitle);
-        auto directory_flags =
-            juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectDirectories;
-        directory_picker_->launchAsync (
-            directory_flags,
-            [&] (const juce::FileChooser & chooser)
-            {
-                context_.dispatch (AddProjectPathAction {
-                    .project_path = chooser.getResult ().getFullPathName ().toStdString ()});
-            });
-    };
+    add_project_path_button_.onClick = [&] { AddProjectPath (); };
+    import_project_ir_button_.onClick = [&] { ImportProjectIr (); };
+    project_ir_combo_box_.onChange = [&] { SelectProjectIr (context); };
+}
 
-    import_project_ir_button_.onClick = [&]
-    {
-        ir_picker_ = std::make_unique<juce::FileChooser> (kIrPickerDialogTitle);
-        auto directory_flags =
-            juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectFiles;
-        ir_picker_->launchAsync (directory_flags,
-                                 [&] (const juce::FileChooser & chooser)
-                                 {
-                                     std::filesystem::path ir_path =
-                                         chooser.getResult ().getFullPathName ().toStdString ();
-                                     auto identifier = ir_path.stem ();
+void ProjectImportComponent::SelectProjectIr (
+    const lager::context<ProjectIrRepositoryAction> & context) const
+{
+    auto & [identifier, _] = project_data_ [project_ir_combo_box_.getSelectedItemIndex ()];
+    context.dispatch (LoadProjectIrAction {.ir_identifier = identifier});
+}
 
-                                     lager::watch (importing_state_reader_,
-                                                   [&] (const ProjectIrLoadingState & state)
-                                                   {
-                                                       if (state == ProjectIrLoadingState::kSuccess)
-                                                           context_.dispatch (LoadProjectIrAction {
-                                                               .ir_identifier = identifier});
-                                                   });
+void ProjectImportComponent::ImportProjectIr ()
+{
+    ir_picker_ = std::__1::make_unique<juce::FileChooser> (kIrPickerDialogTitle);
+    auto directory_flags =
+        juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectFiles;
+    ir_picker_->launchAsync (directory_flags,
+                             [&] (const juce::FileChooser & chooser)
+                             {
+                                 std::filesystem::path ir_path =
+                                     chooser.getResult ().getFullPathName ().toStdString ();
+                                 auto identifier = ir_path.stem ();
 
-                                     context_.dispatch (ImportProjectIrAction {.import_project_ir {
-                                         .ir_path = ir_path,
-                                         .name = ir_path.stem (),
-                                         .description = "None",
-                                     }});
-                                 });
-    };
+                                 lager::watch (importing_state_reader_,
+                                               [&] (const ProjectIrLoadingState & state)
+                                               {
+                                                   if (state == ProjectIrLoadingState::kSuccess)
+                                                       context_.dispatch (LoadProjectIrAction {
+                                                           .ir_identifier = identifier});
+                                               });
 
-    project_ir_combo_box_.onChange = [&]
-    {
-        auto & [identifier, _] = project_data_ [project_ir_combo_box_.getSelectedItemIndex ()];
-        context.dispatch (LoadProjectIrAction {.ir_identifier = identifier});
-    };
+                                 context_.dispatch (ImportProjectIrAction {.import_project_ir {
+                                     .ir_path = ir_path,
+                                     .name = ir_path.stem (),
+                                     .description = "None",
+                                 }});
+                             });
+}
+
+void ProjectImportComponent::AddProjectPath ()
+{
+    directory_picker_ = std::__1::make_unique<juce::FileChooser> (kProjectPickerDialogTitle);
+    auto directory_flags =
+        juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectDirectories;
+    directory_picker_->launchAsync (
+        directory_flags,
+        [&] (const juce::FileChooser & chooser)
+        {
+            context_.dispatch (AddProjectPathAction {
+                .project_path = chooser.getResult ().getFullPathName ().toStdString ()});
+        });
 }
 
 void ProjectImportComponent::resized ()
@@ -135,7 +140,7 @@ void ProjectImportComponent::DisplayProjectPaths ()
         path_list += project_path.string () + ",";
 
     current_project_paths_.setText (path_list, juce::dontSendNotification);
-    if (project_paths.size () > 0)
+    if (! project_paths.empty ())
         import_project_ir_button_.setEnabled (true);
 }
 

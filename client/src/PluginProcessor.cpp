@@ -138,7 +138,7 @@ void AudioPluginAudioProcessor::processBlock (juce::AudioBuffer<float> & buffer,
         juce::dsp::AudioBlock<float> (buffer).getSubsetChannelBlock (0, (size_t) num_channels);
     juce::dsp::ProcessContextReplacing<float> process_context (process_block);
 
-    command_queue_.RTService ();
+    command_queue_.Service ();
     graph_.process (process_context);
 }
 

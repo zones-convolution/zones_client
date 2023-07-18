@@ -28,7 +28,7 @@ void AudioPluginAudioProcessorEditor::resized ()
     layout.flexDirection = juce::FlexBox::Direction::row;
     layout.alignItems = juce::FlexBox::AlignItems::center;
 
-    layout.items.add (juce::FlexItem (project_import_panel_).withFlex (1.f).withHeight (200.f));
+    layout.items.add (juce::FlexItem (project_import_panel_).withFlex (1.f).withHeight (280.f));
 
     layout.performLayout (getLocalBounds ().toFloat ().reduced (LookAndFeel::kPadding));
 }

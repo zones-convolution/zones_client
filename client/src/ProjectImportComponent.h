@@ -42,4 +42,7 @@ private:
     lager::reader<ProjectIrLoadingState> importing_state_reader_;
     lager::reader<CurrentProjectIrOptional> current_ir_reader_;
     lager::context<ProjectIrRepositoryAction> context_;
+    void AddProjectPath ();
+    void ImportProjectIr ();
+    void SelectProjectIr (const lager::context<ProjectIrRepositoryAction> & context) const;
 };

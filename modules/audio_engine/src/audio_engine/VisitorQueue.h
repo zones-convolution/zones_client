@@ -20,7 +20,7 @@ public:
         command_queue_.reset (kMaxQueueSize);
     }
 
-    void RTService ()
+    void Service ()
     {
         Commands command;
         while (command_queue_.pop (command))
