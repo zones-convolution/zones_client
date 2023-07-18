@@ -7,6 +7,7 @@ struct CommandQueue
 {
     struct LoadIr
     {
+        IrData * ir_data;
     };
 
     struct UpdateParameters
