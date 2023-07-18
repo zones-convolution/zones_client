@@ -3,6 +3,7 @@
 #include "audio_engine/AudioEngine.h"
 #include "audio_engine/AudioGraph.h"
 #include "audio_engine/CommandQueue.h"
+#include "audio_engine/VisitorQueue.h"
 #include "ir_engine/IrWatchController.h"
 #include "ir_repository/io/IrReader.h"
 #include "ir_repository/io/IrWriter.h"
@@ -70,7 +71,7 @@ private:
                                                              ir_writer_};
 
     AudioGraph graph_;
-    CommandQueue command_queue_ {graph_};
+    CommandQueue::VisitorQueue command_queue_ {graph_};
     AudioEngine audio_engine_;
 
     IrEngine ir_engine_;

@@ -5,7 +5,7 @@
 
 class AudioGraph
     : public juce::dsp::ProcessorBase
-    , public CommandQueue::Delegate
+    , public CommandQueue::Visitor
 {
 public:
     explicit AudioGraph ();
@@ -13,9 +13,6 @@ public:
     void prepare (const juce::dsp::ProcessSpec & spec) override;
     void process (const juce::dsp::ProcessContextReplacing<float> & replacing) override;
     void reset () override;
-
-    void RTLoadIr (IrData * ir_data) override;
-    void RTUpdateParameters () override;
 
 private:
     struct NonUniformConvolver : public juce::dsp::Convolution
@@ -27,5 +24,10 @@ private:
         }
     };
 
+public:
+    void operator() (const CommandQueue::LoadIr & load_ir) override;
+    void operator() (const CommandQueue::UpdateParameters & update_parameters) override;
+
+private:
     juce::dsp::ProcessorChain<NonUniformConvolver> processor_chain_;
 };

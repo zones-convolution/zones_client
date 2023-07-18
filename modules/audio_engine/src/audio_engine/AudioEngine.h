@@ -7,13 +7,13 @@
 class AudioEngine
 {
 public:
-    explicit AudioEngine (CommandQueue & command_queue,
+    explicit AudioEngine (CommandQueue::VisitorQueue & command_queue,
                           const ProjectIrLoadController & load_controller);
 
     void LoadIr (const IrData & ir_data);
 
 private:
-    CommandQueue & command_queue_;
+    CommandQueue::VisitorQueue & command_queue_;
     const ProjectIrLoadController & load_controller_;
     std::unique_ptr<IrData> ir_data_;
 };

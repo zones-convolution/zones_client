@@ -19,21 +19,21 @@ void AudioGraph::reset ()
     processor_chain_.reset ();
 }
 
-void AudioGraph::RTLoadIr (IrData * ir_data)
+void AudioGraph::operator() (const CommandQueue::LoadIr & load_ir)
 {
-    juce::AudioBuffer<float> ir_buffer {};
-    ir_buffer.setDataToReferTo (ir_data->buffer.getArrayOfWritePointers (),
-                                ir_data->buffer.getNumChannels (),
-                                ir_data->buffer.getNumSamples ());
-
-    auto & convolver = processor_chain_.get<0> ();
-    convolver.loadImpulseResponse (std::move (ir_buffer),
-                                   ir_data->sample_rate,
-                                   juce::dsp::Convolution::Stereo::yes,
-                                   juce::dsp::Convolution::Trim::no,
-                                   juce::dsp::Convolution::Normalise::no);
+    //    juce::AudioBuffer<float> ir_buffer {};
+    //    ir_buffer.setDataToReferTo (ir_data->buffer.getArrayOfWritePointers (),
+    //                                ir_data->buffer.getNumChannels (),
+    //                                ir_data->buffer.getNumSamples ());
+    //
+    //    auto & convolver = processor_chain_.get<0> ();
+    //    convolver.loadImpulseResponse (std::move (ir_buffer),
+    //                                   ir_data->sample_rate,
+    //                                   juce::dsp::Convolution::Stereo::yes,
+    //                                   juce::dsp::Convolution::Trim::no,
+    //                                   juce::dsp::Convolution::Normalise::no);
 }
 
-void AudioGraph::RTUpdateParameters ()
+void AudioGraph::operator() (const CommandQueue::UpdateParameters & update_parameters)
 {
 }

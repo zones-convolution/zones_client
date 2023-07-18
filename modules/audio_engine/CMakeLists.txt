@@ -6,8 +6,8 @@ zones_add_module(
         src/audio_engine/AudioEngine.cpp
         src/audio_engine/AudioGraph.h
         src/audio_engine/AudioGraph.cpp
+        src/audio_engine/VisitorQueue.h
         src/audio_engine/CommandQueue.h
-        src/audio_engine/CommandQueue.cpp
         src/audio_engine/NotificationQueue.h
         src/audio_engine/NotificationQueue.cpp
         DEPS
@@ -17,5 +17,5 @@ zones_add_module(
         juce::juce_dsp
         juce::juce_audio_basics)
 
-zones_add_test(MODULE audio_engine SOURCES test/CommandQueueTests.cpp
+zones_add_test(MODULE audio_engine SOURCES test/VisitorQueueTests.cpp
         DEPS audio_engine)

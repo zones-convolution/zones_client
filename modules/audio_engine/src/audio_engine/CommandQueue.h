@@ -1,62 +1,24 @@
 #pragma once
+#include "VisitorQueue.h"
 
-#include "ir_repository/IrData.h"
+#include <variant>
 
-#include <choc/containers/choc_VariableSizeFIFO.h>
-#include <juce_audio_basics/juce_audio_basics.h>
-#include <juce_core/juce_core.h>
-
-class CommandQueue
+struct CommandQueue
 {
-public:
-    struct Delegate
+    struct LoadIr
     {
-        virtual void RTLoadIr (IrData * ir_data) = 0;
-        virtual void RTUpdateParameters () = 0;
     };
 
-    enum CommandID
+    struct UpdateParameters
     {
-        kLoadIr,
-        kUpdateParameters
     };
 
-    template <CommandID cmd, typename T>
-    class CommandBase
+    using Commands = std::variant<LoadIr, UpdateParameters>;
+    struct Visitor
     {
-    public:
-        explicit CommandBase (T & data)
-            : data_ (data)
-        {
-        }
-
-        T & GetData ()
-        {
-            return data_;
-        }
-
-    private:
-        /**
-         * This order is imperative to how the commands are read from the queue and should not be
-         * re-ordered!
-         */
-        const CommandID command_id = cmd;
-        T data_;
+        virtual void operator() (const LoadIr & load_ir) = 0;
+        virtual void operator() (const UpdateParameters & update_parameters) = 0;
     };
 
-    explicit CommandQueue (Delegate & delegate);
-
-    using LoadIrCommand = CommandBase<CommandID::kLoadIr, IrData *>;
-    using UpdateParametersCommand = CommandID;
-
-    void LoadIr (IrData * ir_data);
-    void UpdateParameters ();
-
-    void RTService ();
-
-private:
-    static constexpr int kMaxQueueSizeInBytes = 16000;
-
-    Delegate & delegate_;
-    choc::fifo::VariableSizeFIFO command_queue_;
+    using VisitorQueue = VisitorQueue<Commands, Visitor>;
 };
