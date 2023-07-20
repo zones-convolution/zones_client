@@ -12,3 +12,6 @@ target_link_libraries(lager INTERFACE zug immer Boost::headers)
 
 add_library(choc INTERFACE)
 target_include_directories(choc SYSTEM INTERFACE choc)
+
+add_library(stretch INTERFACE)
+target_include_directories(stretch SYSTEM INTERFACE stretch)

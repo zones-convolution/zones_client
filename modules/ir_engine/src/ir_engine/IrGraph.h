@@ -3,7 +3,6 @@
 #include "IrGraphProcessor.h"
 #include "IrGraphStateKey.h"
 #include "ProcessResultPool.h"
-#include "processors/TestProcessor.h"
 
 #include <array>
 #include <immer/flex_vector.hpp>

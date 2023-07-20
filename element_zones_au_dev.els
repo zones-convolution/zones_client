@@ -25,12 +25,12 @@
           </ports>
         </node>
         <node id="5" type="plugin" format="AudioUnit" identifier="AudioUnit:Effects/aufx,Zone,Zone"
-              name="Zones" relativeX="0.4220183486238532" relativeY="0.436036036036036"
+              name="Zones" relativeX="0.5523156089193825" relativeY="0.436036036036036"
               pluginIdentifierString="AudioUnit-Zones-ec83dd73-61756678" uuid="9211415b923e49ff89240308266fcc02"
               bypass="0" persistent="1" renderMode="single" keyStart="0" keyEnd="127.0"
-              transpose="0" delayCompensation="0.0" x="262.0" y="219.0" windowX="1550"
-              windowY="664" windowVisible="1" state="185.hAGaoMGcv.y0AHv.DTfAGfPBJffDSPAWsEla0YVXiQWcxUlbTQVXzEFWkwVYsUlaz0hag0VYWMWchQWdvU1U1Ulbyk1atQEc4AWYT4VXsUlDZ8lakAjzKvPCPDULQISzN7PTvTURtAWczEsCQX0S0QGb0QGD.HQX0YFdXUkazkFcrUFYHbAIoXiOFsDTUY0Vc8kXjoVazY2d........AD..........U....................PH"
-              programState="185.hAGaoMGcv.y0AHv.DTfAGfPBJffDSPAWsEla0YVXiQWcxUlbTQVXzEFWkwVYsUlaz0hag0VYWMWchQWdvU1U1Ulbyk1atQEc4AWYT4VXsUlDZ8lakAjzKvPCPDULQISzN7PTvTURtAWczEsCQX0S0QGb0QGD.HQX0YFdXUkazkFcrUFYHbAIoXiOFsDTUY0Vc8kXjoVazY2d........AD..........U....................PH"
+              transpose="0" delayCompensation="0.0" x="262.0" y="219.0" windowX="1869"
+              windowY="733" windowVisible="1" state="339.hAGaoMGcv.C1AHv.DTfAGfPBJrPBSPQEVvUag4VclE1XzUmbkIGUjEFcgwUYrUVak4Fcs3VXsU1UyUmXzkGbkckckI2bo8laTQWdvU1WP7fZ0MVYPwVcmklaSQWXzUFUtEVakIgVu4VY.IMCM3PDQESTxD8CPDELUkjavUGcQ+fDV8TczAWczAA.RDVclg2SPnlUCISHgA...vyO30FafXWYxMWZu4VOhDiKvHBHk41XuQVZtcVOhTEUF0BNh7iOfviVu4VYyABbx8lZkMFceAWXzgVOh7RUyUlby8BSk8laP0xTuPTYysFcuA2KvI2apU1Xz8UZxMmHu3C.XUkazkFcrUFY.f..Y.fI.rB.3..P.fD.MAvW.PF.oAfZ.7F.wAvb.XG.3Afe.DH.HBfh.7H.7C.......HP..........bA..................DPA"
+              programState="339.hAGaoMGcv.C1AHv.DTfAGfPBJrPBSPQEVvUag4VclE1XzUmbkIGUjEFcgwUYrUVak4Fcs3VXsU1UyUmXzkGbkckckI2bo8laTQWdvU1WP7fZ0MVYPwVcmklaSQWXzUFUtEVakIgVu4VY.IMCM3PDQESTxD8CPDELUkjavUGcQ+fDV8TczAWczAA.RDVclg2SPnlUCISHgA...vyO30FafXWYxMWZu4VOhDiKvHBHk41XuQVZtcVOhTEUF0BNh7iOfviVu4VYyABbx8lZkMFceAWXzgVOh7RUyUlby8BSk8laP0xTuPTYysFcuA2KvI2apU1Xz8UZxMmHu3C.XUkazkFcrUFY.f..Y.fI.rB.3..P.fD.MAvW.PF.oAfZ.7F.wAvb.XG.3Afe.DH.HBfh.7H.7C.......HP..........bA..................DPA"
               program="-1" midiProgram="0" globalMidiPrograms="0" midiProgramsEnabled="0"
               mute="0" muteInput="0" midiProgramsState="52.3o8Jnn7SunDysXFXfQFK.BaFXjY3rXkQF.BxKwbSkAFYhUFJtjDKAHKVX0.8XfA.h2YCaB"
               oversamplingFactor="1" windowOnTop="1" enabled="1">
@@ -52,13 +52,13 @@
           </ports>
         </node>
         <node id="7" type="plugin" format="Element" identifier="element.audioFilePlayer"
-              name="Audio File Player" relativeX="0.259469696969697" relativeY="0.2262569832402235"
+              name="Audio File Player" relativeX="0.4699828473413379" relativeY="0.2918918918918919"
               pluginIdentifierString="Element-Audio File Player-53a71901-3e8"
-              uuid="626729f8cc6649aa80efb615ac2b0985" bypass="1" persistent="1"
-              renderMode="single" keyStart="0" keyEnd="127" transpose="0" delayCompensation="0.0"
-              x="214.0" y="139.0" windowX="1399" windowY="831" windowVisible="0"
-              state="171.yQWXzUF.ATPX0QVZuYTZrUF.ADVAuT0bkI2buvTYu4FTsL0KMU2boM1KoQUctU1bujFU04VYyARSkQVZg8RS0MWZi8RUtslaucmafDjbzk1bz8RUtslaucmafDDahUWaujjafPGZkAxavUlafDVZx4xcgYG.vwVX4klamAP.AHvbrElckAP.AL.au8Fb.DP.CzVZjk1TzElbzMEcuA2Pu4Fco4VckAP.AL.."
-              programState="171.yQWXzUF.ATPX0QVZuYTZrUF.ADVAuT0bkI2buvTYu4FTsL0KMU2boM1KoQUctU1bujFU04VYyARSkQVZg8RS0MWZi8RUtslaucmafDjbzk1bz8RUtslaucmafDDahUWaujjafPGZkAxavUlafDVZx4xcgYG.vwVX4klamAP.AHvbrElckAP.AL.au8Fb.DP.CzVZjk1TzElbzMEcuA2Pu4Fco4VckAP.AL.."
+              uuid="626729f8cc6649aa80efb615ac2b0985" bypass="0" persistent="1"
+              renderMode="single" keyStart="0" keyEnd="127.0" transpose="0"
+              delayCompensation="0.0" x="214.0" y="139.0" windowX="1068" windowY="890"
+              windowVisible="0" state="171.yQWXzUF.ATPX0QVZuYTZrUF.ADVAuT0bkI2buvTYu4FTsL0KMU2boM1KoQUctU1bujFU04VYyARSkQVZg8RS0MWZi8RUtslaucmafDjbzk1bz8RUtslaucmafDDahUWaujjafPGZkAxavUlafDVZx4xcgYG.vwVX4klamAP.ALvbrElckAP.AL.au8Fb.DP.BzVZjk1TzElbzMEcuA2Pu4Fco4VckAP.AL.."
+              programState="171.yQWXzUF.ATPX0QVZuYTZrUF.ADVAuT0bkI2buvTYu4FTsL0KMU2boM1KoQUctU1bujFU04VYyARSkQVZg8RS0MWZi8RUtslaucmafDjbzk1bz8RUtslaucmafDDahUWaujjafPGZkAxavUlafDVZx4xcgYG.vwVX4klamAP.ALvbrElckAP.AL.au8Fb.DP.BzVZjk1TzElbzMEcuA2Pu4Fco4VckAP.AL.."
               program="0" midiProgram="0" globalMidiPrograms="0" midiProgramsEnabled="0"
               mute="0" muteInput="0" midiProgramsState="52.3o8Jnn7SunDysXFXfQFK.BaFXjY3rXkQF.BxKwbSkAFYhUFJtjDKAHKVX0.8XfA.h2YCaB"
               oversamplingFactor="1" enabled="1">
@@ -99,5 +99,5 @@
   </graphs>
   <controllers/>
   <maps/>
-  <ui content="127.3ocAAGqCBBCD..scvemtXB5phkXQh5.VKMwALTLz6BGAujV+6889x8bPHkWogfdXho0RZlCyrcJjDxWaJJTao80b7zEyiJWj1kuoGaqSK.BqGr91ECDASOZHvksn0iPTSnyWg9bU7sGS2SPrK28zT1jO+qQMp7G+DDh+rh3JOA"/>
+  <ui content="128.3ocCHGrCBBBF..FNzqCWrY0YCVfth0Lhe25fNooDyeWwFzae8c76SrO5HT5YbzwGmi36JbI5VhlYWhPerorjUf6UQ+wZ4Mg0i6xW3OaUoUP.gsB.5L9gb.BRSvNYr5U7kGDccSx91qBKxCYc5ekg6xpl7ouMLVg5ftlP94m2oHO"/>
 </session>
