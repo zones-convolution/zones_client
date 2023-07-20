@@ -20,7 +20,9 @@ target_sources(storyboard
         storyboard/Buttons.h
         storyboard/Buttons.cpp
         storyboard/Combos.h
-        storyboard/Combos.cpp)
+        storyboard/Combos.cpp
+        storyboard/Visualisers.h
+        storyboard/Visualisers.cpp)
 
 target_compile_definitions(storyboard
         PRIVATE
@@ -32,6 +34,7 @@ target_link_libraries(storyboard
         juce::juce_core
         juce::juce_gui_basics
         zones_look_and_feel
+        spectrogram_visualiser
         PUBLIC
         juce::juce_recommended_config_flags
         juce::juce_recommended_lto_flags

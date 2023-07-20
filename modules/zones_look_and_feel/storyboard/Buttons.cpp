@@ -27,5 +27,5 @@ void Buttons::resized ()
     layout.items.add (LookAndFeel::kFlexSpacer);
     layout.items.add (juce::FlexItem (button_disabled_).withFlex (1.f));
 
-    layout.performLayout (getLocalBounds ().toFloat ().reduced (LookAndFeel::kPadding));
+    layout.performLayout (getLocalBounds ());
 }

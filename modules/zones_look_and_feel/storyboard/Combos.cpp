@@ -34,5 +34,5 @@ void Combos::resized ()
     layout.items.add (LookAndFeel::kFlexSpacer);
     layout.items.add (juce::FlexItem (combo_box_disabled_).withHeight (40.f));
 
-    layout.performLayout (getLocalBounds ().toFloat ().reduced (LookAndFeel::kPadding));
+    layout.performLayout (getLocalBounds ());
 }
