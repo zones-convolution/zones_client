@@ -62,7 +62,7 @@ void main()
     getAmplitudeForXPos(gl_FragCoord.x, amplitude);
 
     // Center and reduce the wave amplitude
-    amplitude = 0.5 - amplitude / 2;
+    amplitude = 0.5 - amplitude * 0.8;
 
     // Calculate the intensity of the wave at the current pixel
     float intensity = THICKNESS / abs(amplitude - y_cord);

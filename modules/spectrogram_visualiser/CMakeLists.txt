@@ -24,5 +24,9 @@ function(embed_resources target)
 endfunction()
 
 embed_resources(spectrogram_visualiser
-        shaders/osc_3d.frag.glsl
-        shaders/osc_3d.vert.glsl)
+        shaders/osc_2d.frag.glsl
+        shaders/osc_2d.vert.glsl)
+
+target_compile_definitions(
+        spectrogram_visualiser
+        PUBLIC "SHADER_DIRECTORY=\"${CMAKE_CURRENT_SOURCE_DIR}/shaders/\"")

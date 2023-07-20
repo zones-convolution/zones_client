@@ -22,9 +22,11 @@ LookAndFeel::LookAndFeel ()
     setColour (juce::Slider::trackColourId, findColour (ColourIds::kPrimary));
 }
 
+static const auto kDefaultFont = juce::Font (20.f, juce::Font::FontStyleFlags::bold);
+
 juce::Font LookAndFeel::getLabelFont (juce::Label & label)
 {
-    return juce::Font (20.f, juce::Font::FontStyleFlags::bold);
+    return kDefaultFont;
 }
 
 void LookAndFeel::drawRotarySlider (juce::Graphics & g,
@@ -194,4 +196,9 @@ void LookAndFeel::drawButtonBackground (juce::Graphics & g,
     auto brightness = isButtonDown ? 0.32f : isMouseOverButton ? 0.16f : 0.08f;
     g.setColour (button_colour.brighter (brightness));
     g.fillPath (button_path);
+}
+
+juce::Font LookAndFeel::getTextButtonFont (juce::TextButton & button, int buttonHeight)
+{
+    return kDefaultFont;
 }

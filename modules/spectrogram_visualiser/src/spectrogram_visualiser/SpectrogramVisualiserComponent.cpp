@@ -2,11 +2,15 @@
 
 #include <memory>
 
-extern "C" const char shaders_osc_3d_frag_glsl [];
-extern "C" const unsigned shaders_osc_3d_frag_glsl_size;
+#if JUCE_DEBUG
+const std::filesystem::path SpectrogramVisualiserComponent::kShaderDirectory = SHADER_DIRECTORY;
+#elif
+extern "C" const char shaders_osc_2d_frag_glsl [];
+extern "C" const unsigned shaders_osc_2d_frag_glsl_size;
 
-extern "C" const char shaders_osc_3d_vert_glsl [];
-extern "C" const unsigned shaders_osc_3d_vert_glsl_size;
+extern "C" const char shaders_osc_2d_vert_glsl [];
+extern "C" const unsigned shaders_osc_2d_vert_glsl_size;
+#endif
 
 SpectrogramVisualiserComponent::SpectrogramVisualiserComponent (RingBuffer<GLfloat> * ringBuffer)
     : ring_buffer_ (ringBuffer)
@@ -23,6 +27,10 @@ SpectrogramVisualiserComponent::SpectrogramVisualiserComponent (RingBuffer<GLflo
 
     addAndMakeVisible (status_label_);
     status_label_.setJustificationType (juce::Justification::topLeft);
+
+    addAndMakeVisible (refresh_button_);
+    refresh_button_.onClick = [&] () { UpdateShaders (); };
+    UpdateShaders ();
 }
 
 void SpectrogramVisualiserComponent::paint (juce::Graphics & g)
@@ -47,7 +55,6 @@ void SpectrogramVisualiserComponent::Stop ()
 
 void SpectrogramVisualiserComponent::newOpenGLContextCreated ()
 {
-    CreateShaders ();
     open_gl_context_.extensions.glGenBuffers (1, &vbo_);
     open_gl_context_.extensions.glGenBuffers (1, &ebo_);
 }
@@ -60,6 +67,7 @@ void SpectrogramVisualiserComponent::openGLContextClosing ()
 
 void SpectrogramVisualiserComponent::renderOpenGL ()
 {
+    CreateShaders ();
     jassert (juce::OpenGLHelpers::isContextActive ());
 
     const auto kRenderingScale = (float) open_gl_context_.getRenderingScale ();
@@ -162,32 +170,64 @@ void SpectrogramVisualiserComponent::renderOpenGL ()
 
 void SpectrogramVisualiserComponent::resized ()
 {
-    status_label_.setBounds (getLocalBounds ().reduced (4).removeFromTop (75));
+    juce::FlexBox layout;
+    layout.flexDirection = juce::FlexBox::Direction::column;
+    layout.justifyContent = juce::FlexBox::JustifyContent::flexEnd;
+
+    layout.items.add (juce::FlexItem (status_label_).withHeight (20.f));
+    layout.items.add (LookAndFeel::kFlexSpacer);
+    layout.items.add (juce::FlexItem (refresh_button_).withHeight (40.f));
+
+    layout.performLayout (getLocalBounds ().toFloat ().reduced (LookAndFeel::kPadding));
 }
 
 void SpectrogramVisualiserComponent::CreateShaders ()
 {
+    auto lock = std::lock_guard (shader_mutex_);
     auto gl_shader_program = std::make_unique<juce::OpenGLShaderProgram> (open_gl_context_);
 
-    juce::String status_text;
-    if (gl_shader_program->addVertexShader (juce::StringRef (shaders_osc_3d_vert_glsl)) &&
-        gl_shader_program->addFragmentShader (juce::StringRef (shaders_osc_3d_frag_glsl)) &&
-        gl_shader_program->link ())
+    if (new_vertex_shader_.isNotEmpty () || new_fragment_shader_.isNotEmpty ())
     {
-        uniforms.reset ();
-        shader = std::move (gl_shader_program);
-        uniforms = std::make_unique<Uniforms> (open_gl_context_, *shader);
+        juce::String status_text;
+        if (gl_shader_program->addVertexShader (new_vertex_shader_) &&
+            gl_shader_program->addFragmentShader (new_fragment_shader_) &&
+            gl_shader_program->link ())
+        {
+            uniforms.reset ();
+            shader = std::move (gl_shader_program);
+            uniforms = std::make_unique<Uniforms> (open_gl_context_, *shader);
 
-        status_text =
-            "GLSL: v" + juce::String (juce::OpenGLShaderProgram::getLanguageVersion (), 2);
-    }
-    else
-    {
-        status_text = gl_shader_program->getLastError ();
-    }
+            status_text =
+                "GLSL: v" + juce::String (juce::OpenGLShaderProgram::getLanguageVersion (), 2);
+        }
+        else
+        {
+            status_text = gl_shader_program->getLastError ();
+        }
 
-    juce::MessageManager::callAsync (
-        [&, status_text] () { status_label_.setText (status_text, juce::dontSendNotification); });
+        juce::MessageManager::callAsync (
+            [&, status_text] ()
+            { status_label_.setText (status_text, juce::dontSendNotification); });
+    }
+}
+
+void SpectrogramVisualiserComponent::UpdateShaders ()
+{
+    auto lock = std::lock_guard (shader_mutex_);
+
+#if JUCE_DEBUG
+    static const auto fragment_shader_filepath = kShaderDirectory / "osc_2d.frag.glsl";
+    static const auto vertex_shader_filepath = kShaderDirectory / "osc_2d.vert.glsl";
+
+    auto fragment_shader_file = juce::File (fragment_shader_filepath.string ());
+    auto vertex_shader_file = juce::File (vertex_shader_filepath.string ());
+
+    new_fragment_shader_ = fragment_shader_file.loadFileAsString ();
+    new_vertex_shader_ = vertex_shader_file.loadFileAsString ();
+#elif
+    new_fragment_shader_ = shaders_osc_2d_frag_glsl;
+    new_vertex_shader_ = shaders_osc_2d_vert_glsl;
+#endif
 }
 
 juce::OpenGLShaderProgram::Uniform *

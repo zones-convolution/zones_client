@@ -28,11 +28,11 @@ void Combos::resized ()
 
     layout.items.add (juce::FlexItem (combos_label_).withHeight (20.f));
     layout.items.add (LookAndFeel::kFlexSpacer);
-    layout.items.add (juce::FlexItem (combo_box_small_).withHeight (40.f));
+    layout.items.add (juce::FlexItem (combo_box_small_).withFlex (1.f));
     layout.items.add (LookAndFeel::kFlexSpacer);
-    layout.items.add (juce::FlexItem (combo_box_large_).withHeight (80.f));
+    layout.items.add (juce::FlexItem (combo_box_large_).withFlex (2.f));
     layout.items.add (LookAndFeel::kFlexSpacer);
-    layout.items.add (juce::FlexItem (combo_box_disabled_).withHeight (40.f));
+    layout.items.add (juce::FlexItem (combo_box_disabled_).withFlex (1.f));
 
     layout.performLayout (getLocalBounds ());
 }

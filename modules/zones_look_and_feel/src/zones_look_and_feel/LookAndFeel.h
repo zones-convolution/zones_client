@@ -32,6 +32,7 @@ public:
         kPrimary,
         kSecondary
     };
+    juce::Font getTextButtonFont (juce::TextButton & button, int buttonHeight) override;
 
     juce::Font getLabelFont (juce::Label & label) override;
 
@@ -72,7 +73,7 @@ public:
     void positionComboBoxText (juce::ComboBox & box, juce::Label & label) override;
 
     juce::Label * createComboBoxTextBox (juce::ComboBox & combo) override;
-    
+
     juce::PopupMenu::Options getOptionsForComboBoxPopupMenu (juce::ComboBox & box,
                                                              juce::Label & label) override;
 };
