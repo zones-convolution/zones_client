@@ -12,6 +12,8 @@ SpectrogramVisualiserComponent::SpectrogramVisualiserComponent (RingBuffer<GLflo
     : ring_buffer_ (ringBuffer)
     , read_buffer_ (2, kRingBufferReadSize)
 {
+    open_gl_context_.setOpenGLVersionRequired (juce::OpenGLContext::OpenGLVersion::openGL4_1);
+
     if (auto * peer = getPeer ())
         peer->setCurrentRenderingEngine (0);
 
@@ -122,9 +124,10 @@ void SpectrogramVisualiserComponent::renderOpenGL ()
         3 // Second Triangle
     };
 
-    // Vertex Array Object stuff for later
-    // openGLContext.extensions.glGenVertexArrays(1, &VAO);
-    // openGLContext.extensions.glBindVertexArray(VAO);
+    // This appears to be required! see this -
+    // https://stackoverflow.com/questions/48714591/modern-opengl-macos-only-black-screen
+    open_gl_context_.extensions.glGenVertexArrays (1, &vao_);
+    open_gl_context_.extensions.glBindVertexArray (vao_);
 
     // VBO (Vertex Buffer Object) - Bind and Write to Buffer
     open_gl_context_.extensions.glBindBuffer (juce::gl::GL_ARRAY_BUFFER, vbo_);
@@ -139,10 +142,6 @@ void SpectrogramVisualiserComponent::renderOpenGL ()
     open_gl_context_.extensions.glBindBuffer (juce::gl::GL_ELEMENT_ARRAY_BUFFER, ebo_);
     open_gl_context_.extensions.glBufferData (
         juce::gl::GL_ELEMENT_ARRAY_BUFFER, sizeof (indices), indices, juce::gl::GL_STREAM_DRAW);
-    // GL_DYNAMIC_DRAW or GL_STREAM_DRAW
-    // Don't we want GL_DYNAMIC_DRAW since this
-    // vertex data will be changing alot??
-    // test this
 
     // Setup Vertex Attributes
     open_gl_context_.extensions.glVertexAttribPointer (
@@ -172,8 +171,10 @@ void SpectrogramVisualiserComponent::CreateShaders ()
     auto gl_shader_program = std::make_unique<juce::OpenGLShaderProgram> (open_gl_context_);
 
     juce::String status_text;
-    if (gl_shader_program->addVertexShader (juce::StringRef (shaders_osc_3d_vert_glsl)) &&
-        gl_shader_program->addFragmentShader (juce::StringRef (shaders_osc_3d_frag_glsl)) &&
+    if (gl_shader_program->addVertexShader (juce::OpenGLHelpers::translateVertexShaderToV3 (
+            juce::StringRef (shaders_osc_3d_vert_glsl))) &&
+        gl_shader_program->addFragmentShader (juce::OpenGLHelpers::translateFragmentShaderToV3 (
+            juce::StringRef (shaders_osc_3d_frag_glsl))) &&
         gl_shader_program->link ())
     {
         uniforms.reset ();

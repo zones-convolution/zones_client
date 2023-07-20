@@ -43,7 +43,7 @@ private:
     };
 
     juce::OpenGLContext open_gl_context_;
-    GLuint vbo_, ebo_;
+    GLuint vbo_, vao_, ebo_;
 
     std::unique_ptr<juce::OpenGLShaderProgram> shader;
     std::unique_ptr<Uniforms> uniforms;
@@ -51,7 +51,7 @@ private:
     RingBuffer<GLfloat> * ring_buffer_;
     juce::AudioBuffer<GLfloat> read_buffer_;
     GLfloat visualization_buffer_ [kRingBufferReadSize];
-    
+
     juce::Label status_label_;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SpectrogramVisualiserComponent)
