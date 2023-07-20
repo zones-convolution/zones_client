@@ -12,6 +12,31 @@ extern "C" const char shaders_osc_2d_vert_glsl [];
 extern "C" const unsigned shaders_osc_2d_vert_glsl_size;
 #endif
 
+static void GLClearError ()
+{
+    while (juce::gl::glGetError () != juce::gl::GL_NO_ERROR)
+        ;
+}
+
+static bool GLLogCall (const char * function, const char * file, int line)
+{
+    while (auto error = juce::gl::glGetError ())
+    {
+        DBG ("[OpenGL Error] (" + std::to_string (error) + ") " + function + " " + file + " " +
+             std::to_string (line));
+        return false;
+    }
+    return true;
+}
+
+/*
+ * WILL NOT WORK WITH SINGLE LINE IF!!
+ */
+#define GLCall(x)    \
+    GLClearError (); \
+    x;               \
+    jassert (GLLogCall (#x, __FILE__, __LINE__))
+
 SpectrogramVisualiserComponent::SpectrogramVisualiserComponent (RingBuffer<GLfloat> * ringBuffer)
     : ring_buffer_ (ringBuffer)
     , read_buffer_ (2, kRingBufferReadSize)
@@ -55,8 +80,8 @@ void SpectrogramVisualiserComponent::Stop ()
 
 void SpectrogramVisualiserComponent::newOpenGLContextCreated ()
 {
-    open_gl_context_.extensions.glGenBuffers (1, &vbo_);
-    open_gl_context_.extensions.glGenBuffers (1, &ebo_);
+    GLCall (open_gl_context_.extensions.glGenBuffers (1, &vbo_));
+    GLCall (open_gl_context_.extensions.glGenBuffers (1, &ibo_));
 }
 
 void SpectrogramVisualiserComponent::openGLContextClosing ()
@@ -71,15 +96,15 @@ void SpectrogramVisualiserComponent::renderOpenGL ()
     jassert (juce::OpenGLHelpers::isContextActive ());
 
     const auto kRenderingScale = (float) open_gl_context_.getRenderingScale ();
-    juce::gl::glViewport (0,
-                          0,
-                          juce::roundToInt (kRenderingScale * (float) getWidth ()),
-                          juce::roundToInt (kRenderingScale * (float) getHeight ()));
+    GLCall (juce::gl::glViewport (0,
+                                  0,
+                                  juce::roundToInt (kRenderingScale * (float) getWidth ()),
+                                  juce::roundToInt (kRenderingScale * (float) getHeight ())));
 
     juce::OpenGLHelpers::clear (getLookAndFeel ().findColour (LookAndFeel::ColourIds::kPanel));
 
-    juce::gl::glEnable (juce::gl::GL_BLEND);
-    juce::gl::glBlendFunc (juce::gl::GL_SRC_ALPHA, juce::gl::GL_ONE_MINUS_SRC_ALPHA);
+    GLCall (juce::gl::glEnable (juce::gl::GL_BLEND));
+    GLCall (juce::gl::glBlendFunc (juce::gl::GL_SRC_ALPHA, juce::gl::GL_ONE_MINUS_SRC_ALPHA));
 
     shader->use ();
 
@@ -133,39 +158,38 @@ void SpectrogramVisualiserComponent::renderOpenGL ()
         // Note that we start from 0!
         0,
         1,
-        3, // First Triangle
-        1,
+        2, // First Triangle
         2,
-        3 // Second Triangle
+        3,
+        0 // Second Triangle
     };
 
     // This appears to be required! see this -
     // https://stackoverflow.com/questions/48714591/modern-opengl-macos-only-black-screen
-    open_gl_context_.extensions.glGenVertexArrays (1, &vao_);
-    open_gl_context_.extensions.glBindVertexArray (vao_);
+    GLCall (open_gl_context_.extensions.glGenVertexArrays (1, &vao_));
+    GLCall (open_gl_context_.extensions.glBindVertexArray (vao_));
 
     // VBO (Vertex Buffer Object) - Bind and Write to Buffer
-    open_gl_context_.extensions.glBindBuffer (juce::gl::GL_ARRAY_BUFFER, vbo_);
-    open_gl_context_.extensions.glBufferData (
-        juce::gl::GL_ARRAY_BUFFER, sizeof (vertices), vertices, juce::gl::GL_STREAM_DRAW);
-
-    // EBO (Element Buffer Object) - Bind and Write to Buffer
-    open_gl_context_.extensions.glBindBuffer (juce::gl::GL_ELEMENT_ARRAY_BUFFER, ebo_);
-    open_gl_context_.extensions.glBufferData (
-        juce::gl::GL_ELEMENT_ARRAY_BUFFER, sizeof (indices), indices, juce::gl::GL_STREAM_DRAW);
+    GLCall (open_gl_context_.extensions.glBindBuffer (juce::gl::GL_ARRAY_BUFFER, vbo_));
+    GLCall (open_gl_context_.extensions.glBufferData (
+        juce::gl::GL_ARRAY_BUFFER, sizeof (vertices), vertices, juce::gl::GL_STREAM_DRAW));
 
     // Setup Vertex Attributes
-    open_gl_context_.extensions.glVertexAttribPointer (
-        0, 3, juce::gl::GL_FLOAT, juce::gl::GL_FALSE, 3 * sizeof (GLfloat), nullptr);
-    open_gl_context_.extensions.glEnableVertexAttribArray (0);
+    GLCall (open_gl_context_.extensions.glVertexAttribPointer (
+        0, 3, juce::gl::GL_FLOAT, juce::gl::GL_FALSE, 3 * sizeof (GLfloat), nullptr));
+    GLCall (open_gl_context_.extensions.glEnableVertexAttribArray (0));
 
-    // Draw Vertices
-    // glDrawArrays (GL_TRIANGLES, 0, 6); // For just VBO's (Vertex Buffer Objects)
-    juce::gl::glDrawElements (juce::gl::GL_TRIANGLES, 6, juce::gl::GL_UNSIGNED_INT, nullptr);
+    // IBO (Index Buffer Object) - Bind and Write to Buffer
+    GLCall (open_gl_context_.extensions.glBindBuffer (juce::gl::GL_ELEMENT_ARRAY_BUFFER, ibo_));
+    GLCall (open_gl_context_.extensions.glBufferData (
+        juce::gl::GL_ELEMENT_ARRAY_BUFFER, sizeof (indices), indices, juce::gl::GL_STREAM_DRAW));
+
+    GLCall (
+        juce::gl::glDrawElements (juce::gl::GL_TRIANGLES, 6, juce::gl::GL_UNSIGNED_INT, nullptr));
 
     // Reset the element buffers so child Components draw correctly
-    open_gl_context_.extensions.glBindBuffer (juce::gl::GL_ARRAY_BUFFER, 0);
-    open_gl_context_.extensions.glBindBuffer (juce::gl::GL_ELEMENT_ARRAY_BUFFER, 0);
+    GLCall (open_gl_context_.extensions.glBindBuffer (juce::gl::GL_ARRAY_BUFFER, 0));
+    GLCall (open_gl_context_.extensions.glBindBuffer (juce::gl::GL_ELEMENT_ARRAY_BUFFER, 0));
 }
 
 void SpectrogramVisualiserComponent::resized ()
@@ -183,7 +207,10 @@ void SpectrogramVisualiserComponent::resized ()
 
 void SpectrogramVisualiserComponent::CreateShaders ()
 {
-    auto lock = std::lock_guard (shader_mutex_);
+    juce::SpinLock::ScopedTryLockType lock (shader_mutex_);
+    if (! lock.isLocked ())
+        return;
+
     auto gl_shader_program = std::make_unique<juce::OpenGLShaderProgram> (open_gl_context_);
 
     if (new_vertex_shader_.isNotEmpty () || new_fragment_shader_.isNotEmpty ())
@@ -213,7 +240,7 @@ void SpectrogramVisualiserComponent::CreateShaders ()
 
 void SpectrogramVisualiserComponent::UpdateShaders ()
 {
-    auto lock = std::lock_guard (shader_mutex_);
+    juce::SpinLock::ScopedLockType lock (shader_mutex_);
 
 #if JUCE_DEBUG
     static const auto fragment_shader_filepath = kShaderDirectory / "osc_2d.frag.glsl";

@@ -47,9 +47,9 @@ private:
     static const std::filesystem::path kShaderDirectory;
 
     juce::OpenGLContext open_gl_context_;
-    GLuint vbo_, vao_, ebo_;
+    GLuint vbo_, vao_, ibo_;
 
-    std::mutex shader_mutex_;
+    juce::SpinLock shader_mutex_;
     juce::String new_vertex_shader_;
     juce::String new_fragment_shader_;
     std::unique_ptr<juce::OpenGLShaderProgram> shader;
