@@ -3,7 +3,7 @@
 #include "IrGraph.h"
 #include "juce_core/juce_core.h"
 #include "processors/BaseIrProcessor.h"
-#include "processors/TestProcessor.h"
+#include "processors/RoomSizeProcessor.h"
 
 class IrEngine
 {
@@ -42,7 +42,8 @@ private:
     juce::ThreadPool thread_pool_;
 
     std::shared_ptr<BaseIrProcessor> base_ir_processor_ = std::make_shared<BaseIrProcessor> ();
-    std::shared_ptr<IrGraphProcessor> test_processor_ = std::make_shared<TestProcessor> ();
+    std::shared_ptr<RoomSizeProcessor> room_size_processor_ =
+        std::make_shared<RoomSizeProcessor> ();
 
     IrGraph ir_graph_ =
         IrGraph ()
@@ -50,6 +51,6 @@ private:
                                  .WithPolicyIdentifier ("base_ir_processor")
                                  .WithCachedHandle (&IrGraphState::CacheBaseIr),
                              base_ir_processor_})
-            .WithProcessor (
-                {IrGraph::CachePolicy ().WithPolicyIdentifier ("test_processor"), test_processor_});
+            .WithProcessor ({IrGraph::CachePolicy ().WithPolicyIdentifier ("room_size_processor"),
+                             room_size_processor_});
 };

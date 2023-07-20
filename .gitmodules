@@ -16,3 +16,6 @@
 [submodule "lib/choc/choc"]
 	path = lib/choc/choc
 	url = git@github.com:Tracktion/choc.git
+[submodule "lib/stretch"]
+	path = lib/stretch
+	url = https://signalsmith-audio.co.uk/code/stretch.git

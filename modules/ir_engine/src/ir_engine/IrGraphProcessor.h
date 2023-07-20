@@ -23,6 +23,8 @@ struct IrGraphState
     std::string base_ir;
     IrGraphProcessor::BoxedBuffer base_ir_buffer;
 
+    float room_size;
+
     static float CacheParam1 (const IrGraphState & state)
     {
         return state.param_1;
@@ -41,5 +43,10 @@ struct IrGraphState
     static const std::string & CacheBaseIr (const IrGraphState & state)
     {
         return state.base_ir;
+    }
+
+    static const float CacheRoomSize (const IrGraphState & state)
+    {
+        return state.room_size;
     }
 };

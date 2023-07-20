@@ -6,8 +6,6 @@ zones_add_module(
         src/ir_engine/IrEngine.h
         src/ir_engine/IrGraph.cpp
         src/ir_engine/IrGraph.h
-        src/ir_engine/processors/TestProcessor.h
-        src/ir_engine/processors/TestProcessor.cpp
         src/ir_engine/processors/BaseIrProcessor.h
         src/ir_engine/processors/BaseIrProcessor.cpp
         src/ir_engine/ProcessResultPool.h
@@ -19,6 +17,8 @@ zones_add_module(
         src/ir_engine/IrGraphStateKey.cpp
         src/ir_engine/IrWatchController.h
         src/ir_engine/IrWatchController.cpp
+        src/ir_engine/processors/RoomSizeProcessor.h
+        src/ir_engine/processors/RoomSizeProcessor.cpp
         DEPS
         ir_repository
         audio_engine
