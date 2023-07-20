@@ -45,4 +45,7 @@ private:
     void AddProjectPath ();
     void ImportProjectIr ();
     void SelectProjectIr (const lager::context<ProjectIrRepositoryAction> & context) const;
+
+    juce::Slider room_size_slider_ {juce::Slider::SliderStyle::LinearHorizontal,
+                                    juce::Slider::TextEntryBoxPosition::NoTextBox};
 };

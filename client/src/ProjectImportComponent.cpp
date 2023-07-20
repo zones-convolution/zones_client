@@ -16,11 +16,14 @@ ProjectImportComponent::ProjectImportComponent (
     , context_ (context)
 
 {
+    room_size_slider_.setRange ({.2f, 2.f}, 0);
+
     addAndMakeVisible (current_project_paths_);
     addAndMakeVisible (current_ir_);
     addAndMakeVisible (add_project_path_button_);
     addAndMakeVisible (import_project_ir_button_);
     addAndMakeVisible (project_ir_combo_box_);
+    addAndMakeVisible (room_size_slider_);
 
     import_project_ir_button_.setEnabled (false);
 
@@ -110,6 +113,8 @@ void ProjectImportComponent::resized ()
     layout.items.add (juce::FlexItem (current_ir_).withFlex (1.f));
     layout.items.add (LookAndFeel::kFlexSpacer);
     layout.items.add (juce::FlexItem (project_ir_combo_box_).withFlex (1.f));
+    layout.items.add (LookAndFeel::kFlexSpacer);
+    layout.items.add (juce::FlexItem (room_size_slider_).withFlex (1.f));
 
     layout.performLayout (getLocalBounds ().toFloat ().reduced (LookAndFeel::kPadding));
 }
