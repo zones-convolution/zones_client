@@ -19,7 +19,7 @@ private:
     juce::ComboBox preset_box_;
 
     juce::String fragment_code_;
-    std::unique_ptr<juce::OpenGLGraphicsContextCustomShader> shader;
+    std::unique_ptr<juce::OpenGLGraphicsContextCustomShader> fragment_shader_;
     juce::OpenGLContext open_gl_context_;
 
     struct ShaderPreset

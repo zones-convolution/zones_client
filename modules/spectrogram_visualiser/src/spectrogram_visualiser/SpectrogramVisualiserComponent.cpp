@@ -1,5 +1,7 @@
 #include "SpectrogramVisualiserComponent.h"
 
+#include <memory>
+
 extern "C" const char shaders_solid_colour_frag_glsl [];
 extern "C" const unsigned shaders_solid_colour_frag_glsl_size;
 
@@ -35,7 +37,7 @@ SpectrogramVisualiserComponent::SpectrogramVisualiserComponent ()
 SpectrogramVisualiserComponent::~SpectrogramVisualiserComponent ()
 {
     open_gl_context_.detach ();
-    shader.reset ();
+    fragment_shader_.reset ();
 }
 
 void SpectrogramVisualiserComponent::paint (juce::Graphics & g)
@@ -43,27 +45,27 @@ void SpectrogramVisualiserComponent::paint (juce::Graphics & g)
     g.fillCheckerBoard (
         getLocalBounds ().toFloat (), 48.0f, 48.0f, juce::Colours::lightgrey, juce::Colours::white);
 
-    if (shader.get () == nullptr || shader->getFragmentShaderCode () != fragment_code_)
+    if (fragment_shader_ == nullptr || fragment_shader_->getFragmentShaderCode () != fragment_code_)
     {
-        shader.reset ();
+        fragment_shader_.reset ();
         if (fragment_code_.isNotEmpty ())
         {
-            shader.reset (new juce::OpenGLGraphicsContextCustomShader (fragment_code_));
-
-            auto result = shader->checkCompilation (g.getInternalContext ());
+            fragment_shader_ =
+                std::make_unique<juce::OpenGLGraphicsContextCustomShader> (fragment_code_);
+            auto result = fragment_shader_->checkCompilation (g.getInternalContext ());
 
             if (result.failed ())
             {
                 status_label_.setText (result.getErrorMessage (), juce::dontSendNotification);
-                shader.reset ();
+                fragment_shader_.reset ();
             }
         }
     }
 
-    if (shader.get () != nullptr)
+    if (fragment_shader_ != nullptr)
     {
         status_label_.setText ({}, juce::dontSendNotification);
-        shader->fillRect (g.getInternalContext (), getLocalBounds ());
+        fragment_shader_->fillRect (g.getInternalContext (), getLocalBounds ());
     }
 }
 
