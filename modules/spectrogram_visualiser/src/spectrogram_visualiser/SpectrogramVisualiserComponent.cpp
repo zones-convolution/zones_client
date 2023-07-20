@@ -82,6 +82,17 @@ void SpectrogramVisualiserComponent::renderOpenGL ()
     // Read in samples from ring buffer
     if (uniforms->audio_sample_data != nullptr)
     {
+        juce::AudioBuffer<float> buff;
+        buff.setSize (2, kRingBufferReadSize);
+        juce::Random rand;
+        for (auto channel = 0; channel < buff.getNumChannels (); ++channel)
+        {
+            auto * buffer = buff.getWritePointer (channel, 0);
+            for (auto sample = 0; sample < buff.getNumSamples (); ++sample)
+                buffer [sample] = rand.nextFloat () * 0.25f - 0.125f;
+        }
+
+        ring_buffer_->writeSamples (buff, 0, kRingBufferReadSize);
         ring_buffer_->readSamples (read_buffer_, kRingBufferReadSize);
         juce::FloatVectorOperations::clear (visualization_buffer_, kRingBufferReadSize);
 
@@ -137,20 +148,16 @@ void SpectrogramVisualiserComponent::renderOpenGL ()
 
     // Setup Vertex Attributes
     open_gl_context_.extensions.glVertexAttribPointer (
-        0, 3, juce::gl::GL_FLOAT, juce::gl::GL_FALSE, 3 * sizeof (GLfloat), (GLvoid *) 0);
+        0, 3, juce::gl::GL_FLOAT, juce::gl::GL_FALSE, 3 * sizeof (GLfloat), nullptr);
     open_gl_context_.extensions.glEnableVertexAttribArray (0);
 
     // Draw Vertices
     // glDrawArrays (GL_TRIANGLES, 0, 6); // For just VBO's (Vertex Buffer Objects)
-    juce::gl::glDrawElements (juce::gl::GL_TRIANGLES,
-                              6,
-                              juce::gl::GL_UNSIGNED_INT,
-                              0); // For EBO's (Element Buffer Objects) (Indices)
+    juce::gl::glDrawElements (juce::gl::GL_TRIANGLES, 6, juce::gl::GL_UNSIGNED_INT, nullptr);
 
     // Reset the element buffers so child Components draw correctly
     open_gl_context_.extensions.glBindBuffer (juce::gl::GL_ARRAY_BUFFER, 0);
     open_gl_context_.extensions.glBindBuffer (juce::gl::GL_ELEMENT_ARRAY_BUFFER, 0);
-    // openGLContext.extensions.glBindVertexArray(0);
 }
 
 void SpectrogramVisualiserComponent::resized ()
@@ -163,10 +170,8 @@ void SpectrogramVisualiserComponent::CreateShaders ()
     auto gl_shader_program = std::make_unique<juce::OpenGLShaderProgram> (open_gl_context_);
 
     juce::String status_text;
-    if (gl_shader_program->addVertexShader (juce::OpenGLHelpers::translateVertexShaderToV3 (
-            juce::StringRef (shaders_osc_3d_vert_glsl))) &&
-        gl_shader_program->addFragmentShader (juce::OpenGLHelpers::translateFragmentShaderToV3 (
-            juce::StringRef (shaders_osc_3d_frag_glsl))) &&
+    if (gl_shader_program->addVertexShader (juce::StringRef (shaders_osc_3d_vert_glsl)) &&
+        gl_shader_program->addFragmentShader (juce::StringRef (shaders_osc_3d_frag_glsl)) &&
         gl_shader_program->link ())
     {
         uniforms.reset ();

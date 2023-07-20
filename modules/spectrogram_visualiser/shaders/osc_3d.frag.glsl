@@ -1,3 +1,5 @@
+#version 330 core
+
 // Define a 2D vector to store the screen resolution
 uniform vec2 resolution;
 
@@ -21,6 +23,8 @@ void getAmplitudeForXPos(in float xPos, out float audioAmplitude)
 // Define a constant for the thickness of the wave
 #define THICKNESS 0.02
 
+layout(location = 0) out vec4 fragColor;
+
 // Main function that gets called for each pixel on the screen
 void main()
 {
@@ -29,16 +33,16 @@ void main()
 
     // Variable to store the audio amplitude at the current x position
     float amplitude = 0.0;
-
     // Get the audio amplitude for the current x position
     getAmplitudeForXPos(gl_FragCoord.x, amplitude);
 
     // Center and reduce the wave amplitude
-    amplitude = 0.5 - amplitude / 2.5;
+    amplitude = 0.5 - amplitude / 2;
 
-    // Calculate the radius of the wave at the current pixel
-    float radius = abs(THICKNESS / (amplitude - y_cord));
+    // Calculate the intensity of the wave at the current pixel
+    float intensity = THICKNESS / abs(amplitude - y_cord);
+    vec4 colour = vec4(0, 1, 0, 1);
 
     // Set the color of the current pixel based on the wave radius
-    gl_FragColor = vec4(radius - abs(radius * 0.2), radius - abs(radius * 0.2), radius - abs(radius * 0.2), 1.0);
+    fragColor = vec4(intensity, intensity, intensity, intensity) * colour;
 }
