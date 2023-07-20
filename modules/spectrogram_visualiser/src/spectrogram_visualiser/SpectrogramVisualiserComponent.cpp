@@ -12,6 +12,7 @@ SpectrogramVisualiserComponent::SpectrogramVisualiserComponent (RingBuffer<GLflo
     : ring_buffer_ (ringBuffer)
     , read_buffer_ (2, kRingBufferReadSize)
 {
+    setOpaque (true);
     open_gl_context_.setOpenGLVersionRequired (juce::OpenGLContext::OpenGLVersion::openGL4_1);
 
     if (auto * peer = getPeer ())
@@ -22,6 +23,10 @@ SpectrogramVisualiserComponent::SpectrogramVisualiserComponent (RingBuffer<GLflo
 
     addAndMakeVisible (status_label_);
     status_label_.setJustificationType (juce::Justification::topLeft);
+}
+
+void SpectrogramVisualiserComponent::paint (juce::Graphics & g)
+{
 }
 
 SpectrogramVisualiserComponent::~SpectrogramVisualiserComponent ()
@@ -57,25 +62,18 @@ void SpectrogramVisualiserComponent::renderOpenGL ()
 {
     jassert (juce::OpenGLHelpers::isContextActive ());
 
-    // Setup Viewport
     const auto kRenderingScale = (float) open_gl_context_.getRenderingScale ();
     juce::gl::glViewport (0,
                           0,
-                          juce::roundToInt (kRenderingScale * getWidth ()),
-                          juce::roundToInt (kRenderingScale * getHeight ()));
+                          juce::roundToInt (kRenderingScale * (float) getWidth ()),
+                          juce::roundToInt (kRenderingScale * (float) getHeight ()));
 
-    // Set background Color
-    juce::OpenGLHelpers::clear (
-        getLookAndFeel ().findColour (juce::ResizableWindow::backgroundColourId));
+    juce::OpenGLHelpers::clear (getLookAndFeel ().findColour (LookAndFeel::ColourIds::kPanel));
 
-    // Enable Alpha Blending
     juce::gl::glEnable (juce::gl::GL_BLEND);
     juce::gl::glBlendFunc (juce::gl::GL_SRC_ALPHA, juce::gl::GL_ONE_MINUS_SRC_ALPHA);
 
-    // Use Shader Program that's been defined
     shader->use ();
-
-    // Setup the Uniforms for use in the Shader
 
     if (uniforms->resolution != nullptr)
         uniforms->resolution->set ((GLfloat) kRenderingScale * getWidth (),
@@ -85,15 +83,12 @@ void SpectrogramVisualiserComponent::renderOpenGL ()
     if (uniforms->audio_sample_data != nullptr)
     {
         ring_buffer_->readSamples (read_buffer_, kRingBufferReadSize);
-
         juce::FloatVectorOperations::clear (visualization_buffer_, kRingBufferReadSize);
 
         // Sum channels together
         for (int i = 0; i < 2; ++i)
-        {
             juce::FloatVectorOperations::add (
                 visualization_buffer_, read_buffer_.getReadPointer (i, 0), kRingBufferReadSize);
-        }
 
         uniforms->audio_sample_data->set (visualization_buffer_, 256);
     }
@@ -113,6 +108,7 @@ void SpectrogramVisualiserComponent::renderOpenGL ()
         1.0f,
         0.0f // Top Left
     };
+
     // Define Which Vertex Indexes Make the Square
     GLuint indices [] = {
         // Note that we start from 0!
@@ -133,10 +129,6 @@ void SpectrogramVisualiserComponent::renderOpenGL ()
     open_gl_context_.extensions.glBindBuffer (juce::gl::GL_ARRAY_BUFFER, vbo_);
     open_gl_context_.extensions.glBufferData (
         juce::gl::GL_ARRAY_BUFFER, sizeof (vertices), vertices, juce::gl::GL_STREAM_DRAW);
-    // GL_DYNAMIC_DRAW or GL_STREAM_DRAW
-    // Don't we want GL_DYNAMIC_DRAW since this
-    // vertex data will be changing alot??
-    // test this
 
     // EBO (Element Buffer Object) - Bind and Write to Buffer
     open_gl_context_.extensions.glBindBuffer (juce::gl::GL_ELEMENT_ARRAY_BUFFER, ebo_);

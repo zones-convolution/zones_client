@@ -25,6 +25,7 @@ public:
     void renderOpenGL () override;
 
     void resized () override;
+    void paint (juce::Graphics & g) override;
 
 private:
     void CreateShaders ();

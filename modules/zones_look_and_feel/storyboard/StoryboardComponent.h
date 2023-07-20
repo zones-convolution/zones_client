@@ -23,7 +23,7 @@ private:
     PanelComponent combos_panel_ {combos_};
 
     Visualisers visualisers_;
-    PanelComponent visualisers_panel_ {visualisers_, true};
+    PanelComponent visualisers_panel_ {visualisers_};
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (StoryboardComponent)
 };
