@@ -25,6 +25,31 @@ void getAmplitudeForXPos(in float xPos, out float audioAmplitude)
 
 layout(location = 0) out vec4 fragColor;
 
+float fadeAlphaOnEdges(vec2 position, vec2 size, float percentage) {
+    // Calculate the distance from the center of the screen in the X dimension
+    float centerX = size.x * 0.5;
+    float distanceX = abs(position.x - centerX);
+
+    // Calculate the maximum distance at which alpha should be 1 in the X dimension
+    float maxXDistance = size.x * (0.5 - percentage * 0.5);
+
+    // Calculate the alpha value based on the distance in the X dimension
+    float alphaX = clamp(1.0 - distanceX / maxXDistance, 0.0, 1.0);
+
+    // Calculate the distance from the center of the screen in the Y dimension
+    float centerY = size.y * 0.5;
+    float distanceY = abs(position.y - centerY);
+
+    // Calculate the maximum distance at which alpha should be 1 in the Y dimension
+    float maxYDistance = size.y * (0.5 - percentage * 0.5);
+
+    // Calculate the alpha value based on the distance in the Y dimension
+    float alphaY = clamp(1.0 - distanceY / maxYDistance, 0.0, 1.0);
+
+    // Return the minimum of the two alpha values, so that the alpha value is only 1 if both X and Y distances are within the desired range
+    return min(alphaX, alphaY);
+}
+
 // Main function that gets called for each pixel on the screen
 void main()
 {
@@ -41,8 +66,9 @@ void main()
 
     // Calculate the intensity of the wave at the current pixel
     float intensity = THICKNESS / abs(amplitude - y_cord);
-    vec4 colour = vec4(0, 1, 0, 1);
+    vec4 colour = vec4(0.0, 1.0, 0.0, 1.0);
+    float alpha = fadeAlphaOnEdges(gl_FragCoord.xy, resolution, 0.02);
 
     // Set the color of the current pixel based on the wave radius
-    fragColor = vec4(intensity, intensity, intensity, intensity) * colour;
+    fragColor = intensity * colour * alpha;
 }
