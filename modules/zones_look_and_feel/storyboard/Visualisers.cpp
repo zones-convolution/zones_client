@@ -7,6 +7,7 @@ Visualisers::Visualisers ()
 
     addAndMakeVisible (visualisers_label_);
     addAndMakeVisible (spectrogram_visualiser_component_);
+    spectrogram_visualiser_component_.Start ();
 }
 
 void Visualisers::resized ()

@@ -1,7 +1,7 @@
 zones_add_module(
         MODULE spectrogram_visualiser
-        SOURCES src/spectrogram_visualiser/SpectrogramVisualiserComponent.h src/spectrogram_visualiser/SpectrogramVisualiserComponent.cpp
-        DEPS juce::juce_gui_basics juce::juce_opengl zones_look_and_feel
+        SOURCES src/spectrogram_visualiser/SpectrogramVisualiserComponent.h src/spectrogram_visualiser/SpectrogramVisualiserComponent.cpp src/spectrogram_visualiser/RingBuffer.h
+        DEPS juce::juce_gui_basics juce::juce_opengl zones_look_and_feel juce::juce_audio_basics
 )
 
 # https://github.com/shir0areed/non-invasive-embed-resources.cmake
@@ -24,9 +24,5 @@ function(embed_resources target)
 endfunction()
 
 embed_resources(spectrogram_visualiser
-        shaders/test.frag.glsl
-        shaders/test.vert.glsl
-        shaders/solid_colour.frag.glsl
-        shaders/simple_gradient.frag.glsl
-        shaders/circular_gradient.frag.glsl
-        shaders/circle.frag.glsl)
+        shaders/osc_3d.frag.glsl
+        shaders/osc_3d.vert.glsl)

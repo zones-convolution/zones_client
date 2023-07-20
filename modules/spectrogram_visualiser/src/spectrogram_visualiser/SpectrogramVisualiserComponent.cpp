@@ -2,98 +2,211 @@
 
 #include <memory>
 
-extern "C" const char shaders_solid_colour_frag_glsl [];
-extern "C" const unsigned shaders_solid_colour_frag_glsl_size;
+extern "C" const char shaders_osc_3d_frag_glsl [];
+extern "C" const unsigned shaders_osc_3d_frag_glsl_size;
 
-extern "C" const char shaders_simple_gradient_frag_glsl [];
-extern "C" const unsigned shaders_simple_gradient_frag_glsl_size;
+extern "C" const char shaders_osc_3d_vert_glsl [];
+extern "C" const unsigned shaders_osc_3d_vert_glsl_size;
 
-extern "C" const char shaders_circular_gradient_frag_glsl [];
-extern "C" const unsigned shaders_circular_gradient_frag_glsl_size;
-
-extern "C" const char shaders_circle_frag_glsl [];
-extern "C" const unsigned shaders_circle_frag_glsl_size;
-
-SpectrogramVisualiserComponent::SpectrogramVisualiserComponent ()
+SpectrogramVisualiserComponent::SpectrogramVisualiserComponent (RingBuffer<GLfloat> * ringBuffer)
+    : ring_buffer_ (ringBuffer)
+    , read_buffer_ (2, kRingBufferReadSize)
 {
-    setOpaque (true);
-
     if (auto * peer = getPeer ())
         peer->setCurrentRenderingEngine (0);
 
-    open_gl_context_.attachTo (*getTopLevelComponent ());
+    open_gl_context_.setRenderer (this);
+    open_gl_context_.attachTo (*this);
 
     addAndMakeVisible (status_label_);
-    status_label_.setJustificationType (juce::Justification::centred);
-
-    auto presets = GetPresets ();
-    for (int i = 0; i < presets.size (); ++i)
-        preset_box_.addItem (presets [i].name, i + 1);
-    addAndMakeVisible (preset_box_);
-    preset_box_.onChange = [this] { SelectPreset (preset_box_.getSelectedItemIndex ()); };
-    preset_box_.setSelectedItemIndex (0);
+    status_label_.setJustificationType (juce::Justification::topLeft);
 }
 
 SpectrogramVisualiserComponent::~SpectrogramVisualiserComponent ()
 {
+    open_gl_context_.setContinuousRepainting (false);
     open_gl_context_.detach ();
-    fragment_shader_.reset ();
 }
 
-void SpectrogramVisualiserComponent::paint (juce::Graphics & g)
+void SpectrogramVisualiserComponent::Start ()
 {
-    g.fillCheckerBoard (
-        getLocalBounds ().toFloat (), 48.0f, 48.0f, juce::Colours::lightgrey, juce::Colours::white);
+    open_gl_context_.setContinuousRepainting (true);
+}
 
-    if (fragment_shader_ == nullptr || fragment_shader_->getFragmentShaderCode () != fragment_code_)
+void SpectrogramVisualiserComponent::Stop ()
+{
+    open_gl_context_.setContinuousRepainting (false);
+}
+
+void SpectrogramVisualiserComponent::newOpenGLContextCreated ()
+{
+    CreateShaders ();
+    open_gl_context_.extensions.glGenBuffers (1, &vbo_);
+    open_gl_context_.extensions.glGenBuffers (1, &ebo_);
+}
+
+void SpectrogramVisualiserComponent::openGLContextClosing ()
+{
+    shader.reset ();
+    uniforms.reset ();
+}
+
+void SpectrogramVisualiserComponent::renderOpenGL ()
+{
+    jassert (juce::OpenGLHelpers::isContextActive ());
+
+    // Setup Viewport
+    const auto kRenderingScale = (float) open_gl_context_.getRenderingScale ();
+    juce::gl::glViewport (0,
+                          0,
+                          juce::roundToInt (kRenderingScale * getWidth ()),
+                          juce::roundToInt (kRenderingScale * getHeight ()));
+
+    // Set background Color
+    juce::OpenGLHelpers::clear (
+        getLookAndFeel ().findColour (juce::ResizableWindow::backgroundColourId));
+
+    // Enable Alpha Blending
+    juce::gl::glEnable (juce::gl::GL_BLEND);
+    juce::gl::glBlendFunc (juce::gl::GL_SRC_ALPHA, juce::gl::GL_ONE_MINUS_SRC_ALPHA);
+
+    // Use Shader Program that's been defined
+    shader->use ();
+
+    // Setup the Uniforms for use in the Shader
+
+    if (uniforms->resolution != nullptr)
+        uniforms->resolution->set ((GLfloat) kRenderingScale * getWidth (),
+                                   (GLfloat) kRenderingScale * getHeight ());
+
+    // Read in samples from ring buffer
+    if (uniforms->audio_sample_data != nullptr)
     {
-        fragment_shader_.reset ();
-        if (fragment_code_.isNotEmpty ())
+        ring_buffer_->readSamples (read_buffer_, kRingBufferReadSize);
+
+        juce::FloatVectorOperations::clear (visualization_buffer_, kRingBufferReadSize);
+
+        // Sum channels together
+        for (int i = 0; i < 2; ++i)
         {
-            fragment_shader_ =
-                std::make_unique<juce::OpenGLGraphicsContextCustomShader> (fragment_code_);
-            auto result = fragment_shader_->checkCompilation (g.getInternalContext ());
-
-            if (result.failed ())
-            {
-                status_label_.setText (result.getErrorMessage (), juce::dontSendNotification);
-                fragment_shader_.reset ();
-            }
+            juce::FloatVectorOperations::add (
+                visualization_buffer_, read_buffer_.getReadPointer (i, 0), kRingBufferReadSize);
         }
+
+        uniforms->audio_sample_data->set (visualization_buffer_, 256);
     }
 
-    if (fragment_shader_ != nullptr)
-    {
-        status_label_.setText ({}, juce::dontSendNotification);
-        fragment_shader_->fillRect (g.getInternalContext (), getLocalBounds ());
-    }
+    // Define Vertices for a Square (the view plane)
+    GLfloat vertices [] = {
+        1.0f,
+        1.0f,
+        0.0f, // Top Right
+        1.0f,
+        -1.0f,
+        0.0f, // Bottom Right
+        -1.0f,
+        -1.0f,
+        0.0f, // Bottom Left
+        -1.0f,
+        1.0f,
+        0.0f // Top Left
+    };
+    // Define Which Vertex Indexes Make the Square
+    GLuint indices [] = {
+        // Note that we start from 0!
+        0,
+        1,
+        3, // First Triangle
+        1,
+        2,
+        3 // Second Triangle
+    };
+
+    // Vertex Array Object stuff for later
+    // openGLContext.extensions.glGenVertexArrays(1, &VAO);
+    // openGLContext.extensions.glBindVertexArray(VAO);
+
+    // VBO (Vertex Buffer Object) - Bind and Write to Buffer
+    open_gl_context_.extensions.glBindBuffer (juce::gl::GL_ARRAY_BUFFER, vbo_);
+    open_gl_context_.extensions.glBufferData (
+        juce::gl::GL_ARRAY_BUFFER, sizeof (vertices), vertices, juce::gl::GL_STREAM_DRAW);
+    // GL_DYNAMIC_DRAW or GL_STREAM_DRAW
+    // Don't we want GL_DYNAMIC_DRAW since this
+    // vertex data will be changing alot??
+    // test this
+
+    // EBO (Element Buffer Object) - Bind and Write to Buffer
+    open_gl_context_.extensions.glBindBuffer (juce::gl::GL_ELEMENT_ARRAY_BUFFER, ebo_);
+    open_gl_context_.extensions.glBufferData (
+        juce::gl::GL_ELEMENT_ARRAY_BUFFER, sizeof (indices), indices, juce::gl::GL_STREAM_DRAW);
+    // GL_DYNAMIC_DRAW or GL_STREAM_DRAW
+    // Don't we want GL_DYNAMIC_DRAW since this
+    // vertex data will be changing alot??
+    // test this
+
+    // Setup Vertex Attributes
+    open_gl_context_.extensions.glVertexAttribPointer (
+        0, 3, juce::gl::GL_FLOAT, juce::gl::GL_FALSE, 3 * sizeof (GLfloat), (GLvoid *) 0);
+    open_gl_context_.extensions.glEnableVertexAttribArray (0);
+
+    // Draw Vertices
+    // glDrawArrays (GL_TRIANGLES, 0, 6); // For just VBO's (Vertex Buffer Objects)
+    juce::gl::glDrawElements (juce::gl::GL_TRIANGLES,
+                              6,
+                              juce::gl::GL_UNSIGNED_INT,
+                              0); // For EBO's (Element Buffer Objects) (Indices)
+
+    // Reset the element buffers so child Components draw correctly
+    open_gl_context_.extensions.glBindBuffer (juce::gl::GL_ARRAY_BUFFER, 0);
+    open_gl_context_.extensions.glBindBuffer (juce::gl::GL_ELEMENT_ARRAY_BUFFER, 0);
+    // openGLContext.extensions.glBindVertexArray(0);
 }
 
 void SpectrogramVisualiserComponent::resized ()
 {
-    juce::FlexBox layout;
-    layout.flexDirection = juce::FlexBox::Direction::column;
-    layout.justifyContent = juce::FlexBox::JustifyContent::flexEnd;
-
-    layout.items.add (juce::FlexItem (status_label_).withHeight (20.f));
-    layout.items.add (LookAndFeel::kFlexSpacer);
-    layout.items.add (juce::FlexItem (preset_box_).withHeight (40.f));
-
-    layout.performLayout (getLocalBounds ().toFloat ().reduced (LookAndFeel::kPadding));
+    status_label_.setBounds (getLocalBounds ().reduced (4).removeFromTop (75));
 }
 
-juce::Array<SpectrogramVisualiserComponent::ShaderPreset>
-SpectrogramVisualiserComponent::GetPresets ()
+void SpectrogramVisualiserComponent::CreateShaders ()
 {
-    return {
-        ShaderPreset {"Simple Gradient", juce::StringRef (shaders_simple_gradient_frag_glsl)},
-        ShaderPreset {"Circular Gradient", juce::StringRef (shaders_circular_gradient_frag_glsl)},
-        ShaderPreset {"Circle", juce::StringRef (shaders_circle_frag_glsl)},
-        ShaderPreset {"Solid Colour", juce::StringRef (shaders_solid_colour_frag_glsl)}};
+    auto gl_shader_program = std::make_unique<juce::OpenGLShaderProgram> (open_gl_context_);
+
+    juce::String status_text;
+    if (gl_shader_program->addVertexShader (juce::StringRef (shaders_osc_3d_vert_glsl)) &&
+        gl_shader_program->addFragmentShader (juce::StringRef (shaders_osc_3d_frag_glsl)) &&
+        gl_shader_program->link ())
+    {
+        uniforms.reset ();
+        shader = std::move (gl_shader_program);
+        uniforms = std::make_unique<Uniforms> (open_gl_context_, *shader);
+
+        status_text =
+            "GLSL: v" + juce::String (juce::OpenGLShaderProgram::getLanguageVersion (), 2);
+    }
+    else
+    {
+        status_text = gl_shader_program->getLastError ();
+    }
+
+    juce::MessageManager::callAsync (
+        [&, status_text] () { status_label_.setText (status_text, juce::dontSendNotification); });
 }
 
-void SpectrogramVisualiserComponent::SelectPreset (int preset)
+juce::OpenGLShaderProgram::Uniform *
+SpectrogramVisualiserComponent::Uniforms::CreateUniform (juce::OpenGLContext & open_gl_context,
+                                                         juce::OpenGLShaderProgram & shader_program,
+                                                         const char * uniform_name)
 {
-    fragment_code_ = GetPresets () [preset].fragment_shader;
-    repaint ();
+    if (open_gl_context.extensions.glGetUniformLocation (shader_program.getProgramID (),
+                                                         uniform_name) < 0)
+        return nullptr;
+
+    return new juce::OpenGLShaderProgram::Uniform (shader_program, uniform_name);
+}
+
+SpectrogramVisualiserComponent::Uniforms::Uniforms (juce::OpenGLContext & open_gl_context,
+                                                    juce::OpenGLShaderProgram & shader_program)
+{
+    resolution.reset (CreateUniform (open_gl_context, shader_program, "resolution"));
+    audio_sample_data.reset (CreateUniform (open_gl_context, shader_program, "audioSampleData"));
 }

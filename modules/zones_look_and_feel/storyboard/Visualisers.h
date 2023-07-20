@@ -1,4 +1,5 @@
 #pragma once
+#include "spectrogram_visualiser/RingBuffer.h"
 #include "spectrogram_visualiser/SpectrogramVisualiserComponent.h"
 #include "zones_look_and_feel/LookAndFeel.h"
 
@@ -12,5 +13,6 @@ public:
 
 private:
     juce::Label visualisers_label_;
-    SpectrogramVisualiserComponent spectrogram_visualiser_component_;
+    RingBuffer<GLfloat> ring_buffer_ {2, 1024};
+    SpectrogramVisualiserComponent spectrogram_visualiser_component_ {&ring_buffer_};
 };
