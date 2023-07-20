@@ -24,4 +24,9 @@ function(embed_resources target)
 endfunction()
 
 embed_resources(spectrogram_visualiser
-        shaders/test.frag.glsl shaders/test.vert.glsl)
+        shaders/test.frag.glsl
+        shaders/test.vert.glsl
+        shaders/solid_colour.frag.glsl
+        shaders/simple_gradient.frag.glsl
+        shaders/circular_gradient.frag.glsl
+        shaders/circle.frag.glsl)
