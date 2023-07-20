@@ -4,10 +4,7 @@
 
 #include <juce_gui_basics/juce_gui_basics.h>
 #include <juce_opengl/juce_opengl.h>
-class SpectrogramVisualiserComponent
-    : public juce::Component
-    , private juce::CodeDocument::Listener
-    , private juce::Timer
+class SpectrogramVisualiserComponent : public juce::Component
 {
 public:
     SpectrogramVisualiserComponent ()
@@ -17,29 +14,25 @@ public:
         if (auto * peer = getPeer ())
             peer->setCurrentRenderingEngine (0);
 
-        openGLContext.attachTo (*getTopLevelComponent ());
+        open_gl_context_.attachTo (*getTopLevelComponent ());
 
-        addAndMakeVisible (statusLabel);
-        statusLabel.setJustificationType (juce::Justification::centred);
+        addAndMakeVisible (status_label_);
+        status_label_.setJustificationType (juce::Justification::centred);
 
         auto presets = getPresets ();
 
         for (int i = 0; i < presets.size (); ++i)
-            presetBox.addItem (presets [i].name, i + 1);
+            preset_box_.addItem (presets [i].name, i + 1);
 
-        addAndMakeVisible (presetBox);
-        presetBox.onChange = [this] { selectPreset (presetBox.getSelectedItemIndex ()); };
+        addAndMakeVisible (preset_box_);
+        preset_box_.onChange = [this] { selectPreset (preset_box_.getSelectedItemIndex ()); };
 
-        fragmentEditorComp.setOpaque (false);
-        fragmentDocument.addListener (this);
-        addAndMakeVisible (fragmentEditorComp);
-
-        presetBox.setSelectedItemIndex (0);
+        preset_box_.setSelectedItemIndex (0);
     }
 
     ~SpectrogramVisualiserComponent () override
     {
-        openGLContext.detach ();
+        open_gl_context_.detach ();
         shader.reset ();
     }
 
@@ -51,19 +44,19 @@ public:
                             juce::Colours::lightgrey,
                             juce::Colours::white);
 
-        if (shader.get () == nullptr || shader->getFragmentShaderCode () != fragmentCode)
+        if (shader.get () == nullptr || shader->getFragmentShaderCode () != fragment_code_)
         {
             shader.reset ();
 
-            if (fragmentCode.isNotEmpty ())
+            if (fragment_code_.isNotEmpty ())
             {
-                shader.reset (new juce::OpenGLGraphicsContextCustomShader (fragmentCode));
+                shader.reset (new juce::OpenGLGraphicsContextCustomShader (fragment_code_));
 
                 auto result = shader->checkCompilation (g.getInternalContext ());
 
                 if (result.failed ())
                 {
-                    statusLabel.setText (result.getErrorMessage (), juce::dontSendNotification);
+                    status_label_.setText (result.getErrorMessage (), juce::dontSendNotification);
                     shader.reset ();
                 }
             }
@@ -71,7 +64,7 @@ public:
 
         if (shader.get () != nullptr)
         {
-            statusLabel.setText ({}, juce::dontSendNotification);
+            status_label_.setText ({}, juce::dontSendNotification);
 
             shader->fillRect (g.getInternalContext (), getLocalBounds ());
         }
@@ -83,84 +76,47 @@ public:
         layout.flexDirection = juce::FlexBox::Direction::column;
         layout.justifyContent = juce::FlexBox::JustifyContent::flexEnd;
 
-        layout.items.add (juce::FlexItem (statusLabel).withHeight (20.f));
+        layout.items.add (juce::FlexItem (status_label_).withHeight (20.f));
         layout.items.add (LookAndFeel::kFlexSpacer);
-        layout.items.add (juce::FlexItem (presetBox).withHeight (40.f));
-        layout.items.add (LookAndFeel::kFlexSpacer);
-        layout.items.add (juce::FlexItem (fragmentEditorComp).withHeight (80.f));
+        layout.items.add (juce::FlexItem (preset_box_).withHeight (40.f));
 
         layout.performLayout (getLocalBounds ().toFloat ().reduced (LookAndFeel::kPadding));
     }
 
     void selectPreset (int preset)
     {
-        fragmentDocument.replaceAllContent (getPresets () [preset].fragmentShader);
-        startTimer (1);
+        fragment_code_ = getPresets () [preset].fragment_shader;
+        repaint ();
     }
 
     std::unique_ptr<juce::OpenGLGraphicsContextCustomShader> shader;
 
-    juce::Label statusLabel {{}, "Shader Preset:"};
-    juce::ComboBox presetBox;
-    juce::CodeDocument fragmentDocument;
-    juce::CodeEditorComponent fragmentEditorComp {fragmentDocument, nullptr};
-    juce::String fragmentCode;
+    juce::Label status_label_ {{}, "Status"};
+    juce::ComboBox preset_box_;
+    juce::String fragment_code_;
 
 private:
-    juce::OpenGLContext openGLContext;
-
-    enum
-    {
-        shaderLinkDelay = 500
-    };
-
-    void codeDocumentTextInserted (const juce::String & /*newText*/, int /*insertIndex*/) override
-    {
-        startTimer (shaderLinkDelay);
-    }
-
-    void codeDocumentTextDeleted (int /*startIndex*/, int /*endIndex*/) override
-    {
-        startTimer (shaderLinkDelay);
-    }
-
-    void timerCallback () override
-    {
-        stopTimer ();
-        fragmentCode = fragmentDocument.getAllContent ();
-        repaint ();
-    }
+    juce::OpenGLContext open_gl_context_;
 
     struct ShaderPreset
     {
         const char * name;
-        const char * fragmentShader;
+        const char * fragment_shader;
     };
 
     static juce::Array<ShaderPreset> getPresets ()
     {
-#define SHADER_2DDEMO_HEADER                                                  \
-    "/*  This demo shows the use of the OpenGLGraphicsContextCustomShader,\n" \
-    "    which allows a 2D area to be filled using a GL shader program.\n"    \
-    "\n"                                                                      \
-    "    Edit the shader program below and it will be \n"                     \
-    "    recompiled in real-time!\n"                                          \
-    "*/\n\n"
-
         ShaderPreset presets [] = {
             {"Simple Gradient",
-
-             SHADER_2DDEMO_HEADER "void main()\n"
-                                  "{\n"
-                                  "    " JUCE_MEDIUMP " vec4 colour1 = vec4 (1.0, 0.4, 0.6, 1.0);\n"
-                                  "    " JUCE_MEDIUMP " vec4 colour2 = vec4 (0.0, 0.8, 0.6, 1.0);\n"
-                                  "    " JUCE_MEDIUMP " float alpha = pixelPos.x / 1000.0;\n"
-                                  "    gl_FragColor = pixelAlpha * mix (colour1, colour2, alpha);\n"
-                                  "}\n"},
+             "void main()\n"
+             "{\n"
+             "    " JUCE_MEDIUMP " vec4 colour1 = vec4 (1.0, 0.4, 0.6, 1.0);\n"
+             "    " JUCE_MEDIUMP " vec4 colour2 = vec4 (0.0, 0.8, 0.6, 1.0);\n"
+             "    " JUCE_MEDIUMP " float alpha = pixelPos.x / 1000.0;\n"
+             "    gl_FragColor = pixelAlpha * mix (colour1, colour2, alpha);\n"
+             "}\n"},
 
             {"Circular Gradient",
-
-             SHADER_2DDEMO_HEADER
              "void main()\n"
              "{\n"
              "    " JUCE_MEDIUMP " vec4 colour1 = vec4 (1.0, 0.4, 0.6, 1.0);\n"
@@ -171,8 +127,6 @@ private:
              "}\n"},
 
             {"Circle",
-
-             SHADER_2DDEMO_HEADER
              "void main()\n"
              "{\n"
              "    " JUCE_MEDIUMP " vec4 colour1 = vec4 (0.1, 0.1, 0.9, 1.0);\n"
@@ -193,11 +147,10 @@ private:
              "}\n"},
 
             {"Solid Colour",
-
-             SHADER_2DDEMO_HEADER "void main()\n"
-                                  "{\n"
-                                  "    gl_FragColor = vec4 (1.0, 0.6, 0.1, pixelAlpha);\n"
-                                  "}\n"}};
+             "void main()\n"
+             "{\n"
+             "    gl_FragColor = vec4 (1.0, 0.6, 0.1, pixelAlpha);\n"
+             "}\n"}};
 
         return juce::Array<ShaderPreset> (presets, juce::numElementsInArray (presets));
     }
