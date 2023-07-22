@@ -179,7 +179,7 @@ void SpectrogramVisualiserComponent::resized ()
     layout.items.add (LookAndFeel::kFlexSpacer);
     layout.items.add (juce::FlexItem (refresh_button_).withHeight (40.f));
 
-    layout.performLayout (getLocalBounds ().toFloat ().reduced (LookAndFeel::kPadding));
+    layout.performLayout (getLocalBounds ().toFloat ());
 }
 
 void SpectrogramVisualiserComponent::CreateShaders ()

@@ -33,6 +33,18 @@ GraphComponent::GraphComponent ()
     UpdateShaders ();
 
     open_gl_context_.setContinuousRepainting (true);
+
+    addAndMakeVisible (scale_slider_);
+    scale_slider_.setRange ({0.f, 1.f}, 0.f);
+    scale_slider_.setValue (0.5f);
+    scale_slider_.onValueChange = [&] ()
+    { scale_x = static_cast<float> (scale_slider_.getValue ()); };
+
+    addAndMakeVisible (offset_slider_);
+    offset_slider_.setRange ({-10.f, 10.f}, 0.f);
+    offset_slider_.setValue (0.f);
+    offset_slider_.onValueChange = [&] ()
+    { offset_x = static_cast<float> (offset_slider_.getValue ()); };
 }
 
 void GraphComponent::paint (juce::Graphics & g)
@@ -85,6 +97,9 @@ void GraphComponent::renderOpenGL ()
     CreateShaders ();
     shader->use ();
 
+    GLCall (open_gl_context_.extensions.glUniform1f (uniform_offset_x_, offset_x));
+    GLCall (open_gl_context_.extensions.glUniform1f (uniform_scale_x_, scale_x));
+
     GLCall (open_gl_context_.extensions.glGenVertexArrays (1, &vao_));
     GLCall (open_gl_context_.extensions.glBindVertexArray (vao_));
 
@@ -110,8 +125,12 @@ void GraphComponent::resized ()
     layout.items.add (juce::FlexItem (status_label_).withHeight (20.f));
     layout.items.add (LookAndFeel::kFlexSpacer);
     layout.items.add (juce::FlexItem (refresh_button_).withHeight (40.f));
+    layout.items.add (LookAndFeel::kFlexSpacer);
+    layout.items.add (juce::FlexItem (offset_slider_).withHeight (20.f));
+    layout.items.add (LookAndFeel::kFlexSpacer);
+    layout.items.add (juce::FlexItem (scale_slider_).withHeight (20.f));
 
-    layout.performLayout (getLocalBounds ().toFloat ().reduced (LookAndFeel::kPadding));
+    layout.performLayout (getLocalBounds ().toFloat ());
 }
 
 void GraphComponent::CreateShaders ()
@@ -132,6 +151,10 @@ void GraphComponent::CreateShaders ()
             shader = std::move (gl_shader_program);
             status_text =
                 "GLSL: v" + juce::String (juce::OpenGLShaderProgram::getLanguageVersion (), 2);
+            uniform_offset_x_ = open_gl_context_.extensions.glGetUniformLocation (
+                shader->getProgramID (), "offset_x");
+            uniform_scale_x_ = open_gl_context_.extensions.glGetUniformLocation (
+                shader->getProgramID (), "scale_x");
         }
         else
         {

@@ -3,8 +3,8 @@
 layout (location = 0) in vec2 coord2d;
 out vec4 f_color;
 
-float offset_x = 0.0;
-float scale_x = 1.0;
+uniform float offset_x;
+uniform float scale_x;
 
 void main(void) {
     gl_Position = vec4((coord2d.x + offset_x) * scale_x, coord2d.y, 0, 1);

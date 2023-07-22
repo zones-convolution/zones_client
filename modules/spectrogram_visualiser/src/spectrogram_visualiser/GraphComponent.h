@@ -28,8 +28,10 @@ private:
 
     static const std::filesystem::path kShaderDirectory;
 
+    std::atomic<float> offset_x, scale_x;
+
     juce::OpenGLContext open_gl_context_;
-    GLuint vbo_, vao_;
+    GLuint vbo_, vao_, uniform_offset_x_, uniform_scale_x_;
 
     juce::SpinLock shader_mutex_;
 
@@ -39,6 +41,10 @@ private:
 
     juce::Label status_label_;
     juce::TextButton refresh_button_ {"Refresh"};
+    juce::Slider scale_slider_ {juce::Slider::SliderStyle::LinearHorizontal,
+                                juce::Slider::TextEntryBoxPosition::NoTextBox};
+    juce::Slider offset_slider_ {juce::Slider::SliderStyle::LinearHorizontal,
+                                 juce::Slider::TextEntryBoxPosition::NoTextBox};
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (GraphComponent)
 };
