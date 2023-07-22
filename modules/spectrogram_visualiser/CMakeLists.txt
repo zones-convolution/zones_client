@@ -1,6 +1,6 @@
 zones_add_module(
         MODULE spectrogram_visualiser
-        SOURCES src/spectrogram_visualiser/SpectrogramVisualiserComponent.h src/spectrogram_visualiser/SpectrogramVisualiserComponent.cpp src/spectrogram_visualiser/RingBuffer.h
+        SOURCES src/spectrogram_visualiser/SpectrogramVisualiserComponent.h src/spectrogram_visualiser/SpectrogramVisualiserComponent.cpp src/spectrogram_visualiser/RingBuffer.h src/spectrogram_visualiser/GLUtils.h src/spectrogram_visualiser/GraphComponent.h src/spectrogram_visualiser/GraphComponent.cpp
         DEPS juce::juce_gui_basics juce::juce_opengl zones_look_and_feel juce::juce_audio_basics
 )
 
@@ -25,7 +25,9 @@ endfunction()
 
 embed_resources(spectrogram_visualiser
         shaders/osc_2d.frag.glsl
-        shaders/osc_2d.vert.glsl)
+        shaders/osc_2d.vert.glsl
+        shaders/graph.frag.glsl
+        shaders/graph.vert.glsl)
 
 target_compile_definitions(
         spectrogram_visualiser
