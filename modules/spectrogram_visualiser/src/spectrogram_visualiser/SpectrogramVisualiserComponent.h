@@ -2,6 +2,7 @@
 
 #include "IndexBuffer.h"
 #include "RingBuffer.h"
+#include "VertexArray.h"
 #include "VertexBuffer.h"
 #include "zones_look_and_feel/LookAndFeel.h"
 
@@ -49,10 +50,10 @@ private:
     static const std::filesystem::path kShaderDirectory;
 
     juce::OpenGLContext open_gl_context_;
-    GLuint vbo_, vao_, ibo_;
-
+    GLuint vao_;
     std::unique_ptr<VertexBuffer> vb_;
     std::unique_ptr<IndexBuffer> ib_;
+    std::unique_ptr<VertexArray> va_;
 
     juce::SpinLock shader_mutex_;
     juce::String new_vertex_shader_;

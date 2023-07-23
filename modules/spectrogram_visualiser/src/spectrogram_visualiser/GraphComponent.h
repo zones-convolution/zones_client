@@ -1,6 +1,7 @@
 #pragma once
 
 #include "IndexBuffer.h"
+#include "VertexArray.h"
 #include "VertexBuffer.h"
 #include "zones_look_and_feel/LookAndFeel.h"
 
@@ -33,7 +34,9 @@ private:
     std::atomic<float> offset_x, scale_x;
 
     juce::OpenGLContext open_gl_context_;
-    GLuint vao_, uniform_offset_x_, uniform_scale_x_;
+    GLuint uniform_offset_x_, uniform_scale_x_;
+    std::unique_ptr<VertexBuffer> vb_;
+    std::unique_ptr<VertexArray> va_;
 
     juce::SpinLock shader_mutex_;
 
@@ -47,7 +50,6 @@ private:
                                 juce::Slider::TextEntryBoxPosition::NoTextBox};
     juce::Slider offset_slider_ {juce::Slider::SliderStyle::LinearHorizontal,
                                  juce::Slider::TextEntryBoxPosition::NoTextBox};
-    std::unique_ptr<VertexBuffer> vb_;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (GraphComponent)
 };

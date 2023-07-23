@@ -10,6 +10,9 @@ zones_add_module(
         src/spectrogram_visualiser/VertexBuffer.cpp
         src/spectrogram_visualiser/IndexBuffer.h
         src/spectrogram_visualiser/IndexBuffer.cpp
+        src/spectrogram_visualiser/VertexArray.h
+        src/spectrogram_visualiser/VertexArray.cpp
+        src/spectrogram_visualiser/VertexBufferLayout.h
         DEPS juce::juce_gui_basics juce::juce_opengl zones_look_and_feel juce::juce_audio_basics
 )
 

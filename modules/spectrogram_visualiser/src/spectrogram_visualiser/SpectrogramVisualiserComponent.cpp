@@ -57,8 +57,39 @@ void SpectrogramVisualiserComponent::Stop ()
 
 void SpectrogramVisualiserComponent::newOpenGLContextCreated ()
 {
-    GLCall (open_gl_context_.extensions.glGenBuffers (1, &vbo_));
-    GLCall (open_gl_context_.extensions.glGenBuffers (1, &ibo_));
+    std::array<GLfloat, 12> vertices {
+        1.0f,
+        1.0f,
+        0.0f, // Top Right
+        1.0f,
+        -1.0f,
+        0.0f, // Bottom Right
+        -1.0f,
+        -1.0f,
+        0.0f, // Bottom Left
+        -1.0f,
+        1.0f,
+        0.0f // Top Left
+    };
+
+    vb_ = std::make_unique<VertexBuffer> (open_gl_context_, vertices.data (), sizeof (vertices));
+
+    std::array<GLuint, 6> indices {
+        0,
+        1,
+        2, // First Triangle
+        2,
+        3,
+        0 // Second Triangle
+    };
+
+    ib_ = std::make_unique<IndexBuffer> (open_gl_context_, indices.data (), indices.size ());
+
+    va_ = std::make_unique<VertexArray> (open_gl_context_);
+
+    VertexBufferLayout vertex_buffer_layout;
+    vertex_buffer_layout.Push<GLfloat> (3);
+    va_->AddBuffer (*vb_, vertex_buffer_layout);
 }
 
 void SpectrogramVisualiserComponent::openGLContextClosing ()
@@ -114,59 +145,14 @@ void SpectrogramVisualiserComponent::renderOpenGL ()
         uniforms->audio_sample_data->set (visualization_buffer_, 256);
     }
 
-    // Define Vertices for a Square (the view plane)
-    GLfloat vertices [] = {
-        1.0f,
-        1.0f,
-        0.0f, // Top Right
-        1.0f,
-        -1.0f,
-        0.0f, // Bottom Right
-        -1.0f,
-        -1.0f,
-        0.0f, // Bottom Left
-        -1.0f,
-        1.0f,
-        0.0f // Top Left
-    };
-
-    // Define Which Vertex Indexes Make the Square
-    GLuint indices [] = {
-        // Note that we start from 0!
-        0,
-        1,
-        2, // First Triangle
-        2,
-        3,
-        0 // Second Triangle
-    };
-
-    // This appears to be required! see this -
-    // https://stackoverflow.com/questions/48714591/modern-opengl-macos-only-black-screen
-    GLCall (open_gl_context_.extensions.glGenVertexArrays (1, &vao_));
-    GLCall (open_gl_context_.extensions.glBindVertexArray (vao_));
-
-    // VBO (Vertex Buffer Object) - Bind and Write to Buffer
-    GLCall (open_gl_context_.extensions.glBindBuffer (juce::gl::GL_ARRAY_BUFFER, vbo_));
-    GLCall (open_gl_context_.extensions.glBufferData (
-        juce::gl::GL_ARRAY_BUFFER, sizeof (vertices), vertices, juce::gl::GL_STREAM_DRAW));
-
-    // Setup Vertex Attributes
-    GLCall (open_gl_context_.extensions.glVertexAttribPointer (
-        0, 3, juce::gl::GL_FLOAT, juce::gl::GL_FALSE, 3 * sizeof (GLfloat), nullptr));
-    GLCall (open_gl_context_.extensions.glEnableVertexAttribArray (0));
-
-    // IBO (Index Buffer Object) - Bind and Write to Buffer
-    GLCall (open_gl_context_.extensions.glBindBuffer (juce::gl::GL_ELEMENT_ARRAY_BUFFER, ibo_));
-    GLCall (open_gl_context_.extensions.glBufferData (
-        juce::gl::GL_ELEMENT_ARRAY_BUFFER, sizeof (indices), indices, juce::gl::GL_STREAM_DRAW));
+    va_->Bind ();
+    ib_->Bind ();
 
     GLCall (
         juce::gl::glDrawElements (juce::gl::GL_TRIANGLES, 6, juce::gl::GL_UNSIGNED_INT, nullptr));
 
-    // Reset the element buffers so child Components draw correctly
-    GLCall (open_gl_context_.extensions.glBindBuffer (juce::gl::GL_ARRAY_BUFFER, 0));
-    GLCall (open_gl_context_.extensions.glBindBuffer (juce::gl::GL_ELEMENT_ARRAY_BUFFER, 0));
+    ib_->Unbind ();
+    va_->Unbind ();
 }
 
 void SpectrogramVisualiserComponent::resized ()

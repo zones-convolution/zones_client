@@ -77,6 +77,11 @@ void GraphComponent::newOpenGLContextCreated ()
     }
 
     vb_ = std::make_unique<VertexBuffer> (open_gl_context_, graph, sizeof (graph));
+    va_ = std::make_unique<VertexArray> (open_gl_context_);
+
+    VertexBufferLayout vertex_buffer_layout;
+    vertex_buffer_layout.Push<GLfloat> (2);
+    va_->AddBuffer (*vb_, vertex_buffer_layout);
 }
 
 void GraphComponent::openGLContextClosing ()
@@ -94,16 +99,9 @@ void GraphComponent::renderOpenGL ()
     GLCall (open_gl_context_.extensions.glUniform1f (uniform_offset_x_, offset_x));
     GLCall (open_gl_context_.extensions.glUniform1f (uniform_scale_x_, scale_x));
 
-    GLCall (open_gl_context_.extensions.glGenVertexArrays (1, &vao_));
-    GLCall (open_gl_context_.extensions.glBindVertexArray (vao_));
-
-    vb_->Bind ();
-    GLCall (open_gl_context_.extensions.glEnableVertexAttribArray (0));
-    GLCall (open_gl_context_.extensions.glVertexAttribPointer (
-        0, 2, juce::gl::GL_FLOAT, juce::gl::GL_FALSE, 0, nullptr));
+    va_->Bind ();
     GLCall (juce::gl::glDrawArrays (juce::gl::GL_LINE_STRIP, 0, 2000));
-    GLCall (open_gl_context_.extensions.glDisableVertexAttribArray (0));
-    vb_->Unbind ();
+    va_->Unbind ();
 }
 
 void GraphComponent::resized ()
