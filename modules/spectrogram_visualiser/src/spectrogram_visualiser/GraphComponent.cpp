@@ -57,7 +57,7 @@ GraphComponent::~GraphComponent ()
     open_gl_context_.detach ();
 }
 
-struct point
+struct Point
 {
     GLfloat x;
     GLfloat y;
@@ -68,20 +68,15 @@ void GraphComponent::newOpenGLContextCreated ()
     GLCall (juce::gl::glEnable (juce::gl::GL_BLEND));
     GLCall (juce::gl::glBlendFunc (juce::gl::GL_SRC_ALPHA, juce::gl::GL_ONE_MINUS_SRC_ALPHA));
 
-    point graph [2000];
-
+    Point graph [2000];
     for (int i = 0; i < 2000; i++)
     {
-        float x = (i - 1000.0) / 100.0;
+        float x = (static_cast<float> (i) - 1000.0f) / 100.0f;
         graph [i].x = x;
-        graph [i].y = sin (x * 10.0) / (1.0 + x * x);
+        graph [i].y = sin (x * 10.0f) / (1.0f + x * x);
     }
 
-    GLCall (open_gl_context_.extensions.glGenBuffers (1, &vbo_));
-    GLCall (open_gl_context_.extensions.glBindBuffer (juce::gl::GL_ARRAY_BUFFER, vbo_));
-    GLCall (open_gl_context_.extensions.glBufferData (
-        juce::gl::GL_ARRAY_BUFFER, sizeof (graph), graph, juce::gl::GL_STATIC_DRAW));
-    GLCall (open_gl_context_.extensions.glBindBuffer (juce::gl::GL_ARRAY_BUFFER, 0));
+    vb_ = std::make_unique<VertexBuffer> (open_gl_context_, graph, sizeof (graph));
 }
 
 void GraphComponent::openGLContextClosing ()
@@ -96,24 +91,19 @@ void GraphComponent::renderOpenGL ()
 
     CreateShaders ();
     shader->use ();
-
     GLCall (open_gl_context_.extensions.glUniform1f (uniform_offset_x_, offset_x));
     GLCall (open_gl_context_.extensions.glUniform1f (uniform_scale_x_, scale_x));
 
     GLCall (open_gl_context_.extensions.glGenVertexArrays (1, &vao_));
     GLCall (open_gl_context_.extensions.glBindVertexArray (vao_));
 
-    GLCall (open_gl_context_.extensions.glBindBuffer (juce::gl::GL_ARRAY_BUFFER, vbo_));
-
-    // Setup Vertex Attributes
+    vb_->Bind ();
     GLCall (open_gl_context_.extensions.glEnableVertexAttribArray (0));
     GLCall (open_gl_context_.extensions.glVertexAttribPointer (
         0, 2, juce::gl::GL_FLOAT, juce::gl::GL_FALSE, 0, nullptr));
-
     GLCall (juce::gl::glDrawArrays (juce::gl::GL_LINE_STRIP, 0, 2000));
-
     GLCall (open_gl_context_.extensions.glDisableVertexAttribArray (0));
-    GLCall (open_gl_context_.extensions.glBindBuffer (juce::gl::GL_ARRAY_BUFFER, 0));
+    vb_->Unbind ();
 }
 
 void GraphComponent::resized ()

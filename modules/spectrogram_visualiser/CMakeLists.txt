@@ -1,6 +1,15 @@
 zones_add_module(
         MODULE spectrogram_visualiser
-        SOURCES src/spectrogram_visualiser/SpectrogramVisualiserComponent.h src/spectrogram_visualiser/SpectrogramVisualiserComponent.cpp src/spectrogram_visualiser/RingBuffer.h src/spectrogram_visualiser/GLUtils.h src/spectrogram_visualiser/GraphComponent.h src/spectrogram_visualiser/GraphComponent.cpp
+        SOURCES src/spectrogram_visualiser/SpectrogramVisualiserComponent.h
+        src/spectrogram_visualiser/SpectrogramVisualiserComponent.cpp
+        src/spectrogram_visualiser/RingBuffer.h
+        src/spectrogram_visualiser/GLUtils.h
+        src/spectrogram_visualiser/GraphComponent.h
+        src/spectrogram_visualiser/GraphComponent.cpp
+        src/spectrogram_visualiser/VertexBuffer.h
+        src/spectrogram_visualiser/VertexBuffer.cpp
+        src/spectrogram_visualiser/IndexBuffer.h
+        src/spectrogram_visualiser/IndexBuffer.cpp
         DEPS juce::juce_gui_basics juce::juce_opengl zones_look_and_feel juce::juce_audio_basics
 )
 
