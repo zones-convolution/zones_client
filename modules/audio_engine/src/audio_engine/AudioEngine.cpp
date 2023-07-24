@@ -15,9 +15,9 @@ AudioEngine::AudioEngine (CommandQueue::VisitorQueue & command_queue,
 
 void AudioEngine::LoadIr (const IrData & ir_data)
 {
-    ir_data_ = std::make_unique<IrData> (IrData {.buffer = juce::AudioBuffer<float> (),
-                                                 .sample_rate = ir_data.sample_rate,
-                                                 .bit_depth = ir_data.bit_depth});
-    ir_data_->buffer.makeCopyOf (ir_data.buffer);
-    command_queue_.PushCommand (CommandQueue::LoadIr {.ir_data = ir_data_.get ()});
+    auto handover_ir_buffer = new juce::AudioBuffer<float> ();
+    handover_ir_buffer->makeCopyOf (ir_data.buffer);
+
+    command_queue_.PushCommand (
+        CommandQueue::LoadIr {.ir_buffer = handover_ir_buffer, .sample_rate = ir_data.sample_rate});
 }

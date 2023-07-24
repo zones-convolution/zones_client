@@ -7,7 +7,8 @@ struct CommandQueue
 {
     struct LoadIr
     {
-        IrData * ir_data;
+        juce::AudioBuffer<float> * ir_buffer;
+        double sample_rate;
     };
 
     struct UpdateParameters

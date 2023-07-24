@@ -15,5 +15,4 @@ public:
 private:
     CommandQueue::VisitorQueue & command_queue_;
     lager::reader<BoxedParameterModel> parameter_model_reader_;
-    IrData ir_data_;
 };
