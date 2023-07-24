@@ -52,6 +52,9 @@ IrGraph::Process (const IrGraphState & state,
         processor.lock ()->Process (
             last_result.has_value () ? last_result.value () : empty_buffer, process_result, state);
 
+        if (abort_callback ())
+            return std::nullopt;
+
         auto boxed_result = IrGraphProcessor::BoxedBuffer (std::move (process_result));
         process_result_pool.CacheResult (key, boxed_result);
         last_result = boxed_result;

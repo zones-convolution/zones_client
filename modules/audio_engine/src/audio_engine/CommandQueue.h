@@ -12,6 +12,7 @@ struct CommandQueue
 
     struct UpdateParameters
     {
+        float dry_wet_mix;
     };
 
     using Commands = std::variant<LoadIr, UpdateParameters>;

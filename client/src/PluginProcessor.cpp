@@ -11,16 +11,21 @@ AudioPluginAudioProcessor::AudioPluginAudioProcessor ()
                           .withOutput ("Output", juce::AudioChannelSet::stereo (), true)
 #endif
                           )
-    , audio_engine_ (command_queue_, project_ir_load_controller_)
+    , project_ir_load_controller_ {store_.zoom (
+                                       lager::lenses::attr (&Model::project_ir_repository_model)),
+                                   project_ir_repository_context_,
+                                   ir_reader_}
+    , project_ir_import_controller_ {store_.zoom (
+                                         lager::lenses::attr (&Model::project_ir_repository_model)),
+                                     project_ir_repository_context_,
+                                     ir_reader_,
+                                     ir_writer_}
+    , audio_engine_ (command_queue_, store_.zoom (lager::lenses::attr (&Model::parameter_model)))
     , ir_watch_controller_ (audio_engine_,
                             ir_engine_,
                             project_ir_load_controller_,
-                            project_ir_store_.zoom (lager::lenses::attr (
-                                &ProjectIrRepositoryModel::current_project_ir)))
-{
-}
-
-AudioPluginAudioProcessor::~AudioPluginAudioProcessor ()
+                            store_.zoom (lager::lenses::attr (&Model::project_ir_repository_model)),
+                            store_.zoom (lager::lenses::attr (&Model::parameter_model)))
 {
 }
 
@@ -149,27 +154,15 @@ bool AudioPluginAudioProcessor::hasEditor () const
 
 juce::AudioProcessorEditor * AudioPluginAudioProcessor::createEditor ()
 {
-    return new AudioPluginAudioProcessorEditor (*this, project_ir_store_, project_ir_store_);
+    return new AudioPluginAudioProcessorEditor (*this, store_, store_);
 }
 
 void AudioPluginAudioProcessor::getStateInformation (juce::MemoryBlock & destData)
 {
-    if (! project_ir_store_->project_paths.empty ())
-    {
-        auto state = std::make_unique<juce::XmlElement> ("Zones");
-        state->setAttribute (juce::Identifier {"project_path"},
-                             project_ir_store_->project_paths.front ().string ());
-        copyXmlToBinary (*state, destData);
-    }
 }
 
 void AudioPluginAudioProcessor::setStateInformation (const void * data, int sizeInBytes)
 {
-    std::unique_ptr<juce::XmlElement> state (getXmlFromBinary (data, sizeInBytes));
-    auto project_path = state->getStringAttribute ("project_path", "");
-    if (project_path.isNotEmpty ())
-        project_ir_store_.dispatch (
-            AddProjectPathAction {.project_path = project_path.toStdString ()});
 }
 
 juce::AudioProcessor * JUCE_CALLTYPE createPluginFilter ()

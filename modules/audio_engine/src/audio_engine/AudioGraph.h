@@ -29,5 +29,6 @@ public:
     void operator() (const CommandQueue::UpdateParameters & update_parameters) override;
 
 private:
+    juce::dsp::DryWetMixer<float> dry_wet_mixer_;
     juce::dsp::ProcessorChain<NonUniformConvolver> processor_chain_;
 };

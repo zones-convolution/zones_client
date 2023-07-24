@@ -10,6 +10,8 @@
 #include "ir_repository/project/ProjectIrLoadController.h"
 #include "ir_repository/project/ProjectIrRepositoryAction.h"
 #include "ir_repository/project/ProjectIrRepositoryModel.h"
+#include "model/Action.h"
+#include "model/Model.h"
 #include "model/controllers/IrWatchController.h"
 
 #include <juce_audio_processors/juce_audio_processors.h>
@@ -21,7 +23,7 @@ class AudioPluginAudioProcessor : public juce::AudioProcessor
 {
 public:
     AudioPluginAudioProcessor ();
-    ~AudioPluginAudioProcessor () override;
+    ~AudioPluginAudioProcessor () override = default;
 
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;
     void releaseResources () override;
@@ -52,28 +54,20 @@ public:
 
 private:
     std::string string_dep;
-    lager::store<ProjectIrRepositoryAction, ProjectIrRepositoryModel> project_ir_store_ =
-        lager::make_store<ProjectIrRepositoryAction> (ProjectIrRepositoryModel {},
-                                                      lager::with_manual_event_loop {},
-                                                      lager::with_deps (std::ref (string_dep)),
-                                                      lager::with_reducer (Update));
+    lager::store<Action, Model> store_ =
+        lager::make_store<Action> (Model {},
+                                   lager::with_manual_event_loop {},
+                                   lager::with_reducer (Update));
+
+    lager::context<ProjectIrRepositoryAction> project_ir_repository_context_ {store_};
 
     IrReader ir_reader_;
     IrWriter ir_writer_;
-
-    ProjectIrLoadController project_ir_load_controller_ {project_ir_store_,
-                                                         project_ir_store_,
-                                                         ir_reader_};
-
-    ProjectIrImportController project_ir_import_controller_ {project_ir_store_,
-                                                             project_ir_store_,
-                                                             ir_reader_,
-                                                             ir_writer_};
-
+    ProjectIrLoadController project_ir_load_controller_;
+    ProjectIrImportController project_ir_import_controller_;
     AudioGraph graph_;
     CommandQueue::VisitorQueue command_queue_ {graph_};
     AudioEngine audio_engine_;
-
     IrEngine ir_engine_;
     IrWatchController ir_watch_controller_;
 

@@ -9,6 +9,7 @@ zones_add_module(
         src/audio_engine/VisitorQueue.h
         src/audio_engine/CommandQueue.h
         DEPS
+        model
         ir_repository
         choc
         juce::juce_core

@@ -18,7 +18,7 @@ TEST_CASE ("loads project ir", "[ProjectIrLoadController]")
         ProjectIrLoadController project_ir_load_controller {
             model_state, tracking_context.context_, ir_reader_mock};
 
-        auto [model, effect] = Update (
+        auto [model, effect] = UpdateProjectIrRepository (
             model_state.get (), LoadProjectIrAction {.ir_identifier = "invalid_ir_identifier"});
         model_state.set (model);
 
@@ -46,7 +46,7 @@ TEST_CASE ("loads project ir", "[ProjectIrLoadController]")
         ProjectIrLoadController project_ir_load_controller {
             model_state, tracking_context.context_, ir_reader_mock};
 
-        auto [model, effect] = Update (
+        auto [model, effect] = UpdateProjectIrRepository (
             model_state.get (), LoadProjectIrAction {.ir_identifier = "invalid_ir_identifier"});
         model_state.set (model);
 

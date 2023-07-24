@@ -67,4 +67,5 @@ using ProjectIrRepositoryEffect =
 
 using ProjectIrRepositoryResult = std::pair<ProjectIrRepositoryModel, ProjectIrRepositoryEffect>;
 
-ProjectIrRepositoryResult Update (ProjectIrRepositoryModel model, ProjectIrRepositoryAction action);
+ProjectIrRepositoryResult UpdateProjectIrRepository (ProjectIrRepositoryModel model,
+                                                     ProjectIrRepositoryAction action);

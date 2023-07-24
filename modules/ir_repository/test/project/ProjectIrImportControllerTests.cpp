@@ -20,11 +20,11 @@ TEST_CASE ("imports project ir", "[ProjectIrImportController]")
         ProjectIrImportController project_ir_import_controller {
             model_state, tracking_context.context_, ir_reader_mock, ir_writer_mock};
 
-        auto [model, effect] =
-            Update (model_state.get (),
-                    ImportProjectIrAction {.import_project_ir = {.ir_path = "path/to/ir.wav",
-                                                                 .name = "name",
-                                                                 .description = "description"}});
+        auto [model, effect] = UpdateProjectIrRepository (
+            model_state.get (),
+            ImportProjectIrAction {.import_project_ir = {.ir_path = "path/to/ir.wav",
+                                                         .name = "name",
+                                                         .description = "description"}});
         model_state.set (model);
 
         RequireDispatchedAt<ProjectIrRepositoryAction, ImportProjectIrLoadingAction> (
@@ -51,11 +51,11 @@ TEST_CASE ("imports project ir", "[ProjectIrImportController]")
         ProjectIrImportController project_ir_import_controller {
             model_state, tracking_context.context_, ir_reader_mock, ir_writer_mock};
 
-        auto [model, effect] =
-            Update (model_state.get (),
-                    ImportProjectIrAction {.import_project_ir = {.ir_path = "path/to/ir.wav",
-                                                                 .name = "name",
-                                                                 .description = "description"}});
+        auto [model, effect] = UpdateProjectIrRepository (
+            model_state.get (),
+            ImportProjectIrAction {.import_project_ir = {.ir_path = "path/to/ir.wav",
+                                                         .name = "name",
+                                                         .description = "description"}});
         model_state.set (model);
 
         RequireDispatchedAt<ProjectIrRepositoryAction, ImportProjectIrLoadingAction> (

@@ -20,16 +20,16 @@ TEST_CASE ("add and remove project path actions")
         const std::filesystem::path new_project_path = "new/project/path";
 
         auto model = ProjectIrRepositoryModel {};
-        auto update_result =
-            Update (model, AddProjectPathAction {.project_path = new_project_path});
+        auto update_result = UpdateProjectIrRepository (
+            model, AddProjectPathAction {.project_path = new_project_path});
         model = update_result.first;
 
         REQUIRE (model.project_paths.size () == 1);
         RequireProjectPathsIncludes (model, new_project_path);
 
         const std::filesystem::path another_new_project_path = "another/new/project/path";
-        update_result =
-            Update (model, AddProjectPathAction {.project_path = another_new_project_path});
+        update_result = UpdateProjectIrRepository (
+            model, AddProjectPathAction {.project_path = another_new_project_path});
         model = update_result.first;
 
         REQUIRE (model.project_paths.size () == 2);
@@ -41,7 +41,8 @@ TEST_CASE ("add and remove project path actions")
     {
         auto model = ProjectIrRepositoryModel {.project_paths = {"remove_path"}};
         REQUIRE (model.project_paths.size () == 1);
-        auto update_result = Update (model, RemoveProjectPathAction {.remove_at_index = 0});
+        auto update_result =
+            UpdateProjectIrRepository (model, RemoveProjectPathAction {.remove_at_index = 0});
         model = update_result.first;
         REQUIRE (model.project_paths.empty ());
     }
@@ -50,7 +51,8 @@ TEST_CASE ("add and remove project path actions")
     {
         auto model = ProjectIrRepositoryModel {.project_paths = {"remove_path"}};
         REQUIRE (model.project_paths.size () == 1);
-        auto update_result = Update (model, RemoveProjectPathAction {.remove_at_index = 10});
+        auto update_result =
+            UpdateProjectIrRepository (model, RemoveProjectPathAction {.remove_at_index = 10});
         model = update_result.first;
         REQUIRE (model.project_paths.size () == 1);
     }
@@ -65,7 +67,7 @@ TEST_CASE ("project ir import actions")
         auto import_action = ImportProjectIrAction {
             .import_project_ir = {
                 .ir_path = "path/to/ir.wav", .name = "ir_name", .description = "ir_description"}};
-        auto update_result = Update (model, import_action);
+        auto update_result = UpdateProjectIrRepository (model, import_action);
         model = update_result.first;
 
         REQUIRE (model.import_project_ir.has_value ());
@@ -80,7 +82,7 @@ TEST_CASE ("project ir import actions")
     {
         auto model = ProjectIrRepositoryModel {.importing_project_ir_state =
                                                    ProjectIrLoadingState::kSuccess};
-        auto update_result = Update (model, ImportProjectIrLoadingAction {});
+        auto update_result = UpdateProjectIrRepository (model, ImportProjectIrLoadingAction {});
         model = update_result.first;
 
         REQUIRE (model.import_project_ir == std::nullopt);
@@ -91,7 +93,7 @@ TEST_CASE ("project ir import actions")
     {
         auto model = ProjectIrRepositoryModel {.importing_project_ir_state =
                                                    ProjectIrLoadingState::kLoading};
-        auto update_result = Update (model, ImportProjectIrSuccessAction {});
+        auto update_result = UpdateProjectIrRepository (model, ImportProjectIrSuccessAction {});
         model = update_result.first;
 
         REQUIRE (model.importing_project_ir_state == ProjectIrLoadingState::kSuccess);
@@ -101,7 +103,7 @@ TEST_CASE ("project ir import actions")
     {
         auto model = ProjectIrRepositoryModel {.importing_project_ir_state =
                                                    ProjectIrLoadingState::kLoading};
-        auto update_result = Update (model, ImportProjectIrFailureAction {});
+        auto update_result = UpdateProjectIrRepository (model, ImportProjectIrFailureAction {});
         model = update_result.first;
 
         REQUIRE (model.importing_project_ir_state == ProjectIrLoadingState::kFailure);
@@ -114,7 +116,7 @@ TEST_CASE ("project ir load actions")
     {
         auto model = ProjectIrRepositoryModel {};
         auto load_project_ir_action = LoadProjectIrAction {.ir_identifier = "ir_identifier"};
-        auto update_result = Update (model, load_project_ir_action);
+        auto update_result = UpdateProjectIrRepository (model, load_project_ir_action);
         model = update_result.first;
 
         REQUIRE (model.current_project_ir.has_value ());
@@ -126,7 +128,7 @@ TEST_CASE ("project ir load actions")
     {
         auto model =
             ProjectIrRepositoryModel {.current_project_ir_state = ProjectIrLoadingState::kPending};
-        auto update_result = Update (model, LoadProjectIrLoadingAction {});
+        auto update_result = UpdateProjectIrRepository (model, LoadProjectIrLoadingAction {});
         model = update_result.first;
 
         REQUIRE (model.current_project_ir_state == ProjectIrLoadingState::kLoading);
@@ -135,7 +137,7 @@ TEST_CASE ("project ir load actions")
     {
         auto model =
             ProjectIrRepositoryModel {.current_project_ir_state = ProjectIrLoadingState::kLoading};
-        auto update_result = Update (model, LoadProjectIrSuccessAction {});
+        auto update_result = UpdateProjectIrRepository (model, LoadProjectIrSuccessAction {});
         model = update_result.first;
 
         REQUIRE (model.current_project_ir_state == ProjectIrLoadingState::kSuccess);
@@ -144,7 +146,7 @@ TEST_CASE ("project ir load actions")
     {
         auto model =
             ProjectIrRepositoryModel {.current_project_ir_state = ProjectIrLoadingState::kLoading};
-        auto update_result = Update (model, LoadProjectIrFailureAction {});
+        auto update_result = UpdateProjectIrRepository (model, LoadProjectIrFailureAction {});
         model = update_result.first;
 
         REQUIRE (model.current_project_ir_state == ProjectIrLoadingState::kFailure);

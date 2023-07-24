@@ -1,7 +1,6 @@
 #include "IrEngine.h"
 
 #include <juce_events/juce_events.h>
-#include <utility>
 
 IrEngine::IrEngine ()
     : thread_pool_ ()

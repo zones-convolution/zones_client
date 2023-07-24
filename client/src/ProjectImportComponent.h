@@ -4,6 +4,7 @@
 #include "ir_repository/project/ProjectIrPaths.h"
 #include "ir_repository/project/ProjectIrRepositoryAction.h"
 #include "ir_repository/project/ProjectIrRepositoryModel.h"
+#include "model/ParameterAction.h"
 #include "zones_look_and_feel/LookAndFeel.h"
 
 #include <juce_gui_basics/juce_gui_basics.h>
@@ -13,8 +14,9 @@
 class ProjectImportComponent : public juce::Component
 {
 public:
-    ProjectImportComponent (const lager::reader<ProjectIrRepositoryModel> & model,
-                            lager::context<ProjectIrRepositoryAction> & context);
+    ProjectImportComponent (const lager::reader<ProjectIrRepositoryModel> & project_ir_model,
+                            lager::context<ProjectIrRepositoryAction> & project_ir_context,
+                            lager::context<ParameterAction> & parameter_context);
 
     void resized () override;
 
@@ -37,15 +39,22 @@ private:
     std::unique_ptr<juce::FileChooser> directory_picker_;
     std::unique_ptr<juce::FileChooser> ir_picker_;
 
-    lager::reader<ProjectIrRepositoryModel> model_;
+    lager::reader<ProjectIrRepositoryModel> project_ir_model_;
+    lager::context<ProjectIrRepositoryAction> project_ir_context_;
+    lager::context<ParameterAction> parameter_context_;
     lager::reader<immer::flex_vector<std::filesystem::path>> project_paths_reader_;
     lager::reader<ProjectIrLoadingState> importing_state_reader_;
     lager::reader<CurrentProjectIrOptional> current_ir_reader_;
-    lager::context<ProjectIrRepositoryAction> context_;
+
     void AddProjectPath ();
     void ImportProjectIr ();
     void SelectProjectIr (const lager::context<ProjectIrRepositoryAction> & context) const;
 
+    juce::Label room_size_label_;
     juce::Slider room_size_slider_ {juce::Slider::SliderStyle::LinearHorizontal,
                                     juce::Slider::TextEntryBoxPosition::NoTextBox};
+
+    juce::Label dry_wet_label_;
+    juce::Slider dry_wet_mix_slider_ {juce::Slider::SliderStyle::LinearHorizontal,
+                                      juce::Slider::TextEntryBoxPosition::NoTextBox};
 };

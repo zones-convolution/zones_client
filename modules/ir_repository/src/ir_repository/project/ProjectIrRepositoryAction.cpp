@@ -10,7 +10,8 @@
 //     DBG (string);
 // };
 
-ProjectIrRepositoryResult Update (ProjectIrRepositoryModel model, ProjectIrRepositoryAction action)
+ProjectIrRepositoryResult UpdateProjectIrRepository (ProjectIrRepositoryModel model,
+                                                     ProjectIrRepositoryAction action)
 {
     return std::visit (
         lager::visitor {

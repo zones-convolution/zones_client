@@ -1,10 +1,16 @@
 #include "AudioEngine.h"
 
 AudioEngine::AudioEngine (CommandQueue::VisitorQueue & command_queue,
-                          const ProjectIrLoadController & load_controller)
+                          lager::reader<BoxedParameterModel> parameter_model_reader)
     : command_queue_ (command_queue)
-    , load_controller_ (load_controller)
+    , parameter_model_reader_ (parameter_model_reader)
 {
+    lager::watch (parameter_model_reader_,
+                  [&] (const BoxedParameterModel & parameter_model)
+                  {
+                      command_queue_.PushCommand (CommandQueue::UpdateParameters {
+                          .dry_wet_mix = parameter_model->dry_wet_mix});
+                  });
 }
 
 void AudioEngine::LoadIr (const IrData & ir_data)
