@@ -55,6 +55,8 @@ private:
     std::unique_ptr<IndexBuffer> ib_;
     std::unique_ptr<VertexArray> va_;
 
+    float time_ = 0.f;
+
     juce::SpinLock shader_mutex_;
     juce::String new_vertex_shader_;
     juce::String new_fragment_shader_;

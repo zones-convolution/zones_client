@@ -57,21 +57,19 @@ void SpectrogramVisualiserComponent::Stop ()
 
 void SpectrogramVisualiserComponent::newOpenGLContextCreated ()
 {
-    std::array<GLfloat, 12> vertices {
-        1.0f,
-        1.0f,
-        0.0f, // Top Right
-        1.0f,
-        -1.0f,
-        0.0f, // Bottom Right
-        -1.0f,
-        -1.0f,
-        0.0f, // Bottom Left
-        -1.0f,
-        1.0f,
-        0.0f // Top Left
-    };
+    GLCall (juce::gl::glEnable (juce::gl::GL_BLEND));
+    GLCall (juce::gl::glBlendFunc (juce::gl::GL_SRC_ALPHA, juce::gl::GL_ONE_MINUS_SRC_ALPHA));
 
+    std::array<GLfloat, 8> vertices {
+        1.0f,
+        1.0f,
+        1.0f,
+        -1.0f,
+        -1.0f,
+        -1.0f,
+        -1.0f,
+        1.0f,
+    };
     vb_ = std::make_unique<VertexBuffer> (open_gl_context_, vertices.data (), sizeof (vertices));
 
     std::array<GLuint, 6> indices {
@@ -82,13 +80,11 @@ void SpectrogramVisualiserComponent::newOpenGLContextCreated ()
         3,
         0 // Second Triangle
     };
-
     ib_ = std::make_unique<IndexBuffer> (open_gl_context_, indices.data (), indices.size ());
 
     va_ = std::make_unique<VertexArray> (open_gl_context_);
-
     VertexBufferLayout vertex_buffer_layout;
-    vertex_buffer_layout.Push<GLfloat> (3);
+    vertex_buffer_layout.Push<GLfloat> (2);
     va_->AddBuffer (*vb_, vertex_buffer_layout);
 }
 
@@ -111,9 +107,6 @@ void SpectrogramVisualiserComponent::renderOpenGL ()
 
     juce::OpenGLHelpers::clear (getLookAndFeel ().findColour (LookAndFeel::ColourIds::kPanel));
 
-    GLCall (juce::gl::glEnable (juce::gl::GL_BLEND));
-    GLCall (juce::gl::glBlendFunc (juce::gl::GL_SRC_ALPHA, juce::gl::GL_ONE_MINUS_SRC_ALPHA));
-
     shader->use ();
 
     if (uniforms->resolution != nullptr)
@@ -125,12 +118,14 @@ void SpectrogramVisualiserComponent::renderOpenGL ()
     {
         juce::AudioBuffer<float> buff;
         buff.setSize (2, kRingBufferReadSize);
-        juce::Random rand;
         for (auto channel = 0; channel < buff.getNumChannels (); ++channel)
         {
             auto * buffer = buff.getWritePointer (channel, 0);
             for (auto sample = 0; sample < buff.getNumSamples (); ++sample)
-                buffer [sample] = rand.nextFloat () * 0.25f - 0.125f;
+            {
+                buffer [sample] = std::sinf (time_ * 0.08f) / 4.f;
+                time_ += 1;
+            }
         }
 
         ring_buffer_->writeSamples (buff, 0, kRingBufferReadSize);
