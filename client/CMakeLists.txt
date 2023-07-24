@@ -7,7 +7,8 @@ set(LINK_COMMON
         ir_repository
         ir_engine
         zones_look_and_feel
-        audio_engine)
+        audio_engine
+        model)
 
 # ##############################################################################
 # SRC

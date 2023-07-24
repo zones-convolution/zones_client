@@ -15,8 +15,6 @@ zones_add_module(
         src/ir_engine/IrGraphCachePolicy.cpp
         src/ir_engine/IrGraphStateKey.h
         src/ir_engine/IrGraphStateKey.cpp
-        src/ir_engine/IrWatchController.h
-        src/ir_engine/IrWatchController.cpp
         src/ir_engine/processors/RoomSizeProcessor.h
         src/ir_engine/processors/RoomSizeProcessor.cpp
         DEPS

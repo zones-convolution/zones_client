@@ -4,13 +4,13 @@
 #include "audio_engine/AudioGraph.h"
 #include "audio_engine/CommandQueue.h"
 #include "audio_engine/VisitorQueue.h"
-#include "ir_engine/IrWatchController.h"
 #include "ir_repository/io/IrReader.h"
 #include "ir_repository/io/IrWriter.h"
 #include "ir_repository/project/ProjectIrImportController.h"
 #include "ir_repository/project/ProjectIrLoadController.h"
 #include "ir_repository/project/ProjectIrRepositoryAction.h"
 #include "ir_repository/project/ProjectIrRepositoryModel.h"
+#include "model/controllers/IrWatchController.h"
 
 #include <juce_audio_processors/juce_audio_processors.h>
 #include <juce_dsp/juce_dsp.h>
