@@ -32,6 +32,9 @@ void AudioGraph::operator() (const CommandQueue::LoadIr & load_ir)
                                    juce::dsp::Convolution::Stereo::yes,
                                    juce::dsp::Convolution::Trim::no,
                                    juce::dsp::Convolution::Normalise::yes);
+
+    delete load_ir
+        .ir_buffer; // ABSOLUTELY HORRIFIC BUT STOPS MEMORY LEAK FOR NOW WHILE USING JUCE'S CONV...
 }
 
 void AudioGraph::operator() (const CommandQueue::UpdateParameters & update_parameters)

@@ -28,4 +28,5 @@ private:
     lager::reader<CurrentProjectIrOptional> current_ir_reader_;
     lager::reader<BoxedParameterModel> parameter_model_reader_;
     IrGraphState current_graph_state_ {.room_size = 1.f};
+    IrGraphProcessor::BoxedBuffer last_render_result_;
 };

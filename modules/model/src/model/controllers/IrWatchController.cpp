@@ -56,7 +56,11 @@ void IrWatchController::PerformRender ()
             DBG ("RENDER DONE - FINISHED");
             if (render_result->getNumChannels () == 0 || render_result->getNumChannels () == 0)
                 return;
+            if (last_render_result_.impl () == render_result.impl ())
+                return;
+            
             DBG ("RENDER DONE - LOAD");
+            last_render_result_ = render_result;
             audio_engine_.LoadIr ({
                 .buffer = render_result,
                 .sample_rate = sample_rate,
