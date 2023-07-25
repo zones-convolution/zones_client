@@ -17,6 +17,8 @@ zones_add_module(
         src/ir_engine/IrGraphStateKey.cpp
         src/ir_engine/processors/RoomSizeProcessor.h
         src/ir_engine/processors/RoomSizeProcessor.cpp
+        src/ir_engine/processors/ReverbTimeProcessor.h
+        src/ir_engine/processors/ReverbTimeProcessor.cpp
         DEPS
         ir_repository
         audio_engine
