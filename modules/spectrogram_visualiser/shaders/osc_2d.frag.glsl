@@ -66,7 +66,7 @@ void main()
 
     // Calculate the intensity of the wave at the current pixel
     float intensity = THICKNESS / abs(amplitude - y_cord);
-    vec4 colour = vec4(1.0, 1.0, 1.0, 1.0);
+    vec4 colour = vec4(0.0, 1.0, 1.0, 1.0);
     float alpha = fadeAlphaOnEdges(gl_FragCoord.xy, resolution, 0.02);
 
     // Set the color of the current pixel based on the wave radius

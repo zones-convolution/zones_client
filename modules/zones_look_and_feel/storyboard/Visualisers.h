@@ -1,4 +1,5 @@
 #pragma once
+#include "spectrogram_visualiser/Graph3DComponent.h"
 #include "spectrogram_visualiser/GraphComponent.h"
 #include "spectrogram_visualiser/RingBuffer.h"
 #include "spectrogram_visualiser/SpectrogramVisualiserComponent.h"
@@ -14,7 +15,7 @@ public:
 
 private:
     juce::Label visualisers_label_;
-    RingBuffer<GLfloat> ring_buffer_ {2, 1024};
-    SpectrogramVisualiserComponent spectrogram_visualiser_component_ {&ring_buffer_};
+    SpectrogramVisualiserComponent spectrogram_visualiser_component_;
     GraphComponent graph_component_;
+    Graph3DComponent graph3d_component_;
 };

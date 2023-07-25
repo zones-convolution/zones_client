@@ -22,6 +22,7 @@ GraphComponent::GraphComponent ()
     if (auto * peer = getPeer ())
         peer->setCurrentRenderingEngine (0);
 
+    open_gl_context_.setComponentPaintingEnabled (true);
     open_gl_context_.setRenderer (this);
     open_gl_context_.attachTo (*this);
 
@@ -31,8 +32,6 @@ GraphComponent::GraphComponent ()
     addAndMakeVisible (refresh_button_);
     refresh_button_.onClick = [&] () { UpdateShaders (); };
     UpdateShaders ();
-
-    open_gl_context_.setContinuousRepainting (true);
 
     addAndMakeVisible (scale_slider_);
     scale_slider_.setRange ({0.f, 1.f}, 0.f);
@@ -110,13 +109,13 @@ void GraphComponent::resized ()
     layout.flexDirection = juce::FlexBox::Direction::column;
     layout.justifyContent = juce::FlexBox::JustifyContent::flexEnd;
 
-    layout.items.add (juce::FlexItem (status_label_).withHeight (20.f));
-    layout.items.add (LookAndFeel::kFlexSpacer);
-    layout.items.add (juce::FlexItem (refresh_button_).withHeight (40.f));
-    layout.items.add (LookAndFeel::kFlexSpacer);
     layout.items.add (juce::FlexItem (offset_slider_).withHeight (20.f));
     layout.items.add (LookAndFeel::kFlexSpacer);
     layout.items.add (juce::FlexItem (scale_slider_).withHeight (20.f));
+    layout.items.add (LookAndFeel::kFlexSpacer);
+    layout.items.add (juce::FlexItem (status_label_).withHeight (20.f));
+    layout.items.add (LookAndFeel::kFlexSpacer);
+    layout.items.add (juce::FlexItem (refresh_button_).withHeight (40.f));
 
     layout.performLayout (getLocalBounds ().toFloat ());
 }

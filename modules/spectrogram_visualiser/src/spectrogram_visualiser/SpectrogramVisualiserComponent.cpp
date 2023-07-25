@@ -14,9 +14,8 @@ extern "C" const char shaders_osc_2d_vert_glsl [];
 extern "C" const unsigned shaders_osc_2d_vert_glsl_size;
 #endif
 
-SpectrogramVisualiserComponent::SpectrogramVisualiserComponent (RingBuffer<GLfloat> * ringBuffer)
-    : ring_buffer_ (ringBuffer)
-    , read_buffer_ (2, kRingBufferReadSize)
+SpectrogramVisualiserComponent::SpectrogramVisualiserComponent ()
+    : read_buffer_ (2, kRingBufferReadSize)
 {
     setOpaque (true);
     open_gl_context_.setOpenGLVersionRequired (juce::OpenGLContext::OpenGLVersion::openGL4_1);
@@ -24,6 +23,7 @@ SpectrogramVisualiserComponent::SpectrogramVisualiserComponent (RingBuffer<GLflo
     if (auto * peer = getPeer ())
         peer->setCurrentRenderingEngine (0);
 
+    open_gl_context_.setComponentPaintingEnabled (true);
     open_gl_context_.setRenderer (this);
     open_gl_context_.attachTo (*this);
 
@@ -33,6 +33,17 @@ SpectrogramVisualiserComponent::SpectrogramVisualiserComponent (RingBuffer<GLflo
     addAndMakeVisible (refresh_button_);
     refresh_button_.onClick = [&] () { UpdateShaders (); };
     UpdateShaders ();
+
+    juce::dsp::AudioBlock<float> read_block {read_buffer_};
+
+    for (auto channel_index = 0; channel_index < read_block.getNumChannels (); ++channel_index)
+    {
+        auto * channel = read_block.getChannelPointer (channel_index);
+        for (auto sample_index = 0; sample_index < read_block.getNumSamples (); ++sample_index)
+        {
+            channel [sample_index] = std::sinf (sample_index * 0.08f) / 4.f;
+        }
+    }
 }
 
 void SpectrogramVisualiserComponent::paint (juce::Graphics & g)
@@ -72,14 +83,7 @@ void SpectrogramVisualiserComponent::newOpenGLContextCreated ()
     };
     vb_ = std::make_unique<VertexBuffer> (open_gl_context_, vertices.data (), sizeof (vertices));
 
-    std::array<GLuint, 6> indices {
-        0,
-        1,
-        2, // First Triangle
-        2,
-        3,
-        0 // Second Triangle
-    };
+    std::array<GLuint, 6> indices {0, 1, 2, 2, 3, 0};
     ib_ = std::make_unique<IndexBuffer> (open_gl_context_, indices.data (), indices.size ());
 
     va_ = std::make_unique<VertexArray> (open_gl_context_);
@@ -90,8 +94,6 @@ void SpectrogramVisualiserComponent::newOpenGLContextCreated ()
 
 void SpectrogramVisualiserComponent::openGLContextClosing ()
 {
-    shader.reset ();
-    uniforms.reset ();
 }
 
 void SpectrogramVisualiserComponent::renderOpenGL ()
@@ -109,43 +111,25 @@ void SpectrogramVisualiserComponent::renderOpenGL ()
 
     shader->use ();
 
-    if (uniforms->resolution != nullptr)
-        uniforms->resolution->set ((GLfloat) kRenderingScale * getWidth (),
-                                   (GLfloat) kRenderingScale * getHeight ());
+    if (resolution_ != nullptr)
+        resolution_->set ((GLfloat) kRenderingScale * getWidth (),
+                          (GLfloat) kRenderingScale * getHeight ());
 
-    // Read in samples from ring buffer
-    if (uniforms->audio_sample_data != nullptr)
+    if (audio_sample_data_ != nullptr)
     {
-        juce::AudioBuffer<float> buff;
-        buff.setSize (2, kRingBufferReadSize);
-        for (auto channel = 0; channel < buff.getNumChannels (); ++channel)
-        {
-            auto * buffer = buff.getWritePointer (channel, 0);
-            for (auto sample = 0; sample < buff.getNumSamples (); ++sample)
-            {
-                buffer [sample] = std::sinf (time_ * 0.08f) / 4.f;
-                time_ += 1;
-            }
-        }
-
-        ring_buffer_->writeSamples (buff, 0, kRingBufferReadSize);
-        ring_buffer_->readSamples (read_buffer_, kRingBufferReadSize);
         juce::FloatVectorOperations::clear (visualization_buffer_, kRingBufferReadSize);
-
-        // Sum channels together
-        for (int i = 0; i < 2; ++i)
-            juce::FloatVectorOperations::add (
-                visualization_buffer_, read_buffer_.getReadPointer (i, 0), kRingBufferReadSize);
-
-        uniforms->audio_sample_data->set (visualization_buffer_, 256);
+        for (auto channel_index = 0; channel_index < read_buffer_.getNumChannels ();
+             ++channel_index)
+            juce::FloatVectorOperations::add (visualization_buffer_,
+                                              read_buffer_.getReadPointer (channel_index, 0),
+                                              kRingBufferReadSize);
+        audio_sample_data_->set (visualization_buffer_, 256);
     }
 
     va_->Bind ();
     ib_->Bind ();
-
     GLCall (
         juce::gl::glDrawElements (juce::gl::GL_TRIANGLES, 6, juce::gl::GL_UNSIGNED_INT, nullptr));
-
     ib_->Unbind ();
     va_->Unbind ();
 }
@@ -171,6 +155,7 @@ void SpectrogramVisualiserComponent::CreateShaders ()
 
     auto gl_shader_program = std::make_unique<juce::OpenGLShaderProgram> (open_gl_context_);
 
+    static const juce::String kGLSLVersionLabel = "GLSL: v";
     if (new_vertex_shader_.isNotEmpty () || new_fragment_shader_.isNotEmpty ())
     {
         juce::String status_text;
@@ -178,12 +163,14 @@ void SpectrogramVisualiserComponent::CreateShaders ()
             gl_shader_program->addFragmentShader (new_fragment_shader_) &&
             gl_shader_program->link ())
         {
-            uniforms.reset ();
             shader = std::move (gl_shader_program);
-            uniforms = std::make_unique<Uniforms> (open_gl_context_, *shader);
+            resolution_ =
+                std::make_unique<juce::OpenGLShaderProgram::Uniform> (*shader, "resolution");
+            audio_sample_data_ =
+                std::make_unique<juce::OpenGLShaderProgram::Uniform> (*shader, "audioSampleData");
 
-            status_text =
-                "GLSL: v" + juce::String (juce::OpenGLShaderProgram::getLanguageVersion (), 2);
+            status_text = kGLSLVersionLabel +
+                          juce::String (juce::OpenGLShaderProgram::getLanguageVersion (), 2);
         }
         else
         {
@@ -213,23 +200,4 @@ void SpectrogramVisualiserComponent::UpdateShaders ()
     new_fragment_shader_ = shaders_osc_2d_frag_glsl;
     new_vertex_shader_ = shaders_osc_2d_vert_glsl;
 #endif
-}
-
-juce::OpenGLShaderProgram::Uniform *
-SpectrogramVisualiserComponent::Uniforms::CreateUniform (juce::OpenGLContext & open_gl_context,
-                                                         juce::OpenGLShaderProgram & shader_program,
-                                                         const char * uniform_name)
-{
-    if (open_gl_context.extensions.glGetUniformLocation (shader_program.getProgramID (),
-                                                         uniform_name) < 0)
-        return nullptr;
-
-    return new juce::OpenGLShaderProgram::Uniform (shader_program, uniform_name);
-}
-
-SpectrogramVisualiserComponent::Uniforms::Uniforms (juce::OpenGLContext & open_gl_context,
-                                                    juce::OpenGLShaderProgram & shader_program)
-{
-    resolution.reset (CreateUniform (open_gl_context, shader_program, "resolution"));
-    audio_sample_data.reset (CreateUniform (open_gl_context, shader_program, "audioSampleData"));
 }
