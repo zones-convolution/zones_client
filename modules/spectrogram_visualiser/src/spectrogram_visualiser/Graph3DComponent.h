@@ -31,10 +31,12 @@ private:
 
     static const std::filesystem::path kShaderDirectory;
 
-    std::atomic<float> offset_x, scale_x;
+    std::atomic<float> offset_x_;
+    std::atomic<float> offset_y_;
+    std::atomic<float> scale_;
 
     juce::OpenGLContext open_gl_context_;
-    GLuint uniform_texture_;
+    GLuint graph_texture_id_;
 
     std::unique_ptr<VertexBuffer> vertex_buffer_;
     std::unique_ptr<IndexBuffer> index_buffer_;
@@ -45,9 +47,18 @@ private:
     juce::String new_vertex_shader_;
     juce::String new_fragment_shader_;
     std::unique_ptr<juce::OpenGLShaderProgram> shader;
+    std::unique_ptr<juce::OpenGLShaderProgram::Uniform> uniform_texture_transform_;
+    std::unique_ptr<juce::OpenGLShaderProgram::Uniform> uniform_vertex_transform_;
+    std::unique_ptr<juce::OpenGLShaderProgram::Uniform> uniform_graph_texture_;
 
     juce::Label status_label_;
     juce::TextButton refresh_button_ {"Refresh"};
+    juce::Slider scale_slider_ {juce::Slider::SliderStyle::LinearHorizontal,
+                                juce::Slider::TextEntryBoxPosition::NoTextBox};
+    juce::Slider offset_x_slider_ {juce::Slider::SliderStyle::LinearHorizontal,
+                                   juce::Slider::TextEntryBoxPosition::NoTextBox};
+    juce::Slider offset_y_slider_ {juce::Slider::SliderStyle::LinearHorizontal,
+                                   juce::Slider::TextEntryBoxPosition::NoTextBox};
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Graph3DComponent)
 };

@@ -37,13 +37,13 @@ GraphComponent::GraphComponent ()
     scale_slider_.setRange ({0.f, 1.f}, 0.f);
     scale_slider_.setValue (0.5f);
     scale_slider_.onValueChange = [&] ()
-    { scale_x = static_cast<float> (scale_slider_.getValue ()); };
+    { scale_x_ = static_cast<float> (scale_slider_.getValue ()); };
 
     addAndMakeVisible (offset_slider_);
     offset_slider_.setRange ({-10.f, 10.f}, 0.f);
     offset_slider_.setValue (0.f);
     offset_slider_.onValueChange = [&] ()
-    { offset_x = static_cast<float> (offset_slider_.getValue ()); };
+    { offset_x_ = static_cast<float> (offset_slider_.getValue ()); };
 }
 
 void GraphComponent::paint (juce::Graphics & g)
@@ -56,12 +56,6 @@ GraphComponent::~GraphComponent ()
     open_gl_context_.detach ();
 }
 
-struct Point
-{
-    GLfloat x;
-    GLfloat y;
-};
-
 void GraphComponent::newOpenGLContextCreated ()
 {
     int vertex_texture_units;
@@ -73,20 +67,48 @@ void GraphComponent::newOpenGLContextCreated ()
     GLCall (juce::gl::glEnable (juce::gl::GL_BLEND));
     GLCall (juce::gl::glBlendFunc (juce::gl::GL_SRC_ALPHA, juce::gl::GL_ONE_MINUS_SRC_ALPHA));
 
-    Point graph [2000];
-    for (int i = 0; i < 2000; i++)
+    std::array<GLfloat, 400> x_distribution {};
+    for (auto i = 0; i < x_distribution.size (); i++)
+        x_distribution [i] = ((float) i - 50.f) / 50.0f;
+
+    vb_ = std::make_unique<VertexBuffer> (
+        open_gl_context_, x_distribution.data (), sizeof (x_distribution));
+
+    va_ = std::make_unique<VertexArray> (open_gl_context_);
+    VertexBufferLayout vertex_buffer_layout;
+    vertex_buffer_layout.Push<GLfloat> (1);
+    va_->AddBuffer (*vb_, vertex_buffer_layout);
+
+    std::array<GLubyte, 2048> graph {};
+    for (auto i = 0; i < graph.size (); i++)
     {
-        float x = (static_cast<float> (i) - 1000.0f) / 100.0f;
-        graph [i].x = x;
-        graph [i].y = sin (x * 10.0f) / (1.0f + x * x);
+        float x = (i - 1024.0f) / 100.0f;
+        float y = std::sin (x * 10.0f) / (1.0f + x * x);
+        graph [i] = std::roundf (y * 128.0f + 128.0f);
     }
 
-    vb_ = std::make_unique<VertexBuffer> (open_gl_context_, graph, sizeof (graph));
-    va_ = std::make_unique<VertexArray> (open_gl_context_);
+    GLCall (juce::gl::glActiveTexture (juce::gl::GL_TEXTURE0));
+    GLCall (juce::gl::glGenTextures (1, &graph_texture_id_));
+    GLCall (juce::gl::glBindTexture (juce::gl::GL_TEXTURE_2D, graph_texture_id_));
 
-    VertexBufferLayout vertex_buffer_layout;
-    vertex_buffer_layout.Push<GLfloat> (2);
-    va_->AddBuffer (*vb_, vertex_buffer_layout);
+    juce::gl::glTexParameteri (
+        juce::gl::GL_TEXTURE_2D, juce::gl::GL_TEXTURE_MIN_FILTER, juce::gl::GL_LINEAR);
+    juce::gl::glTexParameteri (
+        juce::gl::GL_TEXTURE_2D, juce::gl::GL_TEXTURE_MAG_FILTER, juce::gl::GL_LINEAR);
+    juce::gl::glTexParameteri (
+        juce::gl::GL_TEXTURE_2D, juce::gl::GL_TEXTURE_WRAP_S, juce::gl::GL_CLAMP_TO_EDGE);
+    juce::gl::glTexParameteri (
+        juce::gl::GL_TEXTURE_2D, juce::gl::GL_TEXTURE_WRAP_T, juce::gl::GL_CLAMP_TO_EDGE);
+
+    GLCall (juce::gl::glTexImage2D (juce::gl::GL_TEXTURE_2D,
+                                    0,
+                                    juce::gl::GL_RED,
+                                    graph.size (),
+                                    1,
+                                    0,
+                                    juce::gl::GL_RED,
+                                    juce::gl::GL_UNSIGNED_BYTE,
+                                    graph.data ()));
 }
 
 void GraphComponent::openGLContextClosing ()
@@ -101,10 +123,14 @@ void GraphComponent::renderOpenGL ()
 
     CreateShaders ();
     shader->use ();
-    uniform_offset_x_->set (offset_x);
-    uniform_scale_x_->set (scale_x);
+    uniform_offset_x_->set (offset_x_.load ());
+    uniform_scale_x_->set (scale_x_.load ());
+    uniform_mytexture_->set (0);
+
+    GLCall (juce::gl::glBindTexture (juce::gl::GL_TEXTURE_2D, graph_texture_id_));
+
     va_->Bind ();
-    GLCall (juce::gl::glDrawArrays (juce::gl::GL_LINE_STRIP, 0, 2000));
+    GLCall (juce::gl::glDrawArrays (juce::gl::GL_LINE_STRIP, 0, 101));
     va_->Unbind ();
 }
 
@@ -147,6 +173,8 @@ void GraphComponent::CreateShaders ()
                 std::make_unique<juce::OpenGLShaderProgram::Uniform> (*shader, "offset_x");
             uniform_scale_x_ =
                 std::make_unique<juce::OpenGLShaderProgram::Uniform> (*shader, "scale_x");
+            uniform_mytexture_ =
+                std::make_unique<juce::OpenGLShaderProgram::Uniform> (*shader, "mytexture");
         }
         else
         {

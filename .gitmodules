@@ -19,3 +19,6 @@
 [submodule "lib/stretch"]
 	path = lib/stretch
 	url = https://signalsmith-audio.co.uk/code/stretch.git
+[submodule "lib/glm"]
+	path = lib/glm
+	url = git@github.com:g-truc/glm.git

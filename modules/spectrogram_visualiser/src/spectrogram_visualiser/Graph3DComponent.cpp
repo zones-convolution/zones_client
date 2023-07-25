@@ -1,7 +1,10 @@
 #include "Graph3DComponent.h"
 
 #include "GLUtils.h"
-
+#define GLM_FORCE_RADIANS
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <memory>
 
 #if JUCE_DEBUG
@@ -32,6 +35,24 @@ Graph3DComponent::Graph3DComponent ()
     addAndMakeVisible (refresh_button_);
     refresh_button_.onClick = [&] () { UpdateShaders (); };
     UpdateShaders ();
+
+    addAndMakeVisible (scale_slider_);
+    scale_slider_.setRange ({0.f, 1.f}, 0.f);
+    scale_slider_.setValue (0.5f);
+    scale_slider_.onValueChange = [&] ()
+    { scale_ = static_cast<float> (scale_slider_.getValue ()); };
+
+    addAndMakeVisible (offset_x_slider_);
+    offset_x_slider_.setRange ({-10.f, 10.f}, 0.f);
+    offset_x_slider_.setValue (0.f);
+    offset_x_slider_.onValueChange = [&] ()
+    { offset_x_ = static_cast<float> (offset_x_slider_.getValue ()); };
+
+    addAndMakeVisible (offset_y_slider_);
+    offset_y_slider_.setRange ({-10.f, 10.f}, 0.f);
+    offset_y_slider_.setValue (0.f);
+    offset_y_slider_.onValueChange = [&] ()
+    { offset_y_ = static_cast<float> (offset_y_slider_.getValue ()); };
 }
 
 void Graph3DComponent::paint (juce::Graphics & g)
@@ -44,35 +65,30 @@ Graph3DComponent::~Graph3DComponent ()
     open_gl_context_.detach ();
 }
 
-struct Vec2
-{
-    GLfloat x;
-    GLfloat y;
-};
-
 void Graph3DComponent::newOpenGLContextCreated ()
 {
     GLCall (juce::gl::glEnable (juce::gl::GL_BLEND));
     GLCall (juce::gl::glBlendFunc (juce::gl::GL_SRC_ALPHA, juce::gl::GL_ONE_MINUS_SRC_ALPHA));
 
-    static constexpr GLsizei kGraphSize = 256;
+    static constexpr auto kGraphSize = 256;
     std::array<std::array<GLbyte, kGraphSize>, kGraphSize> graph {};
 
-    for (int i = 0; i < kGraphSize; i++)
+    for (int x_index = 0; x_index < kGraphSize; x_index++)
     {
-        for (int j = 0; j < kGraphSize; j++)
+        for (int y_index = 0; y_index < kGraphSize; y_index++)
         {
-            float x = (i - kGraphSize / 2.f) / (kGraphSize / 2.0f);
-            float y = (j - kGraphSize / 2.f) / (kGraphSize / 2.0f);
+            float x = ((float) x_index - (float) kGraphSize / 2.0f) / ((float) kGraphSize / 2.0f);
+            float y = ((float) y_index - (float) kGraphSize / 2.0f) / ((float) kGraphSize / 2.0f);
+
             float d = std::hypotf (x, y) * 4.0f;
             float z = (1.0f - d * d) * std::expf (d * d / -2.0f);
-            graph [i][j] = std::roundf (z * 127.f + 128.f);
+            graph [x_index][y_index] = std::roundf (z * 127.f + 128.f);
         }
     }
 
     GLCall (open_gl_context_.extensions.glActiveTexture (juce::gl::GL_TEXTURE0));
-    GLCall (juce::gl::glGenTextures (1, &uniform_texture_));
-    GLCall (juce::gl::glBindTexture (juce::gl::GL_TEXTURE_2D, uniform_texture_));
+    GLCall (juce::gl::glGenTextures (1, &graph_texture_id_));
+    GLCall (juce::gl::glBindTexture (juce::gl::GL_TEXTURE_2D, graph_texture_id_));
     GLCall (juce::gl::glTexImage2D (juce::gl::GL_TEXTURE_2D,
                                     0,
                                     juce::gl::GL_RED,
@@ -82,9 +98,17 @@ void Graph3DComponent::newOpenGLContextCreated ()
                                     juce::gl::GL_RED,
                                     juce::gl::GL_BYTE,
                                     graph.data ()));
+    juce::gl::glTexParameteri (
+        juce::gl::GL_TEXTURE_2D, juce::gl::GL_TEXTURE_WRAP_S, juce::gl::GL_CLAMP_TO_EDGE);
+    juce::gl::glTexParameteri (
+        juce::gl::GL_TEXTURE_2D, juce::gl::GL_TEXTURE_WRAP_T, juce::gl::GL_CLAMP_TO_EDGE);
+    juce::gl::glTexParameteri (
+        juce::gl::GL_TEXTURE_2D, juce::gl::GL_TEXTURE_MIN_FILTER, juce::gl::GL_LINEAR);
+    juce::gl::glTexParameteri (
+        juce::gl::GL_TEXTURE_2D, juce::gl::GL_TEXTURE_MAG_FILTER, juce::gl::GL_LINEAR);
 
     static constexpr size_t kVertexBufferSize = 101;
-    std::array<std::array<Vec2, kVertexBufferSize>, kVertexBufferSize> vertices {};
+    std::array<std::array<glm::vec2, kVertexBufferSize>, kVertexBufferSize> vertices {};
     for (int i = 0; i < kVertexBufferSize; i++)
     {
         for (int j = 0; j < kVertexBufferSize; j++)
@@ -96,7 +120,7 @@ void Graph3DComponent::newOpenGLContextCreated ()
     vertex_buffer_ =
         std::make_unique<VertexBuffer> (open_gl_context_, vertices.data (), sizeof (vertices));
 
-    std::array<GLuint, 100 * 101 * 4> indices;
+    std::array<GLuint, 100 * 101 * 4> indices {};
     int i = 0;
     for (int y = 0; y < 101; y++)
     {
@@ -137,17 +161,27 @@ void Graph3DComponent::renderOpenGL ()
     CreateShaders ();
     shader->use ();
 
-    juce::gl::glUniform1i (uniform_texture_, 0);
+    auto scale = scale_.load ();
+    auto offset_x = offset_x_.load ();
+    auto offset_y = offset_y_.load ();
 
-    juce::gl::glTexParameteri (
-        juce::gl::GL_TEXTURE_2D, juce::gl::GL_TEXTURE_WRAP_S, juce::gl::GL_CLAMP_TO_EDGE);
-    juce::gl::glTexParameteri (
-        juce::gl::GL_TEXTURE_2D, juce::gl::GL_TEXTURE_WRAP_T, juce::gl::GL_CLAMP_TO_EDGE);
+    glm::mat4 model {1.0f};
+    glm::mat4 view = glm::lookAt (
+        glm::vec3 (0.0, -2.0, 2.0), glm::vec3 (0.0, 0.0, 0.0), glm::vec3 (0.0, 0.0, 1.0));
+    glm::mat4 projection = glm::perspective (45.0f, 1.0f * 640 / 480, 0.1f, 10.0f);
 
-    juce::gl::glTexParameteri (
-        juce::gl::GL_TEXTURE_2D, juce::gl::GL_TEXTURE_MIN_FILTER, juce::gl::GL_LINEAR);
-    juce::gl::glTexParameteri (
-        juce::gl::GL_TEXTURE_2D, juce::gl::GL_TEXTURE_MAG_FILTER, juce::gl::GL_LINEAR);
+    glm::mat4 vertex_transform = projection * view * model;
+    glm::mat4 texture_transform =
+        glm::translate (glm::scale (glm::mat4 (1.0f), glm::vec3 (scale, scale, 1)),
+                        glm::vec3 (offset_x, offset_y, 0));
+
+    uniform_vertex_transform_->setMatrix4 (
+        glm::value_ptr (vertex_transform), 1, juce::gl::GL_FALSE);
+    uniform_texture_transform_->setMatrix4 (
+        glm::value_ptr (texture_transform), 1, juce::gl::GL_FALSE);
+    uniform_graph_texture_->set (0);
+
+    GLCall (juce::gl::glBindTexture (juce::gl::GL_TEXTURE_2D, graph_texture_id_));
 
     vertex_array_->Bind ();
     index_buffer_->Bind ();
@@ -163,6 +197,12 @@ void Graph3DComponent::resized ()
     layout.flexDirection = juce::FlexBox::Direction::column;
     layout.justifyContent = juce::FlexBox::JustifyContent::flexEnd;
 
+    layout.items.add (juce::FlexItem (offset_y_slider_).withHeight (20.f));
+    layout.items.add (LookAndFeel::kFlexSpacer);
+    layout.items.add (juce::FlexItem (offset_x_slider_).withHeight (20.f));
+    layout.items.add (LookAndFeel::kFlexSpacer);
+    layout.items.add (juce::FlexItem (scale_slider_).withHeight (20.f));
+    layout.items.add (LookAndFeel::kFlexSpacer);
     layout.items.add (juce::FlexItem (status_label_).withHeight (20.f));
     layout.items.add (LookAndFeel::kFlexSpacer);
     layout.items.add (juce::FlexItem (refresh_button_).withHeight (40.f));
@@ -188,8 +228,12 @@ void Graph3DComponent::CreateShaders ()
             shader = std::move (gl_shader_program);
             status_text =
                 "GLSL: v" + juce::String (juce::OpenGLShaderProgram::getLanguageVersion (), 2);
-            uniform_texture_ = open_gl_context_.extensions.glGetUniformLocation (
-                shader->getProgramID (), "graph_texture");
+            uniform_texture_transform_ =
+                std::make_unique<juce::OpenGLShaderProgram::Uniform> (*shader, "texture_transform");
+            uniform_vertex_transform_ =
+                std::make_unique<juce::OpenGLShaderProgram::Uniform> (*shader, "vertex_transform");
+            uniform_graph_texture_ =
+                std::make_unique<juce::OpenGLShaderProgram::Uniform> (*shader, "graph_texture");
         }
         else
         {

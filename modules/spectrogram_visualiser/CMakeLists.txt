@@ -17,7 +17,7 @@ zones_add_module(
         src/spectrogram_visualiser/VertexBufferLayout.h
         src/spectrogram_visualiser/Shader.h
         src/spectrogram_visualiser/Shader.cpp
-        DEPS juce::juce_gui_basics juce::juce_opengl zones_look_and_feel juce::juce_audio_basics
+        DEPS juce::juce_gui_basics juce::juce_opengl zones_look_and_feel juce::juce_audio_basics glm
 )
 
 embed_resources(spectrogram_visualiser

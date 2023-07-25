@@ -31,11 +31,12 @@ private:
 
     static const std::filesystem::path kShaderDirectory;
 
-    std::atomic<float> offset_x, scale_x;
+    std::atomic<float> offset_x_, scale_x_;
 
     juce::OpenGLContext open_gl_context_;
     std::unique_ptr<VertexBuffer> vb_;
     std::unique_ptr<VertexArray> va_;
+    GLuint graph_texture_id_;
 
     juce::SpinLock shader_mutex_;
     juce::String new_vertex_shader_;
@@ -43,6 +44,7 @@ private:
     std::unique_ptr<juce::OpenGLShaderProgram> shader;
     std::unique_ptr<juce::OpenGLShaderProgram::Uniform> uniform_offset_x_;
     std::unique_ptr<juce::OpenGLShaderProgram::Uniform> uniform_scale_x_;
+    std::unique_ptr<juce::OpenGLShaderProgram::Uniform> uniform_mytexture_;
 
     juce::Label status_label_;
     juce::TextButton refresh_button_ {"Refresh"};
