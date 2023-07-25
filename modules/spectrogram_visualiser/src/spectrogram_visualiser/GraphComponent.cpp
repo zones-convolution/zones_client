@@ -64,6 +64,12 @@ struct Point
 
 void GraphComponent::newOpenGLContextCreated ()
 {
+    int vertex_texture_units;
+    GLCall (juce::gl::glGetIntegerv (juce::gl::GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS,
+                                     &vertex_texture_units));
+    if (! vertex_texture_units)
+        DBG ("Your graphics cards does not support texture lookups in the vertex shader!");
+
     GLCall (juce::gl::glEnable (juce::gl::GL_BLEND));
     GLCall (juce::gl::glBlendFunc (juce::gl::GL_SRC_ALPHA, juce::gl::GL_ONE_MINUS_SRC_ALPHA));
 
@@ -95,9 +101,8 @@ void GraphComponent::renderOpenGL ()
 
     CreateShaders ();
     shader->use ();
-    GLCall (open_gl_context_.extensions.glUniform1f (uniform_offset_x_, offset_x));
-    GLCall (open_gl_context_.extensions.glUniform1f (uniform_scale_x_, scale_x));
-
+    uniform_offset_x_->set (offset_x);
+    uniform_scale_x_->set (scale_x);
     va_->Bind ();
     GLCall (juce::gl::glDrawArrays (juce::gl::GL_LINE_STRIP, 0, 2000));
     va_->Unbind ();
@@ -138,10 +143,10 @@ void GraphComponent::CreateShaders ()
             shader = std::move (gl_shader_program);
             status_text =
                 "GLSL: v" + juce::String (juce::OpenGLShaderProgram::getLanguageVersion (), 2);
-            uniform_offset_x_ = open_gl_context_.extensions.glGetUniformLocation (
-                shader->getProgramID (), "offset_x");
-            uniform_scale_x_ = open_gl_context_.extensions.glGetUniformLocation (
-                shader->getProgramID (), "scale_x");
+            uniform_offset_x_ =
+                std::make_unique<juce::OpenGLShaderProgram::Uniform> (*shader, "offset_x");
+            uniform_scale_x_ =
+                std::make_unique<juce::OpenGLShaderProgram::Uniform> (*shader, "scale_x");
         }
         else
         {

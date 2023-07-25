@@ -34,15 +34,15 @@ private:
     std::atomic<float> offset_x, scale_x;
 
     juce::OpenGLContext open_gl_context_;
-    GLuint uniform_offset_x_, uniform_scale_x_;
     std::unique_ptr<VertexBuffer> vb_;
     std::unique_ptr<VertexArray> va_;
 
     juce::SpinLock shader_mutex_;
-
     juce::String new_vertex_shader_;
     juce::String new_fragment_shader_;
     std::unique_ptr<juce::OpenGLShaderProgram> shader;
+    std::unique_ptr<juce::OpenGLShaderProgram::Uniform> uniform_offset_x_;
+    std::unique_ptr<juce::OpenGLShaderProgram::Uniform> uniform_scale_x_;
 
     juce::Label status_label_;
     juce::TextButton refresh_button_ {"Refresh"};
