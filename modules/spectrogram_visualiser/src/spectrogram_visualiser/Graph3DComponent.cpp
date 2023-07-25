@@ -43,13 +43,13 @@ Graph3DComponent::Graph3DComponent ()
     { scale_ = static_cast<float> (scale_slider_.getValue ()); };
 
     addAndMakeVisible (offset_x_slider_);
-    offset_x_slider_.setRange ({-10.f, 10.f}, 0.f);
+    offset_x_slider_.setRange ({-1.f, 1.f}, 0.f);
     offset_x_slider_.setValue (0.f);
     offset_x_slider_.onValueChange = [&] ()
     { offset_x_ = static_cast<float> (offset_x_slider_.getValue ()); };
 
     addAndMakeVisible (offset_y_slider_);
-    offset_y_slider_.setRange ({-10.f, 10.f}, 0.f);
+    offset_y_slider_.setRange ({-1.f, 1.f}, 0.f);
     offset_y_slider_.setValue (0.f);
     offset_y_slider_.onValueChange = [&] ()
     { offset_y_ = static_cast<float> (offset_y_slider_.getValue ()); };
@@ -71,21 +71,18 @@ void Graph3DComponent::newOpenGLContextCreated ()
     GLCall (juce::gl::glBlendFunc (juce::gl::GL_SRC_ALPHA, juce::gl::GL_ONE_MINUS_SRC_ALPHA));
 
     static constexpr auto kGraphSize = 256;
-    std::array<std::array<GLbyte, kGraphSize>, kGraphSize> graph {};
+    std::array<std::array<GLubyte, kGraphSize>, kGraphSize> graph {};
 
-    for (int x_index = 0; x_index < kGraphSize; x_index++)
+    for (int i = 0; i < kGraphSize; i++)
     {
-        for (int y_index = 0; y_index < kGraphSize; y_index++)
+        for (int j = 0; j < kGraphSize; j++)
         {
-            float x = ((float) x_index - (float) kGraphSize / 2.0f) / ((float) kGraphSize / 2.0f);
-            float y = ((float) y_index - (float) kGraphSize / 2.0f) / ((float) kGraphSize / 2.0f);
-
-            float d = std::hypotf (x, y) * 4.0f;
-            float z = (1.0f - d * d) * std::expf (d * d / -2.0f);
-            graph [x_index][y_index] = std::roundf (z * 127.f + 128.f);
+            float x = (i - kGraphSize / 2) / (kGraphSize / 2.0);
+            float y = (j - kGraphSize / 2) / (kGraphSize / 2.0);
+            float z = sinf (y * M_PI * 2.f) * sinf (x * M_PI * 2.f);
+            graph [i][j] = roundf (z * 127 + 128);
         }
     }
-
     GLCall (open_gl_context_.extensions.glActiveTexture (juce::gl::GL_TEXTURE0));
     GLCall (juce::gl::glGenTextures (1, &graph_texture_id_));
     GLCall (juce::gl::glBindTexture (juce::gl::GL_TEXTURE_2D, graph_texture_id_));
@@ -96,7 +93,7 @@ void Graph3DComponent::newOpenGLContextCreated ()
                                     kGraphSize,
                                     0,
                                     juce::gl::GL_RED,
-                                    juce::gl::GL_BYTE,
+                                    juce::gl::GL_UNSIGNED_BYTE,
                                     graph.data ()));
     juce::gl::glTexParameteri (
         juce::gl::GL_TEXTURE_2D, juce::gl::GL_TEXTURE_WRAP_S, juce::gl::GL_CLAMP_TO_EDGE);
