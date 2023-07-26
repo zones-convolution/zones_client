@@ -1,5 +1,6 @@
 #pragma once
 
+#include "DraggableOrientation.h"
 #include "IndexBuffer.h"
 #include "VertexArray.h"
 #include "VertexBuffer.h"
@@ -35,8 +36,6 @@ private:
     std::atomic<float> offset_x_;
     std::atomic<float> offset_y_;
     std::atomic<float> scale_;
-    std::atomic<float> rot_x_;
-    std::atomic<float> rot_y_;
 
     float rot_x_smooth_ = 0.f;
     float rot_y_smooth_ = 0.f;
@@ -51,6 +50,11 @@ private:
 
     juce::SpinLock shader_mutex_;
 
+public:
+    void mouseDown (const juce::MouseEvent & event) override;
+    void mouseDrag (const juce::MouseEvent & event) override;
+
+private:
     juce::String new_vertex_shader_;
     juce::String new_fragment_shader_;
     std::unique_ptr<juce::OpenGLShaderProgram> shader;
@@ -67,10 +71,7 @@ private:
                                    juce::Slider::TextEntryBoxPosition::NoTextBox};
     juce::Slider offset_y_slider_ {juce::Slider::SliderStyle::LinearHorizontal,
                                    juce::Slider::TextEntryBoxPosition::NoTextBox};
-    juce::Slider rot_y_slider_ {juce::Slider::SliderStyle::LinearHorizontal,
-                                juce::Slider::TextEntryBoxPosition::NoTextBox};
-    juce::Slider rot_x_slider_ {juce::Slider::SliderStyle::LinearHorizontal,
-                                juce::Slider::TextEntryBoxPosition::NoTextBox};
+    DraggableOrientation draggable_orientation_;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Graph3DComponent)
 };

@@ -4,13 +4,40 @@ in vec4 graph_coord;
 out vec4 fragColor;
 uniform vec4 colour;
 
+const float blueToYellowBound = 0.4;
+const float yellowToGreenBound = 0.8;
+
+vec4 getColorFromHeight(float y)
+{
+    vec3 blueColor = vec3(0.0, 0.0, 1.0);
+    vec3 yellowColor = vec3(1.0, 1.0, 0.0);
+    vec3 greenColor = vec3(0.0, 1.0, 0.0);
+    vec3 redColor = vec3(1.0, 0.0, 0.0);
+
+    vec3 interpolatedColor;
+    if (y < blueToYellowBound)
+    {
+        interpolatedColor = mix(blueColor, yellowColor, y / blueToYellowBound);
+    }
+    else if (y < yellowToGreenBound)
+    {
+        interpolatedColor = mix(yellowColor, greenColor, (y - blueToYellowBound) / (yellowToGreenBound - blueToYellowBound));
+    }
+    else
+    {
+        interpolatedColor = mix(greenColor, redColor, (y - yellowToGreenBound) / (1.0 - yellowToGreenBound));
+    }
+
+    return vec4(interpolatedColor, 1.0);
+}
+
 void main(void) {
     float factor;
     if (gl_FrontFacing)
     factor = 1.0;
     else
-    factor = 0.5;
+    factor = 0.2;
 
-    fragColor = (graph_coord / 2.0 + 0.5) * factor * colour;
+    fragColor = getColorFromHeight(abs(graph_coord.z)) * factor * colour;
 }
 

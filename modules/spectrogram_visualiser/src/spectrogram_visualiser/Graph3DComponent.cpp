@@ -56,18 +56,6 @@ Graph3DComponent::Graph3DComponent ()
     offset_y_slider_.setValue (0.f);
     offset_y_slider_.onValueChange = [&] ()
     { offset_y_ = static_cast<float> (offset_y_slider_.getValue ()); };
-
-    addAndMakeVisible (rot_x_slider_);
-    rot_x_slider_.setRange ({-1.f, 1.f}, 0.f);
-    rot_x_slider_.setValue (0.f);
-    rot_x_slider_.onValueChange = [&] ()
-    { rot_x_ = static_cast<float> (rot_x_slider_.getValue ()); };
-
-    addAndMakeVisible (rot_y_slider_);
-    rot_y_slider_.setRange ({-1.f, 1.f}, 0.f);
-    rot_y_slider_.setValue (0.f);
-    rot_y_slider_.onValueChange = [&] ()
-    { rot_y_ = static_cast<float> (rot_y_slider_.getValue ()); };
 }
 
 void Graph3DComponent::paint (juce::Graphics & g)
@@ -98,6 +86,7 @@ void Graph3DComponent::newOpenGLContextCreated ()
             graph [i][j] = roundf (z * 127 + 128);
         }
     }
+
     GLCall (open_gl_context_.extensions.glActiveTexture (juce::gl::GL_TEXTURE0));
     GLCall (juce::gl::glGenTextures (1, &graph_texture_id_));
     GLCall (juce::gl::glBindTexture (juce::gl::GL_TEXTURE_2D, graph_texture_id_));
@@ -183,9 +172,10 @@ void Graph3DComponent::openGLContextClosing ()
     shader.reset ();
 }
 
-double SmoothLerp (double currentValue, double targetValue, double speedFactor, double deltaTime)
+static float
+SmoothLerp (float current_value, float target_value, float speed_factor, float delta_time)
 {
-    return currentValue + (targetValue - currentValue) * speedFactor * deltaTime;
+    return current_value + (target_value - current_value) * speed_factor * delta_time;
 }
 
 void Graph3DComponent::renderOpenGL ()
@@ -196,28 +186,32 @@ void Graph3DComponent::renderOpenGL ()
     CreateShaders ();
     shader->use ();
 
-    auto scale = scale_.load ();
-    auto offset_x = offset_x_.load ();
-    auto offset_y = offset_y_.load ();
+    rot_x_smooth_ =
+        SmoothLerp (rot_x_smooth_, draggable_orientation_.x_rotation.load (), 4.f, 1.0f / 60.0f);
+    rot_y_smooth_ =
+        SmoothLerp (rot_y_smooth_, draggable_orientation_.y_rotation.load (), 4.f, 1.0f / 60.0f);
 
-    rot_x_smooth_ = SmoothLerp (rot_x_smooth_, rot_x_.load (), 4.f, 1.0 / 60.0);
-    rot_y_smooth_ = SmoothLerp (rot_y_smooth_, rot_y_.load (), 4.f, 1.0 / 60.0);
+    auto rot_about_z = glm::rotate (glm::mat4 (1.f),
+                                    rot_x_smooth_ * juce::MathConstants<float>::twoPi,
+                                    glm::vec3 (0.f, 0.f, 1.f));
 
-    glm::mat4 rotator = glm::rotate (glm::mat4 (1.f),
-                                     rot_x_smooth_ * juce::MathConstants<float>::twoPi,
-                                     glm::vec3 (1.f, 0.f, 0.f));
+    auto rot_about_x = glm::rotate (glm::mat4 (1.f),
+                                    rot_y_smooth_ * juce::MathConstants<float>::twoPi,
+                                    glm::vec3 (1.f, 0.f, 0.f));
 
-    rotator = glm::rotate (
-        rotator, rot_y_smooth_ * juce::MathConstants<float>::twoPi, glm::vec3 (0.f, 0.f, 1.f));
+    auto rotator = rot_about_x * rot_about_z;
 
     glm::mat4 view = glm::lookAt (
-        glm::vec3 (0.0, -2.0, 2.0), glm::vec3 (0.0, 0.0, 0.0), glm::vec3 (0.0, 0.0, 1.0));
+        glm::vec3 (0.f, 4.f, 2.f), glm::vec3 (0.0, 0.0, 0.0), glm::vec3 (0.0, 0.0, 1.0));
     glm::mat4 projection = glm::perspective (45.0f, 1.0f * 640 / 480, 0.1f, 10.0f);
 
     glm::mat4 vertex_transform = projection * view * rotator;
     uniform_vertex_transform_->setMatrix4 (
         glm::value_ptr (vertex_transform), 1, juce::gl::GL_FALSE);
 
+    auto scale = scale_.load ();
+    auto offset_x = offset_x_.load ();
+    auto offset_y = offset_y_.load ();
     glm::mat4 texture_transform =
         glm::translate (glm::scale (glm::mat4 (1.0f), glm::vec3 (scale, scale, 1)),
                         glm::vec3 (offset_x, offset_y, 0));
@@ -249,11 +243,7 @@ void Graph3DComponent::resized ()
     juce::FlexBox layout;
     layout.flexDirection = juce::FlexBox::Direction::column;
     layout.justifyContent = juce::FlexBox::JustifyContent::flexEnd;
-
-    layout.items.add (juce::FlexItem (rot_y_slider_).withHeight (20.f));
-    layout.items.add (LookAndFeel::kFlexSpacer);
-    layout.items.add (juce::FlexItem (rot_x_slider_).withHeight (20.f));
-    layout.items.add (LookAndFeel::kFlexSpacer);
+    
     layout.items.add (juce::FlexItem (offset_y_slider_).withHeight (20.f));
     layout.items.add (LookAndFeel::kFlexSpacer);
     layout.items.add (juce::FlexItem (offset_x_slider_).withHeight (20.f));
@@ -265,6 +255,8 @@ void Graph3DComponent::resized ()
     layout.items.add (juce::FlexItem (refresh_button_).withHeight (40.f));
 
     layout.performLayout (getLocalBounds ().toFloat ());
+
+    draggable_orientation_.SetBounds (getLocalBounds ());
 }
 
 void Graph3DComponent::CreateShaders ()
@@ -322,4 +314,14 @@ void Graph3DComponent::UpdateShaders ()
     new_fragment_shader_ = shaders_graph3d_frag_glsl;
     new_vertex_shader_ = shaders_graph3d_vert_glsl;
 #endif
+}
+
+void Graph3DComponent::mouseDown (const juce::MouseEvent & event)
+{
+    draggable_orientation_.MouseDown (event.getPosition ().toFloat ());
+}
+
+void Graph3DComponent::mouseDrag (const juce::MouseEvent & event)
+{
+    draggable_orientation_.MouseDrag (event.getPosition ().toFloat ());
 }

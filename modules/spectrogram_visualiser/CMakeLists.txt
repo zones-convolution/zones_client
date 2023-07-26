@@ -17,6 +17,8 @@ zones_add_module(
         src/spectrogram_visualiser/VertexBufferLayout.h
         src/spectrogram_visualiser/Shader.h
         src/spectrogram_visualiser/Shader.cpp
+        src/spectrogram_visualiser/DraggableOrientation.h
+        src/spectrogram_visualiser/DraggableOrientation.cpp
         DEPS juce::juce_gui_basics juce::juce_opengl zones_look_and_feel juce::juce_audio_basics glm
 )
 
