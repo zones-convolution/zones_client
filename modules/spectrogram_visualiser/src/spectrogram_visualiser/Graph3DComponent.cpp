@@ -203,20 +203,24 @@ void Graph3DComponent::renderOpenGL ()
     rot_x_smooth_ = SmoothLerp (rot_x_smooth_, rot_x_.load (), 4.f, 1.0 / 60.0);
     rot_y_smooth_ = SmoothLerp (rot_y_smooth_, rot_y_.load (), 4.f, 1.0 / 60.0);
 
-    glm::quat rotator_quat {{rot_y_smooth_ * juce::MathConstants<float>::twoPi,
-                             0,
-                             rot_x_smooth_ * juce::MathConstants<float>::twoPi}};
+    glm::mat4 rotator = glm::rotate (glm::mat4 (1.f),
+                                     rot_x_smooth_ * juce::MathConstants<float>::twoPi,
+                                     glm::vec3 (1.f, 0.f, 0.f));
+
+    rotator = glm::rotate (
+        rotator, rot_y_smooth_ * juce::MathConstants<float>::twoPi, glm::vec3 (0.f, 0.f, 1.f));
+
     glm::mat4 view = glm::lookAt (
         glm::vec3 (0.0, -2.0, 2.0), glm::vec3 (0.0, 0.0, 0.0), glm::vec3 (0.0, 0.0, 1.0));
     glm::mat4 projection = glm::perspective (45.0f, 1.0f * 640 / 480, 0.1f, 10.0f);
 
-    glm::mat4 vertex_transform = projection * view * glm::toMat4 (rotator_quat);
+    glm::mat4 vertex_transform = projection * view * rotator;
+    uniform_vertex_transform_->setMatrix4 (
+        glm::value_ptr (vertex_transform), 1, juce::gl::GL_FALSE);
+
     glm::mat4 texture_transform =
         glm::translate (glm::scale (glm::mat4 (1.0f), glm::vec3 (scale, scale, 1)),
                         glm::vec3 (offset_x, offset_y, 0));
-
-    uniform_vertex_transform_->setMatrix4 (
-        glm::value_ptr (vertex_transform), 1, juce::gl::GL_FALSE);
     uniform_texture_transform_->setMatrix4 (
         glm::value_ptr (texture_transform), 1, juce::gl::GL_FALSE);
     uniform_graph_texture_->set (0);
