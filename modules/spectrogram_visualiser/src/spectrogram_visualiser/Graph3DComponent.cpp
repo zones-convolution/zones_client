@@ -2,9 +2,11 @@
 
 #include "GLUtils.h"
 #define GLM_FORCE_RADIANS
+#include <glm/common.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/quaternion.hpp>
 #include <memory>
 
 #if JUCE_DEBUG
@@ -28,6 +30,7 @@ Graph3DComponent::Graph3DComponent ()
     open_gl_context_.setComponentPaintingEnabled (true);
     open_gl_context_.setRenderer (this);
     open_gl_context_.attachTo (*this);
+    open_gl_context_.setContinuousRepainting (true);
 
     addAndMakeVisible (status_label_);
     status_label_.setJustificationType (juce::Justification::topLeft);
@@ -53,6 +56,18 @@ Graph3DComponent::Graph3DComponent ()
     offset_y_slider_.setValue (0.f);
     offset_y_slider_.onValueChange = [&] ()
     { offset_y_ = static_cast<float> (offset_y_slider_.getValue ()); };
+
+    addAndMakeVisible (rot_x_slider_);
+    rot_x_slider_.setRange ({-1.f, 1.f}, 0.f);
+    rot_x_slider_.setValue (0.f);
+    rot_x_slider_.onValueChange = [&] ()
+    { rot_x_ = static_cast<float> (rot_x_slider_.getValue ()); };
+
+    addAndMakeVisible (rot_y_slider_);
+    rot_y_slider_.setRange ({-1.f, 1.f}, 0.f);
+    rot_y_slider_.setValue (0.f);
+    rot_y_slider_.onValueChange = [&] ()
+    { rot_y_ = static_cast<float> (rot_y_slider_.getValue ()); };
 }
 
 void Graph3DComponent::paint (juce::Graphics & g)
@@ -117,9 +132,10 @@ void Graph3DComponent::newOpenGLContextCreated ()
     vertex_buffer_ =
         std::make_unique<VertexBuffer> (open_gl_context_, vertices.data (), sizeof (vertices));
 
-    std::array<GLuint, 100 * 101 * 4> indices {};
+    std::array<GLuint, 100 * 100 * 6> indices {};
     int i = 0;
-    for (int y = 0; y < 101; y++)
+
+    for (int y = 0; y < 100; y++)
     {
         for (int x = 0; x < 100; x++)
         {
@@ -128,7 +144,7 @@ void Graph3DComponent::newOpenGLContextCreated ()
         }
     }
 
-    for (int x = 0; x < 101; x++)
+    for (int x = 0; x < 100; x++)
     {
         for (int y = 0; y < 100; y++)
         {
@@ -136,7 +152,24 @@ void Graph3DComponent::newOpenGLContextCreated ()
             indices [i++] = (y + 1) * 101 + x;
         }
     }
-    index_buffer_ =
+    index_buffer_grid_ =
+        std::make_unique<IndexBuffer> (open_gl_context_, indices.data (), indices.size ());
+
+    i = 0;
+    for (int y = 0; y < 100; y++)
+    {
+        for (int x = 0; x < 100; x++)
+        {
+            indices [i++] = y * 101 + x;
+            indices [i++] = y * 101 + x + 1;
+            indices [i++] = (y + 1) * 101 + x + 1;
+
+            indices [i++] = y * 101 + x;
+            indices [i++] = (y + 1) * 101 + x + 1;
+            indices [i++] = (y + 1) * 101 + x;
+        }
+    }
+    index_buffer_graph_ =
         std::make_unique<IndexBuffer> (open_gl_context_, indices.data (), indices.size ());
 
     vertex_array_ = std::make_unique<VertexArray> (open_gl_context_);
@@ -148,6 +181,11 @@ void Graph3DComponent::newOpenGLContextCreated ()
 void Graph3DComponent::openGLContextClosing ()
 {
     shader.reset ();
+}
+
+double SmoothLerp (double currentValue, double targetValue, double speedFactor, double deltaTime)
+{
+    return currentValue + (targetValue - currentValue) * speedFactor * deltaTime;
 }
 
 void Graph3DComponent::renderOpenGL ()
@@ -162,12 +200,17 @@ void Graph3DComponent::renderOpenGL ()
     auto offset_x = offset_x_.load ();
     auto offset_y = offset_y_.load ();
 
-    glm::mat4 model {1.0f};
+    rot_x_smooth_ = SmoothLerp (rot_x_smooth_, rot_x_.load (), 4.f, 1.0 / 60.0);
+    rot_y_smooth_ = SmoothLerp (rot_y_smooth_, rot_y_.load (), 4.f, 1.0 / 60.0);
+
+    glm::quat rotator_quat {{rot_y_smooth_ * juce::MathConstants<float>::twoPi,
+                             0,
+                             rot_x_smooth_ * juce::MathConstants<float>::twoPi}};
     glm::mat4 view = glm::lookAt (
         glm::vec3 (0.0, -2.0, 2.0), glm::vec3 (0.0, 0.0, 0.0), glm::vec3 (0.0, 0.0, 1.0));
     glm::mat4 projection = glm::perspective (45.0f, 1.0f * 640 / 480, 0.1f, 10.0f);
 
-    glm::mat4 vertex_transform = projection * view * model;
+    glm::mat4 vertex_transform = projection * view * glm::toMat4 (rotator_quat);
     glm::mat4 texture_transform =
         glm::translate (glm::scale (glm::mat4 (1.0f), glm::vec3 (scale, scale, 1)),
                         glm::vec3 (offset_x, offset_y, 0));
@@ -181,10 +224,19 @@ void Graph3DComponent::renderOpenGL ()
     GLCall (juce::gl::glBindTexture (juce::gl::GL_TEXTURE_2D, graph_texture_id_));
 
     vertex_array_->Bind ();
-    index_buffer_->Bind ();
+
+    index_buffer_graph_->Bind ();
+    uniform_colour_->set (1.f, 1.f, 1.f, 1.f);
     GLCall (juce::gl::glDrawElements (
-                juce::gl::GL_LINES, 100 * 101 * 4, juce::gl::GL_UNSIGNED_INT, 0););
-    index_buffer_->Unbind ();
+        juce::gl::GL_TRIANGLES, 100 * 100 * 6, juce::gl::GL_UNSIGNED_INT, 0));
+    index_buffer_graph_->Unbind ();
+
+    index_buffer_graph_->Bind ();
+    uniform_colour_->set (0.f, 0.f, 0.f, 1.f);
+    GLCall (
+        juce::gl::glDrawElements (juce::gl::GL_LINES, 100 * 100 * 6, juce::gl::GL_UNSIGNED_INT, 0));
+    index_buffer_grid_->Unbind ();
+
     vertex_array_->Unbind ();
 }
 
@@ -194,6 +246,10 @@ void Graph3DComponent::resized ()
     layout.flexDirection = juce::FlexBox::Direction::column;
     layout.justifyContent = juce::FlexBox::JustifyContent::flexEnd;
 
+    layout.items.add (juce::FlexItem (rot_y_slider_).withHeight (20.f));
+    layout.items.add (LookAndFeel::kFlexSpacer);
+    layout.items.add (juce::FlexItem (rot_x_slider_).withHeight (20.f));
+    layout.items.add (LookAndFeel::kFlexSpacer);
     layout.items.add (juce::FlexItem (offset_y_slider_).withHeight (20.f));
     layout.items.add (LookAndFeel::kFlexSpacer);
     layout.items.add (juce::FlexItem (offset_x_slider_).withHeight (20.f));
@@ -231,6 +287,8 @@ void Graph3DComponent::CreateShaders ()
                 std::make_unique<juce::OpenGLShaderProgram::Uniform> (*shader, "vertex_transform");
             uniform_graph_texture_ =
                 std::make_unique<juce::OpenGLShaderProgram::Uniform> (*shader, "graph_texture");
+            uniform_colour_ =
+                std::make_unique<juce::OpenGLShaderProgram::Uniform> (*shader, "colour");
         }
         else
         {

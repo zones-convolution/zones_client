@@ -2,6 +2,7 @@
 
 in vec4 graph_coord;
 out vec4 fragColor;
+uniform vec4 colour;
 
 void main(void) {
     float factor;
@@ -10,6 +11,6 @@ void main(void) {
     else
     factor = 0.5;
 
-    fragColor = (graph_coord / 2.0 + 0.5) * factor;
+    fragColor = (graph_coord / 2.0 + 0.5) * factor * colour;
 }
 
