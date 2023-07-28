@@ -14,6 +14,11 @@ struct SetDryWetMixAction
     float dry_wet_mix;
 };
 
-using ParameterAction = std::variant<SetRoomSizeAction, SetDryWetMixAction>;
+struct SetReverbTimeAction
+{
+    float reverb_time;
+};
+
+using ParameterAction = std::variant<SetRoomSizeAction, SetDryWetMixAction, SetReverbTimeAction>;
 
 ParameterModel UpdateParameter (ParameterModel model, ParameterAction action);

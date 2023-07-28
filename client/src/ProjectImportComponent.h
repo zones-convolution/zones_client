@@ -53,7 +53,9 @@ private:
     juce::Label room_size_label_;
     juce::Slider room_size_slider_ {juce::Slider::SliderStyle::LinearHorizontal,
                                     juce::Slider::TextEntryBoxPosition::NoTextBox};
-
+    juce::Label reverb_time_label_;
+    juce::Slider reverb_time_slider_ {juce::Slider::SliderStyle::LinearHorizontal,
+                                      juce::Slider::TextEntryBoxPosition::NoTextBox};
     juce::Label dry_wet_label_;
     juce::Slider dry_wet_mix_slider_ {juce::Slider::SliderStyle::LinearHorizontal,
                                       juce::Slider::TextEntryBoxPosition::NoTextBox};

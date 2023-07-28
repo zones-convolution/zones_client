@@ -12,6 +12,9 @@ IrWatchController::IrWatchController (AudioEngine & audio_engine,
           lager::lenses::attr (&ProjectIrRepositoryModel::current_project_ir)))
     , parameter_model_reader_ (parameter_model_reader)
 {
+    current_graph_state_.room_size = 1.f;
+    current_graph_state_.reverb_time = 1.f;
+    
     WatchCurrentIr ();
     WatchParameterModel ();
 }
@@ -40,6 +43,7 @@ void IrWatchController::WatchParameterModel ()
                   [&] (const BoxedParameterModel & parameter_model)
                   {
                       current_graph_state_.room_size = parameter_model->room_size;
+                      current_graph_state_.reverb_time = parameter_model->reverb_time;
                       PerformRender ();
                   });
 }
@@ -58,7 +62,7 @@ void IrWatchController::PerformRender ()
                 return;
             if (last_render_result_.impl () == render_result.impl ())
                 return;
-            
+
             DBG ("RENDER DONE - LOAD");
             last_render_result_ = render_result;
             audio_engine_.LoadIr ({

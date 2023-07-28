@@ -12,6 +12,11 @@ ParameterModel UpdateParameter (ParameterModel model, ParameterAction action)
                         {
                             model.dry_wet_mix = set_dry_wet_mix_action.dry_wet_mix;
                             return model;
+                        },
+                        [&] (const SetReverbTimeAction & set_reverb_time_action) -> ParameterModel
+                        {
+                            model.reverb_time = set_reverb_time_action.reverb_time;
+                            return model;
                         }},
         action);
 }

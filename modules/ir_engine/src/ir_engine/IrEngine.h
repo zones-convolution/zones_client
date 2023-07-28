@@ -3,6 +3,7 @@
 #include "IrGraph.h"
 #include "juce_core/juce_core.h"
 #include "processors/BaseIrProcessor.h"
+#include "processors/ReverbTimeProcessor.h"
 #include "processors/RoomSizeProcessor.h"
 
 class IrEngine
@@ -44,6 +45,8 @@ private:
     std::shared_ptr<BaseIrProcessor> base_ir_processor_ = std::make_shared<BaseIrProcessor> ();
     std::shared_ptr<RoomSizeProcessor> room_size_processor_ =
         std::make_shared<RoomSizeProcessor> ();
+    std::shared_ptr<ReverbTimeProcessor> reverb_time_processor_ =
+        std::make_shared<ReverbTimeProcessor> ();
 
     IrGraph ir_graph_ = IrGraph ()
                             .WithProcessor ({IrGraph::CachePolicy ()
@@ -53,5 +56,9 @@ private:
                             .WithProcessor ({IrGraph::CachePolicy ()
                                                  .WithPolicyIdentifier ("room_size_processor")
                                                  .WithCachedHandle (&IrGraphState::CacheRoomSize),
-                                             room_size_processor_});
+                                             room_size_processor_})
+                            .WithProcessor ({IrGraph::CachePolicy ()
+                                                 .WithPolicyIdentifier ("reverb_time_processor")
+                                                 .WithCachedHandle (&IrGraphState::CacheReverbTime),
+                                             reverb_time_processor_});
 };
