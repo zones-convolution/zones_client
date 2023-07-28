@@ -139,10 +139,13 @@ juce::Image CreateGraphData ()
     return spectrogram.rescaled (1024, 1024);
 }
 
+static constexpr size_t kVertexBufferSize = 110;
+static constexpr size_t kVertexBufferSizeM1 = kVertexBufferSize - 1;
+
 void Graph3DComponent::newOpenGLContextCreated ()
 {
-    GLCall (juce::gl::glEnable (juce::gl::GL_BLEND));
-    GLCall (juce::gl::glBlendFunc (juce::gl::GL_SRC_ALPHA, juce::gl::GL_ONE_MINUS_SRC_ALPHA));
+    //    GLCall (juce::gl::glEnable (juce::gl::GL_BLEND));
+    //    GLCall (juce::gl::glBlendFunc (juce::gl::GL_SRC_ALPHA, juce::gl::GL_ONE_MINUS_SRC_ALPHA));
 
     //    static constexpr auto kGraphSize = 1024;
     //    auto graph = std::make_unique<std::array<std::array<GLubyte, kGraphSize>, kGraphSize>> ();
@@ -211,62 +214,54 @@ void Graph3DComponent::newOpenGLContextCreated ()
     juce::gl::glTexParameteri (
         juce::gl::GL_TEXTURE_2D, juce::gl::GL_TEXTURE_MAG_FILTER, juce::gl::GL_LINEAR);
 
-    static constexpr size_t kVertexBufferSize = 101;
     std::array<std::array<glm::vec2, kVertexBufferSize>, kVertexBufferSize> vertices {};
     for (int i = 0; i < kVertexBufferSize; i++)
     {
         for (int j = 0; j < kVertexBufferSize; j++)
         {
-            vertices [i][j].x = (j - 50.f) / 50.0f;
-            vertices [i][j].y = (i - 50.f) / 50.0f;
+            auto hvbs = (float) kVertexBufferSizeM1 / 2.f;
+            vertices [i][j].x = (j - hvbs) / hvbs;
+            vertices [i][j].y = (i - hvbs) / hvbs;
         }
     }
     vertex_buffer_ =
         std::make_unique<VertexBuffer> (open_gl_context_, vertices.data (), sizeof (vertices));
 
-    std::array<GLuint, 100 * 100 * 6> indices {};
+    std::array<GLuint, kVertexBufferSizeM1 * kVertexBufferSizeM1 * 6> indices {};
     int i = 0;
 
-    for (int y = 0; y < 100; y++)
+    for (int y = 0; y < kVertexBufferSizeM1; y++)
     {
-        juce::gl::glTexParameteri (
-            juce::gl::GL_TEXTURE_2D, juce::gl::GL_TEXTURE_WRAP_S, juce::gl::GL_REPEAT);
-        juce::gl::glTexParameteri (
-            juce::gl::GL_TEXTURE_2D, juce::gl::GL_TEXTURE_WRAP_T, juce::gl::GL_REPEAT);
-        juce::gl::glTexParameteri (
-            juce::gl::GL_TEXTURE_2D, juce::gl::GL_TEXTURE_MIN_FILTER, juce::gl::GL_LINEAR);
-        juce::gl::glTexParameteri (
-            juce::gl::GL_TEXTURE_2D, juce::gl::GL_TEXTURE_MAG_FILTER, juce::gl::GL_LINEAR);
-        for (int x = 0; x < 100; x++)
+        for (int x = 0; x < kVertexBufferSizeM1; x++)
         {
-            indices [i++] = y * 101 + x;
-            indices [i++] = y * 101 + x + 1;
+            indices [i++] = y * kVertexBufferSize + x;
+            indices [i++] = y * kVertexBufferSize + x + 1;
         }
     }
 
-    for (int x = 0; x < 100; x++)
+    for (int x = 0; x < kVertexBufferSizeM1; x++)
     {
-        for (int y = 0; y < 100; y++)
+        for (int y = 0; y < kVertexBufferSizeM1; y++)
         {
-            indices [i++] = y * 101 + x;
-            indices [i++] = (y + 1) * 101 + x;
+            indices [i++] = y * kVertexBufferSize + x;
+            indices [i++] = (y + 1) * kVertexBufferSize + x;
         }
     }
     index_buffer_grid_ =
         std::make_unique<IndexBuffer> (open_gl_context_, indices.data (), indices.size ());
 
     i = 0;
-    for (int y = 0; y < 100; y++)
+    for (int y = 0; y < kVertexBufferSizeM1; y++)
     {
-        for (int x = 0; x < 100; x++)
+        for (int x = 0; x < kVertexBufferSizeM1; x++)
         {
-            indices [i++] = y * 101 + x;
-            indices [i++] = y * 101 + x + 1;
-            indices [i++] = (y + 1) * 101 + x + 1;
+            indices [i++] = y * kVertexBufferSize + x;
+            indices [i++] = y * kVertexBufferSize + x + 1;
+            indices [i++] = (y + 1) * kVertexBufferSize + x + 1;
 
-            indices [i++] = y * 101 + x;
-            indices [i++] = (y + 1) * 101 + x + 1;
-            indices [i++] = (y + 1) * 101 + x;
+            indices [i++] = y * kVertexBufferSize + x;
+            indices [i++] = (y + 1) * kVertexBufferSize + x + 1;
+            indices [i++] = (y + 1) * kVertexBufferSize + x;
         }
     }
     index_buffer_graph_ =
@@ -336,15 +331,19 @@ void Graph3DComponent::renderOpenGL ()
 
     index_buffer_graph_->Bind ();
     uniform_colour_->set (1.f, 1.f, 1.f, 1.f);
-    GLCall (juce::gl::glDrawElements (
-        juce::gl::GL_TRIANGLES, 100 * 100 * 6, juce::gl::GL_UNSIGNED_INT, 0));
+    GLCall (juce::gl::glDrawElements (juce::gl::GL_TRIANGLES,
+                                      kVertexBufferSizeM1 * kVertexBufferSizeM1 * 6,
+                                      juce::gl::GL_UNSIGNED_INT,
+                                      0));
     index_buffer_graph_->Unbind ();
 
-    index_buffer_graph_->Bind ();
-    uniform_colour_->set (0.f, 0.f, 0.f, 1.f);
-    GLCall (
-        juce::gl::glDrawElements (juce::gl::GL_LINES, 100 * 100 * 6, juce::gl::GL_UNSIGNED_INT, 0));
-    index_buffer_grid_->Unbind ();
+    //    index_buffer_graph_->Bind ();
+    //    uniform_colour_->set (0.f, 0.f, 0.f, 1.f);
+    //    GLCall (juce::gl::glDrawElements (juce::gl::GL_LINES,
+    //                                      kVertexBufferSizeM1 * kVertexBufferSizeM1 * 6,
+    //                                      juce::gl::GL_UNSIGNED_INT,
+    //                                      0));
+    //    index_buffer_grid_->Unbind ();
 
     vertex_array_->Unbind ();
 }
