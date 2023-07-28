@@ -1,15 +1,17 @@
 #include "Graph3DRenderer.h"
 
+#include "zones_look_and_feel/LookAndFeel.h"
+
+#include <juce_audio_formats/juce_audio_formats.h>
+#include <juce_dsp/juce_dsp.h>
+#include <tinycolormap.hpp>
+
 #define GLM_FORCE_RADIANS
 #include <glm/common.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/quaternion.hpp>
-#include <juce_audio_formats/juce_audio_formats.h>
-#include <juce_dsp/juce_dsp.h>
-#include <memory>
-#include <tinycolormap.hpp>
 
 #if JUCE_DEBUG
 const std::filesystem::path Graph3DRenderer::kShaderDirectory = SHADER_DIRECTORY;
@@ -23,21 +25,22 @@ extern "C" const unsigned shaders3d_graph_vert_glsl_size;
 
 Graph3DRenderer::Graph3DRenderer (juce::OpenGLContext & open_gl_context,
                                   DraggableOrientation & draggable_orientation)
-    : open_gl_context_ (open_gl_context)
-    , draggable_orientation_ (draggable_orientation)
+    : draggable_orientation_ (draggable_orientation)
+    , open_gl_context_ (open_gl_context)
 {
 }
 
 juce::Image CreateGraphData ()
 {
-    juce::AudioFormatManager audioFormatManager;
-    audioFormatManager.registerBasicFormats ();
+    juce::AudioFormatManager audio_format_manager;
+    audio_format_manager.registerBasicFormats ();
 
     // auto ir_file = juce::File (kTestAudioPath.string ());
     auto ir_file = juce::File ();
 
     juce::AudioBuffer<float> audio_buffer;
-    std::unique_ptr<juce::AudioFormatReader> reader (audioFormatManager.createReaderFor (ir_file));
+    std::unique_ptr<juce::AudioFormatReader> reader (
+        audio_format_manager.createReaderFor (ir_file));
     auto sample_rate = reader->sampleRate;
     auto bit_depth = reader->bitsPerSample;
     audio_buffer.setSize (reader->numChannels, reader->lengthInSamples);
@@ -54,8 +57,8 @@ juce::Image CreateGraphData ()
     juce::dsp::AudioBlock<float> audio_block {audio_buffer};
 
     auto hop = kFFTSize / 2;
-    auto numHops = 1 + (audio_block.getNumSamples () - kFFTSize) / hop;
-    juce::Image spectrogram {juce::Image::RGB, (int) numHops, kFFTSize, true};
+    auto num_hops = 1 + (audio_block.getNumSamples () - kFFTSize) / hop;
+    juce::Image spectrogram {juce::Image::RGB, (int) num_hops, kFFTSize, true};
 
     for (auto i = 0; i < audio_buffer.getNumSamples () - kFFTSize; i += hop)
     {
@@ -69,25 +72,26 @@ juce::Image CreateGraphData ()
         window.multiplyWithWindowingTable (fft_data.data (), kFFTSize);
         fft.performFrequencyOnlyForwardTransform (fft_data.data (), true);
 
-        auto rightHandEdge = spectrogram.getWidth () - 1;
-        auto imageHeight = spectrogram.getHeight ();
+        auto right_hand_edge = spectrogram.getWidth () - 1;
+        auto image_height = spectrogram.getHeight ();
 
-        spectrogram.moveImageSection (0, 0, 1, 0, rightHandEdge, imageHeight);
+        spectrogram.moveImageSection (0, 0, 1, 0, right_hand_edge, image_height);
 
-        auto maxLevel = juce::FloatVectorOperations::findMinAndMax (fft_data.data (), kFFTSize / 2);
+        auto max_level =
+            juce::FloatVectorOperations::findMinAndMax (fft_data.data (), kFFTSize / 2);
 
-        for (auto y = 1; y < imageHeight; ++y)
+        for (auto y = 1; y < image_height; ++y)
         {
-            auto y_prop = 1.0f - ((float) y / (float) imageHeight);
+            auto y_prop = 1.0f - ((float) y / (float) image_height);
             auto skewedProportionY = std::exp (std::log (0.2f * y_prop));
             auto fftDataIndex =
                 (size_t) juce::jlimit (0, kFFTSize / 2, (int) (skewedProportionY * kFFTSize / 2));
             auto level = juce::jmap (
-                fft_data [fftDataIndex], 0.0f, juce::jmax (maxLevel.getEnd (), 1e-5f), 0.0f, 1.0f);
+                fft_data [fftDataIndex], 0.0f, juce::jmax (max_level.getEnd (), 1e-5f), 0.0f, 1.0f);
 
             auto colour = tinycolormap::GetColor (level, tinycolormap::ColormapType::Viridis);
             spectrogram.setPixelAt (
-                rightHandEdge,
+                right_hand_edge,
                 y,
                 juce::Colour::fromFloatRGBA (colour.r (), colour.g (), colour.b (), level));
         }
@@ -253,51 +257,45 @@ void Graph3DRenderer::renderOpenGL ()
     auto rot_about_z = glm::rotate (glm::mat4 (1.f),
                                     rot_x_smooth_ * juce::MathConstants<float>::twoPi,
                                     glm::vec3 (0.f, 0.f, 1.f));
-
     auto rot_about_x = glm::rotate (glm::mat4 (1.f),
                                     rot_y_smooth_ * juce::MathConstants<float>::twoPi,
                                     glm::vec3 (1.f, 0.f, 0.f));
-
     auto rotator = rot_about_x * rot_about_z;
-
-    glm::mat4 view = glm::lookAt (
+    auto view = glm::lookAt (
         glm::vec3 (0.f, 4.f, 2.f), glm::vec3 (0.0, 0.0, 0.0), glm::vec3 (0.0, 0.0, 1.0));
-    glm::mat4 projection = glm::perspective (45.0f, 1.0f * 640 / 480, 0.1f, 10.0f);
-
-    glm::mat4 vertex_transform = projection * view * rotator;
+    auto projection = glm::perspective (45.0f, 1.0f * 640 / 480, 0.1f, 10.0f);
+    auto vertex_transform = projection * view * rotator;
     uniform_vertex_transform_->setMatrix4 (
         glm::value_ptr (vertex_transform), 1, juce::gl::GL_FALSE);
 
     auto scale = scale_.load ();
     auto offset_x = offset_x_.load ();
     auto offset_y = offset_y_.load ();
+
     glm::mat4 texture_transform =
         glm::translate (glm::scale (glm::mat4 (1.0f), glm::vec3 (-scale, scale, 1)),
                         glm::vec3 (offset_x, offset_y, 0));
     uniform_texture_transform_->setMatrix4 (
         glm::value_ptr (texture_transform), 1, juce::gl::GL_FALSE);
-    uniform_graph_texture_->set (0);
 
+    uniform_graph_texture_->set (0);
     GLCall (juce::gl::glBindTexture (juce::gl::GL_TEXTURE_2D, graph_texture_id_));
+    uniform_colour_->set (1.f, 1.f, 1.f, 1.f);
 
     vertex_array_->Bind ();
-
     index_buffer_graph_->Bind ();
-    uniform_colour_->set (1.f, 1.f, 1.f, 1.f);
     GLCall (juce::gl::glDrawElements (juce::gl::GL_TRIANGLES,
                                       kVertexBufferSizeM1 * kVertexBufferSizeM1 * 6,
                                       juce::gl::GL_UNSIGNED_INT,
                                       0));
     index_buffer_graph_->Unbind ();
-
-    //    index_buffer_graph_->Bind ();
-    //    uniform_colour_->set (0.f, 0.f, 0.f, 1.f);
-    //    GLCall (juce::gl::glDrawElements (juce::gl::GL_LINES,
-    //                                      kVertexBufferSizeM1 * kVertexBufferSizeM1 * 6,
-    //                                      juce::gl::GL_UNSIGNED_INT,
-    //                                      0));
-    //    index_buffer_grid_->Unbind ();
-
+    index_buffer_graph_->Bind ();
+    uniform_colour_->set (0.f, 0.f, 0.f, 1.f);
+    GLCall (juce::gl::glDrawElements (juce::gl::GL_LINES,
+                                      kVertexBufferSizeM1 * kVertexBufferSizeM1 * 6,
+                                      juce::gl::GL_UNSIGNED_INT,
+                                      0));
+    index_buffer_grid_->Unbind ();
     vertex_array_->Unbind ();
 }
 
