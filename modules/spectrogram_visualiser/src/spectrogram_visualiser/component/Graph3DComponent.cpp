@@ -1,22 +1,8 @@
 #include "Graph3DComponent.h"
 
-#include "../gl/GLUtils.h"
-
-const std::filesystem::path kTestAudioDirectory = TEST_AUDIO_DIRECTORY;
-const std::filesystem::path kTestAudioPath = kTestAudioDirectory / "minst.wav";
-
 Graph3DComponent::Graph3DComponent ()
 {
-    setOpaque (true);
-    open_gl_context_.setOpenGLVersionRequired (juce::OpenGLContext::OpenGLVersion::openGL4_1);
-
-    if (auto * peer = getPeer ())
-        peer->setCurrentRenderingEngine (0);
-
-    open_gl_context_.setComponentPaintingEnabled (true);
-    open_gl_context_.setRenderer (&graph3d_renderer_);
-    open_gl_context_.attachTo (*this);
-    open_gl_context_.setContinuousRepainting (true);
+    SetupOpenGl ();
 
     addAndMakeVisible (status_label_);
     status_label_.setJustificationType (juce::Justification::topLeft);
@@ -44,14 +30,24 @@ Graph3DComponent::Graph3DComponent ()
     { graph3d_renderer_.offset_y_ = (float) offset_y_slider_.getValue (); };
 }
 
-void Graph3DComponent::paint (juce::Graphics & g)
-{
-}
-
 Graph3DComponent::~Graph3DComponent ()
 {
     open_gl_context_.setContinuousRepainting (false);
     open_gl_context_.detach ();
+}
+
+void Graph3DComponent::SetupOpenGl ()
+{
+    setOpaque (true);
+    open_gl_context_.setOpenGLVersionRequired (juce::OpenGLContext::openGL4_1);
+
+    if (auto * peer = getPeer ())
+        peer->setCurrentRenderingEngine (0);
+
+    open_gl_context_.setComponentPaintingEnabled (true);
+    open_gl_context_.setRenderer (&graph3d_renderer_);
+    open_gl_context_.attachTo (*this);
+    open_gl_context_.setContinuousRepainting (true);
 }
 
 void Graph3DComponent::resized ()
@@ -82,4 +78,9 @@ void Graph3DComponent::mouseDown (const juce::MouseEvent & event)
 void Graph3DComponent::mouseDrag (const juce::MouseEvent & event)
 {
     draggable_orientation_.MouseDrag (event.getPosition ().toFloat ());
+}
+
+void Graph3DComponent::paint (juce::Graphics & g)
+{
+    juce::ignoreUnused (g);
 }

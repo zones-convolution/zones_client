@@ -1,16 +1,9 @@
 #pragma once
 
-#include "../gl/IndexBuffer.h"
-#include "../gl/VertexArray.h"
-#include "../gl/VertexBuffer.h"
 #include "../renderer/Graph3DRenderer.h"
 #include "DraggableOrientation.h"
 #include "zones_look_and_feel/LookAndFeel.h"
 
-#include <filesystem>
-#include <juce_audio_basics/juce_audio_basics.h>
-#include <juce_audio_formats/juce_audio_formats.h>
-#include <juce_dsp/juce_dsp.h>
 #include <juce_gui_basics/juce_gui_basics.h>
 #include <juce_opengl/juce_opengl.h>
 
@@ -26,6 +19,8 @@ public:
 private:
     void mouseDown (const juce::MouseEvent & event) override;
     void mouseDrag (const juce::MouseEvent & event) override;
+
+    void SetupOpenGl ();
 
     DraggableOrientation draggable_orientation_;
 
