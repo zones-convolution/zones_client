@@ -52,6 +52,8 @@ void Graph3DComponent::SetupOpenGl ()
 
 void Graph3DComponent::resized ()
 {
+    draggable_orientation_.SetBounds (getLocalBounds ());
+    
     juce::FlexBox layout;
     layout.flexDirection = juce::FlexBox::Direction::column;
     layout.justifyContent = juce::FlexBox::JustifyContent::flexEnd;
@@ -67,7 +69,6 @@ void Graph3DComponent::resized ()
     layout.items.add (juce::FlexItem (refresh_button_).withHeight (40.f));
 
     layout.performLayout (getLocalBounds ().toFloat ());
-    draggable_orientation_.SetBounds (getLocalBounds ());
 }
 
 void Graph3DComponent::mouseDown (const juce::MouseEvent & event)

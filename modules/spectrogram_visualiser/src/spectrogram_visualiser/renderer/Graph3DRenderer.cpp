@@ -15,7 +15,7 @@
 
 #if JUCE_DEBUG
 const std::filesystem::path Graph3DRenderer::kShaderDirectory = SHADER_DIRECTORY;
-#elif
+#else
 extern "C" const char shaders_graph3d_frag_glsl [];
 extern "C" const unsigned shaders_graph3d_frag_glsl_size;
 
@@ -235,7 +235,7 @@ void Graph3DRenderer::newOpenGLContextCreated ()
 }
 
 static float
-SmoothLerp (float current_value, float target_value, float speed_factor, float delta_time)
+Smoothed (float current_value, float target_value, float speed_factor, float delta_time)
 {
     return current_value + (target_value - current_value) * speed_factor * delta_time;
 }
@@ -243,16 +243,16 @@ SmoothLerp (float current_value, float target_value, float speed_factor, float d
 void Graph3DRenderer::renderOpenGL ()
 {
     jassert (juce::OpenGLHelpers::isContextActive ());
-    auto & look_and_feel = juce::LookAndFeel::getDefaultLookAndFeel ();
-    juce::OpenGLHelpers::clear (look_and_feel.findColour (LookAndFeel::ColourIds::kPanel));
+    juce::OpenGLHelpers::clear (
+        juce::LookAndFeel::getDefaultLookAndFeel ().findColour (LookAndFeel::ColourIds::kPanel));
 
     CreateShaders ();
-    shader->use ();
+    shader_->use ();
 
     rot_x_smooth_ =
-        SmoothLerp (rot_x_smooth_, draggable_orientation_.x_rotation.load (), 4.f, 1.0f / 60.0f);
+        Smoothed (rot_x_smooth_, draggable_orientation_.x_rotation.load (), 4.f, 1.0f / 60.0f);
     rot_y_smooth_ =
-        SmoothLerp (rot_y_smooth_, draggable_orientation_.y_rotation.load (), 4.f, 1.0f / 60.0f);
+        Smoothed (rot_y_smooth_, draggable_orientation_.y_rotation.load (), 4.f, 1.0f / 60.0f);
 
     auto rot_about_z = glm::rotate (glm::mat4 (1.f),
                                     rot_x_smooth_ * juce::MathConstants<float>::twoPi,
@@ -301,7 +301,7 @@ void Graph3DRenderer::renderOpenGL ()
 
 void Graph3DRenderer::openGLContextClosing ()
 {
-    shader.reset ();
+    shader_.reset ();
 }
 
 void Graph3DRenderer::CreateShaders ()
@@ -319,17 +319,17 @@ void Graph3DRenderer::CreateShaders ()
             gl_shader_program->addFragmentShader (new_fragment_shader_) &&
             gl_shader_program->link ())
         {
-            shader = std::move (gl_shader_program);
+            shader_ = std::move (gl_shader_program);
             status_text =
                 "GLSL: v" + juce::String (juce::OpenGLShaderProgram::getLanguageVersion (), 2);
-            uniform_texture_transform_ =
-                std::make_unique<juce::OpenGLShaderProgram::Uniform> (*shader, "texture_transform");
+            uniform_texture_transform_ = std::make_unique<juce::OpenGLShaderProgram::Uniform> (
+                *shader_, "texture_transform");
             uniform_vertex_transform_ =
-                std::make_unique<juce::OpenGLShaderProgram::Uniform> (*shader, "vertex_transform");
+                std::make_unique<juce::OpenGLShaderProgram::Uniform> (*shader_, "vertex_transform");
             uniform_graph_texture_ =
-                std::make_unique<juce::OpenGLShaderProgram::Uniform> (*shader, "graph_texture");
+                std::make_unique<juce::OpenGLShaderProgram::Uniform> (*shader_, "graph_texture");
             uniform_colour_ =
-                std::make_unique<juce::OpenGLShaderProgram::Uniform> (*shader, "colour");
+                std::make_unique<juce::OpenGLShaderProgram::Uniform> (*shader_, "colour");
         }
         else
         {
@@ -355,7 +355,7 @@ void Graph3DRenderer::UpdateShaders ()
 
     new_fragment_shader_ = fragment_shader_file.loadFileAsString ();
     new_vertex_shader_ = vertex_shader_file.loadFileAsString ();
-#elif
+#else
     new_fragment_shader_ = shaders_graph3d_frag_glsl;
     new_vertex_shader_ = shaders_graph3d_vert_glsl;
 #endif

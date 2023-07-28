@@ -6,7 +6,7 @@
 
 #if JUCE_DEBUG
 const std::filesystem::path Osc2DComponent::kShaderDirectory = SHADER_DIRECTORY;
-#elif
+#else
 extern "C" const char shaders_osc_2d_frag_glsl [];
 extern "C" const unsigned shaders_osc_2d_frag_glsl_size;
 
@@ -196,7 +196,7 @@ void Osc2DComponent::UpdateShaders ()
 
     new_fragment_shader_ = fragment_shader_file.loadFileAsString ();
     new_vertex_shader_ = vertex_shader_file.loadFileAsString ();
-#elif
+#else
     new_fragment_shader_ = shaders_osc_2d_frag_glsl;
     new_vertex_shader_ = shaders_osc_2d_vert_glsl;
 #endif

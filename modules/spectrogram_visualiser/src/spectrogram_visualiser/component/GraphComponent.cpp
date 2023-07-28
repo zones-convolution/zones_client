@@ -6,7 +6,7 @@
 
 #if JUCE_DEBUG
 const std::filesystem::path GraphComponent::kShaderDirectory = SHADER_DIRECTORY;
-#elif
+#else
 extern "C" const char shaders_graph_frag_glsl [];
 extern "C" const unsigned shaders_graph_frag_glsl_size;
 
@@ -199,7 +199,7 @@ void GraphComponent::UpdateShaders ()
 
     new_fragment_shader_ = fragment_shader_file.loadFileAsString ();
     new_vertex_shader_ = vertex_shader_file.loadFileAsString ();
-#elif
+#else
     new_fragment_shader_ = shaders_graph_frag_glsl;
     new_vertex_shader_ = shaders_graph_vert_glsl;
 #endif
