@@ -8,6 +8,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/quaternion.hpp>
 #include <memory>
+#include <tinycolormap.hpp>
 
 #if JUCE_DEBUG
 const std::filesystem::path Graph3DComponent::kShaderDirectory = SHADER_DIRECTORY;
@@ -18,6 +19,9 @@ extern "C" const unsigned shaders_graph3d_frag_glsl_size;
 extern "C" const char shaders_graph3d_vert_glsl [];
 extern "C" const unsigned shaders3d_graph_vert_glsl_size;
 #endif
+
+const std::filesystem::path kTestAudioDirectory = TEST_AUDIO_DIRECTORY;
+const std::filesystem::path kTestAudioPath = kTestAudioDirectory / "minst.wav";
 
 Graph3DComponent::Graph3DComponent ()
 {
@@ -68,22 +72,121 @@ Graph3DComponent::~Graph3DComponent ()
     open_gl_context_.detach ();
 }
 
+juce::Image CreateGraphData ()
+{
+    juce::AudioFormatManager audioFormatManager;
+    audioFormatManager.registerBasicFormats ();
+
+    auto ir_file = juce::File (kTestAudioPath.string ());
+
+    juce::AudioBuffer<float> audio_buffer;
+    std::unique_ptr<juce::AudioFormatReader> reader (audioFormatManager.createReaderFor (ir_file));
+    auto sample_rate = reader->sampleRate;
+    auto bit_depth = reader->bitsPerSample;
+    audio_buffer.setSize (reader->numChannels, reader->lengthInSamples);
+    reader->read (&audio_buffer, 0, reader->lengthInSamples, 0, true, true);
+
+    static constexpr auto kFFTOrder = 10;
+    static constexpr auto kFFTSize = 1 << kFFTOrder;
+
+    std::array<float, kFFTSize * 2> fft_data {};
+    juce::dsp::FFT fft {kFFTOrder};
+    juce::dsp::WindowingFunction<float> window {kFFTSize,
+                                                juce::dsp::WindowingFunction<float>::hann};
+
+    juce::dsp::AudioBlock<float> audio_block {audio_buffer};
+
+    auto hop = kFFTSize / 2;
+    auto numHops = 1 + (audio_block.getNumSamples () - kFFTSize) / hop;
+    juce::Image spectrogram {juce::Image::RGB, (int) numHops, kFFTSize, true};
+
+    for (auto i = 0; i < audio_buffer.getNumSamples () - kFFTSize; i += hop)
+    {
+        auto sub_block = audio_block.getSubBlock (i, kFFTSize);
+        std::fill (fft_data.begin (), fft_data.end (), 0.0f);
+        for (auto channel = 0; channel < audio_buffer.getNumChannels (); ++channel)
+        {
+            auto read = sub_block.getChannelPointer (channel);
+            juce::FloatVectorOperations::add (fft_data.data (), read, kFFTSize);
+        }
+        window.multiplyWithWindowingTable (fft_data.data (), kFFTSize);
+        fft.performFrequencyOnlyForwardTransform (fft_data.data (), true);
+
+        auto rightHandEdge = spectrogram.getWidth () - 1;
+        auto imageHeight = spectrogram.getHeight ();
+
+        spectrogram.moveImageSection (0, 0, 1, 0, rightHandEdge, imageHeight);
+
+        auto maxLevel = juce::FloatVectorOperations::findMinAndMax (fft_data.data (), kFFTSize / 2);
+
+        for (auto y = 1; y < imageHeight; ++y)
+        {
+            auto y_prop = 1.0f - ((float) y / (float) imageHeight);
+            auto skewedProportionY = std::exp (std::log (0.2f * y_prop));
+            auto fftDataIndex =
+                (size_t) juce::jlimit (0, kFFTSize / 2, (int) (skewedProportionY * kFFTSize / 2));
+            auto level = juce::jmap (
+                fft_data [fftDataIndex], 0.0f, juce::jmax (maxLevel.getEnd (), 1e-5f), 0.0f, 1.0f);
+
+            auto colour = tinycolormap::GetColor (level, tinycolormap::ColormapType::Viridis);
+            spectrogram.setPixelAt (
+                rightHandEdge,
+                y,
+                juce::Colour::fromFloatRGBA (colour.r (), colour.g (), colour.b (), level));
+        }
+    }
+
+    return spectrogram.rescaled (1024, 1024);
+}
+
 void Graph3DComponent::newOpenGLContextCreated ()
 {
     GLCall (juce::gl::glEnable (juce::gl::GL_BLEND));
     GLCall (juce::gl::glBlendFunc (juce::gl::GL_SRC_ALPHA, juce::gl::GL_ONE_MINUS_SRC_ALPHA));
 
-    static constexpr auto kGraphSize = 256;
-    std::array<std::array<GLubyte, kGraphSize>, kGraphSize> graph {};
+    //    static constexpr auto kGraphSize = 1024;
+    //    auto graph = std::make_unique<std::array<std::array<GLubyte, kGraphSize>, kGraphSize>> ();
+    //
+    //    for (int i = 0; i < kGraphSize; i++)
+    //    {
+    //        for (int j = 0; j < kGraphSize; j++)
+    //        {
+    //            float x = (i - kGraphSize / 2) / (kGraphSize / 2.0);
+    //            float y = (j - kGraphSize / 2) / (kGraphSize / 2.0);
+    //            float z = sinf (y * M_PI * 2.f) * sinf (x * M_PI * 2.f);
+    //            (*graph) [i][j] = roundf (z * 127 + 128);
+    //        }
+    //    }
 
-    for (int i = 0; i < kGraphSize; i++)
+    auto spectrogram = CreateGraphData ();
+
+    juce::ImageConvolutionKernel convolution_kernel {4};
+    convolution_kernel.createGaussianBlur (4.f);
+    convolution_kernel.applyToImage (spectrogram, spectrogram, spectrogram.getBounds ());
+
+    auto path = kTestAudioDirectory / "test_audio.png";
+    auto file = juce::File (path.string ());
+    file.moveToTrash ();
+    juce::FileOutputStream stream (file);
+    juce::PNGImageFormat pngWriter;
+    pngWriter.writeImageToStream (spectrogram, stream);
+
+    auto width = spectrogram.getWidth ();
+    auto height = spectrogram.getHeight ();
+    juce::AudioBuffer<GLubyte> graph {width, height};
+
+    for (int x = 0; x < width; x++)
     {
-        for (int j = 0; j < kGraphSize; j++)
+        auto channel_pointer = graph.getWritePointer (x);
+        for (int y = 0; y < height; y++)
         {
-            float x = (i - kGraphSize / 2) / (kGraphSize / 2.0);
-            float y = (j - kGraphSize / 2) / (kGraphSize / 2.0);
-            float z = sinf (y * M_PI * 2.f) * sinf (x * M_PI * 2.f);
-            graph [i][j] = roundf (z * 127 + 128);
+            //            float x_n = (x - width / 2) / (width / 2.0);
+            //            float y_n = (y - height / 2) / (height / 2.0);
+            //            float z = sinf (y_n * M_PI * 2.f) * sinf (x_n * M_PI * 2.f);
+            //            channel_pointer [y] = roundf (z * 127 + 128);
+
+            auto pixel_value = spectrogram.getPixelAt (x, y).getFloatAlpha ();
+            channel_pointer [y] = roundf (pixel_value * 127 + 128);
         }
     }
 
@@ -93,12 +196,12 @@ void Graph3DComponent::newOpenGLContextCreated ()
     GLCall (juce::gl::glTexImage2D (juce::gl::GL_TEXTURE_2D,
                                     0,
                                     juce::gl::GL_RED,
-                                    kGraphSize,
-                                    kGraphSize,
+                                    width,
+                                    height,
                                     0,
                                     juce::gl::GL_RED,
                                     juce::gl::GL_UNSIGNED_BYTE,
-                                    graph.data ()));
+                                    graph.getReadPointer (0)));
     juce::gl::glTexParameteri (
         juce::gl::GL_TEXTURE_2D, juce::gl::GL_TEXTURE_WRAP_S, juce::gl::GL_CLAMP_TO_EDGE);
     juce::gl::glTexParameteri (
@@ -126,6 +229,14 @@ void Graph3DComponent::newOpenGLContextCreated ()
 
     for (int y = 0; y < 100; y++)
     {
+        juce::gl::glTexParameteri (
+            juce::gl::GL_TEXTURE_2D, juce::gl::GL_TEXTURE_WRAP_S, juce::gl::GL_REPEAT);
+        juce::gl::glTexParameteri (
+            juce::gl::GL_TEXTURE_2D, juce::gl::GL_TEXTURE_WRAP_T, juce::gl::GL_REPEAT);
+        juce::gl::glTexParameteri (
+            juce::gl::GL_TEXTURE_2D, juce::gl::GL_TEXTURE_MIN_FILTER, juce::gl::GL_LINEAR);
+        juce::gl::glTexParameteri (
+            juce::gl::GL_TEXTURE_2D, juce::gl::GL_TEXTURE_MAG_FILTER, juce::gl::GL_LINEAR);
         for (int x = 0; x < 100; x++)
         {
             indices [i++] = y * 101 + x;
@@ -213,7 +324,7 @@ void Graph3DComponent::renderOpenGL ()
     auto offset_x = offset_x_.load ();
     auto offset_y = offset_y_.load ();
     glm::mat4 texture_transform =
-        glm::translate (glm::scale (glm::mat4 (1.0f), glm::vec3 (scale, scale, 1)),
+        glm::translate (glm::scale (glm::mat4 (1.0f), glm::vec3 (-scale, scale, 1)),
                         glm::vec3 (offset_x, offset_y, 0));
     uniform_texture_transform_->setMatrix4 (
         glm::value_ptr (texture_transform), 1, juce::gl::GL_FALSE);
@@ -243,7 +354,7 @@ void Graph3DComponent::resized ()
     juce::FlexBox layout;
     layout.flexDirection = juce::FlexBox::Direction::column;
     layout.justifyContent = juce::FlexBox::JustifyContent::flexEnd;
-    
+
     layout.items.add (juce::FlexItem (offset_y_slider_).withHeight (20.f));
     layout.items.add (LookAndFeel::kFlexSpacer);
     layout.items.add (juce::FlexItem (offset_x_slider_).withHeight (20.f));

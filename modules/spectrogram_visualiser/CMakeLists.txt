@@ -19,7 +19,7 @@ zones_add_module(
         src/spectrogram_visualiser/Shader.cpp
         src/spectrogram_visualiser/DraggableOrientation.h
         src/spectrogram_visualiser/DraggableOrientation.cpp
-        DEPS juce::juce_gui_basics juce::juce_opengl zones_look_and_feel juce::juce_audio_basics glm
+        DEPS juce::juce_gui_basics juce::juce_opengl zones_look_and_feel juce::juce_audio_basics juce::juce_dsp juce::juce_audio_formats glm tinycolormap
 )
 
 embed_resources(spectrogram_visualiser
@@ -32,4 +32,4 @@ embed_resources(spectrogram_visualiser
 
 target_compile_definitions(
         spectrogram_visualiser
-        PUBLIC "SHADER_DIRECTORY=\"${CMAKE_CURRENT_SOURCE_DIR}/shaders/\"")
+        PUBLIC "SHADER_DIRECTORY=\"${CMAKE_CURRENT_SOURCE_DIR}/shaders/\"" "TEST_AUDIO_DIRECTORY=\"${CMAKE_CURRENT_SOURCE_DIR}/test_audio/\"")

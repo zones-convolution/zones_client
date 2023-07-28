@@ -1,2 +1,3 @@
 cmake-build-debug
 builds
+modules/spectrogram_visualiser/test_audio

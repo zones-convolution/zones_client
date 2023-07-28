@@ -22,3 +22,6 @@
 [submodule "lib/glm"]
 	path = lib/glm
 	url = git@github.com:g-truc/glm.git
+[submodule "lib/tinycolormap"]
+	path = lib/tinycolormap
+	url = git@github.com:yuki-koyama/tinycolormap.git
