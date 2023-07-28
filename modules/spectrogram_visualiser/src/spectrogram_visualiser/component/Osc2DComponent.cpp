@@ -1,11 +1,11 @@
-#include "SpectrogramVisualiserComponent.h"
+#include "Osc2DComponent.h"
 
-#include "GLUtils.h"
+#include "../gl/GLUtils.h"
 
 #include <memory>
 
 #if JUCE_DEBUG
-const std::filesystem::path SpectrogramVisualiserComponent::kShaderDirectory = SHADER_DIRECTORY;
+const std::filesystem::path Osc2DComponent::kShaderDirectory = SHADER_DIRECTORY;
 #elif
 extern "C" const char shaders_osc_2d_frag_glsl [];
 extern "C" const unsigned shaders_osc_2d_frag_glsl_size;
@@ -14,7 +14,7 @@ extern "C" const char shaders_osc_2d_vert_glsl [];
 extern "C" const unsigned shaders_osc_2d_vert_glsl_size;
 #endif
 
-SpectrogramVisualiserComponent::SpectrogramVisualiserComponent ()
+Osc2DComponent::Osc2DComponent ()
     : read_buffer_ (2, kRingBufferReadSize)
 {
     setOpaque (true);
@@ -46,27 +46,27 @@ SpectrogramVisualiserComponent::SpectrogramVisualiserComponent ()
     }
 }
 
-void SpectrogramVisualiserComponent::paint (juce::Graphics & g)
+void Osc2DComponent::paint (juce::Graphics & g)
 {
 }
 
-SpectrogramVisualiserComponent::~SpectrogramVisualiserComponent ()
+Osc2DComponent::~Osc2DComponent ()
 {
     open_gl_context_.setContinuousRepainting (false);
     open_gl_context_.detach ();
 }
 
-void SpectrogramVisualiserComponent::Start ()
+void Osc2DComponent::Start ()
 {
     open_gl_context_.setContinuousRepainting (true);
 }
 
-void SpectrogramVisualiserComponent::Stop ()
+void Osc2DComponent::Stop ()
 {
     open_gl_context_.setContinuousRepainting (false);
 }
 
-void SpectrogramVisualiserComponent::newOpenGLContextCreated ()
+void Osc2DComponent::newOpenGLContextCreated ()
 {
     GLCall (juce::gl::glEnable (juce::gl::GL_BLEND));
     GLCall (juce::gl::glBlendFunc (juce::gl::GL_SRC_ALPHA, juce::gl::GL_ONE_MINUS_SRC_ALPHA));
@@ -81,22 +81,22 @@ void SpectrogramVisualiserComponent::newOpenGLContextCreated ()
         -1.0f,
         1.0f,
     };
-    vb_ = std::make_unique<VertexBuffer> (open_gl_context_, vertices.data (), sizeof (vertices));
+    vb_ = std::make_unique<VertexBuffer> (vertices.data (), sizeof (vertices));
 
     std::array<GLuint, 6> indices {0, 1, 2, 2, 3, 0};
-    ib_ = std::make_unique<IndexBuffer> (open_gl_context_, indices.data (), indices.size ());
+    ib_ = std::make_unique<IndexBuffer> (indices.data (), indices.size ());
 
-    va_ = std::make_unique<VertexArray> (open_gl_context_);
+    va_ = std::make_unique<VertexArray> ();
     VertexBufferLayout vertex_buffer_layout;
     vertex_buffer_layout.Push<GLfloat> (2);
     va_->AddBuffer (*vb_, vertex_buffer_layout);
 }
 
-void SpectrogramVisualiserComponent::openGLContextClosing ()
+void Osc2DComponent::openGLContextClosing ()
 {
 }
 
-void SpectrogramVisualiserComponent::renderOpenGL ()
+void Osc2DComponent::renderOpenGL ()
 {
     CreateShaders ();
     jassert (juce::OpenGLHelpers::isContextActive ());
@@ -134,7 +134,7 @@ void SpectrogramVisualiserComponent::renderOpenGL ()
     va_->Unbind ();
 }
 
-void SpectrogramVisualiserComponent::resized ()
+void Osc2DComponent::resized ()
 {
     juce::FlexBox layout;
     layout.flexDirection = juce::FlexBox::Direction::column;
@@ -147,7 +147,7 @@ void SpectrogramVisualiserComponent::resized ()
     layout.performLayout (getLocalBounds ().toFloat ());
 }
 
-void SpectrogramVisualiserComponent::CreateShaders ()
+void Osc2DComponent::CreateShaders ()
 {
     juce::SpinLock::ScopedTryLockType lock (shader_mutex_);
     if (! lock.isLocked ())
@@ -183,7 +183,7 @@ void SpectrogramVisualiserComponent::CreateShaders ()
     }
 }
 
-void SpectrogramVisualiserComponent::UpdateShaders ()
+void Osc2DComponent::UpdateShaders ()
 {
     juce::SpinLock::ScopedLockType lock (shader_mutex_);
 

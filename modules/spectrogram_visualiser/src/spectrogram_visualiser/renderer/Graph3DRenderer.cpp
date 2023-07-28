@@ -1,17 +1,18 @@
-#include "Graph3DComponent.h"
+#include "Graph3DRenderer.h"
 
-#include "GLUtils.h"
 #define GLM_FORCE_RADIANS
 #include <glm/common.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/quaternion.hpp>
+#include <juce_audio_formats/juce_audio_formats.h>
+#include <juce_dsp/juce_dsp.h>
 #include <memory>
 #include <tinycolormap.hpp>
 
 #if JUCE_DEBUG
-const std::filesystem::path Graph3DComponent::kShaderDirectory = SHADER_DIRECTORY;
+const std::filesystem::path Graph3DRenderer::kShaderDirectory = SHADER_DIRECTORY;
 #elif
 extern "C" const char shaders_graph3d_frag_glsl [];
 extern "C" const unsigned shaders_graph3d_frag_glsl_size;
@@ -20,56 +21,11 @@ extern "C" const char shaders_graph3d_vert_glsl [];
 extern "C" const unsigned shaders3d_graph_vert_glsl_size;
 #endif
 
-const std::filesystem::path kTestAudioDirectory = TEST_AUDIO_DIRECTORY;
-const std::filesystem::path kTestAudioPath = kTestAudioDirectory / "minst.wav";
-
-Graph3DComponent::Graph3DComponent ()
+Graph3DRenderer::Graph3DRenderer (juce::OpenGLContext & open_gl_context,
+                                  DraggableOrientation & draggable_orientation)
+    : open_gl_context_ (open_gl_context)
+    , draggable_orientation_ (draggable_orientation)
 {
-    setOpaque (true);
-    open_gl_context_.setOpenGLVersionRequired (juce::OpenGLContext::OpenGLVersion::openGL4_1);
-
-    if (auto * peer = getPeer ())
-        peer->setCurrentRenderingEngine (0);
-
-    open_gl_context_.setComponentPaintingEnabled (true);
-    open_gl_context_.setRenderer (this);
-    open_gl_context_.attachTo (*this);
-    open_gl_context_.setContinuousRepainting (true);
-
-    addAndMakeVisible (status_label_);
-    status_label_.setJustificationType (juce::Justification::topLeft);
-
-    addAndMakeVisible (refresh_button_);
-    refresh_button_.onClick = [&] () { UpdateShaders (); };
-    UpdateShaders ();
-
-    addAndMakeVisible (scale_slider_);
-    scale_slider_.setRange ({0.f, 1.f}, 0.f);
-    scale_slider_.setValue (0.5f);
-    scale_slider_.onValueChange = [&] ()
-    { scale_ = static_cast<float> (scale_slider_.getValue ()); };
-
-    addAndMakeVisible (offset_x_slider_);
-    offset_x_slider_.setRange ({-1.f, 1.f}, 0.f);
-    offset_x_slider_.setValue (0.f);
-    offset_x_slider_.onValueChange = [&] ()
-    { offset_x_ = static_cast<float> (offset_x_slider_.getValue ()); };
-
-    addAndMakeVisible (offset_y_slider_);
-    offset_y_slider_.setRange ({-1.f, 1.f}, 0.f);
-    offset_y_slider_.setValue (0.f);
-    offset_y_slider_.onValueChange = [&] ()
-    { offset_y_ = static_cast<float> (offset_y_slider_.getValue ()); };
-}
-
-void Graph3DComponent::paint (juce::Graphics & g)
-{
-}
-
-Graph3DComponent::~Graph3DComponent ()
-{
-    open_gl_context_.setContinuousRepainting (false);
-    open_gl_context_.detach ();
 }
 
 juce::Image CreateGraphData ()
@@ -77,7 +33,8 @@ juce::Image CreateGraphData ()
     juce::AudioFormatManager audioFormatManager;
     audioFormatManager.registerBasicFormats ();
 
-    auto ir_file = juce::File (kTestAudioPath.string ());
+    // auto ir_file = juce::File (kTestAudioPath.string ());
+    auto ir_file = juce::File ();
 
     juce::AudioBuffer<float> audio_buffer;
     std::unique_ptr<juce::AudioFormatReader> reader (audioFormatManager.createReaderFor (ir_file));
@@ -142,7 +99,7 @@ juce::Image CreateGraphData ()
 static constexpr size_t kVertexBufferSize = 110;
 static constexpr size_t kVertexBufferSizeM1 = kVertexBufferSize - 1;
 
-void Graph3DComponent::newOpenGLContextCreated ()
+void Graph3DRenderer::newOpenGLContextCreated ()
 {
     //    GLCall (juce::gl::glEnable (juce::gl::GL_BLEND));
     //    GLCall (juce::gl::glBlendFunc (juce::gl::GL_SRC_ALPHA, juce::gl::GL_ONE_MINUS_SRC_ALPHA));
@@ -161,21 +118,24 @@ void Graph3DComponent::newOpenGLContextCreated ()
     //        }
     //    }
 
-    auto spectrogram = CreateGraphData ();
+    //    auto spectrogram = CreateGraphData ();
+    //
+    //    juce::ImageConvolutionKernel convolution_kernel {4};
+    //    convolution_kernel.createGaussianBlur (4.f);
+    //    convolution_kernel.applyToImage (spectrogram, spectrogram, spectrogram.getBounds ());
 
-    juce::ImageConvolutionKernel convolution_kernel {4};
-    convolution_kernel.createGaussianBlur (4.f);
-    convolution_kernel.applyToImage (spectrogram, spectrogram, spectrogram.getBounds ());
+    //    auto path = kTestAudioDirectory / "test_audio.png";
+    //    auto file = juce::File (path.string ());
+    //    file.moveToTrash ();
+    //    juce::FileOutputStream stream (file);
+    //    juce::PNGImageFormat pngWriter;
+    //    pngWriter.writeImageToStream (spectrogram, stream);
 
-    auto path = kTestAudioDirectory / "test_audio.png";
-    auto file = juce::File (path.string ());
-    file.moveToTrash ();
-    juce::FileOutputStream stream (file);
-    juce::PNGImageFormat pngWriter;
-    pngWriter.writeImageToStream (spectrogram, stream);
+    //    auto width = spectrogram.getWidth ();
+    //    auto height = spectrogram.getHeight ();
 
-    auto width = spectrogram.getWidth ();
-    auto height = spectrogram.getHeight ();
+    auto width = 1024;
+    auto height = 1024;
     juce::AudioBuffer<GLubyte> graph {width, height};
 
     for (int x = 0; x < width; x++)
@@ -183,17 +143,17 @@ void Graph3DComponent::newOpenGLContextCreated ()
         auto channel_pointer = graph.getWritePointer (x);
         for (int y = 0; y < height; y++)
         {
-            //            float x_n = (x - width / 2) / (width / 2.0);
-            //            float y_n = (y - height / 2) / (height / 2.0);
-            //            float z = sinf (y_n * M_PI * 2.f) * sinf (x_n * M_PI * 2.f);
-            //            channel_pointer [y] = roundf (z * 127 + 128);
+            float x_n = (x - width / 2) / (width / 2.0);
+            float y_n = (y - height / 2) / (height / 2.0);
+            float z = sinf (y_n * M_PI * 2.f) * sinf (x_n * M_PI * 2.f);
+            channel_pointer [y] = roundf (z * 127 + 128);
 
-            auto pixel_value = spectrogram.getPixelAt (x, y).getFloatAlpha ();
-            channel_pointer [y] = roundf (pixel_value * 127 + 128);
+            //            auto pixel_value = spectrogram.getPixelAt (x, y).getFloatAlpha ();
+            //            channel_pointer [y] = roundf (pixel_value * 127 + 128);
         }
     }
 
-    GLCall (open_gl_context_.extensions.glActiveTexture (juce::gl::GL_TEXTURE0));
+    GLCall (juce::gl::glActiveTexture (juce::gl::GL_TEXTURE0));
     GLCall (juce::gl::glGenTextures (1, &graph_texture_id_));
     GLCall (juce::gl::glBindTexture (juce::gl::GL_TEXTURE_2D, graph_texture_id_));
     GLCall (juce::gl::glTexImage2D (juce::gl::GL_TEXTURE_2D,
@@ -224,8 +184,7 @@ void Graph3DComponent::newOpenGLContextCreated ()
             vertices [i][j].y = (i - hvbs) / hvbs;
         }
     }
-    vertex_buffer_ =
-        std::make_unique<VertexBuffer> (open_gl_context_, vertices.data (), sizeof (vertices));
+    vertex_buffer_ = std::make_unique<VertexBuffer> (vertices.data (), sizeof (vertices));
 
     std::array<GLuint, kVertexBufferSizeM1 * kVertexBufferSizeM1 * 6> indices {};
     int i = 0;
@@ -247,8 +206,7 @@ void Graph3DComponent::newOpenGLContextCreated ()
             indices [i++] = (y + 1) * kVertexBufferSize + x;
         }
     }
-    index_buffer_grid_ =
-        std::make_unique<IndexBuffer> (open_gl_context_, indices.data (), indices.size ());
+    index_buffer_grid_ = std::make_unique<IndexBuffer> (indices.data (), indices.size ());
 
     i = 0;
     for (int y = 0; y < kVertexBufferSizeM1; y++)
@@ -264,18 +222,12 @@ void Graph3DComponent::newOpenGLContextCreated ()
             indices [i++] = (y + 1) * kVertexBufferSize + x;
         }
     }
-    index_buffer_graph_ =
-        std::make_unique<IndexBuffer> (open_gl_context_, indices.data (), indices.size ());
+    index_buffer_graph_ = std::make_unique<IndexBuffer> (indices.data (), indices.size ());
 
-    vertex_array_ = std::make_unique<VertexArray> (open_gl_context_);
+    vertex_array_ = std::make_unique<VertexArray> ();
     VertexBufferLayout vertex_buffer_layout;
     vertex_buffer_layout.Push<GLfloat> (2);
     vertex_array_->AddBuffer (*vertex_buffer_, vertex_buffer_layout);
-}
-
-void Graph3DComponent::openGLContextClosing ()
-{
-    shader.reset ();
 }
 
 static float
@@ -284,10 +236,11 @@ SmoothLerp (float current_value, float target_value, float speed_factor, float d
     return current_value + (target_value - current_value) * speed_factor * delta_time;
 }
 
-void Graph3DComponent::renderOpenGL ()
+void Graph3DRenderer::renderOpenGL ()
 {
     jassert (juce::OpenGLHelpers::isContextActive ());
-    juce::OpenGLHelpers::clear (getLookAndFeel ().findColour (LookAndFeel::ColourIds::kPanel));
+    auto & look_and_feel = juce::LookAndFeel::getDefaultLookAndFeel ();
+    juce::OpenGLHelpers::clear (look_and_feel.findColour (LookAndFeel::ColourIds::kPanel));
 
     CreateShaders ();
     shader->use ();
@@ -348,28 +301,12 @@ void Graph3DComponent::renderOpenGL ()
     vertex_array_->Unbind ();
 }
 
-void Graph3DComponent::resized ()
+void Graph3DRenderer::openGLContextClosing ()
 {
-    juce::FlexBox layout;
-    layout.flexDirection = juce::FlexBox::Direction::column;
-    layout.justifyContent = juce::FlexBox::JustifyContent::flexEnd;
-
-    layout.items.add (juce::FlexItem (offset_y_slider_).withHeight (20.f));
-    layout.items.add (LookAndFeel::kFlexSpacer);
-    layout.items.add (juce::FlexItem (offset_x_slider_).withHeight (20.f));
-    layout.items.add (LookAndFeel::kFlexSpacer);
-    layout.items.add (juce::FlexItem (scale_slider_).withHeight (20.f));
-    layout.items.add (LookAndFeel::kFlexSpacer);
-    layout.items.add (juce::FlexItem (status_label_).withHeight (20.f));
-    layout.items.add (LookAndFeel::kFlexSpacer);
-    layout.items.add (juce::FlexItem (refresh_button_).withHeight (40.f));
-
-    layout.performLayout (getLocalBounds ().toFloat ());
-
-    draggable_orientation_.SetBounds (getLocalBounds ());
+    shader.reset ();
 }
 
-void Graph3DComponent::CreateShaders ()
+void Graph3DRenderer::CreateShaders ()
 {
     juce::SpinLock::ScopedTryLockType lock (shader_mutex_);
     if (! lock.isLocked ())
@@ -401,13 +338,13 @@ void Graph3DComponent::CreateShaders ()
             status_text = gl_shader_program->getLastError ();
         }
 
-        juce::MessageManager::callAsync (
-            [&, status_text] ()
-            { status_label_.setText (status_text, juce::dontSendNotification); });
+        //        juce::MessageManager::callAsync (
+        //            [&, status_text] ()
+        //            { status_label_.setText (status_text, juce::dontSendNotification); });
     }
 }
 
-void Graph3DComponent::UpdateShaders ()
+void Graph3DRenderer::UpdateShaders ()
 {
     juce::SpinLock::ScopedLockType lock (shader_mutex_);
 
@@ -424,14 +361,4 @@ void Graph3DComponent::UpdateShaders ()
     new_fragment_shader_ = shaders_graph3d_frag_glsl;
     new_vertex_shader_ = shaders_graph3d_vert_glsl;
 #endif
-}
-
-void Graph3DComponent::mouseDown (const juce::MouseEvent & event)
-{
-    draggable_orientation_.MouseDown (event.getPosition ().toFloat ());
-}
-
-void Graph3DComponent::mouseDrag (const juce::MouseEvent & event)
-{
-    draggable_orientation_.MouseDrag (event.getPosition ().toFloat ());
 }

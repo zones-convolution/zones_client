@@ -1,8 +1,7 @@
 #pragma once
-#include "spectrogram_visualiser/Graph3DComponent.h"
-#include "spectrogram_visualiser/GraphComponent.h"
-#include "spectrogram_visualiser/RingBuffer.h"
-#include "spectrogram_visualiser/SpectrogramVisualiserComponent.h"
+#include "spectrogram_visualiser/component/Graph3DComponent.h"
+#include "spectrogram_visualiser/component/GraphComponent.h"
+#include "spectrogram_visualiser/component/Osc2DComponent.h"
 #include "zones_look_and_feel/LookAndFeel.h"
 
 #include <juce_gui_basics/juce_gui_basics.h>
@@ -15,7 +14,7 @@ public:
 
 private:
     juce::Label visualisers_label_;
-    SpectrogramVisualiserComponent spectrogram_visualiser_component_;
+    Osc2DComponent osc2d_component_;
     GraphComponent graph_component_;
     Graph3DComponent graph3d_component_;
 };

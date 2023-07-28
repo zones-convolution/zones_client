@@ -1,9 +1,8 @@
 #pragma once
 
-#include "IndexBuffer.h"
-#include "RingBuffer.h"
-#include "VertexArray.h"
-#include "VertexBuffer.h"
+#include "../gl/IndexBuffer.h"
+#include "../gl/VertexArray.h"
+#include "../gl/VertexBuffer.h"
 #include "zones_look_and_feel/LookAndFeel.h"
 
 #include <filesystem>
@@ -12,15 +11,15 @@
 #include <juce_gui_basics/juce_gui_basics.h>
 #include <juce_opengl/juce_opengl.h>
 
-class SpectrogramVisualiserComponent
+class Osc2DComponent
     : public juce::Component
     , public juce::OpenGLRenderer
 {
 public:
     static constexpr int kRingBufferReadSize = 256;
 
-    explicit SpectrogramVisualiserComponent ();
-    ~SpectrogramVisualiserComponent () override;
+    explicit Osc2DComponent ();
+    ~Osc2DComponent () override;
 
     void Start ();
     void Stop ();
@@ -55,5 +54,5 @@ private:
     juce::Label status_label_;
     juce::TextButton refresh_button_ {"Refresh"};
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SpectrogramVisualiserComponent)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Osc2DComponent)
 };

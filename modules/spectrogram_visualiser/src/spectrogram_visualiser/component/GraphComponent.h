@@ -1,8 +1,8 @@
 #pragma once
 
-#include "IndexBuffer.h"
-#include "VertexArray.h"
-#include "VertexBuffer.h"
+#include "../gl/IndexBuffer.h"
+#include "../gl/VertexArray.h"
+#include "../gl/VertexBuffer.h"
 #include "zones_look_and_feel/LookAndFeel.h"
 
 #include <filesystem>

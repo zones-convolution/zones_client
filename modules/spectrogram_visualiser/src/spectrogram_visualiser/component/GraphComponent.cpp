@@ -1,6 +1,6 @@
 #include "GraphComponent.h"
 
-#include "GLUtils.h"
+#include "../gl/GLUtils.h"
 
 #include <memory>
 
@@ -71,10 +71,9 @@ void GraphComponent::newOpenGLContextCreated ()
     for (auto i = 0; i < x_distribution.size (); i++)
         x_distribution [i] = ((float) i - 50.f) / 50.0f;
 
-    vb_ = std::make_unique<VertexBuffer> (
-        open_gl_context_, x_distribution.data (), sizeof (x_distribution));
+    vb_ = std::make_unique<VertexBuffer> (x_distribution.data (), sizeof (x_distribution));
 
-    va_ = std::make_unique<VertexArray> (open_gl_context_);
+    va_ = std::make_unique<VertexArray> ();
     VertexBufferLayout vertex_buffer_layout;
     vertex_buffer_layout.Push<GLfloat> (1);
     va_->AddBuffer (*vb_, vertex_buffer_layout);

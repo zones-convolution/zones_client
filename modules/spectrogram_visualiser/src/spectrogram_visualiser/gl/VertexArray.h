@@ -9,7 +9,7 @@
 class VertexArray
 {
 public:
-    explicit VertexArray (juce::OpenGLContext & open_gl_context);
+    explicit VertexArray ();
     ~VertexArray ();
 
     void AddBuffer (const VertexBuffer & vertex_buffer,
@@ -19,6 +19,5 @@ public:
     void Unbind () const;
 
 private:
-    juce::OpenGLContext & open_gl_context_;
     GLuint renderer_;
 };

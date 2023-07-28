@@ -1,24 +1,23 @@
 zones_add_module(
         MODULE spectrogram_visualiser
-        SOURCES src/spectrogram_visualiser/SpectrogramVisualiserComponent.h
-        src/spectrogram_visualiser/SpectrogramVisualiserComponent.cpp
-        src/spectrogram_visualiser/RingBuffer.h
-        src/spectrogram_visualiser/GLUtils.h
-        src/spectrogram_visualiser/GraphComponent.h
-        src/spectrogram_visualiser/GraphComponent.cpp
-        src/spectrogram_visualiser/Graph3DComponent.h
-        src/spectrogram_visualiser/Graph3DComponent.cpp
-        src/spectrogram_visualiser/VertexBuffer.h
-        src/spectrogram_visualiser/VertexBuffer.cpp
-        src/spectrogram_visualiser/IndexBuffer.h
-        src/spectrogram_visualiser/IndexBuffer.cpp
-        src/spectrogram_visualiser/VertexArray.h
-        src/spectrogram_visualiser/VertexArray.cpp
-        src/spectrogram_visualiser/VertexBufferLayout.h
-        src/spectrogram_visualiser/Shader.h
-        src/spectrogram_visualiser/Shader.cpp
-        src/spectrogram_visualiser/DraggableOrientation.h
-        src/spectrogram_visualiser/DraggableOrientation.cpp
+        SOURCES src/spectrogram_visualiser/component/Osc2DComponent.h
+        src/spectrogram_visualiser/component/Osc2DComponent.cpp
+        src/spectrogram_visualiser/component/GraphComponent.h
+        src/spectrogram_visualiser/component/GraphComponent.cpp
+        src/spectrogram_visualiser/component/Graph3DComponent.h
+        src/spectrogram_visualiser/component/Graph3DComponent.cpp
+        src/spectrogram_visualiser/component/DraggableOrientation.h
+        src/spectrogram_visualiser/component/DraggableOrientation.cpp
+        src/spectrogram_visualiser/renderer/Graph3DRenderer.h
+        src/spectrogram_visualiser/renderer/Graph3DRenderer.cpp
+        src/spectrogram_visualiser/gl/GLUtils.h
+        src/spectrogram_visualiser/gl/VertexBuffer.h
+        src/spectrogram_visualiser/gl/VertexBuffer.cpp
+        src/spectrogram_visualiser/gl/IndexBuffer.h
+        src/spectrogram_visualiser/gl/IndexBuffer.cpp
+        src/spectrogram_visualiser/gl/VertexArray.h
+        src/spectrogram_visualiser/gl/VertexArray.cpp
+        src/spectrogram_visualiser/gl/VertexBufferLayout.h
         DEPS juce::juce_gui_basics juce::juce_opengl zones_look_and_feel juce::juce_audio_basics juce::juce_dsp juce::juce_audio_formats glm tinycolormap
 )
 
