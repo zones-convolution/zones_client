@@ -4,6 +4,7 @@
 #include "../gl/IndexBuffer.h"
 #include "../gl/VertexArray.h"
 #include "../gl/VertexBuffer.h"
+#include "Spectrogram.h"
 
 #include <filesystem>
 #include <juce_opengl/juce_opengl.h>

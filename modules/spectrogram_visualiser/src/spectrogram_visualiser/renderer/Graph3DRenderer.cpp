@@ -2,16 +2,14 @@
 
 #include "zones_look_and_feel/LookAndFeel.h"
 
-#include <juce_audio_formats/juce_audio_formats.h>
-#include <juce_dsp/juce_dsp.h>
-#include <tinycolormap.hpp>
-
 #define GLM_FORCE_RADIANS
 #include <glm/common.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/quaternion.hpp>
+
+const std::filesystem::path kTestAudioDirectory = TEST_AUDIO_DIRECTORY;
 
 #if JUCE_DEBUG
 const std::filesystem::path Graph3DRenderer::kShaderDirectory = SHADER_DIRECTORY;
@@ -30,116 +28,40 @@ Graph3DRenderer::Graph3DRenderer (juce::OpenGLContext & open_gl_context,
 {
 }
 
-juce::Image CreateGraphData ()
-{
-    juce::AudioFormatManager audio_format_manager;
-    audio_format_manager.registerBasicFormats ();
-
-    // auto ir_file = juce::File (kTestAudioPath.string ());
-    auto ir_file = juce::File ();
-
-    juce::AudioBuffer<float> audio_buffer;
-    std::unique_ptr<juce::AudioFormatReader> reader (
-        audio_format_manager.createReaderFor (ir_file));
-    auto sample_rate = reader->sampleRate;
-    auto bit_depth = reader->bitsPerSample;
-    audio_buffer.setSize (reader->numChannels, reader->lengthInSamples);
-    reader->read (&audio_buffer, 0, reader->lengthInSamples, 0, true, true);
-
-    static constexpr auto kFFTOrder = 10;
-    static constexpr auto kFFTSize = 1 << kFFTOrder;
-
-    std::array<float, kFFTSize * 2> fft_data {};
-    juce::dsp::FFT fft {kFFTOrder};
-    juce::dsp::WindowingFunction<float> window {kFFTSize,
-                                                juce::dsp::WindowingFunction<float>::hann};
-
-    juce::dsp::AudioBlock<float> audio_block {audio_buffer};
-
-    auto hop = kFFTSize / 2;
-    auto num_hops = 1 + (audio_block.getNumSamples () - kFFTSize) / hop;
-    juce::Image spectrogram {juce::Image::RGB, (int) num_hops, kFFTSize, true};
-
-    for (auto i = 0; i < audio_buffer.getNumSamples () - kFFTSize; i += hop)
-    {
-        auto sub_block = audio_block.getSubBlock (i, kFFTSize);
-        std::fill (fft_data.begin (), fft_data.end (), 0.0f);
-        for (auto channel = 0; channel < audio_buffer.getNumChannels (); ++channel)
-        {
-            auto read = sub_block.getChannelPointer (channel);
-            juce::FloatVectorOperations::add (fft_data.data (), read, kFFTSize);
-        }
-        window.multiplyWithWindowingTable (fft_data.data (), kFFTSize);
-        fft.performFrequencyOnlyForwardTransform (fft_data.data (), true);
-
-        auto right_hand_edge = spectrogram.getWidth () - 1;
-        auto image_height = spectrogram.getHeight ();
-
-        spectrogram.moveImageSection (0, 0, 1, 0, right_hand_edge, image_height);
-
-        auto max_level =
-            juce::FloatVectorOperations::findMinAndMax (fft_data.data (), kFFTSize / 2);
-
-        for (auto y = 1; y < image_height; ++y)
-        {
-            auto y_prop = 1.0f - ((float) y / (float) image_height);
-            auto skewedProportionY = std::exp (std::log (0.2f * y_prop));
-            auto fftDataIndex =
-                (size_t) juce::jlimit (0, kFFTSize / 2, (int) (skewedProportionY * kFFTSize / 2));
-            auto level = juce::jmap (
-                fft_data [fftDataIndex], 0.0f, juce::jmax (max_level.getEnd (), 1e-5f), 0.0f, 1.0f);
-
-            auto colour = tinycolormap::GetColor (level, tinycolormap::ColormapType::Viridis);
-            spectrogram.setPixelAt (
-                right_hand_edge,
-                y,
-                juce::Colour::fromFloatRGBA (colour.r (), colour.g (), colour.b (), level));
-        }
-    }
-
-    return spectrogram.rescaled (1024, 1024);
-}
-
 static constexpr size_t kVertexBufferSize = 110;
 static constexpr size_t kVertexBufferSizeM1 = kVertexBufferSize - 1;
 
 void Graph3DRenderer::newOpenGLContextCreated ()
 {
-    //    GLCall (juce::gl::glEnable (juce::gl::GL_BLEND));
-    //    GLCall (juce::gl::glBlendFunc (juce::gl::GL_SRC_ALPHA, juce::gl::GL_ONE_MINUS_SRC_ALPHA));
+    GLCall (juce::gl::glEnable (juce::gl::GL_BLEND));
+    GLCall (juce::gl::glBlendFunc (juce::gl::GL_SRC_ALPHA, juce::gl::GL_ONE_MINUS_SRC_ALPHA));
 
-    //    static constexpr auto kGraphSize = 1024;
-    //    auto graph = std::make_unique<std::array<std::array<GLubyte, kGraphSize>, kGraphSize>> ();
-    //
-    //    for (int i = 0; i < kGraphSize; i++)
-    //    {
-    //        for (int j = 0; j < kGraphSize; j++)
-    //        {
-    //            float x = (i - kGraphSize / 2) / (kGraphSize / 2.0);
-    //            float y = (j - kGraphSize / 2) / (kGraphSize / 2.0);
-    //            float z = sinf (y * M_PI * 2.f) * sinf (x * M_PI * 2.f);
-    //            (*graph) [i][j] = roundf (z * 127 + 128);
-    //        }
-    //    }
+    juce::AudioFormatManager audio_format_manager;
+    audio_format_manager.registerBasicFormats ();
+    auto test_audio_path = kTestAudioDirectory / "nash.wav";
+    auto ir_file = juce::File (test_audio_path.string ());
+    juce::AudioBuffer<float> audio_buffer;
+    std::unique_ptr<juce::AudioFormatReader> reader (
+        audio_format_manager.createReaderFor (ir_file));
+    audio_buffer.setSize (reader->numChannels, reader->lengthInSamples);
+    reader->read (&audio_buffer, 0, reader->lengthInSamples, 0, true, true);
 
-    //    auto spectrogram = CreateGraphData ();
-    //
-    //    juce::ImageConvolutionKernel convolution_kernel {4};
-    //    convolution_kernel.createGaussianBlur (4.f);
-    //    convolution_kernel.applyToImage (spectrogram, spectrogram, spectrogram.getBounds ());
+    auto spectrogram = Spectrogram::CreateSpectrogram (juce::dsp::AudioBlock<float> {audio_buffer});
 
-    //    auto path = kTestAudioDirectory / "test_audio.png";
-    //    auto file = juce::File (path.string ());
-    //    file.moveToTrash ();
-    //    juce::FileOutputStream stream (file);
-    //    juce::PNGImageFormat pngWriter;
-    //    pngWriter.writeImageToStream (spectrogram, stream);
+    juce::ImageConvolutionKernel convolution_kernel {4};
+    convolution_kernel.createGaussianBlur (4.f);
+    convolution_kernel.applyToImage (spectrogram, spectrogram, spectrogram.getBounds ());
 
-    //    auto width = spectrogram.getWidth ();
-    //    auto height = spectrogram.getHeight ();
+    auto path = kTestAudioDirectory / "test_audio.png";
+    auto file = juce::File (path.string ());
+    file.moveToTrash ();
+    juce::FileOutputStream stream (file);
+    juce::PNGImageFormat pngWriter;
+    pngWriter.writeImageToStream (spectrogram, stream);
 
-    auto width = 1024;
-    auto height = 1024;
+    auto width = spectrogram.getWidth ();
+    auto height = spectrogram.getHeight ();
+
     juce::AudioBuffer<GLubyte> graph {width, height};
 
     for (int x = 0; x < width; x++)
@@ -147,13 +69,13 @@ void Graph3DRenderer::newOpenGLContextCreated ()
         auto channel_pointer = graph.getWritePointer (x);
         for (int y = 0; y < height; y++)
         {
-            float x_n = (x - width / 2) / (width / 2.0);
-            float y_n = (y - height / 2) / (height / 2.0);
-            float z = sinf (y_n * M_PI * 2.f) * sinf (x_n * M_PI * 2.f);
-            channel_pointer [y] = roundf (z * 127 + 128);
+            //            float x_n = (x - width / 2) / (width / 2.0);
+            //            float y_n = (y - height / 2) / (height / 2.0);
+            //            float z = sinf (y_n * M_PI * 2.f) * sinf (x_n * M_PI * 2.f);
+            //            channel_pointer [y] = roundf (z * 127 + 128);
 
-            //            auto pixel_value = spectrogram.getPixelAt (x, y).getFloatAlpha ();
-            //            channel_pointer [y] = roundf (pixel_value * 127 + 128);
+            auto pixel_value = spectrogram.getPixelAt (x, y).getFloatAlpha ();
+            channel_pointer [y] = roundf (pixel_value * 127 + 128);
         }
     }
 
@@ -289,13 +211,13 @@ void Graph3DRenderer::renderOpenGL ()
                                       juce::gl::GL_UNSIGNED_INT,
                                       0));
     index_buffer_graph_->Unbind ();
-    index_buffer_graph_->Bind ();
-    uniform_colour_->set (0.f, 0.f, 0.f, 1.f);
-    GLCall (juce::gl::glDrawElements (juce::gl::GL_LINES,
-                                      kVertexBufferSizeM1 * kVertexBufferSizeM1 * 6,
-                                      juce::gl::GL_UNSIGNED_INT,
-                                      0));
-    index_buffer_grid_->Unbind ();
+    //    index_buffer_graph_->Bind ();
+    //    uniform_colour_->set (0.f, 0.f, 0.f, 1.f);
+    //    GLCall (juce::gl::glDrawElements (juce::gl::GL_LINES,
+    //                                      kVertexBufferSizeM1 * kVertexBufferSizeM1 * 6,
+    //                                      juce::gl::GL_UNSIGNED_INT,
+    //                                      0));
+    //    index_buffer_grid_->Unbind ();
     vertex_array_->Unbind ();
 }
 

@@ -12,6 +12,7 @@
     <mapping directory="$PROJECT_DIR$/lib/lager" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/lager/tools/sinusoidal-sphinx-theme" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/stretch" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/lib/tinycolormap" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/zug" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/zug/tools/sinusoidal-sphinx-theme" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/vcpkg" vcs="Git" />

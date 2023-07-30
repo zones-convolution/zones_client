@@ -10,6 +10,8 @@ zones_add_module(
         src/spectrogram_visualiser/component/DraggableOrientation.cpp
         src/spectrogram_visualiser/renderer/Graph3DRenderer.h
         src/spectrogram_visualiser/renderer/Graph3DRenderer.cpp
+        src/spectrogram_visualiser/renderer/Spectrogram.h
+        src/spectrogram_visualiser/renderer/Spectrogram.cpp
         src/spectrogram_visualiser/gl/GLUtils.h
         src/spectrogram_visualiser/gl/VertexBuffer.h
         src/spectrogram_visualiser/gl/VertexBuffer.cpp
@@ -18,7 +20,7 @@ zones_add_module(
         src/spectrogram_visualiser/gl/VertexArray.h
         src/spectrogram_visualiser/gl/VertexArray.cpp
         src/spectrogram_visualiser/gl/VertexBufferLayout.h
-        DEPS juce::juce_gui_basics juce::juce_opengl zones_look_and_feel juce::juce_audio_basics juce::juce_dsp juce::juce_audio_formats glm tinycolormap
+        DEPS juce::juce_gui_basics juce::juce_opengl zones_look_and_feel juce::juce_audio_basics juce::juce_dsp juce::juce_audio_formats glm tinycolormap immer
 )
 
 embed_resources(spectrogram_visualiser
