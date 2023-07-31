@@ -19,6 +19,7 @@ struct TabLoadedAction
 
 struct TabsControllerDelegate
 {
+    virtual ~TabsControllerDelegate () = default;
     virtual bool LoadTab (const std::string & tab_name, bool animate) = 0;
 };
 

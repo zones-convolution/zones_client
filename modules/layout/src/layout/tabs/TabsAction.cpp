@@ -7,13 +7,12 @@ TabsResult UpdateTabs (TabsModel tabs_model, TabsAction tabs_action)
             [&] (const LoadTabAction & load_tab_action) -> TabsResult
             {
                 return {tabs_model,
-                        [&] (const TabsEffect::context_t & context)
+                        [tab_name = load_tab_action.tab_name] (auto && context)
                         {
                             auto & tabs_controller_delegate =
                                 lager::get<TabsControllerDelegate> (context);
-                            if (tabs_controller_delegate.LoadTab (load_tab_action.tab_name, true))
-                                context.dispatch (
-                                    TabLoadedAction {.tab_name = load_tab_action.tab_name});
+                            if (tabs_controller_delegate.LoadTab (tab_name, true))
+                                context.dispatch (TabLoadedAction {.tab_name = tab_name});
                         }};
             },
             [&] (const TabLoadedAction & tab_loaded_action) -> TabsResult

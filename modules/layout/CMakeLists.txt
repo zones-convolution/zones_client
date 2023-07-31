@@ -9,6 +9,7 @@ zones_add_module(
         src/layout/tabs/TabsController.h
         src/layout/tabs/TabsController.cpp
         src/layout/tabs/TabsModel.h
+        src/layout/WithJuceEventLoop.h
         DEPS
         juce::juce_core
         juce::juce_gui_basics
