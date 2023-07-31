@@ -36,69 +36,7 @@ void Graph3DRenderer::newOpenGLContextCreated ()
     GLCall (juce::gl::glEnable (juce::gl::GL_BLEND));
     GLCall (juce::gl::glBlendFunc (juce::gl::GL_SRC_ALPHA, juce::gl::GL_ONE_MINUS_SRC_ALPHA));
 
-    juce::AudioFormatManager audio_format_manager;
-    audio_format_manager.registerBasicFormats ();
-    auto test_audio_path = kTestAudioDirectory / "nash.wav";
-    auto ir_file = juce::File (test_audio_path.string ());
-    juce::AudioBuffer<float> audio_buffer;
-    std::unique_ptr<juce::AudioFormatReader> reader (
-        audio_format_manager.createReaderFor (ir_file));
-    audio_buffer.setSize (reader->numChannels, reader->lengthInSamples);
-    reader->read (&audio_buffer, 0, reader->lengthInSamples, 0, true, true);
-
-    auto spectrogram = Spectrogram::CreateSpectrogram (juce::dsp::AudioBlock<float> {audio_buffer});
-
-    juce::ImageConvolutionKernel convolution_kernel {4};
-    convolution_kernel.createGaussianBlur (4.f);
-    convolution_kernel.applyToImage (spectrogram, spectrogram, spectrogram.getBounds ());
-
-    auto path = kTestAudioDirectory / "test_audio.png";
-    auto file = juce::File (path.string ());
-    file.moveToTrash ();
-    juce::FileOutputStream stream (file);
-    juce::PNGImageFormat pngWriter;
-    pngWriter.writeImageToStream (spectrogram, stream);
-
-    auto width = spectrogram.getWidth ();
-    auto height = spectrogram.getHeight ();
-
-    juce::AudioBuffer<GLubyte> graph {width, height};
-
-    for (int x = 0; x < width; x++)
-    {
-        auto channel_pointer = graph.getWritePointer (x);
-        for (int y = 0; y < height; y++)
-        {
-            //            float x_n = (x - width / 2) / (width / 2.0);
-            //            float y_n = (y - height / 2) / (height / 2.0);
-            //            float z = sinf (y_n * M_PI * 2.f) * sinf (x_n * M_PI * 2.f);
-            //            channel_pointer [y] = roundf (z * 127 + 128);
-
-            auto pixel_value = spectrogram.getPixelAt (x, y).getFloatAlpha ();
-            channel_pointer [y] = roundf (pixel_value * 127 + 128);
-        }
-    }
-
-    GLCall (juce::gl::glActiveTexture (juce::gl::GL_TEXTURE0));
-    GLCall (juce::gl::glGenTextures (1, &graph_texture_id_));
-    GLCall (juce::gl::glBindTexture (juce::gl::GL_TEXTURE_2D, graph_texture_id_));
-    GLCall (juce::gl::glTexImage2D (juce::gl::GL_TEXTURE_2D,
-                                    0,
-                                    juce::gl::GL_RED,
-                                    width,
-                                    height,
-                                    0,
-                                    juce::gl::GL_RED,
-                                    juce::gl::GL_UNSIGNED_BYTE,
-                                    graph.getReadPointer (0)));
-    juce::gl::glTexParameteri (
-        juce::gl::GL_TEXTURE_2D, juce::gl::GL_TEXTURE_WRAP_S, juce::gl::GL_CLAMP_TO_EDGE);
-    juce::gl::glTexParameteri (
-        juce::gl::GL_TEXTURE_2D, juce::gl::GL_TEXTURE_WRAP_T, juce::gl::GL_CLAMP_TO_EDGE);
-    juce::gl::glTexParameteri (
-        juce::gl::GL_TEXTURE_2D, juce::gl::GL_TEXTURE_MIN_FILTER, juce::gl::GL_LINEAR);
-    juce::gl::glTexParameteri (
-        juce::gl::GL_TEXTURE_2D, juce::gl::GL_TEXTURE_MAG_FILTER, juce::gl::GL_LINEAR);
+    //    SetupGraphTexture ();
 
     std::array<std::array<glm::vec2, kVertexBufferSize>, kVertexBufferSize> vertices {};
     for (int i = 0; i < kVertexBufferSize; i++)
@@ -156,6 +94,51 @@ void Graph3DRenderer::newOpenGLContextCreated ()
     vertex_array_->AddBuffer (*vertex_buffer_, vertex_buffer_layout);
 }
 
+void Graph3DRenderer::SetupGraphTexture (const juce::dsp::AudioBlock<float> block)
+{
+    auto spectrogram = Spectrogram::CreateSpectrogram (block).rescaled (1024, 1024);
+
+    //    juce::ImageConvolutionKernel convolution_kernel {4};
+    //    convolution_kernel.createGaussianBlur (4.f);
+    //    convolution_kernel.applyToImage (spectrogram, spectrogram, spectrogram.getBounds ());
+    
+    auto width = spectrogram.getWidth ();
+    auto height = spectrogram.getHeight ();
+
+    juce::AudioBuffer<GLubyte> graph {width, height};
+
+    for (int x = 0; x < width; x++)
+    {
+        auto channel_pointer = graph.getWritePointer (x);
+        for (int y = 0; y < height; y++)
+        {
+            auto pixel_value = spectrogram.getPixelAt (x, y).getFloatAlpha ();
+            channel_pointer [y] = static_cast<GLubyte> (std::roundf (pixel_value * 127 + 128));
+        }
+    }
+
+    GLCall (juce::gl::glActiveTexture (juce::gl::GL_TEXTURE0));
+    GLCall (juce::gl::glGenTextures (1, &graph_texture_id_));
+    GLCall (juce::gl::glBindTexture (juce::gl::GL_TEXTURE_2D, graph_texture_id_));
+    GLCall (juce::gl::glTexImage2D (juce::gl::GL_TEXTURE_2D,
+                                    0,
+                                    juce::gl::GL_RED,
+                                    width,
+                                    height,
+                                    0,
+                                    juce::gl::GL_RED,
+                                    juce::gl::GL_UNSIGNED_BYTE,
+                                    graph.getReadPointer (0)));
+    juce::gl::glTexParameteri (
+        juce::gl::GL_TEXTURE_2D, juce::gl::GL_TEXTURE_WRAP_S, juce::gl::GL_CLAMP_TO_EDGE);
+    juce::gl::glTexParameteri (
+        juce::gl::GL_TEXTURE_2D, juce::gl::GL_TEXTURE_WRAP_T, juce::gl::GL_CLAMP_TO_EDGE);
+    juce::gl::glTexParameteri (
+        juce::gl::GL_TEXTURE_2D, juce::gl::GL_TEXTURE_MIN_FILTER, juce::gl::GL_LINEAR);
+    juce::gl::glTexParameteri (
+        juce::gl::GL_TEXTURE_2D, juce::gl::GL_TEXTURE_MAG_FILTER, juce::gl::GL_LINEAR);
+}
+
 static float
 Smoothed (float current_value, float target_value, float speed_factor, float delta_time)
 {
@@ -177,7 +160,8 @@ void Graph3DRenderer::renderOpenGL ()
         Smoothed (rot_y_smooth_, draggable_orientation_.y_rotation.load (), 4.f, 1.0f / 60.0f);
 
     auto rot_about_z = glm::rotate (glm::mat4 (1.f),
-                                    rot_x_smooth_ * juce::MathConstants<float>::twoPi,
+                                    (rot_x_smooth_ * juce::MathConstants<float>::twoPi) -
+                                        (juce::MathConstants<float>::twoPi / 8),
                                     glm::vec3 (0.f, 0.f, 1.f));
     auto rot_about_x = glm::rotate (glm::mat4 (1.f),
                                     rot_y_smooth_ * juce::MathConstants<float>::twoPi,
@@ -195,7 +179,7 @@ void Graph3DRenderer::renderOpenGL ()
     auto offset_y = offset_y_.load ();
 
     glm::mat4 texture_transform =
-        glm::translate (glm::scale (glm::mat4 (1.0f), glm::vec3 (-scale, scale, 1)),
+        glm::translate (glm::scale (glm::mat4 (1.0f), glm::vec3 (scale, -scale, 1)),
                         glm::vec3 (offset_x, offset_y, 0));
     uniform_texture_transform_->setMatrix4 (
         glm::value_ptr (texture_transform), 1, juce::gl::GL_FALSE);

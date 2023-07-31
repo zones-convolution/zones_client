@@ -4,6 +4,7 @@
 #include "DraggableOrientation.h"
 #include "zones_look_and_feel/LookAndFeel.h"
 
+#include <juce_dsp/juce_dsp.h>
 #include <juce_gui_basics/juce_gui_basics.h>
 #include <juce_opengl/juce_opengl.h>
 
@@ -15,6 +16,8 @@ public:
 
     void resized () override;
     void paint (juce::Graphics & g) override;
+
+    void SetAudioBlock (const juce::dsp::AudioBlock<float> audio_block);
 
 private:
     void mouseDown (const juce::MouseEvent & event) override;

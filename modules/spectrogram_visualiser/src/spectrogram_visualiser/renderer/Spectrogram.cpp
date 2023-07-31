@@ -38,12 +38,10 @@ static void DrawSpectrogramLine (juce::Image & spectrogram, const float * fft_da
         auto level = juce::jmap (
             fft_data [fft_data_index], 0.0f, juce::jmax (max_level.getEnd (), 1e-5f), 0.0f, 1.0f);
 
-        spectrogram.setPixelAt (
-            right_hand_edge,
-            y,
-            ConvertToJuceColour (
-                tinycolormap::GetColor (level, tinycolormap::ColormapType::Viridis))
-                .withAlpha (level));
+        auto colour = ConvertToJuceColour (
+                          tinycolormap::GetColor (level, tinycolormap::ColormapType::Viridis))
+                          .withAlpha (level);
+        spectrogram.setPixelAt (right_hand_edge, y, colour);
     }
 }
 
@@ -60,15 +58,20 @@ Spectrogram::PerformFFT (const juce::dsp::AudioBlock<float> & audio_block)
 
     auto num_samples = static_cast<int> (audio_block.getNumSamples ());
     auto hop_length = kFFTSize / 2;
-    auto num_hops = num_samples / hop_length;
+    auto num_hops = (num_samples / hop_length) + 1;
 
     juce::AudioBuffer<float> fft_buffer;
     fft_buffer.setSize (num_hops, fft_data.size ());
+    fft_buffer.clear ();
 
-    for (auto hop_index = 0; hop_index < num_hops; ++hop_index)
+    auto start_sample_index = 0;
+    while (start_sample_index < num_samples)
     {
-        auto start_sample_index = hop_index * hop_length;
-        auto sub_block = audio_block.getSubBlock (start_sample_index, kFFTSize);
+        auto hop_index = start_sample_index / hop_length;
+        auto block_size = (start_sample_index + kFFTSize > num_samples)
+                              ? num_samples - start_sample_index
+                              : kFFTSize;
+        auto sub_block = audio_block.getSubBlock (start_sample_index, block_size);
 
         juce::FloatVectorOperations::fill (fft_data.data (), 0.f, fft_data.size ());
         for (auto channel = 0; channel < audio_block.getNumChannels (); ++channel)
@@ -81,7 +84,8 @@ Spectrogram::PerformFFT (const juce::dsp::AudioBlock<float> & audio_block)
         fft.performFrequencyOnlyForwardTransform (fft_data.data (), true);
 
         auto fft_channel = fft_buffer.getWritePointer (hop_index);
-        juce::FloatVectorOperations::copy (fft_data.data (), fft_channel, fft_data.size ());
+        juce::FloatVectorOperations::copy (fft_channel, fft_data.data (), fft_data.size ());
+        start_sample_index += hop_length;
     }
 
     return {std::move (fft_buffer)};

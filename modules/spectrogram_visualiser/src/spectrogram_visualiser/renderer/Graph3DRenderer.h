@@ -27,6 +27,8 @@ public:
     std::atomic<float> offset_y_;
     std::atomic<float> scale_;
 
+    void SetupGraphTexture (const juce::dsp::AudioBlock<float> block);
+    
 private:
     static const std::filesystem::path kShaderDirectory;
 

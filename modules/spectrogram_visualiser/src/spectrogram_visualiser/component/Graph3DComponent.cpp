@@ -13,7 +13,7 @@ Graph3DComponent::Graph3DComponent ()
 
     addAndMakeVisible (scale_slider_);
     scale_slider_.setRange ({0.f, 1.f}, 0.f);
-    scale_slider_.setValue (0.5f);
+    scale_slider_.setValue (1.f);
     scale_slider_.onValueChange = [&] ()
     { graph3d_renderer_.scale_ = (float) scale_slider_.getValue (); };
 
@@ -53,7 +53,7 @@ void Graph3DComponent::SetupOpenGl ()
 void Graph3DComponent::resized ()
 {
     draggable_orientation_.SetBounds (getLocalBounds ());
-    
+
     juce::FlexBox layout;
     layout.flexDirection = juce::FlexBox::Direction::column;
     layout.justifyContent = juce::FlexBox::JustifyContent::flexEnd;
@@ -84,4 +84,9 @@ void Graph3DComponent::mouseDrag (const juce::MouseEvent & event)
 void Graph3DComponent::paint (juce::Graphics & g)
 {
     juce::ignoreUnused (g);
+}
+
+void Graph3DComponent::SetAudioBlock (const juce::dsp::AudioBlock<float> audio_block)
+{
+    graph3d_renderer_.SetupGraphTexture (audio_block);
 }
