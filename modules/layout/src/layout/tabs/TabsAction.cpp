@@ -1,0 +1,27 @@
+#include "TabsAction.h"
+
+TabsResult UpdateTabs (TabsModel tabs_model, TabsAction tabs_action)
+{
+    return std::visit (
+        lager::visitor {
+            [&] (const LoadTabAction & load_tab_action) -> TabsResult
+            {
+                return {tabs_model,
+                        [&] (const TabsEffect::context_t & context)
+                        {
+                            auto & tabs_controller_delegate =
+                                lager::get<TabsControllerDelegate> (context);
+                            if (tabs_controller_delegate.LoadTab (load_tab_action.tab_name, true))
+                                context.dispatch (
+                                    TabLoadedAction {.tab_name = load_tab_action.tab_name});
+                        }};
+            },
+            [&] (const TabLoadedAction & tab_loaded_action) -> TabsResult
+            {
+                tabs_model.current_tab = tab_loaded_action.tab_name;
+                return {tabs_model, lager::noop};
+            },
+
+        },
+        tabs_action);
+}
