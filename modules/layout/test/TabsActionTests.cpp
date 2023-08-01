@@ -34,21 +34,52 @@ SCENARIO ("updating tabs model", "[TabsAction]")
         auto deps = lager::deps<TabsControllerDelegate &>::with (
             std::reference_wrapper<TabsControllerDelegate> (tabs_controller_delegate_mock));
         auto loop = lager::with_manual_event_loop {};
+
+        std::optional<TabsAction> last_tab_action;
         lager::context<TabsAction, lager::deps<TabsControllerDelegate &>> context (
-            [] (auto && act) -> lager::future
+            [&] (auto && action) -> lager::future
             {
-                jassert (false);
-                return lager::future ();
+                last_tab_action = action;
+                return {};
             },
             loop,
             deps);
 
-        WHEN ("a load tab action is dispatched")
+        WHEN ("a tab that doesnt exist is loaded")
+        {
+            tabs_controller_delegate_mock.should_return_success = false;
+            LoadTabAction load_tab_action {.tab_name = "test_tab"};
+            auto [model, effect] = UpdateTabs (TabsModel {}, load_tab_action);
+
+            THEN ("running the effect has no action")
+            {
+                REQUIRE (model.current_tab != load_tab_action.tab_name);
+                effect (context);
+                REQUIRE_FALSE (last_tab_action.has_value ());
+            }
+        }
+        WHEN ("a tab that does exist is loaded")
         {
             tabs_controller_delegate_mock.should_return_success = true;
             LoadTabAction load_tab_action {.tab_name = "test_tab"};
             auto [model, effect] = UpdateTabs (TabsModel {}, load_tab_action);
-            effect (context);
+
+            THEN ("a tab loaded action is dispatched")
+            {
+                REQUIRE (model.current_tab != load_tab_action.tab_name);
+                effect (context);
+                auto tab_loaded_action = std::get<TabLoadedAction> (last_tab_action.value ());
+                REQUIRE (tab_loaded_action.tab_name == load_tab_action.tab_name);
+            }
+        }
+        WHEN ("a tab loaded action is dispatched")
+        {
+            TabLoadedAction tab_loaded_action {.tab_name = "test_tab"};
+            auto [model, effect] = UpdateTabs (TabsModel {}, tab_loaded_action);
+
+            REQUIRE (model.current_tab == tab_loaded_action.tab_name);
+
+            //            REQUIRE (effect == lager::noop);
         }
     }
 }
