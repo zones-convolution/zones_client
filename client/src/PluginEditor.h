@@ -2,6 +2,8 @@
 
 #include "PluginProcessor.h"
 #include "ProjectImportComponent.h"
+#include "SidebarContent.h"
+#include "layout/sidebar/SidebarComponent.h"
 #include "layout/tabs/TabsAction.h"
 #include "layout/tabs/TabsComponent.h"
 #include "layout/tabs/TabsController.h"
@@ -38,9 +40,12 @@ private:
 
     ProjectImportComponent project_import_component_;
     PanelComponent project_import_panel_ {project_import_component_};
-    
-    juce::TextButton test_button_ {"WOW"};
-    PanelComponent test_panel_ {test_button_};
+
+    juce::TextButton browse_ {"BROWSE"};
+    PanelComponent browse_panel_ {browse_};
+
+    juce::TextButton settings_ {"SETTINGS"};
+    PanelComponent settings_panel_ {settings_};
 
     TabsComponent tabs_component_;
     TabsController tabs_controller_ {tabs_component_};
@@ -50,6 +55,19 @@ private:
         lager::with_manual_event_loop {},
         lager::with_deps (std::reference_wrapper<TabsControllerDelegate> (tabs_controller_)),
         lager::with_reducer (UpdateTabs));
+
+    juce::TextButton sidebar_header_button_ {"header"};
+    PanelComponent sidebar_header_panel_ {sidebar_header_button_};
+
+    SidebarContent sidebar_content_ {store_};
+    PanelComponent sidebar_content_panel_ {sidebar_content_};
+
+    juce::TextButton sidebar_footer_button_ {"footer"};
+    PanelComponent sidebar_footer_panel_ {sidebar_footer_button_};
+
+    SidebarComponent sidebar_component_ {sidebar_header_panel_,
+                                         sidebar_content_panel_,
+                                         sidebar_footer_panel_};
 
     void resized () override;
     void paint (juce::Graphics & graphics) override;

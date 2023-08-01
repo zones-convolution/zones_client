@@ -15,7 +15,7 @@ set(LINK_COMMON
 # SRC
 # ##############################################################################
 set(SOURCES src/PluginProcessor.h src/PluginProcessor.cpp src/PluginEditor.h
-        src/PluginEditor.cpp src/ProjectImportComponent.h src/ProjectImportComponent.cpp)
+        src/PluginEditor.cpp src/ProjectImportComponent.h src/ProjectImportComponent.cpp src/SidebarContent.h src/SidebarContent.cpp)
 
 juce_add_plugin(
         ${BINARY}

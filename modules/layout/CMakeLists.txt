@@ -2,6 +2,8 @@ zones_add_module(
         MODULE
         layout
         SOURCES
+        src/layout/sidebar/SidebarComponent.h
+        src/layout/sidebar/SidebarComponent.cpp
         src/layout/tabs/TabsAction.h
         src/layout/tabs/TabsAction.cpp
         src/layout/tabs/TabsComponent.h
