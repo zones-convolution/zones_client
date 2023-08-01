@@ -2,11 +2,17 @@
 
 #include "PluginProcessor.h"
 #include "ProjectImportComponent.h"
+#include "layout/tabs/TabsAction.h"
+#include "layout/tabs/TabsComponent.h"
+#include "layout/tabs/TabsController.h"
+#include "layout/tabs/TabsModel.h"
 #include "model/Model.h"
 #include "zones_look_and_feel/LookAndFeel.h"
 #include "zones_look_and_feel/components/PanelComponent.h"
 
 #include <juce_gui_basics/juce_gui_basics.h>
+#include <lager/event_loop/manual.hpp>
+#include <lager/store.hpp>
 
 class AudioPluginAudioProcessorEditor : public juce::AudioProcessorEditor
 {
@@ -32,6 +38,15 @@ private:
 
     ProjectImportComponent project_import_component_;
     PanelComponent project_import_panel_ {project_import_component_};
+
+    TabsComponent tabs_component_;
+    TabsController tabs_controller_ {tabs_component_};
+
+    lager::store<TabsAction, TabsModel> store_ = lager::make_store<TabsAction> (
+        TabsModel {},
+        lager::with_manual_event_loop {},
+        lager::with_deps (std::reference_wrapper<TabsControllerDelegate> (tabs_controller_)),
+        lager::with_reducer (UpdateTabs));
 
     void resized () override;
     void paint (juce::Graphics & graphics) override;

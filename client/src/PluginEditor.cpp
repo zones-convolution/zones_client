@@ -23,7 +23,7 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (
                      kWindowMaxWidth,
                      static_cast<int> (kWindowMaxWidth * kPreferredAspectRatio));
 
-    addAndMakeVisible (project_import_panel_);
+    addAndMakeVisible (tabs_component_);
 }
 
 void AudioPluginAudioProcessorEditor::resized ()
@@ -32,7 +32,7 @@ void AudioPluginAudioProcessorEditor::resized ()
     layout.flexDirection = juce::FlexBox::Direction::row;
     layout.alignItems = juce::FlexBox::AlignItems::center;
 
-    layout.items.add (juce::FlexItem (project_import_panel_).withFlex (1.f).withHeight (400.f));
+    layout.items.add (juce::FlexItem (tabs_component_).withFlex (1.f).withHeight (400.f));
 
     layout.performLayout (getLocalBounds ().toFloat ().reduced (LookAndFeel::kPadding));
 }

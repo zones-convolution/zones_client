@@ -8,7 +8,8 @@ set(LINK_COMMON
         ir_engine
         zones_look_and_feel
         audio_engine
-        model)
+        model
+        layout)
 
 # ##############################################################################
 # SRC
