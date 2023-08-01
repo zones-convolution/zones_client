@@ -38,6 +38,9 @@ private:
 
     ProjectImportComponent project_import_component_;
     PanelComponent project_import_panel_ {project_import_component_};
+    
+    juce::TextButton test_button_ {"WOW"};
+    PanelComponent test_panel_ {test_button_};
 
     TabsComponent tabs_component_;
     TabsController tabs_controller_ {tabs_component_};
