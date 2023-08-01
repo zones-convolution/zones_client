@@ -1,0 +1,11 @@
+zones_add_module(
+        MODULE
+        browser
+        SOURCES
+        src/browser/BrowserComponent.h
+        src/browser/BrowserComponent.cpp
+        DEPS
+        juce::juce_core
+        juce::juce_gui_basics
+        lager
+        zones_look_and_feel)

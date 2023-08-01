@@ -1,0 +1,11 @@
+zones_add_module(
+        MODULE
+        editor
+        SOURCES
+        src/editor/EditorComponent.h
+        src/editor/EditorComponent.cpp
+        DEPS
+        juce::juce_core
+        juce::juce_gui_basics
+        lager
+        zones_look_and_feel)
