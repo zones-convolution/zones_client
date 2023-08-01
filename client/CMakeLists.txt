@@ -9,13 +9,15 @@ set(LINK_COMMON
         zones_look_and_feel
         audio_engine
         model
-        layout)
+        layout
+        browser
+        editor)
 
 # ##############################################################################
 # SRC
 # ##############################################################################
 set(SOURCES src/PluginProcessor.h src/PluginProcessor.cpp src/PluginEditor.h
-        src/PluginEditor.cpp src/ProjectImportComponent.h src/ProjectImportComponent.cpp src/SidebarContent.h src/SidebarContent.cpp)
+        src/PluginEditor.cpp src/SidebarContent.h src/SidebarContent.cpp)
 
 juce_add_plugin(
         ${BINARY}

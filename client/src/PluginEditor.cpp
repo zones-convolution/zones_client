@@ -10,10 +10,10 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (
     , processor_ (processor)
     , model_ (model)
     , context_ (context)
-    , project_import_component_ (
-          model.zoom (lager::lenses::attr (&Model::project_ir_repository_model)),
-          project_ir_repository_context_,
-          parameter_context_)
+    , editor_ (parameter_context_)
+    , browser_ (model.zoom (lager::lenses::attr (&Model::project_ir_repository_model)),
+                project_ir_repository_context_)
+
 {
     juce::LookAndFeel::setDefaultLookAndFeel (&look_and_feel_);
 
@@ -25,14 +25,14 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (
 
     setSize (1280, 600);
 
-    tabs_controller_.AddTab ("browse", browse_panel_);
-    tabs_controller_.AddTab ("edit", project_import_panel_);
+    tabs_controller_.AddTab ("browser", browser_panel_);
+    tabs_controller_.AddTab ("editor", editor_panel_);
     tabs_controller_.AddTab ("settings", settings_panel_);
 
     addAndMakeVisible (tabs_component_);
     addAndMakeVisible (sidebar_component_);
 
-    store_.dispatch (LoadTabAction {.tab_name = "edit"});
+    store_.dispatch (LoadTabAction {.tab_name = "editor"});
 }
 
 void AudioPluginAudioProcessorEditor::resized ()

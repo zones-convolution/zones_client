@@ -8,4 +8,5 @@ zones_add_module(
         juce::juce_core
         juce::juce_gui_basics
         lager
-        zones_look_and_feel)
+        zones_look_and_feel
+        model)

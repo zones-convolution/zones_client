@@ -1,8 +1,9 @@
 #pragma once
 
 #include "PluginProcessor.h"
-#include "ProjectImportComponent.h"
 #include "SidebarContent.h"
+#include "browser/BrowserComponent.h"
+#include "editor/EditorComponent.h"
 #include "layout/sidebar/SidebarComponent.h"
 #include "layout/tabs/TabsAction.h"
 #include "layout/tabs/TabsComponent.h"
@@ -38,11 +39,11 @@ private:
 
     LookAndFeel look_and_feel_;
 
-    ProjectImportComponent project_import_component_;
-    PanelComponent project_import_panel_ {project_import_component_};
+    EditorComponent editor_;
+    PanelComponent editor_panel_ {editor_};
 
-    juce::TextButton browse_ {"BROWSE"};
-    PanelComponent browse_panel_ {browse_};
+    BrowserComponent browser_;
+    PanelComponent browser_panel_ {browser_};
 
     juce::TextButton settings_ {"SETTINGS"};
     PanelComponent settings_panel_ {settings_};

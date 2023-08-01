@@ -7,8 +7,9 @@ SidebarContent::SidebarContent (lager::context<TabsAction> tabs_context)
     addAndMakeVisible (edit_button_);
     addAndMakeVisible (settings_button_);
 
-    browse_button_.onClick = [&] { tabs_context_.dispatch (LoadTabAction {.tab_name = "browse"}); };
-    edit_button_.onClick = [&] { tabs_context_.dispatch (LoadTabAction {.tab_name = "edit"}); };
+    browse_button_.onClick = [&]
+    { tabs_context_.dispatch (LoadTabAction {.tab_name = "browser"}); };
+    edit_button_.onClick = [&] { tabs_context_.dispatch (LoadTabAction {.tab_name = "editor"}); };
     settings_button_.onClick = [&]
     { tabs_context_.dispatch (LoadTabAction {.tab_name = "settings"}); };
 }
