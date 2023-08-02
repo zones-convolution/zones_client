@@ -19,11 +19,11 @@ void SidebarContent::resized ()
     juce::FlexBox layout;
     layout.flexDirection = juce::FlexBox::Direction::column;
 
-    layout.items.add (juce::FlexItem {browse_button_}.withHeight (40.f));
+    layout.items.add (LookAndFeel::ButtonFlexItem (browse_button_));
     layout.items.add (LookAndFeel::kFlexSpacer);
-    layout.items.add (juce::FlexItem {edit_button_}.withHeight (40.f));
+    layout.items.add (LookAndFeel::ButtonFlexItem (edit_button_));
     layout.items.add (LookAndFeel::kFlexSpacer);
-    layout.items.add (juce::FlexItem {settings_button_}.withHeight (40.f));
+    layout.items.add (LookAndFeel::ButtonFlexItem (settings_button_));
 
     layout.performLayout (getLocalBounds ().toFloat ());
 }

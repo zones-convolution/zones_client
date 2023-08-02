@@ -202,3 +202,18 @@ juce::Font LookAndFeel::getTextButtonFont (juce::TextButton & button, int button
 {
     return kDefaultFont;
 }
+
+juce::FlexItem LookAndFeel::ButtonFlexItem (juce::Component & button)
+{
+    return juce::FlexItem (button).withHeight (kButtonHeight);
+}
+
+juce::FlexItem LookAndFeel::LabelFlexItem (juce::Component & label)
+{
+    return juce::FlexItem (label).withHeight (kLabelHeight);
+}
+
+juce::FlexItem LookAndFeel::ComboFlexItem (juce::Component & combo)
+{
+    return juce::FlexItem (combo).withHeight (kComboHeight);
+}

@@ -42,15 +42,15 @@ void EditorComponent::resized ()
     juce::FlexBox layout;
     layout.flexDirection = juce::FlexBox::Direction::column;
 
-    layout.items.add (juce::FlexItem (room_size_label_).withFlex (1.f));
+    layout.items.add (LookAndFeel::LabelFlexItem (room_size_label_));
     layout.items.add (LookAndFeel::kFlexSpacer);
     layout.items.add (juce::FlexItem (room_size_slider_).withFlex (1.f));
     layout.items.add (LookAndFeel::kFlexSpacer);
-    layout.items.add (juce::FlexItem (reverb_time_label_).withFlex (1.f));
+    layout.items.add (LookAndFeel::LabelFlexItem (reverb_time_label_));
     layout.items.add (LookAndFeel::kFlexSpacer);
     layout.items.add (juce::FlexItem (reverb_time_slider_).withFlex (1.f));
     layout.items.add (LookAndFeel::kFlexSpacer);
-    layout.items.add (juce::FlexItem (dry_wet_label_).withFlex (1.f));
+    layout.items.add (LookAndFeel::LabelFlexItem (dry_wet_label_));
     layout.items.add (LookAndFeel::kFlexSpacer);
     layout.items.add (juce::FlexItem (dry_wet_mix_slider_).withFlex (1.f));
 

@@ -138,16 +138,15 @@ void BrowserComponent::resized ()
     juce::FlexBox layout;
     layout.flexDirection = juce::FlexBox::Direction::column;
 
-    layout.items.add (juce::FlexItem (current_project_paths_).withFlex (1.f));
+    layout.items.add (LookAndFeel::LabelFlexItem (current_project_paths_));
     layout.items.add (LookAndFeel::kFlexSpacer);
-    layout.items.add (juce::FlexItem (add_project_path_button_).withFlex (1.f));
+    layout.items.add (LookAndFeel::ButtonFlexItem (add_project_path_button_));
     layout.items.add (LookAndFeel::kFlexSpacer);
-    layout.items.add (juce::FlexItem (import_project_ir_button_).withFlex (1.f));
+    layout.items.add (LookAndFeel::ButtonFlexItem (import_project_ir_button_));
     layout.items.add (LookAndFeel::kFlexSpacer);
-    layout.items.add (juce::FlexItem (current_ir_).withFlex (1.f));
+    layout.items.add (LookAndFeel::LabelFlexItem (current_ir_));
     layout.items.add (LookAndFeel::kFlexSpacer);
-    layout.items.add (juce::FlexItem (project_ir_combo_box_).withFlex (1.f));
-    layout.items.add (LookAndFeel::kFlexSpacer);
+    layout.items.add (LookAndFeel::ComboFlexItem (project_ir_combo_box_));
 
     layout.performLayout (getLocalBounds ().toFloat ());
 }

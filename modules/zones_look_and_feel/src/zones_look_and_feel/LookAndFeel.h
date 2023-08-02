@@ -26,6 +26,15 @@ public:
     static const juce::FlexItem kFlexSpacer;
     static const juce::FlexItem kDoubleFlexSpacer;
 
+    static constexpr float kButtonHeight = 40.f;
+    static juce::FlexItem ButtonFlexItem (juce::Component & button);
+
+    static constexpr float kLabelHeight = 20.f;
+    static juce::FlexItem LabelFlexItem (juce::Component & label);
+
+    static constexpr float kComboHeight = 40.f;
+    static juce::FlexItem ComboFlexItem (juce::Component & combo);
+
     enum ColourIds
     {
         kPanel,
