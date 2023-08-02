@@ -7,4 +7,5 @@ SidebarHeader::SidebarHeader ()
 
 void SidebarHeader::resized ()
 {
+    logo_component_.setBounds (getLocalBounds ());
 }

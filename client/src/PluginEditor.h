@@ -3,6 +3,7 @@
 #include "PluginProcessor.h"
 #include "browser/BrowserComponent.h"
 #include "components/SidebarContent.h"
+#include "components/SidebarHeader.h"
 #include "editor/EditorComponent.h"
 #include "layout/sidebar/SidebarComponent.h"
 #include "layout/tabs/TabsAction.h"
@@ -57,8 +58,8 @@ private:
         lager::with_deps (std::reference_wrapper<TabsControllerDelegate> (tabs_controller_)),
         lager::with_reducer (UpdateTabs));
 
-    juce::TextButton sidebar_header_button_ {"header"};
-    PanelComponent sidebar_header_panel_ {sidebar_header_button_};
+    SidebarHeader sidebar_header_;
+    PanelComponent sidebar_header_panel_ {sidebar_header_};
 
     SidebarContent sidebar_content_ {store_};
     PanelComponent sidebar_content_panel_ {sidebar_content_};

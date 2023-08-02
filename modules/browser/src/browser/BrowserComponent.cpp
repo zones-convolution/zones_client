@@ -149,5 +149,5 @@ void BrowserComponent::resized ()
     layout.items.add (juce::FlexItem (project_ir_combo_box_).withFlex (1.f));
     layout.items.add (LookAndFeel::kFlexSpacer);
 
-    layout.performLayout (getLocalBounds ().toFloat ().reduced (LookAndFeel::kPadding));
+    layout.performLayout (getLocalBounds ().toFloat ());
 }

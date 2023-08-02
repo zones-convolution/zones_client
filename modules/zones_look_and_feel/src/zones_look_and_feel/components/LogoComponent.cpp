@@ -11,5 +11,9 @@ LogoComponent::LogoComponent ()
 
 void LogoComponent::paint (juce::Graphics & g)
 {
-    zones_logo_drawable_->draw (g, 1.0);
+    zones_logo_drawable_->setTransformToFit (getLocalBounds ().toFloat (),
+                                             juce::RectanglePlacement::xLeft |
+                                                 juce::RectanglePlacement::centred);
+
+    zones_logo_drawable_->draw (g, 1.f);
 }

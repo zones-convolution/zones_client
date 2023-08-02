@@ -7,7 +7,7 @@
 class SidebarContent : public juce::Component
 {
 public:
-    SidebarContent (lager::context<TabsAction> tabs_context);
+    explicit SidebarContent (lager::context<TabsAction> tabs_context);
     void resized () override;
 
 private:

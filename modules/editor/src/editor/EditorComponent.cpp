@@ -18,7 +18,6 @@ EditorComponent::EditorComponent (lager::context<ParameterAction> & parameter_co
         parameter_context.dispatch (
             SetRoomSizeAction {.room_size = (float) room_size_slider_.getValue ()});
     };
-    room_size_slider_.setRange ({.2f, 2.f}, 0);
 
     reverb_time_label_.setText ("Reverb Time", juce::dontSendNotification);
     reverb_time_slider_.setRange ({0.f, 1.f}, 0);
@@ -55,5 +54,5 @@ void EditorComponent::resized ()
     layout.items.add (LookAndFeel::kFlexSpacer);
     layout.items.add (juce::FlexItem (dry_wet_mix_slider_).withFlex (1.f));
 
-    layout.performLayout (getLocalBounds ().toFloat ().reduced (LookAndFeel::kPadding));
+    layout.performLayout (getLocalBounds ().toFloat ());
 }
