@@ -4,21 +4,29 @@
 #include <lager/util.hpp>
 #include <variant>
 
-struct SetRoomSizeAction
+template <typename T>
+struct UpdateParameterAction
 {
-    float room_size;
+    T value;
+    T ParameterModel::*const member_ptr;
 };
 
-struct SetDryWetMixAction
+static auto UpdateRoomSize (float value)
 {
-    float dry_wet_mix;
-};
+    return UpdateParameterAction<float> {.value = value, .member_ptr = &ParameterModel::room_size};
+}
 
-struct SetReverbTimeAction
+static auto UpdateReverbTime (float value)
 {
-    float reverb_time;
-};
+    return UpdateParameterAction<float> {.value = value,
+                                         .member_ptr = &ParameterModel::reverb_time};
+}
 
-using ParameterAction = std::variant<SetRoomSizeAction, SetDryWetMixAction, SetReverbTimeAction>;
+static auto UpdateDryWetMix (float value)
+{
+    return UpdateParameterAction<float> {.value = value,
+                                         .member_ptr = &ParameterModel::dry_wet_mix};
+}
 
+using ParameterAction = std::variant<UpdateParameterAction<float>>;
 ParameterModel UpdateParameter (ParameterModel model, ParameterAction action);

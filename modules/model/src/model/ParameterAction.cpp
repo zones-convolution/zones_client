@@ -3,19 +3,10 @@
 ParameterModel UpdateParameter (ParameterModel model, ParameterAction action)
 {
     return std::visit (
-        lager::visitor {[&] (const SetRoomSizeAction & set_room_size_action) -> ParameterModel
+        lager::visitor {[&] (const UpdateParameterAction<float> & update_parameter_action)
                         {
-                            model.room_size = set_room_size_action.room_size;
-                            return model;
-                        },
-                        [&] (const SetDryWetMixAction & set_dry_wet_mix_action) -> ParameterModel
-                        {
-                            model.dry_wet_mix = set_dry_wet_mix_action.dry_wet_mix;
-                            return model;
-                        },
-                        [&] (const SetReverbTimeAction & set_reverb_time_action) -> ParameterModel
-                        {
-                            model.reverb_time = set_reverb_time_action.reverb_time;
+                            model.*update_parameter_action.member_ptr =
+                                update_parameter_action.value;
                             return model;
                         }},
         action);

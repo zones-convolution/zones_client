@@ -16,7 +16,7 @@ EditorComponent::EditorComponent (lager::context<ParameterAction> & parameter_co
     room_size_slider_.onDragEnd = [&]
     {
         parameter_context.dispatch (
-            SetRoomSizeAction {.room_size = (float) room_size_slider_.getValue ()});
+            UpdateRoomSize (static_cast<float> (room_size_slider_.getValue ())));
     };
 
     reverb_time_label_.setText ("Reverb Time", juce::dontSendNotification);
@@ -25,7 +25,7 @@ EditorComponent::EditorComponent (lager::context<ParameterAction> & parameter_co
     reverb_time_slider_.onDragEnd = [&]
     {
         parameter_context.dispatch (
-            SetReverbTimeAction {.reverb_time = (float) reverb_time_slider_.getValue ()});
+            UpdateReverbTime (static_cast<float> (reverb_time_slider_.getValue ())));
     };
 
     dry_wet_label_.setText ("Dry/Wet", juce::dontSendNotification);
@@ -34,7 +34,7 @@ EditorComponent::EditorComponent (lager::context<ParameterAction> & parameter_co
     dry_wet_mix_slider_.onValueChange = [&]
     {
         parameter_context.dispatch (
-            SetDryWetMixAction {.dry_wet_mix = (float) dry_wet_mix_slider_.getValue ()});
+            UpdateDryWetMix (static_cast<float> (dry_wet_mix_slider_.getValue ())));
     };
 }
 void EditorComponent::resized ()
