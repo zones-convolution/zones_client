@@ -6,8 +6,12 @@ zones_add_module(
         src/zones_look_and_feel/LookAndFeel.h
         src/zones_look_and_feel/components/PanelComponent.h
         src/zones_look_and_feel/components/PanelComponent.cpp
+        src/zones_look_and_feel/components/LogoComponent.h
+        src/zones_look_and_feel/components/LogoComponent.cpp
         DEPS
         juce::juce_gui_basics)
+
+embed_resources(zones_look_and_feel assets/zones_light.svg)
 
 juce_add_gui_app(storyboard
         PRODUCT_NAME "storyboard")

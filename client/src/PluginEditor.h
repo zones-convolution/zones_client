@@ -1,8 +1,8 @@
 #pragma once
 
 #include "PluginProcessor.h"
-#include "SidebarContent.h"
 #include "browser/BrowserComponent.h"
+#include "components/SidebarContent.h"
 #include "editor/EditorComponent.h"
 #include "layout/sidebar/SidebarComponent.h"
 #include "layout/tabs/TabsAction.h"

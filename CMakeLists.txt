@@ -12,6 +12,8 @@ set(BUILD_TESTING OFF)
 
 include(cmake/update_from_git.cmake)
 include(cmake/zones_module_common.cmake)
+include(cmake/embed_resources.cmake)
+
 
 find_package(Catch2 3 REQUIRED)
 find_package(Boost 1.82.0)
