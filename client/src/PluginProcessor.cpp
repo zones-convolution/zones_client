@@ -11,20 +11,18 @@ AudioPluginAudioProcessor::AudioPluginAudioProcessor ()
                           .withOutput ("Output", juce::AudioChannelSet::stereo (), true)
 #endif
                           )
-    , project_ir_load_controller_ {store_.zoom (
-                                       lager::lenses::attr (&Model::project_ir_repository_model)),
+    , project_ir_load_controller_ {Model::ProjectIrRepositoryReader (store_),
                                    project_ir_repository_context_,
                                    ir_reader_}
-    , project_ir_import_controller_ {store_.zoom (
-                                         lager::lenses::attr (&Model::project_ir_repository_model)),
+    , project_ir_import_controller_ {Model::ProjectIrRepositoryReader (store_),
                                      project_ir_repository_context_,
                                      ir_reader_,
                                      ir_writer_}
-    , audio_engine_ (command_queue_, store_.zoom (lager::lenses::attr (&Model::parameter_model)))
+    , audio_engine_ (command_queue_, Model::ParameterReader (store_))
     , ir_watch_controller_ (ir_engine_,
                             project_ir_load_controller_,
-                            store_.zoom (lager::lenses::attr (&Model::project_ir_repository_model)),
-                            store_.zoom (lager::lenses::attr (&Model::parameter_model)))
+                            Model::ProjectIrRepositoryReader (store_),
+                            Model::ParameterReader (store_))
 {
     auto & ir_engine_listeners = ir_engine_.GetListeners ();
     ir_engine_listeners.add (&audio_engine_);
