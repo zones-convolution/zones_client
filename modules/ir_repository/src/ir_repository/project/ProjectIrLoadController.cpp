@@ -3,13 +3,13 @@
 #include "ProjectIrPaths.h"
 
 ProjectIrLoadController::ProjectIrLoadController (
-    const lager::reader<ProjectIrRepositoryModel> & model,
+    const lager::reader<ProjectIrRepositoryModel> & project_ir_reader,
     lager::context<ProjectIrRepositoryAction> & context,
     IrReader & ir_reader)
-    : model_ (model)
+    : project_ir_reader_ (project_ir_reader)
     , context_ (context)
     , current_project_ir_reader_ (
-          model.zoom (lager::lenses::attr (&ProjectIrRepositoryModel::current_project_ir)))
+          ProjectIrRepositoryModel::CurrentProjectIrReader (project_ir_reader))
     , ir_reader_ (ir_reader)
 {
     lager::watch (current_project_ir_reader_,
@@ -20,7 +20,8 @@ ProjectIrLoadController::ProjectIrLoadController (
 
                       context.dispatch (LoadProjectIrLoadingAction {});
 
-                      auto project_ir_path = ProjectIrPaths (model_).GetAvailableProjectPath ();
+                      auto project_ir_path =
+                          ProjectIrPaths (project_ir_reader_).GetAvailableProjectPath ();
                       if (! project_ir_path.has_value ())
                       {
                           context.dispatch (LoadProjectIrFailureAction {});

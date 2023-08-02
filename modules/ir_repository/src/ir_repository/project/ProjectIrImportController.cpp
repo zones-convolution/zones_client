@@ -3,43 +3,43 @@
 #include "ProjectIrPaths.h"
 
 ProjectIrImportController::ProjectIrImportController (
-    const lager::reader<ProjectIrRepositoryModel> & model,
+    const lager::reader<ProjectIrRepositoryModel> & project_ir_reader,
     lager::context<ProjectIrRepositoryAction> & context,
     IrReader & ir_reader,
     IrWriter & ir_writer)
-    : model_ (model)
+    : project_ir_reader_ (project_ir_reader)
     , context_ (context)
     , import_project_ir_reader_ (
-          model.zoom (lager::lenses::attr (&ProjectIrRepositoryModel::import_project_ir)))
+          ProjectIrRepositoryModel::ImportProjectIrReader (project_ir_reader))
     , ir_reader_ (ir_reader)
     , ir_writer_ (ir_writer)
 {
-    lager::watch (import_project_ir_reader_,
-                  [&] (ImportProjectIrOptional import_project_ir)
-                  {
-                      if (! import_project_ir.has_value ())
-                          return;
+    lager::watch (
+        import_project_ir_reader_,
+        [&] (ImportProjectIrOptional import_project_ir)
+        {
+            if (! import_project_ir.has_value ())
+                return;
 
-                      context.dispatch (ImportProjectIrLoadingAction {});
-                      auto project_ir_path = ProjectIrPaths (model_).GetAvailableProjectPath ();
+            context.dispatch (ImportProjectIrLoadingAction {});
+            auto project_ir_path = ProjectIrPaths (project_ir_reader_).GetAvailableProjectPath ();
 
-                      if (! project_ir_path.has_value ())
-                      {
-                          context.dispatch (ImportProjectIrFailureAction {});
-                          return;
-                      }
+            if (! project_ir_path.has_value ())
+            {
+                context.dispatch (ImportProjectIrFailureAction {});
+                return;
+            }
 
-                      try
-                      {
-                          TransferIrToProject (project_ir_path.value (),
-                                               import_project_ir.value ());
-                          context.dispatch (ImportProjectIrSuccessAction {});
-                      }
-                      catch (...)
-                      {
-                          context.dispatch (ImportProjectIrFailureAction {});
-                      }
-                  });
+            try
+            {
+                TransferIrToProject (project_ir_path.value (), import_project_ir.value ());
+                context.dispatch (ImportProjectIrSuccessAction {});
+            }
+            catch (...)
+            {
+                context.dispatch (ImportProjectIrFailureAction {});
+            }
+        });
 }
 
 void ProjectIrImportController::TransferIrToProject (const std::filesystem::path & project_path,

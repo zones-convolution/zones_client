@@ -10,12 +10,10 @@ BrowserComponent::BrowserComponent (
     lager::context<ProjectIrRepositoryAction> & project_ir_context)
     : project_ir_reader_ (project_ir_reader)
     , project_ir_context_ (project_ir_context)
-    , project_paths_reader_ (
-          project_ir_reader_.zoom (lager::lenses::attr (&ProjectIrRepositoryModel::project_paths)))
-    , current_ir_reader_ (project_ir_reader_.zoom (
-          lager::lenses::attr (&ProjectIrRepositoryModel::current_project_ir)))
-    , importing_state_reader_ (project_ir_reader_.zoom (
-          lager::lenses::attr (&ProjectIrRepositoryModel::importing_project_ir_state)))
+    , project_paths_reader_ (ProjectIrRepositoryModel::ProjectPathsReader (project_ir_reader))
+    , current_ir_reader_ (ProjectIrRepositoryModel::CurrentProjectIrReader (project_ir_reader))
+    , importing_state_reader_ (
+          ProjectIrRepositoryModel::ImportingProjectIrStateReader (project_ir_reader))
 {
     addAndMakeVisible (current_project_paths_);
     addAndMakeVisible (current_ir_);

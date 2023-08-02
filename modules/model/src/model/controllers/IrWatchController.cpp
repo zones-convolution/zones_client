@@ -8,13 +8,12 @@ IrWatchController::IrWatchController (AudioEngine & audio_engine,
     : audio_engine_ (audio_engine)
     , ir_engine_ (ir_engine)
     , load_controller_ (load_controller)
-    , current_ir_reader_ (project_ir_reader.zoom (
-          lager::lenses::attr (&ProjectIrRepositoryModel::current_project_ir)))
+    , current_ir_reader_ (ProjectIrRepositoryModel::CurrentProjectIrReader (project_ir_reader))
     , parameter_model_reader_ (parameter_model_reader)
 {
     current_graph_state_.room_size = 1.f;
     current_graph_state_.reverb_time = 1.f;
-    
+
     WatchCurrentIr ();
     WatchParameterModel ();
 }

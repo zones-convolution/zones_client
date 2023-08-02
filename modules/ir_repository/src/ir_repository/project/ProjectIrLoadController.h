@@ -10,7 +10,7 @@
 class ProjectIrLoadController
 {
 public:
-    ProjectIrLoadController (const lager::reader<ProjectIrRepositoryModel> & model,
+    ProjectIrLoadController (const lager::reader<ProjectIrRepositoryModel> & project_ir_reader,
                              lager::context<ProjectIrRepositoryAction> & context,
                              IrReader & ir_reader);
 
@@ -21,7 +21,7 @@ private:
     void LoadProjectIr (const std::filesystem::path & project_path,
                         const std::string & ir_identifier);
 
-    lager::reader<ProjectIrRepositoryModel> model_;
+    lager::reader<ProjectIrRepositoryModel> project_ir_reader_;
     lager::context<ProjectIrRepositoryAction> context_;
     lager::reader<CurrentProjectIrOptional> current_project_ir_reader_;
     IrReader & ir_reader_;
