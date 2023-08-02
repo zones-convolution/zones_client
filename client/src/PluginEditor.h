@@ -1,6 +1,7 @@
 #pragma once
 
 #include "PluginProcessor.h"
+#include "ProcessorContainer.h"
 #include "browser/BrowserComponent.h"
 #include "components/SidebarContent.h"
 #include "components/SidebarHeader.h"
@@ -22,8 +23,7 @@ class AudioPluginAudioProcessorEditor : public juce::AudioProcessorEditor
 {
 public:
     explicit AudioPluginAudioProcessorEditor (AudioPluginAudioProcessor & processor,
-                                              const lager::reader<Model> & model,
-                                              lager::context<Action> & context);
+                                              ProcessorContainer & processor_container);
     ~AudioPluginAudioProcessorEditor () override = default;
 
 private:

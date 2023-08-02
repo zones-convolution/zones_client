@@ -11,7 +11,7 @@ class ProjectIrLoadController
 {
 public:
     ProjectIrLoadController (const lager::reader<ProjectIrRepositoryModel> & project_ir_reader,
-                             lager::context<ProjectIrRepositoryAction> & context,
+                             lager::context<ProjectIrRepositoryAction> context,
                              IrReader & ir_reader);
 
     const IrData * GetCurrentProjectIrData () const;

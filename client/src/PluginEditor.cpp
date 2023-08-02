@@ -4,14 +4,13 @@
 
 AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (
     AudioPluginAudioProcessor & processor,
-    const lager::reader<Model> & model,
-    lager::context<Action> & context)
+    ProcessorContainer & processor_container)
     : AudioProcessorEditor (&processor)
     , processor_ (processor)
-    , model_ (model)
-    , context_ (context)
+    , model_ (processor_container.store_)
+    , context_ (processor_container.store_)
     , editor_ (parameter_context_)
-    , browser_ (model.zoom (lager::lenses::attr (&Model::project_ir_repository_model)),
+    , browser_ (Model::ProjectIrRepositoryReader (processor_container.store_),
                 project_ir_repository_context_)
 
 {

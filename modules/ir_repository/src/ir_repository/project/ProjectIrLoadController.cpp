@@ -4,10 +4,10 @@
 
 ProjectIrLoadController::ProjectIrLoadController (
     const lager::reader<ProjectIrRepositoryModel> & project_ir_reader,
-    lager::context<ProjectIrRepositoryAction> & context,
+    lager::context<ProjectIrRepositoryAction> context,
     IrReader & ir_reader)
     : project_ir_reader_ (project_ir_reader)
-    , context_ (context)
+    , context_ (std::move (context))
     , current_project_ir_reader_ (
           ProjectIrRepositoryModel::CurrentProjectIrReader (project_ir_reader))
     , ir_reader_ (ir_reader)
@@ -18,24 +18,24 @@ ProjectIrLoadController::ProjectIrLoadController (
                       if (! current_project_ir.has_value ())
                           return;
 
-                      context.dispatch (LoadProjectIrLoadingAction {});
+                      context_.dispatch (LoadProjectIrLoadingAction {});
 
                       auto project_ir_path =
                           ProjectIrPaths (project_ir_reader_).GetAvailableProjectPath ();
                       if (! project_ir_path.has_value ())
                       {
-                          context.dispatch (LoadProjectIrFailureAction {});
+                          context_.dispatch (LoadProjectIrFailureAction {});
                           return;
                       }
 
                       try
                       {
                           LoadProjectIr (project_ir_path.value (), current_project_ir.value ());
-                          context.dispatch (LoadProjectIrSuccessAction {});
+                          context_.dispatch (LoadProjectIrSuccessAction {});
                       }
                       catch (...)
                       {
-                          context.dispatch (LoadProjectIrFailureAction {});
+                          context_.dispatch (LoadProjectIrFailureAction {});
                       }
                   });
 }

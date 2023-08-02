@@ -10,22 +10,8 @@ AudioPluginAudioProcessor::AudioPluginAudioProcessor ()
     #endif
                           .withOutput ("Output", juce::AudioChannelSet::stereo (), true)
 #endif
-                          )
-    , project_ir_load_controller_ {Model::ProjectIrRepositoryReader (store_),
-                                   project_ir_repository_context_,
-                                   ir_reader_}
-    , project_ir_import_controller_ {Model::ProjectIrRepositoryReader (store_),
-                                     project_ir_repository_context_,
-                                     ir_reader_,
-                                     ir_writer_}
-    , audio_engine_ (command_queue_, Model::ParameterReader (store_))
-    , ir_watch_controller_ (ir_engine_,
-                            project_ir_load_controller_,
-                            Model::ProjectIrRepositoryReader (store_),
-                            Model::ParameterReader (store_))
+      )
 {
-    auto & ir_engine_listeners = ir_engine_.GetListeners ();
-    ir_engine_listeners.add (&audio_engine_);
 }
 
 const juce::String AudioPluginAudioProcessor::getName () const
@@ -93,7 +79,7 @@ void AudioPluginAudioProcessor::changeProgramName (int index, const juce::String
 
 void AudioPluginAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
-    graph_.prepare (
+    processor_container_.graph_.prepare (
         juce::dsp::ProcessSpec {sampleRate,
                                 static_cast<juce::uint32> (samplesPerBlock),
                                 static_cast<juce::uint32> (getTotalNumOutputChannels ())});
@@ -101,7 +87,7 @@ void AudioPluginAudioProcessor::prepareToPlay (double sampleRate, int samplesPer
 
 void AudioPluginAudioProcessor::releaseResources ()
 {
-    graph_.reset ();
+    processor_container_.graph_.reset ();
 }
 
 bool AudioPluginAudioProcessor::isBusesLayoutSupported (const BusesLayout & layouts) const
@@ -142,8 +128,8 @@ void AudioPluginAudioProcessor::processBlock (juce::AudioBuffer<float> & buffer,
         juce::dsp::AudioBlock<float> (buffer).getSubsetChannelBlock (0, (size_t) num_channels);
     juce::dsp::ProcessContextReplacing<float> process_context (process_block);
 
-    command_queue_.Service ();
-    graph_.process (process_context);
+    processor_container_.command_queue_.Service ();
+    processor_container_.graph_.process (process_context);
 }
 
 bool AudioPluginAudioProcessor::hasEditor () const
@@ -153,7 +139,7 @@ bool AudioPluginAudioProcessor::hasEditor () const
 
 juce::AudioProcessorEditor * AudioPluginAudioProcessor::createEditor ()
 {
-    return new AudioPluginAudioProcessorEditor (*this, store_, store_);
+    return new AudioPluginAudioProcessorEditor (*this, processor_container_);
 }
 
 void AudioPluginAudioProcessor::getStateInformation (juce::MemoryBlock & destData)

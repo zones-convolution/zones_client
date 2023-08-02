@@ -11,7 +11,7 @@ class ProjectIrImportController
 {
 public:
     ProjectIrImportController (const lager::reader<ProjectIrRepositoryModel> & project_ir_reader,
-                               lager::context<ProjectIrRepositoryAction> & context,
+                               lager::context<ProjectIrRepositoryAction> context,
                                IrReader & ir_reader,
                                IrWriter & ir_writer);
 
