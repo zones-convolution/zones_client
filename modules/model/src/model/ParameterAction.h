@@ -4,29 +4,41 @@
 #include <lager/util.hpp>
 #include <variant>
 
-template <typename T>
+template <typename Model, typename T>
 struct UpdateParameterAction
 {
     T value;
-    T ParameterModel::*const member_ptr;
+    T Model::*const member_ptr;
 };
+
+template <typename T>
+using UpdateIrEngineParameterAction = UpdateParameterAction<IrEngineParameterModel, T>;
 
 static auto UpdateRoomSize (float value)
 {
-    return UpdateParameterAction<float> {.value = value, .member_ptr = &ParameterModel::room_size};
+    return UpdateIrEngineParameterAction<float> {.value = value,
+                                                 .member_ptr = &IrEngineParameterModel::room_size};
 }
 
 static auto UpdateReverbTime (float value)
 {
-    return UpdateParameterAction<float> {.value = value,
-                                         .member_ptr = &ParameterModel::reverb_time};
+    return UpdateIrEngineParameterAction<float> {
+        .value = value, .member_ptr = &IrEngineParameterModel::reverb_time};
 }
+
+using IrEngineParameterAction = std::variant<UpdateIrEngineParameterAction<float>>;
+IrEngineParameterModel UpdateIrEngineParameter (IrEngineParameterModel model,
+                                                IrEngineParameterAction action);
+
+template <typename T>
+using UpdateRealtimeParameterAction = UpdateParameterAction<RealtimeParameterModel, T>;
 
 static auto UpdateDryWetMix (float value)
 {
-    return UpdateParameterAction<float> {.value = value,
-                                         .member_ptr = &ParameterModel::dry_wet_mix};
+    return UpdateRealtimeParameterAction<float> {
+        .value = value, .member_ptr = &RealtimeParameterModel::dry_wet_mix};
 }
 
-using ParameterAction = std::variant<UpdateParameterAction<float>>;
-ParameterModel UpdateParameter (ParameterModel model, ParameterAction action);
+using RealtimeParameterAction = std::variant<UpdateRealtimeParameterAction<float>>;
+RealtimeParameterModel UpdateRealtimeParameter (RealtimeParameterModel model,
+                                                RealtimeParameterAction action);

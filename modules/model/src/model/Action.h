@@ -7,6 +7,7 @@
 #include <lager/util.hpp>
 #include <variant>
 
-using Action = std::variant<ParameterAction, ProjectIrRepositoryAction>;
+using Action =
+    std::variant<RealtimeParameterAction, IrEngineParameterAction, ProjectIrRepositoryAction>;
 
 Model Update (Model model, Action action);

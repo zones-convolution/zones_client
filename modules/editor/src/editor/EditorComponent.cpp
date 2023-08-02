@@ -1,7 +1,10 @@
 #include "EditorComponent.h"
 
-EditorComponent::EditorComponent (lager::context<ParameterAction> & parameter_context)
-    : parameter_context_ (parameter_context)
+EditorComponent::EditorComponent (
+    lager::context<RealtimeParameterAction> & realtime_parameter_context,
+    lager::context<IrEngineParameterAction> & ir_engine_parameter_context)
+    : realtime_parameter_context_ (realtime_parameter_context)
+    , ir_engine_parameter_context_ (ir_engine_parameter_context)
 {
     addAndMakeVisible (room_size_slider_);
     addAndMakeVisible (room_size_label_);
@@ -15,7 +18,7 @@ EditorComponent::EditorComponent (lager::context<ParameterAction> & parameter_co
     room_size_slider_.setPopupDisplayEnabled (true, true, getTopLevelComponent ());
     room_size_slider_.onDragEnd = [&]
     {
-        parameter_context.dispatch (
+        ir_engine_parameter_context_.dispatch (
             UpdateRoomSize (static_cast<float> (room_size_slider_.getValue ())));
     };
 
@@ -24,7 +27,7 @@ EditorComponent::EditorComponent (lager::context<ParameterAction> & parameter_co
     reverb_time_slider_.setPopupDisplayEnabled (true, true, getTopLevelComponent ());
     reverb_time_slider_.onDragEnd = [&]
     {
-        parameter_context.dispatch (
+        ir_engine_parameter_context_.dispatch (
             UpdateReverbTime (static_cast<float> (reverb_time_slider_.getValue ())));
     };
 
@@ -33,7 +36,7 @@ EditorComponent::EditorComponent (lager::context<ParameterAction> & parameter_co
     dry_wet_mix_slider_.setPopupDisplayEnabled (true, true, getTopLevelComponent ());
     dry_wet_mix_slider_.onValueChange = [&]
     {
-        parameter_context.dispatch (
+        realtime_parameter_context_.dispatch (
             UpdateDryWetMix (static_cast<float> (dry_wet_mix_slider_.getValue ())));
     };
 }

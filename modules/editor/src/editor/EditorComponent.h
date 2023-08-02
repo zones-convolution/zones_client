@@ -9,11 +9,14 @@
 class EditorComponent : public juce::Component
 {
 public:
-    explicit EditorComponent (lager::context<ParameterAction> & parameter_context);
+    explicit EditorComponent (
+        lager::context<RealtimeParameterAction> & realtime_parameter_context,
+        lager::context<IrEngineParameterAction> & ir_engine_parameter_context);
     void resized () override;
 
 private:
-    lager::context<ParameterAction> parameter_context_;
+    lager::context<RealtimeParameterAction> realtime_parameter_context_;
+    lager::context<IrEngineParameterAction> ir_engine_parameter_context_;
 
     juce::Label room_size_label_;
     juce::Slider room_size_slider_ {juce::Slider::SliderStyle::LinearHorizontal,

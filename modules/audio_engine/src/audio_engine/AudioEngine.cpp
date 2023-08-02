@@ -1,12 +1,12 @@
 #include "AudioEngine.h"
 
 AudioEngine::AudioEngine (CommandQueue::VisitorQueue & command_queue,
-                          lager::reader<BoxedParameterModel> parameter_model_reader)
+                          lager::reader<BoxedRealtimeParameterModel> realtime_parameter_reader)
     : command_queue_ (command_queue)
-    , parameter_model_reader_ (parameter_model_reader)
+    , realtime_parameter_reader_ (realtime_parameter_reader)
 {
-    lager::watch (parameter_model_reader_,
-                  [&] (const BoxedParameterModel & parameter_model)
+    lager::watch (realtime_parameter_reader_,
+                  [&] (const BoxedRealtimeParameterModel & parameter_model)
                   {
                       command_queue_.PushCommand (CommandQueue::UpdateParameters {
                           .dry_wet_mix = parameter_model->dry_wet_mix});

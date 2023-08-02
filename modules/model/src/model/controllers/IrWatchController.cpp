@@ -4,7 +4,7 @@ IrWatchController::IrWatchController (
     IrEngine & ir_engine,
     ProjectIrLoadController & load_controller,
     const lager::reader<ProjectIrRepositoryModel> & project_ir_reader,
-    const lager::reader<BoxedParameterModel> & parameter_model_reader)
+    const lager::reader<BoxedIrEngineParameterModel> & parameter_model_reader)
     : ir_engine_ (ir_engine)
     , load_controller_ (load_controller)
     , current_ir_reader_ (ProjectIrRepositoryModel::CurrentProjectIrReader (project_ir_reader))
@@ -38,7 +38,7 @@ void IrWatchController::WatchCurrentIr ()
 void IrWatchController::WatchParameterModel ()
 {
     lager::watch (parameter_model_reader_,
-                  [&] (const BoxedParameterModel & parameter_model)
+                  [&] (const BoxedIrEngineParameterModel & parameter_model)
                   {
                       current_graph_state_.room_size = parameter_model->room_size;
                       current_graph_state_.reverb_time = parameter_model->reverb_time;

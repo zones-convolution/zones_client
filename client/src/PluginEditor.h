@@ -36,7 +36,8 @@ private:
     const lager::reader<Model> model_;
     lager::context<Action> context_;
     lager::context<ProjectIrRepositoryAction> project_ir_repository_context_ {context_};
-    lager::context<ParameterAction> parameter_context_ {context_};
+    lager::context<RealtimeParameterAction> realtime_parameter_context_ {context_};
+    lager::context<IrEngineParameterAction> ir_engine_parameter_context_ {context_};
 
     LookAndFeel look_and_feel_;
 

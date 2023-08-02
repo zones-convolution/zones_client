@@ -10,11 +10,11 @@ class AudioEngine : public IrEngine::Listener
 {
 public:
     explicit AudioEngine (CommandQueue::VisitorQueue & command_queue,
-                          lager::reader<BoxedParameterModel> parameter_model_reader);
+                          lager::reader<BoxedRealtimeParameterModel> realtime_parameter_reader);
     void LoadIr (const IrData & ir_data);
     void RenderFinished (IrGraphState state, IrGraphProcessor::BoxedBuffer render_result) override;
 
 private:
     CommandQueue::VisitorQueue & command_queue_;
-    lager::reader<BoxedParameterModel> parameter_model_reader_;
+    lager::reader<BoxedRealtimeParameterModel> realtime_parameter_reader_;
 };

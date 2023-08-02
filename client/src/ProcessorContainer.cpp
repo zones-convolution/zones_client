@@ -6,11 +6,11 @@ ProcessorContainer::ProcessorContainer ()
                                      store_,
                                      ir_reader_,
                                      ir_writer_}
-    , audio_engine_ (command_queue_, Model::ParameterReader (store_))
+    , audio_engine_ (command_queue_, Model::RealtimeParameterReader (store_))
     , ir_watch_controller_ (ir_engine_,
                             project_ir_load_controller_,
                             Model::ProjectIrRepositoryReader (store_),
-                            Model::ParameterReader (store_))
+                            Model::IrEngineParameterReader (store_))
 {
     RegisterIrEngineListeners ();
 }
