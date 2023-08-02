@@ -9,11 +9,20 @@
 class IrEngine
 {
 public:
+    struct Listener
+    {
+        virtual void RenderFinished (IrGraphState state,
+                                     IrGraphProcessor::BoxedBuffer render_result) = 0;
+    };
+
     IrEngine ();
 
     using RenderFinishedCallback = std::function<void (IrGraphProcessor::BoxedBuffer)>;
-    void RenderState (const IrGraphState & state, RenderFinishedCallback callback);
+    void RenderState (const IrGraphState & state);
 
+    juce::ListenerList<Listener> & GetListeners ();
+
+private:
     class Job : public juce::ThreadPoolJob
     {
     public:
@@ -31,12 +40,13 @@ public:
         IrGraphState state_;
     };
 
-private:
     void CleanPool ();
 
     static constexpr int kJobTimeout = 200;
     static constexpr int kMaxNumberOfJobsSinceLastClean = 4;
     int jobs_since_last_clean_ = 0;
+
+    juce::ListenerList<Listener> listeners_;
 
     IrGraphState last_rendered_state_;
     ProcessResultPool result_pool_;

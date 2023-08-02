@@ -21,3 +21,12 @@ void AudioEngine::LoadIr (const IrData & ir_data)
     command_queue_.PushCommand (
         CommandQueue::LoadIr {.ir_buffer = handover_ir_buffer, .sample_rate = ir_data.sample_rate});
 }
+
+void AudioEngine::RenderFinished (IrGraphState state, IrGraphProcessor::BoxedBuffer render_result)
+{
+    LoadIr ({
+        .buffer = render_result,
+        .sample_rate = state.sample_rate,
+        .bit_depth = state.bit_depth,
+    });
+}

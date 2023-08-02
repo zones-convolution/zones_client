@@ -7,7 +7,7 @@ IrEngine::IrEngine ()
 {
 }
 
-void IrEngine::RenderState (const IrGraphState & state, RenderFinishedCallback callback)
+void IrEngine::RenderState (const IrGraphState & state)
 {
     ++jobs_since_last_clean_;
     last_rendered_state_ = state;
@@ -22,15 +22,20 @@ void IrEngine::RenderState (const IrGraphState & state, RenderFinishedCallback c
         CleanPool ();
     }
 
-    auto render_job = new Job (ir_graph_,
-                               state,
-                               result_pool_,
-                               [&, callback] (IrGraphProcessor::BoxedBuffer process_result)
-                               {
-                                   CleanPool ();
-                                   juce::MessageManager::callAsync ([process_result, callback] ()
-                                                                    { callback (process_result); });
-                               });
+    auto render_job =
+        new Job (ir_graph_,
+                 state,
+                 result_pool_,
+                 [&] (IrGraphProcessor::BoxedBuffer process_result)
+                 {
+                     CleanPool ();
+                     juce::MessageManager::callAsync (
+                         [&, state, process_result] ()
+                         {
+                             listeners_.call ([state, process_result] (Listener & listener)
+                                              { listener.RenderFinished (state, process_result); });
+                         });
+                 });
 
     thread_pool_.addJob (render_job, true);
 }
@@ -39,6 +44,11 @@ void IrEngine::CleanPool ()
 {
     result_pool_.RemoveUnusedKeys (ir_graph_.GetKeysForState (last_rendered_state_));
     jobs_since_last_clean_ = 0;
+}
+
+juce::ListenerList<IrEngine::Listener> & IrEngine::GetListeners ()
+{
+    return listeners_;
 }
 
 IrEngine::Job::Job (const IrGraph & ir_graph,

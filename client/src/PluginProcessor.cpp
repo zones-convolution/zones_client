@@ -21,12 +21,13 @@ AudioPluginAudioProcessor::AudioPluginAudioProcessor ()
                                      ir_reader_,
                                      ir_writer_}
     , audio_engine_ (command_queue_, store_.zoom (lager::lenses::attr (&Model::parameter_model)))
-    , ir_watch_controller_ (audio_engine_,
-                            ir_engine_,
+    , ir_watch_controller_ (ir_engine_,
                             project_ir_load_controller_,
                             store_.zoom (lager::lenses::attr (&Model::project_ir_repository_model)),
                             store_.zoom (lager::lenses::attr (&Model::parameter_model)))
 {
+    auto & ir_engine_listeners = ir_engine_.GetListeners ();
+    ir_engine_listeners.add (&audio_engine_);
 }
 
 const juce::String AudioPluginAudioProcessor::getName () const

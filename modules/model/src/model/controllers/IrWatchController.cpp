@@ -1,12 +1,11 @@
 #include "IrWatchController.h"
 
-IrWatchController::IrWatchController (AudioEngine & audio_engine,
-                                      IrEngine & ir_engine,
-                                      ProjectIrLoadController & load_controller,
-                                      lager::reader<ProjectIrRepositoryModel> project_ir_reader,
-                                      lager::reader<BoxedParameterModel> parameter_model_reader)
-    : audio_engine_ (audio_engine)
-    , ir_engine_ (ir_engine)
+IrWatchController::IrWatchController (
+    IrEngine & ir_engine,
+    ProjectIrLoadController & load_controller,
+    const lager::reader<ProjectIrRepositoryModel> & project_ir_reader,
+    const lager::reader<BoxedParameterModel> & parameter_model_reader)
+    : ir_engine_ (ir_engine)
     , load_controller_ (load_controller)
     , current_ir_reader_ (ProjectIrRepositoryModel::CurrentProjectIrReader (project_ir_reader))
     , parameter_model_reader_ (parameter_model_reader)
@@ -49,25 +48,5 @@ void IrWatchController::WatchParameterModel ()
 
 void IrWatchController::PerformRender ()
 {
-    DBG ("RENDER START");
-    ir_engine_.RenderState (
-        current_graph_state_,
-        [&,
-         sample_rate = current_graph_state_.sample_rate,
-         bit_depth = current_graph_state_.bit_depth] (IrGraphProcessor::BoxedBuffer render_result)
-        {
-            DBG ("RENDER DONE - FINISHED");
-            if (render_result->getNumChannels () == 0 || render_result->getNumChannels () == 0)
-                return;
-            if (last_render_result_.impl () == render_result.impl ())
-                return;
-
-            DBG ("RENDER DONE - LOAD");
-            last_render_result_ = render_result;
-            audio_engine_.LoadIr ({
-                .buffer = render_result,
-                .sample_rate = sample_rate,
-                .bit_depth = bit_depth,
-            });
-        });
+    ir_engine_.RenderState (current_graph_state_);
 }
