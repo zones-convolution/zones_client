@@ -53,7 +53,6 @@ public:
     void setStateInformation (const void * data, int sizeInBytes) override;
 
 private:
-    std::string string_dep;
     lager::store<Action, Model> store_ =
         lager::make_store<Action> (Model {},
                                    lager::with_manual_event_loop {},
