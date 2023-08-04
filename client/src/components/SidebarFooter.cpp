@@ -8,6 +8,8 @@ SidebarFooter::SidebarFooter (const lager::reader<CurrentProjectIrOptional> & pr
     , ir_label_panel_ (ir_label_, kIrPanelGradient)
 {
     addAndMakeVisible (ir_label_panel_);
+    addAndMakeVisible (meter_component_);
+
     UpdateIrLabel ();
     lager::watch (project_ir_reader_, [&] (const auto &) { UpdateIrLabel (); });
 }
@@ -15,9 +17,11 @@ SidebarFooter::SidebarFooter (const lager::reader<CurrentProjectIrOptional> & pr
 void SidebarFooter::resized ()
 {
     juce::FlexBox layout;
-    layout.flexDirection = juce::FlexBox::Direction::column;
+    layout.flexDirection = juce::FlexBox::Direction::row;
 
     layout.items.add (juce::FlexItem (ir_label_panel_).withFlex (1.f));
+    layout.items.add (LookAndFeel::kFlexSpacer);
+    layout.items.add (juce::FlexItem (meter_component_).withFlex (1.f));
 
     layout.performLayout (getLocalBounds ().toFloat ());
 }

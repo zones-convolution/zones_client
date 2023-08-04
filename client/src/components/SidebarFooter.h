@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ir_repository/project/ProjectIrRepositoryModel.h"
+#include "metering/MeterComponent.h"
 #include "zones_look_and_feel/LookAndFeel.h"
 #include "zones_look_and_feel/components/PanelComponent.h"
 
@@ -20,6 +21,8 @@ private:
     static const PanelComponent::ColourPair kIrPanelGradient;
     juce::Label ir_label_;
     PanelComponent ir_label_panel_;
+
+    MeterComponent meter_component_;
 
     void UpdateIrLabel ();
 };

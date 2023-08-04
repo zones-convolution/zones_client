@@ -23,6 +23,12 @@ set(SOURCES
         src/PluginEditor.cpp
         src/ProcessorContainer.h
         src/ProcessorContainer.cpp
+        src/components/metering/MeterComponent.h
+        src/components/metering/MeterComponent.cpp
+        src/components/metering/ChannelBar.h
+        src/components/metering/ChannelBar.cpp
+        src/components/metering/DiscreteLevelLabels.h
+        src/components/metering/DiscreteLevelLabels.cpp
         src/components/SidebarContent.h
         src/components/SidebarContent.cpp
         src/components/SidebarHeader.h
