@@ -7,9 +7,11 @@ class MeterBar : public juce::Component
 {
 public:
     void paint (juce::Graphics & g) override;
+    void SetFill (float fill);
 
 private:
     static const std::pair<juce::Colour, juce::Colour> kMeterGradientColours;
+    float fill_ = 0.8f;
 };
 
 class DiscreteLevelBars : public juce::Component

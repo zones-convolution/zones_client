@@ -8,7 +8,16 @@ void MeterBar::paint (juce::Graphics & g)
 {
     g.setGradientFill (juce::ColourGradient::vertical (
         kMeterGradientColours.first, kMeterGradientColours.second, getLocalBounds ()));
-    g.fillAll ();
+
+    auto fill_bounds = getLocalBounds ().toFloat ().withTrimmedTop (
+        (1.f - fill_) * static_cast<float> (getHeight ()));
+    g.fillRect (fill_bounds);
+}
+
+void MeterBar::SetFill (float fill)
+{
+    jassert (fill >= 0.0f && fill <= 1.0f);
+    fill_ = fill;
 }
 
 void DiscreteLevelBars::paint (juce::Graphics & g)
@@ -26,18 +35,22 @@ void DiscreteLevelBars::paint (juce::Graphics & g)
     layout.performLayout (getLocalBounds ().toFloat ());
 
     g.setColour (juce::Colours::white);
-
-    for (auto & layout_line : layout.items)
-        g.fillRect (layout_line.currentBounds.toFloat ());
+    for (auto level_index = 1; level_index < kNumDiscreteLevels - 1; ++level_index)
+        g.fillRect (layout.items [level_index].currentBounds.toFloat ());
 }
 
 ChannelBar::ChannelBar ()
 {
     addAndMakeVisible (meter_bar_);
     addAndMakeVisible (discrete_level_bars_);
+    discrete_level_bars_.setAlpha (0.2f);
 }
+
 void ChannelBar::resized ()
 {
+    juce::Random rand;
     meter_bar_.setBounds (getLocalBounds ());
+    meter_bar_.SetFill (rand.nextFloat ());
+
     discrete_level_bars_.setBounds (getLocalBounds ());
 }

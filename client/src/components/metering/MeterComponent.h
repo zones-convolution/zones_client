@@ -10,12 +10,11 @@ class MeterComponent : public juce::Component
 {
 public:
     MeterComponent ();
-    void paint (juce::Graphics & g) override;
     void resized () override;
     void paintOverChildren (juce::Graphics & g) override;
 
 private:
     std::array<ChannelBar, 4> channel_bars_;
-
+    DiscreteLevelBars discrete_level_bars_;
     DiscreteLevelLabels discrete_level_labels_;
 };

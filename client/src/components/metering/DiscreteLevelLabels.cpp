@@ -4,8 +4,8 @@ DiscreteLevelLabels::DiscreteLevelLabels ()
 {
     for (auto & discrete_level_label : discrete_level_labels_)
     {
+        discrete_level_label.setJustificationType (juce::Justification::topRight);
         addAndMakeVisible (discrete_level_label);
-        discrete_level_label.setText ("0", juce::dontSendNotification);
     }
 }
 
