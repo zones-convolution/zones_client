@@ -4,6 +4,7 @@
 #include "ProcessorContainer.h"
 #include "browser/BrowserComponent.h"
 #include "components/SidebarContent.h"
+#include "components/SidebarFooter.h"
 #include "components/SidebarHeader.h"
 #include "editor/EditorComponent.h"
 #include "layout/sidebar/SidebarComponent.h"
@@ -65,8 +66,8 @@ private:
     SidebarContent sidebar_content_ {store_};
     PanelComponent sidebar_content_panel_ {sidebar_content_};
 
-    juce::TextButton sidebar_footer_button_ {"footer"};
-    PanelComponent sidebar_footer_panel_ {sidebar_footer_button_};
+    SidebarFooter sidebar_footer_;
+    PanelComponent sidebar_footer_panel_ {sidebar_footer_};
 
     SidebarComponent sidebar_component_ {sidebar_header_panel_,
                                          sidebar_content_panel_,

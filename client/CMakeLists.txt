@@ -26,7 +26,9 @@ set(SOURCES
         src/components/SidebarContent.h
         src/components/SidebarContent.cpp
         src/components/SidebarHeader.h
-        src/components/SidebarHeader.cpp)
+        src/components/SidebarHeader.cpp
+        src/components/SidebarFooter.h
+        src/components/SidebarFooter.cpp)
 
 juce_add_plugin(
         ${BINARY}

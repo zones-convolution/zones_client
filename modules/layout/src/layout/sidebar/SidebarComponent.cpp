@@ -22,7 +22,7 @@ void SidebarComponent::resized ()
     layout.items.add (LookAndFeel::kFlexSpacer);
     layout.items.add (juce::FlexItem (content_).withFlex (1.f));
     layout.items.add (LookAndFeel::kFlexSpacer);
-    layout.items.add (juce::FlexItem (footer_).withHeight (60.f));
+    layout.items.add (juce::FlexItem (footer_).withHeight (120.f));
 
     layout.performLayout (getLocalBounds ().toFloat ());
 }

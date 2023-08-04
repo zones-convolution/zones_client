@@ -6,7 +6,12 @@
 class PanelComponent : public juce::Component
 {
 public:
+    using ColourPair = std::pair<juce::Colour, juce::Colour>;
+
     explicit PanelComponent (juce::Component & child, bool apply_content_rounding = false);
+    explicit PanelComponent (juce::Component & child,
+                             ColourPair horizontal_gradient_colours,
+                             bool apply_content_rounding = false);
 
     void paint (juce::Graphics & g) override;
 
@@ -17,4 +22,6 @@ public:
 private:
     bool apply_content_rounding_;
     juce::Component & child_;
+
+    std::optional<ColourPair> background_gradient_ = std::nullopt;
 };

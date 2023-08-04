@@ -12,6 +12,8 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (
     , editor_ (realtime_parameter_context_, ir_engine_parameter_context_)
     , browser_ (Model::ProjectIrRepositoryReader (processor_container.store_),
                 project_ir_repository_context_)
+    , sidebar_footer_ (processor_container.store_ [&Model::project_ir_repository_model]
+                                                  [&ProjectIrRepositoryModel::current_project_ir])
 
 {
     juce::LookAndFeel::setDefaultLookAndFeel (&look_and_feel_);

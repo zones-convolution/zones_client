@@ -7,9 +7,22 @@ PanelComponent::PanelComponent (juce::Component & child, bool apply_content_roun
     addAndMakeVisible (child_);
 }
 
+PanelComponent::PanelComponent (juce::Component & child,
+                                ColourPair horizontal_gradient_colours,
+                                bool apply_content_rounding)
+    : PanelComponent (child, apply_content_rounding)
+{
+    background_gradient_ = horizontal_gradient_colours;
+}
+
 void PanelComponent::paint (juce::Graphics & g)
 {
-    g.setColour (findColour (LookAndFeel::ColourIds::kPanel));
+    if (background_gradient_.has_value ())
+        g.setGradientFill (juce::ColourGradient::horizontal (
+            background_gradient_->first, background_gradient_->second, getLocalBounds ()));
+    else
+        g.setColour (findColour (LookAndFeel::ColourIds::kPanel));
+
     g.fillRoundedRectangle (getLocalBounds ().toFloat (), LookAndFeel::kRounding);
 }
 
