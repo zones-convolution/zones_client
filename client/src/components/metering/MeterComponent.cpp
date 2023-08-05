@@ -48,14 +48,14 @@ void MeterComponent::resized ()
     indicator_layout.items.add (juce::FlexItem ().withWidth (kSpacing));
     indicator_layout.items.add (juce::FlexItem (clipping_indicators_component_)
                                     .withFlex (1.f)
-                                    .withMargin (juce::FlexItem::Margin (kMargin)));
+                                    .withMargin (juce::FlexItem::Margin (0, kMargin, 0, kMargin)));
 
     juce::FlexBox layout;
     layout.flexDirection = juce::FlexBox::Direction::column;
 
-    layout.items.add (juce::FlexItem (indicator_layout).withFlex (1.f));
-    layout.items.add (juce::FlexItem ().withHeight (kSpacing));
-    layout.items.add (juce::FlexItem (sub_layout).withFlex (20.f));
+    layout.items.add (juce::FlexItem (indicator_layout).withHeight (8.f));
+    layout.items.add (LookAndFeel::kFlexSpacer);
+    layout.items.add (juce::FlexItem (sub_layout).withFlex (1.f));
 
     layout.performLayout (getLocalBounds ().toFloat ());
 }
@@ -75,8 +75,9 @@ void MeterComponent::update ()
     {
         auto peak = audio_graph_metering_.GetChannelPeak (channel_index);
         channel_bars_ [channel_index].SetTarget (peak);
-        clipping_indicators_component_.SetIndicator (
-            channel_index, audio_graph_metering_.GetChannelClipping (channel_index));
+
+        if (peak >= 1.f)
+            clipping_indicators_component_.SetIndicator (channel_index, true);
     }
 }
 

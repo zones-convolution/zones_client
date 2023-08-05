@@ -20,7 +20,6 @@ void ClippingIndicator::paint (juce::Graphics & g)
 
 void ClippingIndicator::setFill (bool is_clipping)
 {
-    DBG ("setClippingto:" << (is_clipping ? "true" : "false"));
     is_clipping_ = is_clipping;
 }
 
