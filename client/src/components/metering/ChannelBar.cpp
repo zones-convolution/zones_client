@@ -9,6 +9,10 @@ void MeterBar::paint (juce::Graphics & g)
     g.setGradientFill (juce::ColourGradient::vertical (
         kMeterGradientColours.first, kMeterGradientColours.second, getLocalBounds ()));
 
+    auto peak_bar = juce::Rectangle<float> (
+        0.f, (1 - highest_value_) * static_cast<float> (getHeight ()), getWidth (), 2.f);
+    g.fillRect (peak_bar);
+
     auto fill_bounds = getLocalBounds ().toFloat ().withTrimmedTop (
         (1.f - fill_) * static_cast<float> (getHeight ()));
     g.fillRect (fill_bounds);
@@ -18,6 +22,23 @@ void MeterBar::SetFill (float fill)
 {
     jassert (fill >= 0.0f && fill <= 1.0f);
     fill_ = fill;
+
+    if (fill >= highest_value_)
+    {
+        highest_value_ = fill;
+        if (isTimerRunning ())
+            stopTimer ();
+    }
+    else
+    {
+        if (! isTimerRunning ())
+            startTimer (2000);
+    }
+}
+void MeterBar::timerCallback ()
+{
+    highest_value_ = fill_;
+    stopTimer ();
 }
 
 void DiscreteLevelBars::paint (juce::Graphics & g)

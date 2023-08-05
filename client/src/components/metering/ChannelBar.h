@@ -4,15 +4,20 @@
 
 #include <juce_audio_basics/juce_audio_basics.h>
 #include <juce_gui_basics/juce_gui_basics.h>
-class MeterBar : public juce::Component
+class MeterBar
+    : public juce::Component
+    , public juce::Timer
 {
 public:
     void paint (juce::Graphics & g) override;
     void SetFill (float fill);
 
 private:
+    void timerCallback () override;
+
     static const std::pair<juce::Colour, juce::Colour> kMeterGradientColours;
     float fill_ = 0.8f;
+    float highest_value_ = 0.0f;
 };
 
 class DiscreteLevelBars : public juce::Component
