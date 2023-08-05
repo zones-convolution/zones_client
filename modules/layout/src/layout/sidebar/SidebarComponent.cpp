@@ -20,7 +20,7 @@ void SidebarComponent::resized ()
 
     layout.items.add (juce::FlexItem (header_).withHeight (60.f));
     layout.items.add (LookAndFeel::kFlexSpacer);
-    layout.items.add (juce::FlexItem (content_).withFlex (1.f));
+    layout.items.add (juce::FlexItem (content_).withFlex (1.f).withMinHeight (80.f));
     layout.items.add (LookAndFeel::kFlexSpacer);
     layout.items.add (juce::FlexItem (footer_).withHeight (360.f));
 

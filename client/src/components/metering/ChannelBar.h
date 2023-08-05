@@ -1,4 +1,5 @@
 #pragma once
+#include "juce_gui_extra/juce_gui_extra.h"
 #include "zones_look_and_feel/LookAndFeel.h"
 
 #include <juce_gui_basics/juce_gui_basics.h>
@@ -20,11 +21,16 @@ public:
     void paint (juce::Graphics & g) override;
 };
 
-class ChannelBar : public juce::Component
+class ChannelBar : public juce::AnimatedAppComponent
 {
 public:
     ChannelBar ();
     void resized () override;
+    void paint (juce::Graphics & g) override;
+
+private:
+public:
+    void update () override;
 
 private:
     DiscreteLevelBars discrete_level_bars_;
