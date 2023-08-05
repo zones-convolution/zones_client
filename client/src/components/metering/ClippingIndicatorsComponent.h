@@ -7,7 +7,6 @@ class ClippingIndicator : public juce::ToggleButton
 {
 public:
     void paint (juce::Graphics & g) override;
-    // void resized () override;
     void setFill (bool is_clipping);
 
 private:
@@ -22,6 +21,6 @@ public:
     void paint (juce::Graphics & g) override;
     void resized () override;
     void SetIndicator (size_t channel_index, bool is_clipping);
-    
+
     std::array<ClippingIndicator, 2> clipping_indicators_;
 };

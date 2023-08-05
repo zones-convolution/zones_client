@@ -44,6 +44,8 @@ ChannelBar::ChannelBar ()
     addAndMakeVisible (meter_bar_);
     addAndMakeVisible (discrete_level_bars_);
     discrete_level_bars_.setAlpha (0.1f);
+
+    smoothed_level_.reset (44100, 5);
 }
 
 void ChannelBar::resized ()
@@ -59,5 +61,15 @@ void ChannelBar::paint (juce::Graphics & g)
 
 void ChannelBar::SetTarget (float target)
 {
-    meter_bar_.SetFill (target);
+    smoothed_level_.skip (44100 * 0.03);
+    if (target < smoothed_level_.getCurrentValue ())
+    {
+        smoothed_level_.setTargetValue (target);
+        meter_bar_.SetFill (smoothed_level_.getNextValue ());
+    }
+    else
+    {
+        smoothed_level_.setCurrentAndTargetValue (target);
+        meter_bar_.SetFill (target);
+    }
 }

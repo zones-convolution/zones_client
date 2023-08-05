@@ -2,8 +2,8 @@
 #include "juce_gui_extra/juce_gui_extra.h"
 #include "zones_look_and_feel/LookAndFeel.h"
 
+#include <juce_audio_basics/juce_audio_basics.h>
 #include <juce_gui_basics/juce_gui_basics.h>
-
 class MeterBar : public juce::Component
 {
 public:
@@ -32,4 +32,6 @@ public:
 private:
     DiscreteLevelBars discrete_level_bars_;
     MeterBar meter_bar_;
+
+    juce::SmoothedValue<float, juce::ValueSmoothingTypes::Linear> smoothed_level_ {0.f};
 };
