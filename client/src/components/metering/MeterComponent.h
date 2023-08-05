@@ -1,5 +1,6 @@
 #pragma once
 #include "ChannelBar.h"
+#include "ClippingIndicatorsComponent.h"
 #include "DiscreteLevelLabels.h"
 #include "audio_engine/AudioGraphMetering.h"
 #include "zones_look_and_feel/LookAndFeel.h"
@@ -22,5 +23,6 @@ private:
     std::array<ChannelBar, 2> channel_bars_;
     DiscreteLevelBars discrete_level_bars_;
     DiscreteLevelLabels discrete_level_labels_;
+    ClippingIndicatorsComponent clipping_indicators_component_;
     juce::Rectangle<float> GetChannelBounds ();
 };
