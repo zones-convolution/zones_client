@@ -2,7 +2,6 @@
 #include "ClippingIndicatorsComponent.h"
 
 static constexpr auto kSpacing = 2.f;
-static constexpr auto kMargin = 6.f;
 
 void ClippingIndicator::paint (juce::Graphics & g)
 {
@@ -10,13 +9,6 @@ void ClippingIndicator::paint (juce::Graphics & g)
     g.setColour (indicator_colour);
     g.fillRect (getLocalBounds ().toFloat ());
 }
-
-// void ClippingIndicator::resized ()
-//{
-//     auto indicator_colour = is_clipping_ ? juce::Colours::red : juce::Colours::black;
-//     button_.setColour (juce::Label::backgroundColourId, indicator_colour);
-//     button_.setBounds (getLocalBounds ());
-// }
 
 void ClippingIndicator::setFill (bool is_clipping)
 {
