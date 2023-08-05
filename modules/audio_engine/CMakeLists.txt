@@ -8,6 +8,8 @@ zones_add_module(
         src/audio_engine/AudioGraph.cpp
         src/audio_engine/VisitorQueue.h
         src/audio_engine/CommandQueue.h
+        src/audio_engine/AudioGraphMetering.h
+        src/audio_engine/AudioGraphMetering.cpp
         DEPS
         model
         ir_repository

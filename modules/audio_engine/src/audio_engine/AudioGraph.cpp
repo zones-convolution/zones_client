@@ -1,6 +1,7 @@
 #include "AudioGraph.h"
 
-AudioGraph::AudioGraph ()
+AudioGraph::AudioGraph (AudioGraphMetering & audio_graph_metering)
+    : audio_graph_metering_ (audio_graph_metering)
 {
     dry_wet_mixer_.setWetMixProportion (0.5f);
 }
@@ -9,13 +10,19 @@ void AudioGraph::prepare (const juce::dsp::ProcessSpec & spec)
 {
     dry_wet_mixer_.prepare (spec);
     processor_chain_.prepare (spec);
+
+    audio_graph_metering_.Prepare (spec.numChannels);
 }
 
 void AudioGraph::process (const juce::dsp::ProcessContextReplacing<float> & replacing)
 {
+    auto input_block = replacing.getInputBlock ();
+
     dry_wet_mixer_.pushDrySamples (replacing.getInputBlock ());
     processor_chain_.process (replacing);
     dry_wet_mixer_.mixWetSamples (replacing.getOutputBlock ());
+
+    audio_graph_metering_.UpdateChannelPeak (input_block);
 }
 
 void AudioGraph::reset ()

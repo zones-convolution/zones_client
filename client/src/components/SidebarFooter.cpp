@@ -3,9 +3,11 @@
 const PanelComponent::ColourPair SidebarFooter::kIrPanelGradient = {juce::Colours::green,
                                                                     juce::Colours::aqua};
 
-SidebarFooter::SidebarFooter (const lager::reader<CurrentProjectIrOptional> & project_ir_reader)
+SidebarFooter::SidebarFooter (const lager::reader<CurrentProjectIrOptional> & project_ir_reader,
+                              AudioGraphMetering & audio_graph_metering)
     : project_ir_reader_ (project_ir_reader)
     , ir_label_panel_ (ir_label_, kIrPanelGradient)
+    , meter_component_ (audio_graph_metering)
 {
     addAndMakeVisible (ir_label_panel_);
     addAndMakeVisible (meter_component_);

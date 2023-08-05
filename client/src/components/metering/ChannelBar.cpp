@@ -44,7 +44,6 @@ ChannelBar::ChannelBar ()
     addAndMakeVisible (meter_bar_);
     addAndMakeVisible (discrete_level_bars_);
     discrete_level_bars_.setAlpha (0.1f);
-    setSynchroniseToVBlank (true);
 }
 
 void ChannelBar::resized ()
@@ -58,8 +57,7 @@ void ChannelBar::paint (juce::Graphics & g)
     g.fillAll (getLookAndFeel ().findColour (LookAndFeel::ColourIds::kPanel));
 }
 
-void ChannelBar::update ()
+void ChannelBar::SetTarget (float target)
 {
-    meter_bar_.SetFill (
-        (std::sinf (static_cast<float> (getFrameCounter () * 0.0002f * getX ())) * 0.5f) + 0.5f);
+    meter_bar_.SetFill (target);
 }

@@ -26,7 +26,9 @@ public:
         lager::make_store<Action> (Model {},
                                    lager::with_manual_event_loop {},
                                    lager::with_reducer (Update));
-    AudioGraph graph_;
+
+    AudioGraphMetering audio_graph_metering_;
+    AudioGraph graph_ {audio_graph_metering_};
     CommandQueue::VisitorQueue command_queue_ {graph_};
 
 private:

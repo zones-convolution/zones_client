@@ -21,16 +21,13 @@ public:
     void paint (juce::Graphics & g) override;
 };
 
-class ChannelBar : public juce::AnimatedAppComponent
+class ChannelBar : public juce::Component
 {
 public:
     ChannelBar ();
     void resized () override;
     void paint (juce::Graphics & g) override;
-
-private:
-public:
-    void update () override;
+    void SetTarget (float target);
 
 private:
     DiscreteLevelBars discrete_level_bars_;

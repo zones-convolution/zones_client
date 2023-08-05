@@ -1,12 +1,15 @@
 #include "MeterComponent.h"
 
-MeterComponent::MeterComponent ()
+MeterComponent::MeterComponent (AudioGraphMetering & audio_graph_metering)
+    : audio_graph_metering_ (audio_graph_metering)
 {
     for (auto & channel_bar : channel_bars_)
         addAndMakeVisible (channel_bar);
 
     addAndMakeVisible (discrete_level_bars_);
     addAndMakeVisible (discrete_level_labels_);
+
+    setSynchroniseToVBlank (true);
 }
 
 static constexpr auto kSpacing = 2.f;
@@ -42,6 +45,15 @@ void MeterComponent::paint (juce::Graphics & g)
     auto channels_bounds = GetChannelBounds ().expanded (kMargin);
     g.setColour (getLookAndFeel ().findColour (juce::ResizableWindow::backgroundColourId));
     g.fillRect (channels_bounds);
+}
+
+void MeterComponent::update ()
+{
+    for (auto channel_index = 0; channel_index < channel_bars_.size (); ++channel_index)
+    {
+        auto peak = audio_graph_metering_.GetChannelPeak (channel_index);
+        channel_bars_ [channel_index].SetTarget (peak);
+    }
 }
 
 void MeterComponent::paintOverChildren (juce::Graphics & g)
