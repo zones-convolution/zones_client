@@ -30,6 +30,7 @@ public:
     AudioGraphMetering audio_graph_metering_;
     AudioGraph graph_ {audio_graph_metering_};
     CommandQueue::VisitorQueue command_queue_ {graph_};
+    IrEngine ir_engine_;
 
 private:
     void RegisterIrEngineListeners ();
@@ -39,6 +40,5 @@ private:
     ProjectIrLoadController project_ir_load_controller_;
     ProjectIrImportController project_ir_import_controller_;
     AudioEngine audio_engine_;
-    IrEngine ir_engine_;
     IrWatchController ir_watch_controller_;
 };

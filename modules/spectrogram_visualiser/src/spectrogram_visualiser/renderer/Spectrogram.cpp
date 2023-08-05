@@ -41,12 +41,13 @@ static void DrawSpectrogramLine (juce::Image & spectrogram, const float * fft_da
         auto colour = ConvertToJuceColour (
                           tinycolormap::GetColor (level, tinycolormap::ColormapType::Viridis))
                           .withAlpha (level);
+
         spectrogram.setPixelAt (right_hand_edge, y, colour);
     }
 }
 
 immer::box<juce::AudioBuffer<float>>
-Spectrogram::PerformFFT (const juce::dsp::AudioBlock<float> & audio_block)
+Spectrogram::PerformFFT (const juce::dsp::AudioBlock<const float> & audio_block)
 {
     static constexpr auto kFFTOrder = 10;
     static constexpr auto kFFTSize = 1 << kFFTOrder;
@@ -91,7 +92,7 @@ Spectrogram::PerformFFT (const juce::dsp::AudioBlock<float> & audio_block)
     return {std::move (fft_buffer)};
 }
 
-juce::Image Spectrogram::CreateSpectrogram (const juce::dsp::AudioBlock<float> & audio_block)
+juce::Image Spectrogram::CreateSpectrogram (const juce::dsp::AudioBlock<const float> & audio_block)
 {
     auto fft_buffer = PerformFFT (audio_block);
     auto num_hops = fft_buffer->getNumChannels ();

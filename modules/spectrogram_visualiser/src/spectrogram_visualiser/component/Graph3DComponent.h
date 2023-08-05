@@ -17,7 +17,7 @@ public:
     void resized () override;
     void paint (juce::Graphics & g) override;
 
-    void SetAudioBlock (const juce::dsp::AudioBlock<float> audio_block);
+    void SetAudioBlock (const juce::dsp::AudioBlock<const float> audio_block);
 
 private:
     void mouseDown (const juce::MouseEvent & event) override;

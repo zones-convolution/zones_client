@@ -35,6 +35,9 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (
     addAndMakeVisible (sidebar_component_);
 
     store_.dispatch (LoadTabAction {.tab_name = "editor"});
+
+    auto & ir_engine_listeners = processor_container.ir_engine_.GetListeners ();
+    ir_engine_listeners.add (&editor_);
 }
 
 void AudioPluginAudioProcessorEditor::resized ()

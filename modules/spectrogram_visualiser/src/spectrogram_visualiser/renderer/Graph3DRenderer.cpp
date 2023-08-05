@@ -33,10 +33,8 @@ static constexpr size_t kVertexBufferSizeM1 = kVertexBufferSize - 1;
 
 void Graph3DRenderer::newOpenGLContextCreated ()
 {
-    GLCall (juce::gl::glEnable (juce::gl::GL_BLEND));
-    GLCall (juce::gl::glBlendFunc (juce::gl::GL_SRC_ALPHA, juce::gl::GL_ONE_MINUS_SRC_ALPHA));
-
-    //    SetupGraphTexture ();
+    //    GLCall (juce::gl::glEnable (juce::gl::GL_BLEND));
+    //    GLCall (juce::gl::glBlendFunc (juce::gl::GL_SRC_ALPHA, juce::gl::GL_ONE_MINUS_SRC_ALPHA));
 
     std::array<std::array<glm::vec2, kVertexBufferSize>, kVertexBufferSize> vertices {};
     for (int i = 0; i < kVertexBufferSize; i++)
@@ -94,49 +92,65 @@ void Graph3DRenderer::newOpenGLContextCreated ()
     vertex_array_->AddBuffer (*vertex_buffer_, vertex_buffer_layout);
 }
 
-void Graph3DRenderer::SetupGraphTexture (const juce::dsp::AudioBlock<float> block)
+void Graph3DRenderer::SetupGraphTexture (const juce::dsp::AudioBlock<const float> block)
 {
     auto spectrogram = Spectrogram::CreateSpectrogram (block).rescaled (1024, 1024);
+    texture_ = spectrogram;
 
     //    juce::ImageConvolutionKernel convolution_kernel {4};
     //    convolution_kernel.createGaussianBlur (4.f);
     //    convolution_kernel.applyToImage (spectrogram, spectrogram, spectrogram.getBounds ());
-    
-    auto width = spectrogram.getWidth ();
-    auto height = spectrogram.getHeight ();
 
-    juce::AudioBuffer<GLubyte> graph {width, height};
+    //    static const auto kImagePath = kTestAudioDirectory / "result.png";
+    //    auto file = juce::File (kImagePath.string ());
+    //    file.moveToTrash ();
+    //    juce::FileOutputStream stream (file);
+    //    juce::PNGImageFormat writer;
+    //    writer.writeImageToStream (spectrogram, stream);
+}
 
-    for (int x = 0; x < width; x++)
+void Graph3DRenderer::SetupTexture ()
+{
+    if (texture_.has_value ())
     {
-        auto channel_pointer = graph.getWritePointer (x);
-        for (int y = 0; y < height; y++)
-        {
-            auto pixel_value = spectrogram.getPixelAt (x, y).getFloatAlpha ();
-            channel_pointer [y] = static_cast<GLubyte> (std::roundf (pixel_value * 127 + 128));
-        }
-    }
+        auto width = texture_->getWidth ();
+        auto height = texture_->getHeight ();
 
-    GLCall (juce::gl::glActiveTexture (juce::gl::GL_TEXTURE0));
-    GLCall (juce::gl::glGenTextures (1, &graph_texture_id_));
-    GLCall (juce::gl::glBindTexture (juce::gl::GL_TEXTURE_2D, graph_texture_id_));
-    GLCall (juce::gl::glTexImage2D (juce::gl::GL_TEXTURE_2D,
-                                    0,
-                                    juce::gl::GL_RED,
-                                    width,
-                                    height,
-                                    0,
-                                    juce::gl::GL_RED,
-                                    juce::gl::GL_UNSIGNED_BYTE,
-                                    graph.getReadPointer (0)));
-    juce::gl::glTexParameteri (
-        juce::gl::GL_TEXTURE_2D, juce::gl::GL_TEXTURE_WRAP_S, juce::gl::GL_CLAMP_TO_EDGE);
-    juce::gl::glTexParameteri (
-        juce::gl::GL_TEXTURE_2D, juce::gl::GL_TEXTURE_WRAP_T, juce::gl::GL_CLAMP_TO_EDGE);
-    juce::gl::glTexParameteri (
-        juce::gl::GL_TEXTURE_2D, juce::gl::GL_TEXTURE_MIN_FILTER, juce::gl::GL_LINEAR);
-    juce::gl::glTexParameteri (
-        juce::gl::GL_TEXTURE_2D, juce::gl::GL_TEXTURE_MAG_FILTER, juce::gl::GL_LINEAR);
+        juce::AudioBuffer<GLubyte> graph {width, height};
+
+        for (int x = 0; x < width; x++)
+        {
+            auto channel_pointer = graph.getWritePointer (x);
+            for (int y = 0; y < height; y++)
+            {
+                auto pixel_value = texture_->getPixelAt (x, y).getFloatAlpha ();
+                channel_pointer [y] = static_cast<GLubyte> (std::roundf (pixel_value * 127 + 128));
+            }
+        }
+
+        GLCall (juce::gl::glActiveTexture (juce::gl::GL_TEXTURE0));
+        GLCall (juce::gl::glGenTextures (1, &graph_texture_id_));
+
+        GLCall (juce::gl::glBindTexture (juce::gl::GL_TEXTURE_2D, graph_texture_id_));
+        GLCall (juce::gl::glTexImage2D (juce::gl::GL_TEXTURE_2D,
+                                        0,
+                                        juce::gl::GL_RED,
+                                        width,
+                                        height,
+                                        0,
+                                        juce::gl::GL_RED,
+                                        juce::gl::GL_UNSIGNED_BYTE,
+                                        graph.getReadPointer (0)));
+        juce::gl::glTexParameteri (
+            juce::gl::GL_TEXTURE_2D, juce::gl::GL_TEXTURE_WRAP_S, juce::gl::GL_CLAMP_TO_EDGE);
+        juce::gl::glTexParameteri (
+            juce::gl::GL_TEXTURE_2D, juce::gl::GL_TEXTURE_WRAP_T, juce::gl::GL_CLAMP_TO_EDGE);
+        juce::gl::glTexParameteri (
+            juce::gl::GL_TEXTURE_2D, juce::gl::GL_TEXTURE_MIN_FILTER, juce::gl::GL_LINEAR);
+        juce::gl::glTexParameteri (
+            juce::gl::GL_TEXTURE_2D, juce::gl::GL_TEXTURE_MAG_FILTER, juce::gl::GL_LINEAR);
+        texture_ = std::nullopt;
+    }
 }
 
 static float
@@ -151,6 +165,7 @@ void Graph3DRenderer::renderOpenGL ()
     juce::OpenGLHelpers::clear (
         juce::LookAndFeel::getDefaultLookAndFeel ().findColour (LookAndFeel::ColourIds::kPanel));
 
+    SetupTexture ();
     CreateShaders ();
     shader_->use ();
 
@@ -207,7 +222,16 @@ void Graph3DRenderer::renderOpenGL ()
 
 void Graph3DRenderer::openGLContextClosing ()
 {
+    vertex_buffer_.reset ();
+    index_buffer_graph_.reset ();
+    index_buffer_grid_.reset ();
+    vertex_array_.reset ();
+
     shader_.reset ();
+    uniform_texture_transform_.reset ();
+    uniform_vertex_transform_.reset ();
+    uniform_graph_texture_.reset ();
+    uniform_colour_.reset ();
 }
 
 void Graph3DRenderer::CreateShaders ()

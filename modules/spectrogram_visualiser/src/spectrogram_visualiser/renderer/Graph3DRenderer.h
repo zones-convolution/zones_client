@@ -27,10 +27,12 @@ public:
     std::atomic<float> offset_y_;
     std::atomic<float> scale_;
 
-    void SetupGraphTexture (const juce::dsp::AudioBlock<float> block);
-    
+    void SetupGraphTexture (const juce::dsp::AudioBlock<const float> block);
+
 private:
     static const std::filesystem::path kShaderDirectory;
+
+    void SetupTexture ();
 
     DraggableOrientation & draggable_orientation_;
     float rot_x_smooth_ = 0.f;
@@ -52,4 +54,6 @@ private:
     std::unique_ptr<juce::OpenGLShaderProgram::Uniform> uniform_vertex_transform_;
     std::unique_ptr<juce::OpenGLShaderProgram::Uniform> uniform_graph_texture_;
     std::unique_ptr<juce::OpenGLShaderProgram::Uniform> uniform_colour_;
+
+    std::optional<juce::Image> texture_ = std::nullopt;
 };

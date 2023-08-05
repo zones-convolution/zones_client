@@ -1,13 +1,20 @@
 #pragma once
 
+#include "ir_engine/IrEngine.h"
 #include "model/ParameterAction.h"
+#include "spectrogram_visualiser/component/Graph3DComponent.h"
 #include "zones_look_and_feel/LookAndFeel.h"
 
 #include <juce_gui_basics/juce_gui_basics.h>
 #include <lager/context.hpp>
 
-class EditorComponent : public juce::Component
+class EditorComponent
+    : public juce::Component
+    , public IrEngine::Listener
 {
+public:
+    void RenderFinished (IrGraphState state, IrGraphProcessor::BoxedBuffer render_result) override;
+
 public:
     explicit EditorComponent (
         lager::context<RealtimeParameterAction> & realtime_parameter_context,

@@ -86,7 +86,7 @@ void Graph3DComponent::paint (juce::Graphics & g)
     juce::ignoreUnused (g);
 }
 
-void Graph3DComponent::SetAudioBlock (const juce::dsp::AudioBlock<float> audio_block)
+void Graph3DComponent::SetAudioBlock (const juce::dsp::AudioBlock<const float> audio_block)
 {
     graph3d_renderer_.SetupGraphTexture (audio_block);
 }

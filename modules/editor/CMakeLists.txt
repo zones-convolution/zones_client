@@ -9,4 +9,6 @@ zones_add_module(
         juce::juce_gui_basics
         lager
         zones_look_and_feel
-        model)
+        model
+        spectrogram_visualiser
+        ir_engine)
