@@ -5,9 +5,9 @@ static constexpr auto kSpacing = 2.f;
 
 void ClippingIndicator::paint (juce::Graphics & g)
 {
-    auto indicator_colour = is_clipping_ ? juce::Colours::red : juce::Colours::black;
-    g.setColour (indicator_colour);
-    g.fillRect (getLocalBounds ().toFloat ());
+    auto background_colour =
+        getLookAndFeel ().findColour (juce::ResizableWindow::backgroundColourId);
+    g.fillAll (is_clipping_ ? juce::Colours::red : background_colour);
 }
 
 void ClippingIndicator::setFill (bool is_clipping)
@@ -22,11 +22,6 @@ ClippingIndicatorsComponent::ClippingIndicatorsComponent ()
         addAndMakeVisible (clipping_indicator);
         clipping_indicator.onClick = [&] { clipping_indicator.setFill (false); };
     }
-}
-
-void ClippingIndicatorsComponent::paint (juce::Graphics & g)
-{
-    g.fillAll (getLookAndFeel ().findColour (LookAndFeel::ColourIds::kPanel));
 }
 
 void ClippingIndicatorsComponent::resized ()

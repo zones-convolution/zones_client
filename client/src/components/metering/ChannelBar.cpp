@@ -9,36 +9,29 @@ void MeterBar::paint (juce::Graphics & g)
     g.setGradientFill (juce::ColourGradient::vertical (
         kMeterGradientColours.first, kMeterGradientColours.second, getLocalBounds ()));
 
-    auto peak_bar = juce::Rectangle<float> (
-        0.f, (1 - highest_value_) * static_cast<float> (getHeight ()), getWidth (), 2.f);
+    static constexpr auto kPeakBarHeight = 2.f;
+    auto peak_bar =
+        juce::Rectangle<float> (0.f,
+                                (1.f - peak_target_value_) * static_cast<float> (getHeight ()),
+                                static_cast<float> (getWidth ()),
+                                kPeakBarHeight);
     g.fillRect (peak_bar);
 
-    auto fill_bounds = getLocalBounds ().toFloat ().withTrimmedTop (
+    auto main_bar_bounds = getLocalBounds ().toFloat ().withTrimmedTop (
         (1.f - fill_) * static_cast<float> (getHeight ()));
-    g.fillRect (fill_bounds);
+    g.fillRect (main_bar_bounds);
 }
 
 void MeterBar::SetFill (float fill)
 {
     jassert (fill >= 0.0f && fill <= 1.0f);
     fill_ = fill;
-
-    if (fill >= highest_value_)
-    {
-        highest_value_ = fill;
-        if (isTimerRunning ())
-            stopTimer ();
-    }
-    else
-    {
-        if (! isTimerRunning ())
-            startTimer (2000);
-    }
 }
-void MeterBar::timerCallback ()
+
+void MeterBar::SetPeak (float peak)
 {
-    highest_value_ = fill_;
-    stopTimer ();
+    jassert (peak >= 0.0f && peak <= 1.0f);
+    peak_target_value_ = peak;
 }
 
 void DiscreteLevelBars::paint (juce::Graphics & g)
@@ -65,8 +58,6 @@ ChannelBar::ChannelBar ()
     addAndMakeVisible (meter_bar_);
     addAndMakeVisible (discrete_level_bars_);
     discrete_level_bars_.setAlpha (0.1f);
-
-    smoothed_level_.reset (44100, 5);
 }
 
 void ChannelBar::resized ()
@@ -80,17 +71,8 @@ void ChannelBar::paint (juce::Graphics & g)
     g.fillAll (getLookAndFeel ().findColour (LookAndFeel::ColourIds::kPanel));
 }
 
-void ChannelBar::SetTarget (float target)
+void ChannelBar::SetTarget (float target, float peak)
 {
-    smoothed_level_.skip (44100 * 0.03);
-    if (target < smoothed_level_.getCurrentValue ())
-    {
-        smoothed_level_.setTargetValue (target);
-        meter_bar_.SetFill (smoothed_level_.getNextValue ());
-    }
-    else
-    {
-        smoothed_level_.setCurrentAndTargetValue (target);
-        meter_bar_.SetFill (target);
-    }
+    meter_bar_.SetFill (juce::jlimit (0.f, 1.f, target));
+    meter_bar_.SetPeak (juce::jlimit (0.f, 1.f, peak));
 }

@@ -18,7 +18,6 @@ class ClippingIndicatorsComponent : public juce::Component
 public:
     ClippingIndicatorsComponent ();
 
-    void paint (juce::Graphics & g) override;
     void resized () override;
     void SetIndicator (size_t channel_index, bool is_clipping);
 
