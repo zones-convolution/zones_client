@@ -7,5 +7,5 @@ SidebarHeader::SidebarHeader ()
 
 void SidebarHeader::resized ()
 {
-    logo_component_.setBounds (getLocalBounds ());
+    logo_component_.setBounds (getLocalBounds ().toFloat ().reduced (0.f, LookAndFeel::kGap));
 }

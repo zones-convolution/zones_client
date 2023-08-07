@@ -22,7 +22,7 @@ LookAndFeel::LookAndFeel ()
     setColour (juce::Slider::trackColourId, findColour (ColourIds::kPrimary));
 }
 
-static const auto kDefaultFont = juce::Font ("DM Sans", 18.f, juce::Font::FontStyleFlags::bold);
+static const auto kDefaultFont = juce::Font ("DM Sans", 20.f, juce::Font::FontStyleFlags::bold);
 
 juce::Font LookAndFeel::getLabelFont (juce::Label & label)
 {

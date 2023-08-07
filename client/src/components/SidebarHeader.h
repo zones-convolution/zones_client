@@ -1,6 +1,9 @@
 #pragma once
+#include "zones_look_and_feel/LookAndFeel.h"
+#include "zones_look_and_feel/components/LogoComponent.h"
+
 #include <juce_gui_basics/juce_gui_basics.h>
-#include <zones_look_and_feel/components/LogoComponent.h>
+
 class SidebarHeader : public juce::Component
 {
 public:

@@ -38,6 +38,7 @@ void ClippingIndicatorsComponent::resized ()
 
     layout.performLayout (getLocalBounds ().toFloat ());
 }
+
 void ClippingIndicatorsComponent::SetIndicator (size_t channel_index, bool is_clipping)
 {
     clipping_indicators_ [channel_index].setFill (is_clipping);
