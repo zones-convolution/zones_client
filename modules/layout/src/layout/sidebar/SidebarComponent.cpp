@@ -18,7 +18,7 @@ void SidebarComponent::resized ()
     layout.flexDirection = juce::FlexBox::Direction::column;
     layout.justifyContent = juce::FlexBox::JustifyContent::flexStart;
 
-    layout.items.add (juce::FlexItem (header_).withHeight (60.f));
+    layout.items.add (juce::FlexItem (header_).withMinHeight (60.f));
     layout.items.add (LookAndFeel::kFlexSpacer);
     layout.items.add (juce::FlexItem (content_).withFlex (1.f).withMinHeight (80.f));
     layout.items.add (LookAndFeel::kFlexSpacer);
