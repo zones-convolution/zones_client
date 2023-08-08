@@ -20,10 +20,14 @@ using BoxedIrEngineParameterModel = immer::box<IrEngineParameterModel>;
 struct RealtimeParameterModel
 {
     float dry_wet_mix = 1.f;
+    float input_gain = 1.f;
+    float output_gain = 1.f;
 
     bool operator== (const RealtimeParameterModel & parameter_model) const
     {
-        return juce::approximatelyEqual (dry_wet_mix, parameter_model.dry_wet_mix);
+        return juce::approximatelyEqual (dry_wet_mix, parameter_model.dry_wet_mix) &&
+               juce::approximatelyEqual (input_gain, parameter_model.input_gain) &&
+               juce::approximatelyEqual (output_gain, parameter_model.output_gain);
     }
 };
 

@@ -9,7 +9,9 @@ AudioEngine::AudioEngine (CommandQueue::VisitorQueue & command_queue,
                   [&] (const BoxedRealtimeParameterModel & parameter_model)
                   {
                       command_queue_.PushCommand (CommandQueue::UpdateParameters {
-                          .dry_wet_mix = parameter_model->dry_wet_mix});
+                          .dry_wet_mix = parameter_model->dry_wet_mix,
+                          .input_gain = parameter_model->input_gain,
+                          .output_gain = parameter_model->output_gain});
                   });
 }
 

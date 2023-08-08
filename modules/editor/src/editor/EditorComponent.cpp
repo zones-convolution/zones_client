@@ -12,6 +12,10 @@ EditorComponent::EditorComponent (
     addAndMakeVisible (reverb_time_label_);
     addAndMakeVisible (dry_wet_mix_slider_);
     addAndMakeVisible (dry_wet_label_);
+    addAndMakeVisible (input_gain_slider_);
+    addAndMakeVisible (input_gain_label_);
+    addAndMakeVisible (output_gain_slider_);
+    addAndMakeVisible (output_gain_label_);
 
     room_size_label_.setText ("Room Size", juce::dontSendNotification);
     room_size_slider_.setRange ({0.1f, 2.f}, 0);
@@ -39,7 +43,26 @@ EditorComponent::EditorComponent (
         realtime_parameter_context_.dispatch (
             UpdateDryWetMix (static_cast<float> (dry_wet_mix_slider_.getValue ())));
     };
+
+    input_gain_label_.setText ("Input Gain", juce::dontSendNotification);
+    input_gain_slider_.setRange ({0.f, 2.f}, 0);
+    input_gain_slider_.setPopupDisplayEnabled (true, true, getTopLevelComponent ());
+    input_gain_slider_.onValueChange = [&]
+    {
+        realtime_parameter_context_.dispatch (
+            UpdateInputGain (static_cast<float> (input_gain_slider_.getValue ())));
+    };
+
+    output_gain_label_.setText ("Output Gain", juce::dontSendNotification);
+    output_gain_slider_.setRange ({0.f, 2.f}, 0);
+    output_gain_slider_.setPopupDisplayEnabled (true, true, getTopLevelComponent ());
+    output_gain_slider_.onValueChange = [&]
+    {
+        realtime_parameter_context_.dispatch (
+            UpdateOutputGain (static_cast<float> (output_gain_slider_.getValue ())));
+    };
 }
+
 void EditorComponent::resized ()
 {
     juce::FlexBox layout;
@@ -56,6 +79,14 @@ void EditorComponent::resized ()
     layout.items.add (LookAndFeel::LabelFlexItem (dry_wet_label_));
     layout.items.add (LookAndFeel::kFlexSpacer);
     layout.items.add (juce::FlexItem (dry_wet_mix_slider_).withFlex (1.f));
+    layout.items.add (LookAndFeel::kFlexSpacer);
+    layout.items.add (juce::FlexItem (input_gain_label_).withFlex (1.f));
+    layout.items.add (LookAndFeel::kFlexSpacer);
+    layout.items.add (juce::FlexItem (input_gain_slider_).withFlex (1.f));
+    layout.items.add (LookAndFeel::kFlexSpacer);
+    layout.items.add (juce::FlexItem (output_gain_label_).withFlex (1.f));
+    layout.items.add (LookAndFeel::kFlexSpacer);
+    layout.items.add (juce::FlexItem (output_gain_slider_).withFlex (1.f));
 
     layout.performLayout (getLocalBounds ().toFloat ());
 }

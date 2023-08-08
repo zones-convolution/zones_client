@@ -32,4 +32,6 @@ private:
     AudioGraphMetering & audio_graph_metering_;
     juce::dsp::DryWetMixer<float> dry_wet_mixer_;
     juce::dsp::ProcessorChain<NonUniformConvolver> processor_chain_;
+    float input_gain_ = 1.f;
+    float output_gain_ = 1.f;
 };

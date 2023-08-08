@@ -17,10 +17,13 @@ void AudioGraph::prepare (const juce::dsp::ProcessSpec & spec)
 void AudioGraph::process (const juce::dsp::ProcessContextReplacing<float> & replacing)
 {
     auto input_block = replacing.getInputBlock ();
+    auto output_block = replacing.getOutputBlock ();
 
     dry_wet_mixer_.pushDrySamples (replacing.getInputBlock ());
+    output_block.multiplyBy (input_gain_);
     processor_chain_.process (replacing);
     dry_wet_mixer_.mixWetSamples (replacing.getOutputBlock ());
+    output_block.multiplyBy (output_gain_);
 
     audio_graph_metering_.UpdateChannelPeak (input_block);
 }
@@ -47,4 +50,6 @@ void AudioGraph::operator() (const CommandQueue::LoadIr & load_ir)
 void AudioGraph::operator() (const CommandQueue::UpdateParameters & update_parameters)
 {
     dry_wet_mixer_.setWetMixProportion (update_parameters.dry_wet_mix);
+    input_gain_ = update_parameters.input_gain;
+    output_gain_ = update_parameters.output_gain;
 }

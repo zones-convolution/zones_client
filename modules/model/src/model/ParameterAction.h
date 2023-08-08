@@ -39,6 +39,18 @@ static auto UpdateDryWetMix (float value)
         .value = value, .member_ptr = &RealtimeParameterModel::dry_wet_mix};
 }
 
+static auto UpdateInputGain (float value)
+{
+    return UpdateRealtimeParameterAction<float> {.value = value,
+                                                 .member_ptr = &RealtimeParameterModel::input_gain};
+}
+
+static auto UpdateOutputGain (float value)
+{
+    return UpdateRealtimeParameterAction<float> {
+        .value = value, .member_ptr = &RealtimeParameterModel::output_gain};
+}
+
 using RealtimeParameterAction = std::variant<UpdateRealtimeParameterAction<float>>;
 RealtimeParameterModel UpdateRealtimeParameter (RealtimeParameterModel model,
                                                 RealtimeParameterAction action);

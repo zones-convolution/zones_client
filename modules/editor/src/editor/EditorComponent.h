@@ -27,4 +27,10 @@ private:
     juce::Label dry_wet_label_;
     juce::Slider dry_wet_mix_slider_ {juce::Slider::SliderStyle::LinearHorizontal,
                                       juce::Slider::TextEntryBoxPosition::NoTextBox};
+    juce::Label input_gain_label_;
+    juce::Slider input_gain_slider_ {juce::Slider::SliderStyle::LinearHorizontal,
+                                     juce::Slider::TextEntryBoxPosition::NoTextBox};
+    juce::Label output_gain_label_;
+    juce::Slider output_gain_slider_ {juce::Slider::SliderStyle::LinearHorizontal,
+                                      juce::Slider::TextEntryBoxPosition::NoTextBox};
 };
