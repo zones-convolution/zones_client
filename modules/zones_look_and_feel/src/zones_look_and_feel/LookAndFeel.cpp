@@ -9,7 +9,7 @@ LookAndFeel::LookAndFeel ()
 {
     setColour (ColourIds::kPanel, juce::Colour (29, 32, 37));
     setColour (ColourIds::kPrimary, juce::Colour (149, 213, 178));
-    setColour (ColourIds::kSecondary, juce::Colours::pink);
+    setColour (ColourIds::kSecondary, juce::Colour (23, 26, 29));
 
     setColour (juce::ResizableWindow::backgroundColourId, juce::Colour (23, 26, 29));
 
@@ -52,20 +52,15 @@ void LookAndFeel::drawRotarySlider (juce::Graphics & g,
     const float angle = rotaryStartAngle + sliderPos * (rotaryEndAngle - rotaryStartAngle);
 
     static constexpr float inner_circle_proportional_size = 0.92f;
-    auto secondary_colour = slider.findColour (ColourIds::kSecondary);
-
-    auto secondary_grad = juce::ColourGradient::horizontal (
-        secondary_colour.darker (0.1f), 0.0f, secondary_colour.brighter (0.1f), width);
-    g.setGradientFill (secondary_grad);
+    auto secondary_colour = slider.findColour (juce::ResizableWindow::backgroundColourId);
+    g.setColour (secondary_colour);
     juce::Path filled_arc;
     filled_arc.addPieSegment (
         rx, ry, rw, rw, rotaryStartAngle, rotaryEndAngle, inner_circle_proportional_size);
     g.fillPath (filled_arc);
 
     auto primary_colour = slider.findColour (ColourIds::kPrimary);
-    auto primary_grad = juce::ColourGradient::horizontal (
-        primary_colour.darker (0.1f), 0.0f, primary_colour.brighter (0.1f), width);
-    g.setGradientFill (primary_grad);
+    g.setColour (primary_colour);
     juce::Path filled_arc_1;
     filled_arc_1.addPieSegment (
         rx, ry, rw, rw, rotaryStartAngle, angle, inner_circle_proportional_size);
@@ -208,12 +203,31 @@ juce::FlexItem LookAndFeel::ButtonFlexItem (juce::Component & button)
     return juce::FlexItem (button).withHeight (kButtonHeight);
 }
 
-juce::FlexItem LookAndFeel::LabelFlexItem (juce::Component & label)
+juce::FlexItem LookAndFeel::LabelFlexItem (juce::Label & label)
 {
-    return juce::FlexItem (label).withHeight (kLabelHeight);
+    auto & label_feel = label.getLookAndFeel ();
+    auto label_font = label_feel.getLabelFont (label);
+    auto border_size = label.getBorderSize ();
+
+    auto label_width =
+        label_font.getStringWidthFloat (label.getText ()) + border_size.getLeftAndRight ();
+    auto label_height = label_font.getHeight () + border_size.getTopAndBottom ();
+
+    return juce::FlexItem (label).withHeight (label_height).withWidth (label_width);
 }
 
 juce::FlexItem LookAndFeel::ComboFlexItem (juce::Component & combo)
 {
     return juce::FlexItem (combo).withHeight (kComboHeight);
+}
+void LookAndFeel::drawBubble (juce::Graphics & graphics,
+                              juce::BubbleComponent & component,
+                              const juce::Point<float> & tip,
+                              const juce::Rectangle<float> & body)
+{
+    auto & look_and_feel = component.getLookAndFeel ();
+    auto bubble_colour = look_and_feel.findColour (juce::ResizableWindow::backgroundColourId);
+    graphics.setColour (bubble_colour);
+
+    graphics.fillRoundedRectangle (body.expanded (kPadding), kRounding);
 }

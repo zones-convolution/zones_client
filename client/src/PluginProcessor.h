@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ProcessorContainer.h"
+#include "Translations.h"
 
 #include <juce_audio_processors/juce_audio_processors.h>
 #include <juce_dsp/juce_dsp.h>
@@ -40,5 +41,6 @@ public:
 
 private:
     ProcessorContainer processor_container_;
+    Translations translations_;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioPluginAudioProcessor)
 };

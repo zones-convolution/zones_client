@@ -2,8 +2,10 @@
 
 #include "ir_engine/IrEngine.h"
 #include "model/ParameterAction.h"
+#include "panels/IOPanel.h"
 #include "spectrogram_visualiser/component/Graph3DComponent.h"
 #include "zones_look_and_feel/LookAndFeel.h"
+#include "zones_look_and_feel/components/PanelComponent.h"
 
 #include <juce_gui_basics/juce_gui_basics.h>
 #include <lager/context.hpp>
@@ -13,13 +15,12 @@ class EditorComponent
     , public IrEngine::Listener
 {
 public:
-    void RenderFinished (IrGraphState state, IrGraphProcessor::BoxedBuffer render_result) override;
-
-public:
     explicit EditorComponent (
         lager::context<RealtimeParameterAction> & realtime_parameter_context,
         lager::context<IrEngineParameterAction> & ir_engine_parameter_context);
     void resized () override;
+
+    void RenderFinished (IrGraphState state, IrGraphProcessor::BoxedBuffer render_result) override;
 
 private:
     lager::context<RealtimeParameterAction> realtime_parameter_context_;
@@ -31,13 +32,7 @@ private:
     juce::Label reverb_time_label_;
     juce::Slider reverb_time_slider_ {juce::Slider::SliderStyle::LinearHorizontal,
                                       juce::Slider::TextEntryBoxPosition::NoTextBox};
-    juce::Label dry_wet_label_;
-    juce::Slider dry_wet_mix_slider_ {juce::Slider::SliderStyle::LinearHorizontal,
-                                      juce::Slider::TextEntryBoxPosition::NoTextBox};
-    juce::Label input_gain_label_;
-    juce::Slider input_gain_slider_ {juce::Slider::SliderStyle::LinearHorizontal,
-                                     juce::Slider::TextEntryBoxPosition::NoTextBox};
-    juce::Label output_gain_label_;
-    juce::Slider output_gain_slider_ {juce::Slider::SliderStyle::LinearHorizontal,
-                                      juce::Slider::TextEntryBoxPosition::NoTextBox};
+
+    IOPanel io_;
+    PanelComponent io_panel_ {io_};
 };

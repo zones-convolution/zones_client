@@ -29,8 +29,7 @@ public:
     static constexpr float kButtonHeight = 40.f;
     static juce::FlexItem ButtonFlexItem (juce::Component & button);
 
-    static constexpr float kLabelHeight = 20.f;
-    static juce::FlexItem LabelFlexItem (juce::Component & label);
+    static juce::FlexItem LabelFlexItem (juce::Label & label);
 
     static constexpr float kComboHeight = 40.f;
     static juce::FlexItem ComboFlexItem (juce::Component & combo);
@@ -41,6 +40,10 @@ public:
         kPrimary,
         kSecondary
     };
+    void drawBubble (juce::Graphics & graphics,
+                     juce::BubbleComponent & component,
+                     const juce::Point<float> & tip,
+                     const juce::Rectangle<float> & body) override;
     juce::Font getTextButtonFont (juce::TextButton & button, int buttonHeight) override;
 
     juce::Font getLabelFont (juce::Label & label) override;

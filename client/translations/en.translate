@@ -1,0 +1,7 @@
+language: English
+countries: en
+
+# PARAMETERS
+"dry_wet_parameter" = "Dry/Wet"
+"input_gain_parameter" = "Input"
+"output_gain_parameter" = "Output"

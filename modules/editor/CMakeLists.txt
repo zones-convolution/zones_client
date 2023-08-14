@@ -4,6 +4,8 @@ zones_add_module(
         SOURCES
         src/editor/EditorComponent.h
         src/editor/EditorComponent.cpp
+        src/editor/panels/IOPanel.h
+        src/editor/panels/IOPanel.cpp
         DEPS
         juce::juce_core
         juce::juce_gui_basics

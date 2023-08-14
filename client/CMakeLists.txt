@@ -23,6 +23,8 @@ set(SOURCES
         src/PluginEditor.cpp
         src/ProcessorContainer.h
         src/ProcessorContainer.cpp
+        src/Translations.h
+        src/Translations.cpp
         src/components/metering/MeterComponent.h
         src/components/metering/MeterComponent.cpp
         src/components/metering/ChannelBar.h
@@ -61,6 +63,8 @@ target_link_libraries(
         PUBLIC ${MODULE_LINK_CONF})
 
 target_compile_options(${BINARY} INTERFACE -Wall -Wextra -Werror)
+
+embed_resources(${BINARY} translations/en.translate)
 
 # ##############################################################################
 # TEST
