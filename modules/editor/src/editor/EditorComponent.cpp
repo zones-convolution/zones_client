@@ -6,7 +6,6 @@ EditorComponent::EditorComponent (
     : realtime_parameter_context_ (realtime_parameter_context)
     , ir_engine_parameter_context_ (ir_engine_parameter_context)
 {
-    addAndMakeVisible (graph3d_component_);
     addAndMakeVisible (room_size_slider_);
     addAndMakeVisible (room_size_label_);
     addAndMakeVisible (reverb_time_slider_);
@@ -69,8 +68,6 @@ void EditorComponent::resized ()
     juce::FlexBox layout;
     layout.flexDirection = juce::FlexBox::Direction::column;
 
-    layout.items.add (juce::FlexItem (graph3d_component_).withFlex (8.f));
-    layout.items.add (LookAndFeel::kFlexSpacer);
     layout.items.add (LookAndFeel::LabelFlexItem (room_size_label_));
     layout.items.add (LookAndFeel::kFlexSpacer);
     layout.items.add (juce::FlexItem (room_size_slider_).withFlex (1.f));
@@ -98,5 +95,5 @@ void EditorComponent::RenderFinished (IrGraphState state,
                                       IrGraphProcessor::BoxedBuffer render_result)
 {
     juce::dsp::AudioBlock<const float> render_block {render_result.get ()};
-    graph3d_component_.SetAudioBlock (render_block);
+    //     graph3d_component_.SetAudioBlock (render_block);
 }

@@ -2,19 +2,6 @@
 
 #include <tinycolormap.hpp>
 
-// juce::AudioFormatManager audio_format_manager;
-// audio_format_manager.registerBasicFormats ();
-//
-// auto ir_file = juce::File (kTestAudioPath.string ());
-//
-// juce::AudioBuffer<float> audio_buffer;
-// std::unique_ptr<juce::AudioFormatReader> reader (
-//     audio_format_manager.createReaderFor (ir_file));
-// auto sample_rate = reader->sampleRate;
-// auto bit_depth = reader->bitsPerSample;
-// audio_buffer.setSize (reader->numChannels, reader->lengthInSamples);
-// reader->read (&audio_buffer, 0, reader->lengthInSamples, 0, true, true);
-
 static juce::Colour ConvertToJuceColour (const tinycolormap::Color & color)
 {
     return juce::Colour::fromFloatRGBA (static_cast<float> (color.r ()),
