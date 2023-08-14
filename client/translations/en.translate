@@ -2,6 +2,7 @@ language: English
 countries: en
 
 # PARAMETERS
+"io_panel" = "IO"
 "dry_wet_parameter" = "Dry/Wet"
 "input_gain_parameter" = "Input"
 "output_gain_parameter" = "Output"

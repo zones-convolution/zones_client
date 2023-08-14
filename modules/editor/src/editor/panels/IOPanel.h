@@ -9,9 +9,12 @@ public:
     void resized () override;
 
 private:
+    static const std::string kIOPanelKey;
     static const std::string kDryWetKey;
     static const std::string kInputGainKey;
     static const std::string kOutputGainKey;
+
+    juce::Label io_label_;
 
     juce::Label dry_wet_label_;
     juce::Slider dry_wet_mix_slider_ {juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag,
