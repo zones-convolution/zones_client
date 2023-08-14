@@ -205,15 +205,11 @@ juce::FlexItem LookAndFeel::ButtonFlexItem (juce::Component & button)
 
 juce::FlexItem LookAndFeel::LabelFlexItem (juce::Label & label)
 {
-    auto & label_feel = label.getLookAndFeel ();
-    auto label_font = label_feel.getLabelFont (label);
-    auto border_size = label.getBorderSize ();
+    auto label_bounds = GetLabelBounds (label);
 
-    auto label_width =
-        label_font.getStringWidthFloat (label.getText ()) + border_size.getLeftAndRight ();
-    auto label_height = label_font.getHeight () + border_size.getTopAndBottom ();
-
-    return juce::FlexItem (label).withHeight (label_height).withWidth (label_width);
+    return juce::FlexItem (label)
+        .withHeight (label_bounds.getHeight ())
+        .withWidth (label_bounds.getWidth ());
 }
 
 juce::FlexItem LookAndFeel::ComboFlexItem (juce::Component & combo)
@@ -230,4 +226,16 @@ void LookAndFeel::drawBubble (juce::Graphics & graphics,
     graphics.setColour (bubble_colour);
 
     graphics.fillRoundedRectangle (body.expanded (kPadding), kRounding);
+}
+juce::Rectangle<float> LookAndFeel::GetLabelBounds (juce::Label & label)
+{
+    auto & label_feel = label.getLookAndFeel ();
+    auto label_font = label_feel.getLabelFont (label);
+    auto border_size = label.getBorderSize ();
+
+    auto label_width =
+        label_font.getStringWidthFloat (label.getText ()) + border_size.getLeftAndRight ();
+    auto label_height = label_font.getHeight () + border_size.getTopAndBottom ();
+
+    return {label_width, label_height};
 }

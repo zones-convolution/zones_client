@@ -43,7 +43,6 @@ private:
     LookAndFeel look_and_feel_;
 
     EditorComponent editor_;
-    PanelComponent editor_panel_ {editor_};
 
     BrowserComponent browser_;
     PanelComponent browser_panel_ {browser_};

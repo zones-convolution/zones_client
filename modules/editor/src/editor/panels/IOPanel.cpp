@@ -46,27 +46,21 @@ IOPanel::IOPanel ()
 
 void IOPanel::resized ()
 {
-    juce::FlexBox slider_layout;
-    slider_layout.flexDirection = juce::FlexBox::Direction::row;
-    slider_layout.items.add (juce::FlexItem (dry_wet_mix_slider_).withFlex (1.f));
-    slider_layout.items.add (LookAndFeel::kFlexSpacer);
-    slider_layout.items.add (juce::FlexItem (input_gain_slider_).withFlex (1.f));
-    slider_layout.items.add (LookAndFeel::kFlexSpacer);
-    slider_layout.items.add (juce::FlexItem (output_gain_slider_).withFlex (1.f));
+    static const auto kTrack = juce::Grid::TrackInfo (juce::Grid::Fr (1));
 
-    juce::FlexBox label_layout;
-    label_layout.flexDirection = juce::FlexBox::Direction::row;
-    label_layout.items.add (juce::FlexItem (dry_wet_label_).withFlex (1.f));
-    label_layout.items.add (LookAndFeel::kFlexSpacer);
-    label_layout.items.add (juce::FlexItem (input_gain_label_).withFlex (1.f));
-    label_layout.items.add (LookAndFeel::kFlexSpacer);
-    label_layout.items.add (juce::FlexItem (output_gain_label_).withFlex (1.f));
+    juce::Grid layout;
+    auto labels_height = LookAndFeel::GetLabelBounds (dry_wet_label_).getHeight ();
+    auto labels_track = juce::Grid::TrackInfo (juce::Grid::Px (labels_height));
+    layout.templateRows = {kTrack, labels_track};
+    layout.templateColumns = {kTrack, kTrack, kTrack};
+    layout.setGap (juce::Grid::Px (LookAndFeel::kGap));
 
-    juce::FlexBox layout;
-    layout.flexDirection = juce::FlexBox::Direction::column;
-    layout.items.add (juce::FlexItem (slider_layout).withFlex (1.f));
-    layout.items.add (LookAndFeel::kFlexSpacer);
-    layout.items.add (juce::FlexItem (label_layout).withFlex (1.f));
+    layout.items.add (juce::GridItem (dry_wet_mix_slider_));
+    layout.items.add (juce::GridItem (input_gain_slider_));
+    layout.items.add (juce::GridItem (output_gain_slider_));
+    layout.items.add (juce::GridItem (dry_wet_label_));
+    layout.items.add (juce::GridItem (input_gain_label_));
+    layout.items.add (juce::GridItem (output_gain_label_));
 
-    layout.performLayout (getLocalBounds ().toFloat ());
+    layout.performLayout (getLocalBounds ());
 }

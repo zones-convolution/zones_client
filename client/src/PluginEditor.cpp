@@ -28,7 +28,7 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (
     setSize (1280, 600);
 
     tabs_controller_.AddTab ("browser", browser_panel_);
-    tabs_controller_.AddTab ("editor", editor_panel_);
+    tabs_controller_.AddTab ("editor", editor_);
     tabs_controller_.AddTab ("settings", settings_panel_);
 
     addAndMakeVisible (tabs_component_);

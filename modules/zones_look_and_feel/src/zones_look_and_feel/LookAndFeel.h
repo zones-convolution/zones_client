@@ -34,6 +34,8 @@ public:
     static constexpr float kComboHeight = 40.f;
     static juce::FlexItem ComboFlexItem (juce::Component & combo);
 
+    static juce::Rectangle<float> GetLabelBounds (juce::Label & label);
+
     enum ColourIds
     {
         kPanel,
