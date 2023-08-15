@@ -45,7 +45,7 @@ void AudioPluginAudioProcessorEditor::resized ()
     juce::FlexBox layout;
     layout.flexDirection = juce::FlexBox::Direction::row;
 
-    layout.items.add (juce::FlexItem (sidebar_component_).withWidth (300.f));
+    layout.items.add (juce::FlexItem (sidebar_component_).withWidth (250.f));
     layout.items.add (LookAndFeel::kFlexSpacer);
     layout.items.add (juce::FlexItem (tabs_component_).withFlex (1.f));
 

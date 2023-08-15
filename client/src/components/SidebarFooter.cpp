@@ -1,7 +1,7 @@
 #include "SidebarFooter.h"
 
-const PanelComponent::ColourPair SidebarFooter::kIrPanelGradient = {juce::Colours::green,
-                                                                    juce::Colours::aqua};
+const PanelComponent::ColourPair SidebarFooter::kIrPanelGradient = {juce::Colours::darkmagenta,
+                                                                    juce::Colours::darkorange};
 
 SidebarFooter::SidebarFooter (const lager::reader<CurrentProjectIrOptional> & project_ir_reader,
                               AudioGraphMetering & audio_graph_metering)
