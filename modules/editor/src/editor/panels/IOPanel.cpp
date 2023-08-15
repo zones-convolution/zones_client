@@ -8,6 +8,7 @@ const std::string IOPanel::kOutputGainKey = "output_gain_parameter";
 IOPanel::IOPanel ()
 {
     addAndMakeVisible (io_label_);
+    addAndMakeVisible (top_divider_);
     addAndMakeVisible (dry_wet_mix_slider_);
     addAndMakeVisible (dry_wet_label_);
     addAndMakeVisible (input_gain_slider_);
@@ -50,30 +51,26 @@ IOPanel::IOPanel ()
 
 void IOPanel::resized ()
 {
-    static const auto kTrack = juce::Grid::TrackInfo (juce::Grid::Fr (1));
+    auto dry_wet_layout = LookAndFeel::SliderLabelLayout (dry_wet_mix_slider_, dry_wet_label_);
+    auto input_gain_layout = LookAndFeel::SliderLabelLayout (input_gain_slider_, input_gain_label_);
+    auto output_gain_layout =
+        LookAndFeel::SliderLabelLayout (output_gain_slider_, output_gain_label_);
+
+    juce::FlexBox parameter_layout;
+    parameter_layout.flexDirection = juce::FlexBox::Direction::row;
+
+    parameter_layout.items.add (juce::FlexItem (dry_wet_layout).withFlex (1.f));
+    parameter_layout.items.add (juce::FlexItem (input_gain_layout).withFlex (1.f));
+    parameter_layout.items.add (juce::FlexItem (output_gain_layout).withFlex (1.f));
 
     juce::FlexBox layout;
     layout.flexDirection = juce::FlexBox::Direction::column;
 
     layout.items.add (LookAndFeel::LabelFlexItem (io_label_));
     layout.items.add (LookAndFeel::kFlexSpacer);
-    layout.items.add (juce::FlexItem ().withFlex (1.f));
+    layout.items.add (LookAndFeel::HorizontalDividerFlexItem (top_divider_));
+    layout.items.add (LookAndFeel::kFlexSpacer);
+    layout.items.add (juce::FlexItem (parameter_layout).withFlex (1.f));
 
     layout.performLayout (getLocalBounds ().toFloat ());
-
-    juce::Grid grid_layout;
-    auto labels_height = LookAndFeel::GetLabelBounds (dry_wet_label_).getHeight ();
-    auto labels_track = juce::Grid::TrackInfo (juce::Grid::Px (labels_height));
-    grid_layout.templateRows = {kTrack, labels_track};
-    grid_layout.templateColumns = {kTrack, kTrack, kTrack};
-    grid_layout.setGap (juce::Grid::Px (LookAndFeel::kGap));
-
-    grid_layout.items.add (juce::GridItem (dry_wet_mix_slider_));
-    grid_layout.items.add (juce::GridItem (input_gain_slider_));
-    grid_layout.items.add (juce::GridItem (output_gain_slider_));
-    grid_layout.items.add (juce::GridItem (dry_wet_label_));
-    grid_layout.items.add (juce::GridItem (input_gain_label_));
-    grid_layout.items.add (juce::GridItem (output_gain_label_));
-
-    grid_layout.performLayout (layout.items [2].currentBounds.toNearestInt ());
 }

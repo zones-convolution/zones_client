@@ -10,6 +10,7 @@ LookAndFeel::LookAndFeel ()
     setColour (ColourIds::kPanel, juce::Colour (29, 32, 37));
     setColour (ColourIds::kPrimary, juce::Colour (149, 213, 178));
     setColour (ColourIds::kSecondary, juce::Colour (23, 26, 29));
+    setColour (ColourIds::kDivider, juce::Colours::white.withAlpha (kDividerAlpha));
 
     setColour (juce::ResizableWindow::backgroundColourId, juce::Colour (23, 26, 29));
 
@@ -216,6 +217,7 @@ juce::FlexItem LookAndFeel::ComboFlexItem (juce::Component & combo)
 {
     return juce::FlexItem (combo).withHeight (kComboHeight);
 }
+
 void LookAndFeel::drawBubble (juce::Graphics & graphics,
                               juce::BubbleComponent & component,
                               const juce::Point<float> & tip,
@@ -227,6 +229,7 @@ void LookAndFeel::drawBubble (juce::Graphics & graphics,
 
     graphics.fillRoundedRectangle (body.expanded (kPadding), kRounding);
 }
+
 juce::Rectangle<float> LookAndFeel::GetLabelBounds (juce::Label & label)
 {
     auto & label_feel = label.getLookAndFeel ();
@@ -238,4 +241,34 @@ juce::Rectangle<float> LookAndFeel::GetLabelBounds (juce::Label & label)
     auto label_height = label_font.getHeight () + border_size.getTopAndBottom ();
 
     return {label_width, label_height};
+}
+
+juce::FlexItem LookAndFeel::RotarySliderFlexItem (juce::Component & slider, float size)
+{
+    return juce::FlexItem (slider).withWidth (size).withHeight (size);
+}
+
+juce::FlexBox LookAndFeel::SliderLabelLayout (juce::Component & slider, juce::Label & label)
+{
+    juce::FlexBox layout;
+    layout.flexDirection = juce::FlexBox::Direction::column;
+    layout.justifyContent = juce::FlexBox::JustifyContent::center;
+    layout.alignItems = juce::FlexBox::AlignItems::center;
+
+    layout.items.add (
+        LookAndFeel::RotarySliderFlexItem (slider, LookAndFeel::kMediumRotarySliderSize));
+    layout.items.add (LookAndFeel::kFlexSpacer);
+    layout.items.add (LookAndFeel::LabelFlexItem (label));
+
+    return layout;
+}
+
+juce::FlexItem LookAndFeel::HorizontalDividerFlexItem (juce::Component & divider)
+{
+    return juce::FlexItem (divider).withHeight (kDividerThickness);
+}
+
+juce::FlexItem LookAndFeel::VerticalDividerFlexItem (juce::Component & divider)
+{
+    return juce::FlexItem (divider).withWidth (kDividerThickness);
 }

@@ -20,19 +20,30 @@ public:
 
     static constexpr float kComponentInset = 4.f;
 
+    static constexpr float kDividerAlpha = 0.1f;
+    static constexpr float kDividerThickness = 2.f;
+
     static constexpr float kHoverAlpha = 0.6f;
     static constexpr float kHoverBrightnessMultiplier = 0.1f;
 
     static const juce::FlexItem kFlexSpacer;
     static const juce::FlexItem kDoubleFlexSpacer;
 
-    static constexpr float kButtonHeight = 40.f;
+    static constexpr auto kButtonHeight = 40.f;
     static juce::FlexItem ButtonFlexItem (juce::Component & button);
 
     static juce::FlexItem LabelFlexItem (juce::Label & label);
 
-    static constexpr float kComboHeight = 40.f;
+    static juce::FlexItem HorizontalDividerFlexItem (juce::Component & divider);
+    static juce::FlexItem VerticalDividerFlexItem (juce::Component & divider);
+
+    static constexpr auto kComboHeight = 40.f;
     static juce::FlexItem ComboFlexItem (juce::Component & combo);
+
+    static constexpr auto kMediumRotarySliderSize = 80.f;
+    static juce::FlexItem RotarySliderFlexItem (juce::Component & slider, float size);
+
+    static juce::FlexBox SliderLabelLayout (juce::Component & slider, juce::Label & label);
 
     static juce::Rectangle<float> GetLabelBounds (juce::Label & label);
 
@@ -40,7 +51,8 @@ public:
     {
         kPanel,
         kPrimary,
-        kSecondary
+        kSecondary,
+        kDivider
     };
     void drawBubble (juce::Graphics & graphics,
                      juce::BubbleComponent & component,

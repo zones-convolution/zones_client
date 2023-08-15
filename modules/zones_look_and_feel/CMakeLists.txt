@@ -8,6 +8,8 @@ zones_add_module(
         src/zones_look_and_feel/components/PanelComponent.cpp
         src/zones_look_and_feel/components/LogoComponent.h
         src/zones_look_and_feel/components/LogoComponent.cpp
+        src/zones_look_and_feel/components/DividerComponent.h
+        src/zones_look_and_feel/components/DividerComponent.cpp
         DEPS
         juce::juce_gui_basics)
 
