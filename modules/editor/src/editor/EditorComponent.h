@@ -3,6 +3,8 @@
 #include "ir_engine/IrEngine.h"
 #include "model/ParameterAction.h"
 #include "panels/IOPanel.h"
+#include "panels/IrEnginePanel.h"
+#include "panels/VisualiserPanel.h"
 #include "spectrogram_visualiser/component/Graph3DComponent.h"
 #include "zones_look_and_feel/LookAndFeel.h"
 #include "zones_look_and_feel/components/PanelComponent.h"
@@ -23,16 +25,12 @@ public:
     void RenderFinished (IrGraphState state, IrGraphProcessor::BoxedBuffer render_result) override;
 
 private:
-    lager::context<RealtimeParameterAction> realtime_parameter_context_;
-    lager::context<IrEngineParameterAction> ir_engine_parameter_context_;
-
-    juce::Label room_size_label_;
-    juce::Slider room_size_slider_ {juce::Slider::SliderStyle::LinearHorizontal,
-                                    juce::Slider::TextEntryBoxPosition::NoTextBox};
-    juce::Label reverb_time_label_;
-    juce::Slider reverb_time_slider_ {juce::Slider::SliderStyle::LinearHorizontal,
-                                      juce::Slider::TextEntryBoxPosition::NoTextBox};
-
     IOPanel io_;
     PanelComponent io_panel_ {io_};
+
+    VisualiserPanel visualiser_;
+    PanelComponent visualiser_panel_ {visualiser_};
+
+    IrEnginePanel ir_engine_;
+    PanelComponent ir_engine_panel_ {ir_engine_};
 };

@@ -1,12 +1,14 @@
+#include "model/ParameterAction.h"
 #include "zones_look_and_feel/LookAndFeel.h"
 #include "zones_look_and_feel/components/DividerComponent.h"
 
 #include <juce_gui_basics/juce_gui_basics.h>
+#include <lager/context.hpp>
 
 class IOPanel : public juce::Component
 {
 public:
-    IOPanel ();
+    IOPanel (lager::context<RealtimeParameterAction> & realtime_parameter_context);
     void resized () override;
 
 private:
@@ -14,9 +16,7 @@ private:
     static const std::string kDryWetKey;
     static const std::string kInputGainKey;
     static const std::string kOutputGainKey;
-
-    static juce::FlexBox BuildSliderLabelLayout (juce::Component & slider, juce::Label & label);
-
+    
     juce::Label io_label_;
     DividerComponent top_divider_;
 

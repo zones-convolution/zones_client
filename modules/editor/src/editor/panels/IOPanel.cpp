@@ -5,7 +5,7 @@ const std::string IOPanel::kDryWetKey = "dry_wet_parameter";
 const std::string IOPanel::kInputGainKey = "input_gain_parameter";
 const std::string IOPanel::kOutputGainKey = "output_gain_parameter";
 
-IOPanel::IOPanel ()
+IOPanel::IOPanel (lager::context<RealtimeParameterAction> & realtime_parameter_context)
 {
     addAndMakeVisible (io_label_);
     addAndMakeVisible (top_divider_);
@@ -24,8 +24,8 @@ IOPanel::IOPanel ()
     dry_wet_mix_slider_.setPopupDisplayEnabled (true, true, getTopLevelComponent ());
     dry_wet_mix_slider_.onValueChange = [&]
     {
-        //        realtime_parameter_context_.dispatch (
-        //            UpdateDryWetMix (static_cast<float> (dry_wet_mix_slider_.getValue ())));
+        realtime_parameter_context.dispatch (
+            UpdateDryWetMix (static_cast<float> (dry_wet_mix_slider_.getValue ())));
     };
 
     input_gain_label_.setText (juce::translate (kInputGainKey), juce::dontSendNotification);
@@ -34,8 +34,8 @@ IOPanel::IOPanel ()
     input_gain_slider_.setPopupDisplayEnabled (true, true, getTopLevelComponent ());
     input_gain_slider_.onValueChange = [&]
     {
-        //        realtime_parameter_context_.dispatch (
-        //            UpdateInputGain (static_cast<float> (input_gain_slider_.getValue ())));
+        realtime_parameter_context.dispatch (
+            UpdateInputGain (static_cast<float> (input_gain_slider_.getValue ())));
     };
 
     output_gain_label_.setText (juce::translate (kOutputGainKey), juce::dontSendNotification);
@@ -44,8 +44,8 @@ IOPanel::IOPanel ()
     output_gain_slider_.setPopupDisplayEnabled (true, true, getTopLevelComponent ());
     output_gain_slider_.onValueChange = [&]
     {
-        //        realtime_parameter_context_.dispatch (
-        //            UpdateOutputGain (static_cast<float> (output_gain_slider_.getValue ())));
+        realtime_parameter_context.dispatch (
+            UpdateOutputGain (static_cast<float> (output_gain_slider_.getValue ())));
     };
 }
 
