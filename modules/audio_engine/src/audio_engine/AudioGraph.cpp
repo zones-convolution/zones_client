@@ -19,8 +19,8 @@ void AudioGraph::process (const juce::dsp::ProcessContextReplacing<float> & repl
     auto input_block = replacing.getInputBlock ();
     auto output_block = replacing.getOutputBlock ();
 
-    dry_wet_mixer_.pushDrySamples (replacing.getInputBlock ());
     output_block.multiplyBy (input_gain_);
+    dry_wet_mixer_.pushDrySamples (replacing.getInputBlock ());
     processor_chain_.process (replacing);
     dry_wet_mixer_.mixWetSamples (replacing.getOutputBlock ());
     output_block.multiplyBy (output_gain_);
