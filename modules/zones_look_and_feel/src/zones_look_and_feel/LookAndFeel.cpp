@@ -1,5 +1,8 @@
 #include "LookAndFeel.h"
 
+extern "C" const char assets_boxicons_ttf [];
+extern "C" const unsigned assets_boxicons_ttf_size;
+
 const juce::FlexItem LookAndFeel::kFlexSpacer =
     juce::FlexItem ().withHeight (kGap).withWidth (kGap);
 const juce::FlexItem LookAndFeel::kDoubleFlexSpacer =
@@ -24,6 +27,10 @@ LookAndFeel::LookAndFeel ()
 }
 
 static const auto kDefaultFont = juce::Font ("DM Sans", 20.f, juce::Font::FontStyleFlags::bold);
+static const auto kBoxIconsTypeface =
+    juce::Typeface::createSystemTypefaceFor (assets_boxicons_ttf, assets_boxicons_ttf_size);
+
+static const juce::Font kBoxIconsFont {kBoxIconsTypeface};
 
 juce::Font LookAndFeel::getLabelFont (juce::Label & label)
 {
@@ -271,4 +278,13 @@ juce::FlexItem LookAndFeel::HorizontalDividerFlexItem (juce::Component & divider
 juce::FlexItem LookAndFeel::VerticalDividerFlexItem (juce::Component & divider)
 {
     return juce::FlexItem (divider).withWidth (kDividerThickness);
+}
+
+void LookAndFeel::DrawBoxIcon (juce::Graphics & graphics,
+                               const juce::String & icon,
+                               const juce::Rectangle<int> & bounds)
+{
+    graphics.setFont (kBoxIconsFont);
+    graphics.setFont (juce::jmin (bounds.getHeight (), bounds.getWidth ()));
+    graphics.drawFittedText (icon, bounds, juce::Justification::centred, 1);
 }

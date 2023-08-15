@@ -10,10 +10,14 @@ zones_add_module(
         src/zones_look_and_feel/components/LogoComponent.cpp
         src/zones_look_and_feel/components/DividerComponent.h
         src/zones_look_and_feel/components/DividerComponent.cpp
+        src/zones_look_and_feel/components/IconComponent.h
+        src/zones_look_and_feel/components/IconComponent.cpp
+        src/zones_look_and_feel/BoxIcons.h
+        src/zones_look_and_feel/BoxIcons.cpp
         DEPS
         juce::juce_gui_basics)
 
-embed_resources(zones_look_and_feel assets/zones_light.svg)
+embed_resources(zones_look_and_feel assets/zones_light.svg assets/boxicons.ttf)
 
 juce_add_gui_app(storyboard
         PRODUCT_NAME "storyboard")

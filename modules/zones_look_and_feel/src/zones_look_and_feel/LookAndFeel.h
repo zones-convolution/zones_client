@@ -102,4 +102,8 @@ public:
 
     juce::PopupMenu::Options getOptionsForComboBoxPopupMenu (juce::ComboBox & box,
                                                              juce::Label & label) override;
+
+    static void DrawBoxIcon (juce::Graphics & graphics,
+                             const juce::String & icon,
+                             const juce::Rectangle<int> & bounds);
 };
