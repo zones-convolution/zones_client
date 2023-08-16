@@ -5,7 +5,7 @@ SidebarHeader::SidebarHeader ()
     addAndMakeVisible (logo_component_);
     addAndMakeVisible (icon_sad_);
 
-    icon_sad_.SetIcon (BoxIcons::kBxSad);
+    icon_sad_.SetIcon (BoxIcons::kBxHappy);
 }
 
 void SidebarHeader::resized ()

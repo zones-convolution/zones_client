@@ -255,6 +255,21 @@ juce::FlexItem LookAndFeel::RotarySliderFlexItem (juce::Component & slider, floa
     return juce::FlexItem (slider).withWidth (size).withHeight (size);
 }
 
+juce::FlexItem LookAndFeel::SmallIconFlexItem (juce::Component & icon)
+{
+    return juce::FlexItem (icon).withWidth (kSmallIconSize).withHeight (kSmallIconSize);
+}
+
+juce::FlexItem LookAndFeel::MediumIconFlexItem (juce::Component & icon)
+{
+    return juce::FlexItem (icon).withWidth (kMediumIconSize).withHeight (kMediumIconSize);
+}
+
+juce::FlexItem LookAndFeel::LargeIconFlexItem (juce::Component & icon)
+{
+    return juce::FlexItem (icon).withWidth (kLargeIconSize).withHeight (kLargeIconSize);
+}
+
 juce::FlexBox LookAndFeel::SliderLabelLayout (juce::Component & slider, juce::Label & label)
 {
     juce::FlexBox layout;

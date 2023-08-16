@@ -43,6 +43,15 @@ public:
     static constexpr auto kMediumRotarySliderSize = 80.f;
     static juce::FlexItem RotarySliderFlexItem (juce::Component & slider, float size);
 
+    static constexpr auto kSmallIconSize = 10.f;
+    static juce::FlexItem SmallIconFlexItem (juce::Component & icon);
+
+    static constexpr auto kMediumIconSize = 20.f;
+    static juce::FlexItem MediumIconFlexItem (juce::Component & icon);
+
+    static constexpr auto kLargeIconSize = 40.f;
+    static juce::FlexItem LargeIconFlexItem (juce::Component & icon);
+
     static juce::FlexBox SliderLabelLayout (juce::Component & slider, juce::Label & label);
 
     static juce::Rectangle<float> GetLabelBounds (juce::Label & label);

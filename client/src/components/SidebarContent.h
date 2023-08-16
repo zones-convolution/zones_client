@@ -1,6 +1,8 @@
 #pragma once
 #include "layout/tabs/TabsAction.h"
+#include "zones_look_and_feel/BoxIcons.h"
 #include "zones_look_and_feel/LookAndFeel.h"
+#include "zones_look_and_feel/components/IconTextButton.h"
 
 #include <juce_gui_basics/juce_gui_basics.h>
 
@@ -11,9 +13,9 @@ public:
     void resized () override;
 
 private:
-    juce::TextButton browse_button_ {"Browse"};
-    juce::TextButton edit_button_ {"Edit"};
-    juce::TextButton settings_button_ {"Settings"};
+    IconTextButton browse_button_ {"Browse", BoxIcons::kBxSearch};
+    IconTextButton edit_button_ {"Edit", BoxIcons::kBxEdit};
+    IconTextButton settings_button_ {"Settings", BoxIcons::kBxCog};
 
     lager::context<TabsAction> tabs_context_;
 };

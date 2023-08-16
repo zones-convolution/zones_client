@@ -12,6 +12,8 @@ zones_add_module(
         src/zones_look_and_feel/components/DividerComponent.cpp
         src/zones_look_and_feel/components/IconComponent.h
         src/zones_look_and_feel/components/IconComponent.cpp
+        src/zones_look_and_feel/components/IconTextButton.h
+        src/zones_look_and_feel/components/IconTextButton.cpp
         src/zones_look_and_feel/BoxIcons.h
         src/zones_look_and_feel/BoxIcons.cpp
         DEPS
