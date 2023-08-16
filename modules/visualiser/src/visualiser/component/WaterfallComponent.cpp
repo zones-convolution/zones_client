@@ -1,6 +1,6 @@
-#include "Graph3DComponent.h"
+#include "WaterfallComponent.h"
 
-Graph3DComponent::Graph3DComponent ()
+WaterfallComponent::WaterfallComponent ()
 {
     SetupOpenGl ();
 
@@ -30,13 +30,13 @@ Graph3DComponent::Graph3DComponent ()
     { graph3d_renderer_.offset_y_ = (float) offset_y_slider_.getValue (); };
 }
 
-Graph3DComponent::~Graph3DComponent ()
+WaterfallComponent::~WaterfallComponent ()
 {
     open_gl_context_.setContinuousRepainting (false);
     open_gl_context_.detach ();
 }
 
-void Graph3DComponent::SetupOpenGl ()
+void WaterfallComponent::SetupOpenGl ()
 {
     setOpaque (true);
     open_gl_context_.setOpenGLVersionRequired (juce::OpenGLContext::openGL4_1);
@@ -50,7 +50,7 @@ void Graph3DComponent::SetupOpenGl ()
     open_gl_context_.setContinuousRepainting (true);
 }
 
-void Graph3DComponent::resized ()
+void WaterfallComponent::resized ()
 {
     draggable_orientation_.SetBounds (getLocalBounds ());
 
@@ -71,22 +71,22 @@ void Graph3DComponent::resized ()
     layout.performLayout (getLocalBounds ().toFloat ());
 }
 
-void Graph3DComponent::mouseDown (const juce::MouseEvent & event)
+void WaterfallComponent::mouseDown (const juce::MouseEvent & event)
 {
     draggable_orientation_.MouseDown (event.getPosition ().toFloat ());
 }
 
-void Graph3DComponent::mouseDrag (const juce::MouseEvent & event)
+void WaterfallComponent::mouseDrag (const juce::MouseEvent & event)
 {
     draggable_orientation_.MouseDrag (event.getPosition ().toFloat ());
 }
 
-void Graph3DComponent::paint (juce::Graphics & g)
+void WaterfallComponent::paint (juce::Graphics & g)
 {
     juce::ignoreUnused (g);
 }
 
-void Graph3DComponent::SetAudioBlock (const juce::dsp::AudioBlock<const float> audio_block)
+void WaterfallComponent::SetAudioBlock (const juce::dsp::AudioBlock<const float> audio_block)
 {
     graph3d_renderer_.SetupGraphTexture (audio_block);
 }

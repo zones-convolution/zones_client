@@ -18,5 +18,5 @@ void Visualisers::resized ()
     layout.items.add (LookAndFeel::kFlexSpacer);
     layout.items.add (juce::FlexItem (graph3d_component_).withFlex (1.f));
 
-    layout.performLayout (getLocalBounds ());
+    layout.performLayout (getLocalBounds ().toFloat ());
 }

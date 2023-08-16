@@ -8,11 +8,11 @@
 #include <juce_gui_basics/juce_gui_basics.h>
 #include <juce_opengl/juce_opengl.h>
 
-class Graph3DComponent : public juce::Component
+class WaterfallComponent : public juce::Component
 {
 public:
-    explicit Graph3DComponent ();
-    ~Graph3DComponent () override;
+    explicit WaterfallComponent ();
+    ~WaterfallComponent () override;
 
     void resized () override;
     void paint (juce::Graphics & g) override;
@@ -39,5 +39,5 @@ private:
     juce::Slider offset_y_slider_ {juce::Slider::SliderStyle::LinearHorizontal,
                                    juce::Slider::TextEntryBoxPosition::NoTextBox};
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Graph3DComponent)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (WaterfallComponent)
 };

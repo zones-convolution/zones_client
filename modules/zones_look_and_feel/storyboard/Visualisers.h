@@ -1,5 +1,5 @@
 #pragma once
-#include "visualiser/component/Graph3DComponent.h"
+#include "visualiser/component/WaterfallComponent.h"
 #include "zones_look_and_feel/LookAndFeel.h"
 
 #include <juce_gui_basics/juce_gui_basics.h>
@@ -12,5 +12,5 @@ public:
 
 private:
     juce::Label visualisers_label_;
-    Graph3DComponent graph3d_component_;
+    WaterfallComponent graph3d_component_;
 };

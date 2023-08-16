@@ -1,8 +1,8 @@
 zones_add_module(
         MODULE visualiser
         SOURCES
-        src/visualiser/component/Graph3DComponent.h
-        src/visualiser/component/Graph3DComponent.cpp
+        src/visualiser/component/WaterfallComponent.h
+        src/visualiser/component/WaterfallComponent.cpp
         src/visualiser/component/DraggableOrientation.h
         src/visualiser/component/DraggableOrientation.cpp
         src/visualiser/renderer/Graph3DRenderer.h
