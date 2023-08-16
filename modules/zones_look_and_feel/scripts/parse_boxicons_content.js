@@ -11,7 +11,7 @@ const ToPascalCase = (str) => {
 }
 
 const BuildGoogleStyleConstant = (str) => {
-    return ToPascalCase(`k${ToPascalCase(str)}`);
+    return `k${ToPascalCase(str)}`;
 }
 
 
