@@ -22,7 +22,7 @@ const FillHeaderTemplate = (str) => {
 struct BoxIcons
 {
 ${str}
-}
+};
 `
 }
 

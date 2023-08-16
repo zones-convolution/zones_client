@@ -1637,4 +1637,4 @@ struct BoxIcons
     static const juce::String KBxsZap;
     static const juce::String KBxsZoomIn;
     static const juce::String KBxsZoomOut;
-}
+};
