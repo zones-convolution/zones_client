@@ -1,9 +1,6 @@
 zones_add_module(
         MODULE visualiser
-        SOURCES src/visualiser/component/Osc2DComponent.h
-        src/visualiser/component/Osc2DComponent.cpp
-        src/visualiser/component/GraphComponent.h
-        src/visualiser/component/GraphComponent.cpp
+        SOURCES
         src/visualiser/component/Graph3DComponent.h
         src/visualiser/component/Graph3DComponent.cpp
         src/visualiser/component/DraggableOrientation.h
