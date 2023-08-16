@@ -1,0 +1,36 @@
+zones_add_module(
+        MODULE visualiser
+        SOURCES src/visualiser/component/Osc2DComponent.h
+        src/visualiser/component/Osc2DComponent.cpp
+        src/visualiser/component/GraphComponent.h
+        src/visualiser/component/GraphComponent.cpp
+        src/visualiser/component/Graph3DComponent.h
+        src/visualiser/component/Graph3DComponent.cpp
+        src/visualiser/component/DraggableOrientation.h
+        src/visualiser/component/DraggableOrientation.cpp
+        src/visualiser/renderer/Graph3DRenderer.h
+        src/visualiser/renderer/Graph3DRenderer.cpp
+        src/visualiser/renderer/Spectrogram.h
+        src/visualiser/renderer/Spectrogram.cpp
+        src/visualiser/gl/GLUtils.h
+        src/visualiser/gl/VertexBuffer.h
+        src/visualiser/gl/VertexBuffer.cpp
+        src/visualiser/gl/IndexBuffer.h
+        src/visualiser/gl/IndexBuffer.cpp
+        src/visualiser/gl/VertexArray.h
+        src/visualiser/gl/VertexArray.cpp
+        src/visualiser/gl/VertexBufferLayout.h
+        DEPS juce::juce_gui_basics juce::juce_opengl zones_look_and_feel juce::juce_audio_basics juce::juce_dsp juce::juce_audio_formats glm tinycolormap immer
+)
+
+embed_resources(visualiser
+        shaders/osc_2d.frag.glsl
+        shaders/osc_2d.vert.glsl
+        shaders/graph.frag.glsl
+        shaders/graph.vert.glsl
+        shaders/graph3d.frag.glsl
+        shaders/graph3d.vert.glsl)
+
+target_compile_definitions(
+        visualiser
+        PUBLIC "SHADER_DIRECTORY=\"${CMAKE_CURRENT_SOURCE_DIR}/shaders/\"" "TEST_AUDIO_DIRECTORY=\"${CMAKE_CURRENT_SOURCE_DIR}/test_audio/\"")

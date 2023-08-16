@@ -1,7 +1,7 @@
 add_subdirectory(zones_test_module)
 add_subdirectory(zones_look_and_feel)
 add_subdirectory(zones_api)
-add_subdirectory(spectrogram_visualiser)
+add_subdirectory(visualiser)
 add_subdirectory(ir_repository)
 add_subdirectory(ir_engine)
 add_subdirectory(audio_engine)

@@ -1,7 +1,7 @@
 #pragma once
-#include "spectrogram_visualiser/component/Graph3DComponent.h"
-#include "spectrogram_visualiser/component/GraphComponent.h"
-#include "spectrogram_visualiser/component/Osc2DComponent.h"
+#include "visualiser/component/Graph3DComponent.h"
+#include "visualiser/component/GraphComponent.h"
+#include "visualiser/component/Osc2DComponent.h"
 #include "zones_look_and_feel/LookAndFeel.h"
 
 #include <juce_gui_basics/juce_gui_basics.h>
