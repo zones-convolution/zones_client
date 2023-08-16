@@ -1,4 +1,4 @@
-#include "Graph3DRenderer.h"
+#include "WaterfallRenderer.h"
 
 #include "zones_look_and_feel/LookAndFeel.h"
 
@@ -12,7 +12,7 @@
 const std::filesystem::path kTestAudioDirectory = TEST_AUDIO_DIRECTORY;
 
 #if JUCE_DEBUG
-const std::filesystem::path Graph3DRenderer::kShaderDirectory = SHADER_DIRECTORY;
+const std::filesystem::path WaterfallRenderer::kShaderDirectory = SHADER_DIRECTORY;
 #else
 extern "C" const char shaders_graph3d_frag_glsl [];
 extern "C" const unsigned shaders_graph3d_frag_glsl_size;
@@ -21,8 +21,8 @@ extern "C" const char shaders_graph3d_vert_glsl [];
 extern "C" const unsigned shaders3d_graph_vert_glsl_size;
 #endif
 
-Graph3DRenderer::Graph3DRenderer (juce::OpenGLContext & open_gl_context,
-                                  DraggableOrientation & draggable_orientation)
+WaterfallRenderer::WaterfallRenderer (juce::OpenGLContext & open_gl_context,
+                                      DraggableOrientation & draggable_orientation)
     : draggable_orientation_ (draggable_orientation)
     , open_gl_context_ (open_gl_context)
 {
@@ -31,7 +31,7 @@ Graph3DRenderer::Graph3DRenderer (juce::OpenGLContext & open_gl_context,
 static constexpr size_t kVertexBufferSize = 110;
 static constexpr size_t kVertexBufferSizeM1 = kVertexBufferSize - 1;
 
-void Graph3DRenderer::newOpenGLContextCreated ()
+void WaterfallRenderer::newOpenGLContextCreated ()
 {
     //    GLCall (juce::gl::glEnable (juce::gl::GL_BLEND));
     //    GLCall (juce::gl::glBlendFunc (juce::gl::GL_SRC_ALPHA, juce::gl::GL_ONE_MINUS_SRC_ALPHA));
@@ -92,7 +92,7 @@ void Graph3DRenderer::newOpenGLContextCreated ()
     vertex_array_->AddBuffer (*vertex_buffer_, vertex_buffer_layout);
 }
 
-void Graph3DRenderer::SetupGraphTexture (const juce::dsp::AudioBlock<const float> block)
+void WaterfallRenderer::SetupGraphTexture (const juce::dsp::AudioBlock<const float> block)
 {
     auto spectrogram = Spectrogram::CreateSpectrogram (block).rescaled (1024, 1024);
     texture_ = spectrogram;
@@ -109,7 +109,7 @@ void Graph3DRenderer::SetupGraphTexture (const juce::dsp::AudioBlock<const float
     //    writer.writeImageToStream (spectrogram, stream);
 }
 
-void Graph3DRenderer::SetupTexture ()
+void WaterfallRenderer::SetupTexture ()
 {
     if (texture_.has_value ())
     {
@@ -159,7 +159,7 @@ Smoothed (float current_value, float target_value, float speed_factor, float del
     return current_value + (target_value - current_value) * speed_factor * delta_time;
 }
 
-void Graph3DRenderer::renderOpenGL ()
+void WaterfallRenderer::renderOpenGL ()
 {
     jassert (juce::OpenGLHelpers::isContextActive ());
     juce::OpenGLHelpers::clear (
@@ -220,7 +220,7 @@ void Graph3DRenderer::renderOpenGL ()
     vertex_array_->Unbind ();
 }
 
-void Graph3DRenderer::openGLContextClosing ()
+void WaterfallRenderer::openGLContextClosing ()
 {
     vertex_buffer_.reset ();
     index_buffer_graph_.reset ();
@@ -234,7 +234,7 @@ void Graph3DRenderer::openGLContextClosing ()
     uniform_colour_.reset ();
 }
 
-void Graph3DRenderer::CreateShaders ()
+void WaterfallRenderer::CreateShaders ()
 {
     juce::SpinLock::ScopedTryLockType lock (shader_mutex_);
     if (! lock.isLocked ())
@@ -272,7 +272,7 @@ void Graph3DRenderer::CreateShaders ()
     }
 }
 
-void Graph3DRenderer::UpdateShaders ()
+void WaterfallRenderer::UpdateShaders ()
 {
     juce::SpinLock::ScopedLockType lock (shader_mutex_);
 

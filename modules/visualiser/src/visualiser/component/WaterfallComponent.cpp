@@ -8,26 +8,26 @@ WaterfallComponent::WaterfallComponent ()
     status_label_.setJustificationType (juce::Justification::topLeft);
 
     addAndMakeVisible (refresh_button_);
-    refresh_button_.onClick = [&] () { graph3d_renderer_.UpdateShaders (); };
-    graph3d_renderer_.UpdateShaders ();
+    refresh_button_.onClick = [&] () { waterfall_renderer_.UpdateShaders (); };
+    waterfall_renderer_.UpdateShaders ();
 
     addAndMakeVisible (scale_slider_);
     scale_slider_.setRange ({0.f, 1.f}, 0.f);
     scale_slider_.setValue (1.f);
     scale_slider_.onValueChange = [&] ()
-    { graph3d_renderer_.scale_ = (float) scale_slider_.getValue (); };
+    { waterfall_renderer_.scale_ = (float) scale_slider_.getValue (); };
 
     addAndMakeVisible (offset_x_slider_);
     offset_x_slider_.setRange ({-1.f, 1.f}, 0.f);
     offset_x_slider_.setValue (0.f);
     offset_x_slider_.onValueChange = [&] ()
-    { graph3d_renderer_.offset_x_ = (float) offset_x_slider_.getValue (); };
+    { waterfall_renderer_.offset_x_ = (float) offset_x_slider_.getValue (); };
 
     addAndMakeVisible (offset_y_slider_);
     offset_y_slider_.setRange ({-1.f, 1.f}, 0.f);
     offset_y_slider_.setValue (0.f);
     offset_y_slider_.onValueChange = [&] ()
-    { graph3d_renderer_.offset_y_ = (float) offset_y_slider_.getValue (); };
+    { waterfall_renderer_.offset_y_ = (float) offset_y_slider_.getValue (); };
 }
 
 WaterfallComponent::~WaterfallComponent ()
@@ -45,7 +45,7 @@ void WaterfallComponent::SetupOpenGl ()
         peer->setCurrentRenderingEngine (0);
 
     open_gl_context_.setComponentPaintingEnabled (true);
-    open_gl_context_.setRenderer (&graph3d_renderer_);
+    open_gl_context_.setRenderer (&waterfall_renderer_);
     open_gl_context_.attachTo (*this);
     open_gl_context_.setContinuousRepainting (true);
 }
@@ -88,5 +88,5 @@ void WaterfallComponent::paint (juce::Graphics & g)
 
 void WaterfallComponent::SetAudioBlock (const juce::dsp::AudioBlock<const float> audio_block)
 {
-    graph3d_renderer_.SetupGraphTexture (audio_block);
+    waterfall_renderer_.SetupGraphTexture (audio_block);
 }

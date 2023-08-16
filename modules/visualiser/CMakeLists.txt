@@ -5,8 +5,8 @@ zones_add_module(
         src/visualiser/component/WaterfallComponent.cpp
         src/visualiser/component/DraggableOrientation.h
         src/visualiser/component/DraggableOrientation.cpp
-        src/visualiser/renderer/Graph3DRenderer.h
-        src/visualiser/renderer/Graph3DRenderer.cpp
+        src/visualiser/renderer/WaterfallRenderer.h
+        src/visualiser/renderer/WaterfallRenderer.cpp
         src/visualiser/renderer/Spectrogram.h
         src/visualiser/renderer/Spectrogram.cpp
         src/visualiser/gl/GLUtils.h

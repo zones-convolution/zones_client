@@ -9,13 +9,13 @@
 #include <filesystem>
 #include <juce_opengl/juce_opengl.h>
 
-class Graph3DRenderer : public juce::OpenGLRenderer
+class WaterfallRenderer : public juce::OpenGLRenderer
 {
 public:
-    Graph3DRenderer (juce::OpenGLContext & open_gl_context,
-                     DraggableOrientation & draggable_orientation);
+    WaterfallRenderer (juce::OpenGLContext & open_gl_context,
+                       DraggableOrientation & draggable_orientation);
 
-    ~Graph3DRenderer () override = default;
+    ~WaterfallRenderer () override = default;
     void newOpenGLContextCreated () override;
     void renderOpenGL () override;
     void openGLContextClosing () override;

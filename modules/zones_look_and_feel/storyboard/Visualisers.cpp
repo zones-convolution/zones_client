@@ -5,7 +5,7 @@ Visualisers::Visualisers ()
     visualisers_label_.setText ("Visualisers", juce::dontSendNotification);
     visualisers_label_.setJustificationType (juce::Justification::centred);
 
-    addAndMakeVisible (graph3d_component_);
+    addAndMakeVisible (waterfall_component_);
 }
 
 void Visualisers::resized ()
@@ -16,7 +16,7 @@ void Visualisers::resized ()
 
     layout.items.add (juce::FlexItem (visualisers_label_).withHeight (20.f));
     layout.items.add (LookAndFeel::kFlexSpacer);
-    layout.items.add (juce::FlexItem (graph3d_component_).withFlex (1.f));
+    layout.items.add (juce::FlexItem (waterfall_component_).withFlex (1.f));
 
     layout.performLayout (getLocalBounds ().toFloat ());
 }

@@ -12,5 +12,5 @@ public:
 
 private:
     juce::Label visualisers_label_;
-    WaterfallComponent graph3d_component_;
+    WaterfallComponent waterfall_component_;
 };

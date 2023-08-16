@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../renderer/Graph3DRenderer.h"
+#include "../renderer/WaterfallRenderer.h"
 #include "DraggableOrientation.h"
 #include "zones_look_and_feel/LookAndFeel.h"
 
@@ -28,7 +28,7 @@ private:
     DraggableOrientation draggable_orientation_;
 
     juce::OpenGLContext open_gl_context_;
-    Graph3DRenderer graph3d_renderer_ {open_gl_context_, draggable_orientation_};
+    WaterfallRenderer waterfall_renderer_ {open_gl_context_, draggable_orientation_};
 
     juce::Label status_label_;
     juce::TextButton refresh_button_ {"Refresh"};
