@@ -16,7 +16,6 @@ zones_add_module(
         immer
         audio_engine
         ir_engine
-        spectrogram_visualiser
 )
 
 zones_add_test(MODULE model SOURCES

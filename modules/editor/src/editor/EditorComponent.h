@@ -5,7 +5,6 @@
 #include "panels/IOPanel.h"
 #include "panels/IrEnginePanel.h"
 #include "panels/VisualiserPanel.h"
-#include "spectrogram_visualiser/component/Graph3DComponent.h"
 #include "zones_look_and_feel/LookAndFeel.h"
 #include "zones_look_and_feel/components/PanelComponent.h"
 

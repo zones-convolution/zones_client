@@ -10,12 +10,11 @@ zones_add_module(
         src/editor/panels/IrEnginePanel.cpp
         src/editor/panels/VisualiserPanel.h
         src/editor/panels/VisualiserPanel.cpp
-
         DEPS
         juce::juce_core
         juce::juce_gui_basics
         lager
         zones_look_and_feel
         model
-        spectrogram_visualiser
+        visualiser
         ir_engine)
