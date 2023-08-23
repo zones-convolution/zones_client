@@ -4,7 +4,7 @@ in vec4 graph_coord;
 out vec4 fragColor;
 uniform vec4 colour;
 
-const float blueToYellowBound = 0.4;
+const float blueToYellowBound = 0.1;
 const float yellowToGreenBound = 0.8;
 
 vec4 getColorFromHeight(float y)

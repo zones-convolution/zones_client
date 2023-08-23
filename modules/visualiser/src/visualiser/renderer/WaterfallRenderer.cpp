@@ -9,7 +9,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/quaternion.hpp>
 
-const std::filesystem::path kTestAudioDirectory = TEST_AUDIO_DIRECTORY;
+// const std::filesystem::path kTestAudioDirectory = TEST_AUDIO_DIRECTORY;
 
 #if JUCE_DEBUG
 const std::filesystem::path WaterfallRenderer::kShaderDirectory = SHADER_DIRECTORY;
@@ -90,12 +90,25 @@ void WaterfallRenderer::newOpenGLContextCreated ()
     VertexBufferLayout vertex_buffer_layout;
     vertex_buffer_layout.Push<GLfloat> (2);
     vertex_array_->AddBuffer (*vertex_buffer_, vertex_buffer_layout);
+
+    texture_ = juce::Image (juce::Image::PixelFormat::ARGB, 1024, 1024, true);
+    for (auto i = 0; i < 1024; ++i)
+        for (auto j = 0; j < 1024; ++j)
+            texture_->setPixelAt (i, j, juce::Colour::fromFloatRGBA (0.f, 0.f, 0.f, 0.0f));
+    SetupTexture ();
 }
 
 void WaterfallRenderer::SetupGraphTexture (const juce::dsp::AudioBlock<const float> block)
 {
     auto spectrogram = Spectrogram::CreateSpectrogram (block).rescaled (1024, 1024);
     texture_ = spectrogram;
+
+    juce::File spec_file (
+        "/Users/LeonPS/Documents/Development/zones_client/modules/zones_look_and_feel/spec.png");
+    spec_file.moveToTrash ();
+    juce::FileOutputStream stream (spec_file);
+    juce::PNGImageFormat png_writer;
+    png_writer.writeImageToStream (spectrogram, stream);
 
     //    juce::ImageConvolutionKernel convolution_kernel {4};
     //    convolution_kernel.createGaussianBlur (4.f);
@@ -149,6 +162,7 @@ void WaterfallRenderer::SetupTexture ()
             juce::gl::GL_TEXTURE_2D, juce::gl::GL_TEXTURE_MIN_FILTER, juce::gl::GL_LINEAR);
         juce::gl::glTexParameteri (
             juce::gl::GL_TEXTURE_2D, juce::gl::GL_TEXTURE_MAG_FILTER, juce::gl::GL_LINEAR);
+
         texture_ = std::nullopt;
     }
 }
@@ -174,10 +188,11 @@ void WaterfallRenderer::renderOpenGL ()
     rot_y_smooth_ =
         Smoothed (rot_y_smooth_, draggable_orientation_.y_rotation.load (), 4.f, 1.0f / 60.0f);
 
-    auto rot_about_z = glm::rotate (glm::mat4 (1.f),
-                                    (rot_x_smooth_ * juce::MathConstants<float>::twoPi) -
-                                        (juce::MathConstants<float>::twoPi / 8),
-                                    glm::vec3 (0.f, 0.f, 1.f));
+    auto rot_z_offset = juce::MathConstants<float>::twoPi / 8;
+    auto rot_about_z =
+        glm::rotate (glm::mat4 (1.f),
+                     (rot_x_smooth_ * juce::MathConstants<float>::twoPi) - rot_z_offset,
+                     glm::vec3 (0.f, 0.f, 1.f));
     auto rot_about_x = glm::rotate (glm::mat4 (1.f),
                                     rot_y_smooth_ * juce::MathConstants<float>::twoPi,
                                     glm::vec3 (1.f, 0.f, 0.f));
@@ -210,13 +225,13 @@ void WaterfallRenderer::renderOpenGL ()
                                       juce::gl::GL_UNSIGNED_INT,
                                       0));
     index_buffer_graph_->Unbind ();
-    //    index_buffer_graph_->Bind ();
-    //    uniform_colour_->set (0.f, 0.f, 0.f, 1.f);
-    //    GLCall (juce::gl::glDrawElements (juce::gl::GL_LINES,
-    //                                      kVertexBufferSizeM1 * kVertexBufferSizeM1 * 6,
-    //                                      juce::gl::GL_UNSIGNED_INT,
-    //                                      0));
-    //    index_buffer_grid_->Unbind ();
+    index_buffer_graph_->Bind ();
+    uniform_colour_->set (0.f, 0.f, 0.f, 1.f);
+    GLCall (juce::gl::glDrawElements (juce::gl::GL_LINES,
+                                      kVertexBufferSizeM1 * kVertexBufferSizeM1 * 6,
+                                      juce::gl::GL_UNSIGNED_INT,
+                                      0));
+    index_buffer_grid_->Unbind ();
     vertex_array_->Unbind ();
 }
 

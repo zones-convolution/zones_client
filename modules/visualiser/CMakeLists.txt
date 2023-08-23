@@ -30,4 +30,4 @@ embed_resources(visualiser
 
 target_compile_definitions(
         visualiser
-        PUBLIC "SHADER_DIRECTORY=\"${CMAKE_CURRENT_SOURCE_DIR}/shaders/\"" "TEST_AUDIO_DIRECTORY=\"${CMAKE_CURRENT_SOURCE_DIR}/test_audio/\"")
+        PUBLIC "SHADER_DIRECTORY=\"${CMAKE_CURRENT_SOURCE_DIR}/shaders/\"")

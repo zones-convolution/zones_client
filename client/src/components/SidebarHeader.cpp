@@ -6,6 +6,7 @@ SidebarHeader::SidebarHeader ()
     addAndMakeVisible (icon_sad_);
 
     icon_sad_.SetIcon (BoxIcons::kBxHappy);
+    icon_sad_.SetColour (juce::Colours::cyan);
 }
 
 void SidebarHeader::resized ()
