@@ -2,11 +2,13 @@
 
 #include <zones_look_and_feel/LookAndFeel.h>
 
-MeterComponent::MeterComponent (AudioGraphMetering & audio_graph_metering)
-    : audio_graph_metering_ (audio_graph_metering)
+MeterComponent::MeterComponent (AudioGraphMetering & input_graph_metering,
+                                AudioGraphMetering & output_graph_metering)
+    : input_graph_metering_ (input_graph_metering)
+    , output_graph_metering_ (output_graph_metering)
 {
-    for (auto & channel_bar : channel_bars_)
-        addAndMakeVisible (channel_bar);
+    for (auto & channel : channels_)
+        addAndMakeVisible (channel.bar);
 
     addAndMakeVisible (discrete_level_bars_);
     addAndMakeVisible (discrete_level_labels_);
@@ -57,9 +59,9 @@ juce::FlexBox MeterComponent::CreateBarLayout ()
 {
     juce::FlexBox bar_layout;
     bar_layout.flexDirection = juce::FlexBox::Direction::row;
-    for (auto & channel_bar : channel_bars_)
+    for (auto & channel : channels_)
     {
-        bar_layout.items.add (juce::FlexItem (channel_bar).withFlex (1.f));
+        bar_layout.items.add (juce::FlexItem (channel.bar).withFlex (1.f));
         bar_layout.items.add (juce::FlexItem ().withWidth (kSpacing));
     }
     bar_layout.items.removeLast ();
@@ -97,12 +99,13 @@ static float SmoothedValue (float value_to_smooth, float target, float smoothing
 
 void MeterComponent::update ()
 {
-    for (auto channel_index = 0; channel_index < channel_bars_.size (); ++channel_index)
+    for (auto channel_index = 0; channel_index < channels_.size (); ++channel_index)
     {
-        auto peak = audio_graph_metering_.GetChannelPeak (channel_index);
+        auto peak = output_graph_metering_.GetChannelPeak (channel_index);
         static constexpr auto kSmoothingConstant = 2.f;
-        auto & smoothed_target = smoothed_targets_ [channel_index];
 
+        auto & channel = channels_ [channel_index];
+        auto & smoothed_target = channel.smoothed_value;
         smoothed_target =
             peak < smoothed_target
                 ? SmoothedValue (smoothed_target,
@@ -111,7 +114,9 @@ void MeterComponent::update ()
                                      kSmoothingConstant)
                 : peak;
 
-        auto & [peak_target, peak_fade_timer] = smoothed_peaks_ [channel_index];
+        auto & peak_target = channel.smoothed_peak;
+        auto & peak_fade_timer = channel.peak_fade_timer;
+
         if (peak >= peak_target)
         {
             peak_target = peak;
@@ -129,8 +134,7 @@ void MeterComponent::update ()
                                        kSmoothingConstant * 4);
         }
 
-        channel_bars_ [channel_index].SetTarget (smoothed_target, peak_target);
-
+        channel.bar.SetTarget (smoothed_target, peak_target);
         if (peak >= 1.f)
             clipping_indicators_component_.SetIndicator (channel_index, true);
     }
@@ -162,8 +166,8 @@ void MeterComponent::paintOverChildren (juce::Graphics & g)
 
 juce::Rectangle<float> MeterComponent::GetChannelBounds ()
 {
-    auto left_bar_bounds = channel_bars_.front ().getBounds ().toFloat ();
-    auto right_bar_bounds = channel_bars_.back ().getBounds ().toFloat ();
+    auto left_bar_bounds = channels_.front ().bar.getBounds ().toFloat ();
+    auto right_bar_bounds = channels_.back ().bar.getBounds ().toFloat ();
     auto channels_bounds = left_bar_bounds.getUnion (right_bar_bounds);
     return channels_bounds;
 }

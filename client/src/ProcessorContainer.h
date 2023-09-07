@@ -27,8 +27,9 @@ public:
                                    lager::with_manual_event_loop {},
                                    lager::with_reducer (Update));
 
-    AudioGraphMetering audio_graph_metering_;
-    AudioGraph graph_ {audio_graph_metering_};
+    AudioGraphMetering input_graph_metering_;
+    AudioGraphMetering output_graph_metering_;
+    AudioGraph graph_ {input_graph_metering_, output_graph_metering_};
     CommandQueue::VisitorQueue command_queue_ {graph_};
     IrEngine ir_engine_;
 

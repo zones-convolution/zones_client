@@ -13,6 +13,11 @@ public:
     bool GetChannelClipping (size_t channel_index);
 
 private:
-    std::vector<std::unique_ptr<std::atomic<bool>>> channel_clipping_;
-    std::vector<std::unique_ptr<std::atomic<float>>> channel_peaks_;
+    struct ChannelMetering
+    {
+        std::atomic<bool> is_clipping;
+        std::atomic<float> peak_value;
+    };
+
+    std::vector<std::unique_ptr<ChannelMetering>> channels_;
 };

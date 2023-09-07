@@ -14,7 +14,8 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (
                 project_ir_repository_context_)
     , sidebar_footer_ (processor_container.store_ [&Model::project_ir_repository_model]
                                                   [&ProjectIrRepositoryModel::current_project_ir],
-                       processor_container.audio_graph_metering_)
+                       processor_container.input_graph_metering_,
+                       processor_container.output_graph_metering_)
 
 {
     juce::LookAndFeel::setDefaultLookAndFeel (&look_and_feel_);

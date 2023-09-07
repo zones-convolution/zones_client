@@ -10,7 +10,8 @@ class AudioGraph
     , public CommandQueue::Visitor
 {
 public:
-    explicit AudioGraph (AudioGraphMetering & audio_graph_metering);
+    explicit AudioGraph (AudioGraphMetering & input_graph_metering,
+                         AudioGraphMetering & output_graph_metering);
     ~AudioGraph () override = default;
     void prepare (const juce::dsp::ProcessSpec & spec) override;
     void process (const juce::dsp::ProcessContextReplacing<float> & replacing) override;
@@ -29,7 +30,9 @@ private:
         }
     };
 
-    AudioGraphMetering & audio_graph_metering_;
+    AudioGraphMetering & input_graph_metering_;
+    AudioGraphMetering & output_graph_metering_;
+
     juce::dsp::DryWetMixer<float> dry_wet_mixer_;
     juce::dsp::ProcessorChain<NonUniformConvolver> processor_chain_;
     float input_gain_ = 1.f;

@@ -13,7 +13,8 @@ class SidebarFooter : public juce::Component
 {
 public:
     SidebarFooter (const lager::reader<CurrentProjectIrOptional> & project_ir_reader,
-                   AudioGraphMetering & audio_graph_metering);
+                   AudioGraphMetering & input_graph_metering,
+                   AudioGraphMetering & output_graph_metering);
 
     void resized () override;
 

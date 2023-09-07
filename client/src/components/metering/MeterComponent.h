@@ -11,11 +11,12 @@
 class MeterComponent : public juce::AnimatedAppComponent
 {
 public:
-    explicit MeterComponent (AudioGraphMetering & audio_graph_metering);
+    explicit MeterComponent (AudioGraphMetering & input_graph_metering,
+                             AudioGraphMetering & output_graph_metering);
+
     void resized () override;
     void paintOverChildren (juce::Graphics & g) override;
     void paint (juce::Graphics & g) override;
-
     void update () override;
 
 private:
@@ -23,11 +24,19 @@ private:
     juce::FlexBox CreateBarLayout ();
     juce::FlexBox CreateSideLayout ();
 
-    AudioGraphMetering & audio_graph_metering_;
-    std::array<ChannelBar, 2> channel_bars_;
-    std::array<float, 2> smoothed_targets_ {0.f, 0.f};
-    std::array<std::pair<float, int>, 2> smoothed_peaks_ {std::pair<float, int> {0.f, false},
-                                                          std::pair<float, int> {0.f, false}};
+    AudioGraphMetering & input_graph_metering_;
+    AudioGraphMetering & output_graph_metering_;
+
+    struct ChannelMeter
+    {
+        ChannelBar bar;
+        float smoothed_value = 0.f;
+        float smoothed_peak = 0.f;
+        int peak_fade_timer = 0;
+    };
+
+    std::array<ChannelMeter, 2> channels_;
+
     DiscreteLevelBars discrete_level_bars_;
     DiscreteLevelLabels discrete_level_labels_;
     ClippingIndicatorsComponent clipping_indicators_component_;
