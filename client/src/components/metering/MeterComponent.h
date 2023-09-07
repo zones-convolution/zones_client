@@ -19,6 +19,8 @@ public:
     void paint (juce::Graphics & g) override;
     void update () override;
 
+    void SetChannelConfiguration (size_t num_input_channels, size_t num_output_channels);
+
 private:
     juce::FlexBox CreateClippingIndicatorLayout ();
     juce::FlexBox CreateBarLayout ();
@@ -35,7 +37,8 @@ private:
         int peak_fade_timer = 0;
     };
 
-    std::array<ChannelMeter, 2> channels_;
+    std::vector<std::unique_ptr<ChannelMeter>> input_channels_;
+    std::vector<std::unique_ptr<ChannelMeter>> output_channels_;
 
     DiscreteLevelBars discrete_level_bars_;
     DiscreteLevelLabels discrete_level_labels_;

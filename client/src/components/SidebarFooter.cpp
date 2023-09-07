@@ -15,6 +15,8 @@ SidebarFooter::SidebarFooter (const lager::reader<CurrentProjectIrOptional> & pr
 
     UpdateIrLabel ();
     lager::watch (project_ir_reader_, [&] (const auto &) { UpdateIrLabel (); });
+
+    meter_component_.SetChannelConfiguration (2, 2);
 }
 
 void SidebarFooter::resized ()
