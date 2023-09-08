@@ -8,7 +8,6 @@ SidebarFooter::SidebarFooter (const lager::reader<CurrentProjectIrOptional> & pr
                               AudioGraphMetering & output_graph_metering)
     : project_ir_reader_ (project_ir_reader)
     , ir_label_panel_ (ir_label_, kIrPanelGradient)
-    , meter_component_ (input_graph_metering, output_graph_metering)
 {
     addAndMakeVisible (ir_label_panel_);
     addAndMakeVisible (meter_component_);
@@ -16,7 +15,23 @@ SidebarFooter::SidebarFooter (const lager::reader<CurrentProjectIrOptional> & pr
     UpdateIrLabel ();
     lager::watch (project_ir_reader_, [&] (const auto &) { UpdateIrLabel (); });
 
-    meter_component_.SetChannelConfiguration (2, 2);
+    auto create_meter_delegate = [] (AudioGraphMetering & graph_metering, int channel_index)
+    {
+        return MeterComponent::ChannelMeterDelegate {
+            .get_peak = [&, channel_index] ()
+            { return graph_metering.GetChannelPeak (channel_index); },
+            .is_clipping = [&, channel_index] ()
+            { return graph_metering.GetChannelClipping (channel_index); }};
+    };
+
+    meter_component_.SetConfiguration ({{
+                                            create_meter_delegate (input_graph_metering, 0),
+                                            create_meter_delegate (input_graph_metering, 1),
+                                        },
+                                        {
+                                            create_meter_delegate (output_graph_metering, 0),
+                                            create_meter_delegate (output_graph_metering, 1),
+                                        }});
 }
 
 void SidebarFooter::resized ()

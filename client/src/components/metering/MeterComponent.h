@@ -6,39 +6,43 @@
 #include "zones_look_and_feel/LookAndFeel.h"
 #include "zones_look_and_feel/components/PanelComponent.h"
 
+#include <immer/flex_vector.hpp>
 #include <juce_gui_basics/juce_gui_basics.h>
 
 class MeterComponent : public juce::AnimatedAppComponent
 {
 public:
-    explicit MeterComponent (AudioGraphMetering & input_graph_metering,
-                             AudioGraphMetering & output_graph_metering);
+    struct ChannelMeterDelegate
+    {
+        std::function<float ()> get_peak;
+        std::function<bool ()> is_clipping;
+    };
+
+    MeterComponent ();
 
     void resized () override;
     void paintOverChildren (juce::Graphics & g) override;
     void paint (juce::Graphics & g) override;
     void update () override;
 
-    void SetChannelConfiguration (size_t num_input_channels, size_t num_output_channels);
+    using ChannelConfiguration = immer::flex_vector<immer::flex_vector<ChannelMeterDelegate>>;
+    void SetConfiguration (ChannelConfiguration configuration);
 
 private:
     juce::FlexBox CreateClippingIndicatorLayout ();
     juce::FlexBox CreateBarLayout ();
     juce::FlexBox CreateSideLayout ();
 
-    AudioGraphMetering & input_graph_metering_;
-    AudioGraphMetering & output_graph_metering_;
-
     struct ChannelMeter
     {
         ChannelBar bar;
+        ChannelMeterDelegate delegate;
         float smoothed_value = 0.f;
         float smoothed_peak = 0.f;
         int peak_fade_timer = 0;
     };
 
-    std::vector<std::unique_ptr<ChannelMeter>> input_channels_;
-    std::vector<std::unique_ptr<ChannelMeter>> output_channels_;
+    std::vector<std::vector<std::unique_ptr<ChannelMeter>>> channel_groups_;
 
     DiscreteLevelBars discrete_level_bars_;
     DiscreteLevelLabels discrete_level_labels_;

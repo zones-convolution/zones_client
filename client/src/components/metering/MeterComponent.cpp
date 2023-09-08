@@ -2,10 +2,7 @@
 
 #include <zones_look_and_feel/LookAndFeel.h>
 
-MeterComponent::MeterComponent (AudioGraphMetering & input_graph_metering,
-                                AudioGraphMetering & output_graph_metering)
-    : input_graph_metering_ (input_graph_metering)
-    , output_graph_metering_ (output_graph_metering)
+MeterComponent::MeterComponent ()
 {
     addAndMakeVisible (discrete_level_bars_);
     addAndMakeVisible (discrete_level_labels_);
@@ -19,27 +16,27 @@ static constexpr auto kMargin = 6.f;
 static constexpr auto kDiscreteLevelLabelWidth = 26.f;
 static constexpr auto kClippingIndicatorHeight = 6.f;
 
-void MeterComponent::SetChannelConfiguration (size_t num_input_channels, size_t num_output_channels)
+void MeterComponent::SetConfiguration (MeterComponent::ChannelConfiguration configuration)
 {
-    for (auto & channel : input_channels_)
-        removeChildComponent (&channel->bar);
+    for (auto & channel_group : channel_groups_)
+        for (auto & channel : channel_group)
+            removeChildComponent (&channel->bar);
 
-    for (auto & channel : output_channels_)
-        removeChildComponent (&channel->bar);
+    channel_groups_.clear ();
+    channel_groups_.resize (configuration.size ());
 
-    input_channels_.clear ();
-    output_channels_.clear ();
-
-    for (auto channel_index = 0; channel_index < num_input_channels; ++channel_index)
+    for (auto group_index = 0; group_index < configuration.size (); ++group_index)
     {
-        input_channels_.push_back (std::make_unique<ChannelMeter> ());
-        addAndMakeVisible (input_channels_ [channel_index]->bar);
-    }
+        auto & group_configuration = configuration [group_index];
+        auto & channel_group = channel_groups_ [group_index];
 
-    for (auto channel_index = 0; channel_index < num_output_channels; ++channel_index)
-    {
-        output_channels_.push_back (std::make_unique<ChannelMeter> ());
-        addAndMakeVisible (input_channels_ [channel_index]->bar);
+        for (auto & channel_configuration : group_configuration)
+        {
+            auto channel = std::make_unique<ChannelMeter> ();
+            channel->delegate = channel_configuration;
+            addAndMakeVisible (channel->bar);
+            channel_group.push_back (std::move (channel));
+        }
     }
 }
 
@@ -81,9 +78,10 @@ juce::FlexBox MeterComponent::CreateBarLayout ()
     juce::FlexBox bar_layout;
     bar_layout.flexDirection = juce::FlexBox::Direction::row;
 
-    auto layout_channels = [&bar_layout] (std::vector<std::unique_ptr<ChannelMeter>> & channels)
+    auto layout_channel_group =
+        [&bar_layout] (std::vector<std::unique_ptr<ChannelMeter>> & channel_group)
     {
-        for (auto & channel : channels)
+        for (auto & channel : channel_group)
         {
             bar_layout.items.add (juce::FlexItem (channel->bar).withFlex (1.f));
             bar_layout.items.add (juce::FlexItem ().withWidth (kSpacing));
@@ -92,10 +90,13 @@ juce::FlexBox MeterComponent::CreateBarLayout ()
         bar_layout.items.removeLast ();
     };
 
-    layout_channels (input_channels_);
-    bar_layout.items.add (LookAndFeel::kFlexSpacer);
-    layout_channels (output_channels_);
+    for (auto & channel_group : channel_groups_)
+    {
+        layout_channel_group (channel_group);
+        bar_layout.items.add (LookAndFeel::kFlexSpacer);
+    }
 
+    bar_layout.items.removeLast ();
     return bar_layout;
 }
 
@@ -130,15 +131,15 @@ static float SmoothedValue (float value_to_smooth, float target, float smoothing
 
 void MeterComponent::update ()
 {
-    auto update_metering = [&] (AudioGraphMetering & audio_graph_metering,
-                                std::vector<std::unique_ptr<ChannelMeter>> & channels)
+    auto update_metering = [&] (std::vector<std::unique_ptr<ChannelMeter>> & channel_group)
     {
-        for (auto channel_index = 0; channel_index < channels.size (); ++channel_index)
+        for (auto channel_index = 0; channel_index < channel_group.size (); ++channel_index)
         {
-            auto peak = audio_graph_metering.GetChannelPeak (channel_index);
+            auto & channel = channel_group [channel_index];
+
+            auto peak = channel->delegate.get_peak ();
             static constexpr auto kSmoothingConstant = 2.f;
 
-            auto & channel = channels [channel_index];
             auto & smoothed_target = channel->smoothed_value;
             smoothed_target =
                 peak < smoothed_target
@@ -174,8 +175,8 @@ void MeterComponent::update ()
         }
     };
 
-    update_metering (input_graph_metering_, input_channels_);
-    update_metering (output_graph_metering_, output_channels_);
+    for (auto & channel_group : channel_groups_)
+        update_metering (channel_group);
 }
 
 void MeterComponent::paintOverChildren (juce::Graphics & g)
@@ -204,8 +205,12 @@ void MeterComponent::paintOverChildren (juce::Graphics & g)
 
 juce::Rectangle<float> MeterComponent::GetChannelBounds ()
 {
-    auto left_bar_bounds = input_channels_.front ()->bar.getBounds ().toFloat ();
-    auto right_bar_bounds = output_channels_.back ()->bar.getBounds ().toFloat ();
+    auto & left_most_channel = channel_groups_.front ().front ();
+    auto left_bar_bounds = left_most_channel->bar.getBounds ().toFloat ();
+
+    auto & right_most_channel = channel_groups_.back ().back ();
+    auto right_bar_bounds = right_most_channel->bar.getBounds ().toFloat ();
+
     auto channels_bounds = left_bar_bounds.getUnion (right_bar_bounds);
     return channels_bounds;
 }
