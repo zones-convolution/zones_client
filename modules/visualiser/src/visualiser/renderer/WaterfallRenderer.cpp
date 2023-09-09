@@ -28,62 +28,70 @@ WaterfallRenderer::WaterfallRenderer (juce::OpenGLContext & open_gl_context,
 {
 }
 
-static constexpr size_t kVertexBufferSize = 110;
-static constexpr size_t kVertexBufferSizeM1 = kVertexBufferSize - 1;
+static constexpr size_t kVertexBufferWidth = 80;
+static constexpr size_t kVertexBufferWidthM1 = kVertexBufferWidth - 1;
+
+static constexpr size_t kVertexBufferHeight = 120;
+static constexpr size_t kVertexBufferHeightM1 = kVertexBufferHeight - 1;
 
 void WaterfallRenderer::newOpenGLContextCreated ()
 {
-    //    GLCall (juce::gl::glEnable (juce::gl::GL_BLEND));
-    //    GLCall (juce::gl::glBlendFunc (juce::gl::GL_SRC_ALPHA, juce::gl::GL_ONE_MINUS_SRC_ALPHA));
+    GLCall (juce::gl::glEnable (juce::gl::GL_BLEND));
+    GLCall (juce::gl::glBlendFunc (juce::gl::GL_SRC_ALPHA, juce::gl::GL_ONE_MINUS_SRC_ALPHA));
 
-    std::array<std::array<glm::vec2, kVertexBufferSize>, kVertexBufferSize> vertices {};
-    for (int i = 0; i < kVertexBufferSize; i++)
+    std::array<std::array<glm::vec2, kVertexBufferWidth>, kVertexBufferHeight> vertices {};
+
+    for (int y = 0; y < kVertexBufferHeight; y++)
     {
-        for (int j = 0; j < kVertexBufferSize; j++)
+        for (int x = 0; x < kVertexBufferWidth; x++)
         {
-            auto hvbs = (float) kVertexBufferSizeM1 / 2.f;
-            vertices [i][j].x = (j - hvbs) / hvbs;
-            vertices [i][j].y = (i - hvbs) / hvbs;
+            auto half_vertex_buffer_width = (float) kVertexBufferWidth / 2.f;
+            auto half_vertex_buffer_height = (float) kVertexBufferHeight / 2.f;
+
+            vertices [y][x] = {(x - half_vertex_buffer_width) / half_vertex_buffer_width,
+                               (y - half_vertex_buffer_height) / half_vertex_buffer_height};
         }
     }
     vertex_buffer_ = std::make_unique<VertexBuffer> (vertices.data (), sizeof (vertices));
 
-    std::array<GLuint, kVertexBufferSizeM1 * kVertexBufferSizeM1 * 6> indices {};
-    int i = 0;
+    std::array<GLuint, kVertexBufferWidthM1 * kVertexBufferWidthM1 * 6> indices {};
+    //    int i = 0;
+    //
+    //    for (int y = 0; y < kVertexBufferSizeM1; y++)
+    //    {
+    //        for (int x = 0; x < kVertexBufferSizeM1; x++)
+    //        {
+    //            indices [i++] = y * kVertexBufferSize + x;
+    //            indices [i++] = y * kVertexBufferSize + x + 1;
+    //        }
+    //    }
+    //
+    //    for (int x = 0; x < kVertexBufferSizeM1; x++)
+    //    {
+    //        for (int y = 0; y < kVertexBufferSizeM1; y++)
+    //        {
+    //            indices [i++] = y * kVertexBufferSize + x;
+    //            indices [i++] = (y + 1) * kVertexBufferSize + x;
+    //        }
+    //    }
+    //    index_buffer_grid_ = std::make_unique<IndexBuffer> (indices.data (), indices.size ());
 
-    for (int y = 0; y < kVertexBufferSizeM1; y++)
+    auto i = 0;
+
+    for (int y = 0; y < kVertexBufferHeightM1; y++)
     {
-        for (int x = 0; x < kVertexBufferSizeM1; x++)
+        for (int x = 0; x < kVertexBufferWidthM1; x++)
         {
-            indices [i++] = y * kVertexBufferSize + x;
-            indices [i++] = y * kVertexBufferSize + x + 1;
+            indices [i++] = y * kVertexBufferWidth + x;
+            indices [i++] = y * kVertexBufferWidth + x + 1;
+            indices [i++] = (y + 1) * kVertexBufferWidth + x + 1;
+
+            indices [i++] = y * kVertexBufferWidth + x;
+            indices [i++] = (y + 1) * kVertexBufferWidth + x + 1;
+            indices [i++] = (y + 1) * kVertexBufferWidth + x;
         }
     }
 
-    for (int x = 0; x < kVertexBufferSizeM1; x++)
-    {
-        for (int y = 0; y < kVertexBufferSizeM1; y++)
-        {
-            indices [i++] = y * kVertexBufferSize + x;
-            indices [i++] = (y + 1) * kVertexBufferSize + x;
-        }
-    }
-    index_buffer_grid_ = std::make_unique<IndexBuffer> (indices.data (), indices.size ());
-
-    i = 0;
-    for (int y = 0; y < kVertexBufferSizeM1; y++)
-    {
-        for (int x = 0; x < kVertexBufferSizeM1; x++)
-        {
-            indices [i++] = y * kVertexBufferSize + x;
-            indices [i++] = y * kVertexBufferSize + x + 1;
-            indices [i++] = (y + 1) * kVertexBufferSize + x + 1;
-
-            indices [i++] = y * kVertexBufferSize + x;
-            indices [i++] = (y + 1) * kVertexBufferSize + x + 1;
-            indices [i++] = (y + 1) * kVertexBufferSize + x;
-        }
-    }
     index_buffer_graph_ = std::make_unique<IndexBuffer> (indices.data (), indices.size ());
 
     vertex_array_ = std::make_unique<VertexArray> ();
@@ -94,7 +102,11 @@ void WaterfallRenderer::newOpenGLContextCreated ()
     texture_ = juce::Image (juce::Image::PixelFormat::ARGB, 1024, 1024, true);
     for (auto i = 0; i < 1024; ++i)
         for (auto j = 0; j < 1024; ++j)
-            texture_->setPixelAt (i, j, juce::Colour::fromFloatRGBA (0.f, 0.f, 0.f, 0.0f));
+            texture_->setPixelAt (
+                i,
+                j,
+                juce::Colour::fromFloatRGBA (
+                    0.f, 0.f, 0.f, ((std::sin (j * 0.01f) * std::sin (i * 0.01f)) + 1.f) * 0.5f));
     SetupTexture ();
 }
 
@@ -221,17 +233,17 @@ void WaterfallRenderer::renderOpenGL ()
     vertex_array_->Bind ();
     index_buffer_graph_->Bind ();
     GLCall (juce::gl::glDrawElements (juce::gl::GL_TRIANGLES,
-                                      kVertexBufferSizeM1 * kVertexBufferSizeM1 * 6,
+                                      kVertexBufferWidthM1 * kVertexBufferHeightM1 * 6,
                                       juce::gl::GL_UNSIGNED_INT,
                                       0));
     index_buffer_graph_->Unbind ();
-    index_buffer_graph_->Bind ();
-    uniform_colour_->set (0.f, 0.f, 0.f, 1.f);
-    GLCall (juce::gl::glDrawElements (juce::gl::GL_LINES,
-                                      kVertexBufferSizeM1 * kVertexBufferSizeM1 * 6,
-                                      juce::gl::GL_UNSIGNED_INT,
-                                      0));
-    index_buffer_grid_->Unbind ();
+    //    index_buffer_grid_->Bind ();
+    //    uniform_colour_->set (0.f, 0.f, 0.f, 1.f);
+    //    GLCall (juce::gl::glDrawElements (juce::gl::GL_LINES,
+    //                                      kVertexBufferSizeM1 * kVertexBufferSizeM1 * 6,
+    //                                      juce::gl::GL_UNSIGNED_INT,
+    //                                      0));
+    //    index_buffer_grid_->Unbind ();
     vertex_array_->Unbind ();
 }
 

@@ -1,3 +1,4 @@
 cmake-build-debug
 builds
 modules/spectrogram_visualiser/test_audio
+modules/zones_look_and_feel/spec.png

@@ -9,7 +9,7 @@ const float yellowToGreenBound = 0.8;
 
 vec4 getColorFromHeight(float y)
 {
-    vec3 blueColor = vec3(0.0, 0.2, 1.0);
+    vec3 blueColor = vec3(0.0, 0.0, 1.0);
     vec3 yellowColor = vec3(1.0, 1.0, 0.0);
     vec3 greenColor = vec3(0.0, 1.0, 0.0);
     vec3 redColor = vec3(1.0, 0.0, 0.0);
