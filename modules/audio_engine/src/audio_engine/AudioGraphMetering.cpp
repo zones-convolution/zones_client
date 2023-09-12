@@ -19,10 +19,10 @@ void AudioGraphMetering::UpdateChannelPeak (const juce::dsp::AudioBlock<const fl
     }
 }
 
-void AudioGraphMetering::ResetClipping ()
+void AudioGraphMetering::ResetClipping (size_t channel_index)
 {
-    for (auto & channel : channels_)
-        channel->is_clipping.store (false);
+    auto & channel = channels_ [channel_index];
+    channel->is_clipping.store (false);
 }
 
 void AudioGraphMetering::Prepare (size_t num_channels)

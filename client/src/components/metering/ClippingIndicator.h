@@ -7,7 +7,7 @@ class ClippingIndicator : public juce::ToggleButton
 {
 public:
     void paint (juce::Graphics & g) override;
-    void setFill (bool is_clipping);
+    void SetFill (bool is_clipping);
 
 private:
     bool is_clipping_ = false;

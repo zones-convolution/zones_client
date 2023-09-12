@@ -16,6 +16,7 @@ public:
     {
         std::function<float ()> get_peak;
         std::function<bool ()> is_clipping;
+        std::function<void ()> reset_clipping;
     };
 
     MeterComponent ();

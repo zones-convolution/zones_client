@@ -21,7 +21,9 @@ SidebarFooter::SidebarFooter (const lager::reader<CurrentProjectIrOptional> & pr
             .get_peak = [&, channel_index] ()
             { return graph_metering.GetChannelPeak (channel_index); },
             .is_clipping = [&, channel_index] ()
-            { return graph_metering.GetChannelClipping (channel_index); }};
+            { return graph_metering.GetChannelClipping (channel_index); },
+            .reset_clipping = [&, channel_index] ()
+            { graph_metering.ResetClipping (channel_index); }};
     };
 
     meter_component_.SetConfiguration ({{

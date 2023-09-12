@@ -7,7 +7,7 @@ void ClippingIndicator::paint (juce::Graphics & g)
     g.fillAll (is_clipping_ ? juce::Colours::red : background_colour);
 }
 
-void ClippingIndicator::setFill (bool is_clipping)
+void ClippingIndicator::SetFill (bool is_clipping)
 {
     is_clipping_ = is_clipping;
 }

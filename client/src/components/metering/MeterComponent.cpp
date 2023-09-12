@@ -40,6 +40,10 @@ void MeterComponent::SetConfiguration (MeterComponent::ChannelConfiguration conf
             channel->delegate = channel_configuration;
             addAndMakeVisible (channel->bar);
             addAndMakeVisible (channel->clipping_indicator);
+
+            auto & delegate = channel->delegate;
+            channel->clipping_indicator.onClick = [&delegate] () { delegate.reset_clipping (); };
+
             channel_group.push_back (std::move (channel));
         }
     }
@@ -176,6 +180,7 @@ void MeterComponent::update ()
             auto & channel = channel_group [channel_index];
 
             auto peak = channel->delegate.get_peak ();
+            auto is_clipping = channel->delegate.is_clipping ();
             static constexpr auto kSmoothingConstant = 2.f;
 
             auto & smoothed_target = channel->smoothed_value;
@@ -208,8 +213,7 @@ void MeterComponent::update ()
             }
 
             channel->bar.SetTarget (smoothed_target, peak_target);
-            //            if (peak >= 1.f)
-            //                clipping_indicators_component_.SetIndicator (channel_index, true);
+            channel->clipping_indicator.SetFill (is_clipping);
         }
     };
 
