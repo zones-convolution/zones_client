@@ -84,13 +84,13 @@ void MeterComponent::LayoutBars (const juce::Rectangle<float> & bar_bounds)
      * the same, something FlexBox doesn't always guarantee. */
 
     int num_bars = 0;
-    auto margin_spacing = (channel_groups_.size () - 1.0f) * kMargin;
+    auto group_spacing = (channel_groups_.size () - 1.0f) * (2.0f * kSpacing);
 
     for (auto & channel_group : channel_groups_)
         num_bars += channel_group.size ();
 
     auto spaced_bounds =
-        bar_bounds.getWidth () - (static_cast<float> (num_bars) * kSpacing) - margin_spacing;
+        bar_bounds.getWidth () - (static_cast<float> (num_bars) * kSpacing) - group_spacing;
     auto fixed_bar_width = std::ceil (spaced_bounds / static_cast<float> (num_bars));
 
     auto layout_channel_group =
