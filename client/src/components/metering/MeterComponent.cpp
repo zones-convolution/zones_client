@@ -42,7 +42,8 @@ void MeterComponent::SetConfiguration (MeterComponent::ChannelConfiguration conf
 
 void MeterComponent::resized ()
 {
-    auto bar_layout = CreateBarLayout ();
+    juce::Component bar_layout;
+
     auto side_layout = CreateSideLayout ();
     side_layout.items.add (
         juce::FlexItem (bar_layout).withFlex (1.f).withMargin (juce::FlexItem::Margin (kMargin)));
@@ -57,6 +58,7 @@ void MeterComponent::resized ()
     layout.items.add (juce::FlexItem (side_layout).withFlex (1.f));
 
     layout.performLayout (getLocalBounds ().toFloat ());
+    LayoutBars (bar_layout.getBounds ().toFloat ());
 }
 
 juce::FlexBox MeterComponent::CreateSideLayout ()
@@ -73,17 +75,30 @@ juce::FlexBox MeterComponent::CreateSideLayout ()
     return side_layout;
 }
 
-juce::FlexBox MeterComponent::CreateBarLayout ()
+void MeterComponent::LayoutBars (const juce::Rectangle<float> & bar_bounds)
 {
     juce::FlexBox bar_layout;
     bar_layout.flexDirection = juce::FlexBox::Direction::row;
 
+    /* This sequence is a bit fragile however is needed to ensure the width of each bar is exactly
+     * the same, something FlexBox doesn't always guarantee. */
+
+    int num_bars = 0;
+    auto margin_spacing = (channel_groups_.size () - 1.0f) * kMargin;
+
+    for (auto & channel_group : channel_groups_)
+        num_bars += channel_group.size ();
+
+    auto spaced_bounds =
+        bar_bounds.getWidth () - (static_cast<float> (num_bars) * kSpacing) - margin_spacing;
+    auto fixed_bar_width = std::ceil (spaced_bounds / static_cast<float> (num_bars));
+
     auto layout_channel_group =
-        [&bar_layout] (std::vector<std::unique_ptr<ChannelMeter>> & channel_group)
+        [&bar_layout, &fixed_bar_width] (std::vector<std::unique_ptr<ChannelMeter>> & channel_group)
     {
         for (auto & channel : channel_group)
         {
-            bar_layout.items.add (juce::FlexItem (channel->bar).withFlex (1.f));
+            bar_layout.items.add (juce::FlexItem (channel->bar).withWidth (fixed_bar_width));
             bar_layout.items.add (juce::FlexItem ().withWidth (kSpacing));
         }
 
@@ -93,11 +108,11 @@ juce::FlexBox MeterComponent::CreateBarLayout ()
     for (auto & channel_group : channel_groups_)
     {
         layout_channel_group (channel_group);
-        bar_layout.items.add (LookAndFeel::kFlexSpacer);
+        bar_layout.items.add (juce::FlexItem ().withFlex (1.f));
     }
 
     bar_layout.items.removeLast ();
-    return bar_layout;
+    bar_layout.performLayout (bar_bounds);
 }
 
 juce::FlexBox MeterComponent::CreateClippingIndicatorLayout ()

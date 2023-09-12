@@ -30,7 +30,7 @@ public:
 
 private:
     juce::FlexBox CreateClippingIndicatorLayout ();
-    juce::FlexBox CreateBarLayout ();
+    void LayoutBars (const juce::Rectangle<float> & bar_bounds);
     juce::FlexBox CreateSideLayout ();
 
     struct ChannelMeter
