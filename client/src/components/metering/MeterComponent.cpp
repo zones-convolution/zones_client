@@ -6,7 +6,6 @@ MeterComponent::MeterComponent ()
 {
     addAndMakeVisible (discrete_level_bars_);
     addAndMakeVisible (discrete_level_labels_);
-    addAndMakeVisible (clipping_indicators_component_);
 
     setSynchroniseToVBlank (true);
 }
@@ -19,8 +18,13 @@ static constexpr auto kClippingIndicatorHeight = 6.f;
 void MeterComponent::SetConfiguration (MeterComponent::ChannelConfiguration configuration)
 {
     for (auto & channel_group : channel_groups_)
+    {
         for (auto & channel : channel_group)
+        {
             removeChildComponent (&channel->bar);
+            removeChildComponent (&channel->clipping_indicator);
+        }
+    }
 
     channel_groups_.clear ();
     channel_groups_.resize (configuration.size ());
@@ -35,6 +39,7 @@ void MeterComponent::SetConfiguration (MeterComponent::ChannelConfiguration conf
             auto channel = std::make_unique<ChannelMeter> ();
             channel->delegate = channel_configuration;
             addAndMakeVisible (channel->bar);
+            addAndMakeVisible (channel->clipping_indicator);
             channel_group.push_back (std::move (channel));
         }
     }
@@ -48,17 +53,23 @@ void MeterComponent::resized ()
     side_layout.items.add (
         juce::FlexItem (bar_layout).withFlex (1.f).withMargin (juce::FlexItem::Margin (kMargin)));
 
-    auto clipping_indicator_layout = CreateClippingIndicatorLayout ();
+    auto clipping_side_layout = CreateClippingIndicatorLayout ();
+
+    juce::Component clipping_indicator_layout;
+    clipping_side_layout.items.add (
+        juce::FlexItem (clipping_indicator_layout)
+            .withFlex (1.f)
+            .withMargin (juce::FlexItem::Margin (0, kMargin, 0, kMargin)));
 
     juce::FlexBox layout;
     layout.flexDirection = juce::FlexBox::Direction::column;
-    layout.items.add (
-        juce::FlexItem (clipping_indicator_layout).withHeight (kClippingIndicatorHeight));
+    layout.items.add (juce::FlexItem (clipping_side_layout).withHeight (kClippingIndicatorHeight));
     layout.items.add (LookAndFeel::kFlexSpacer);
     layout.items.add (juce::FlexItem (side_layout).withFlex (1.f));
 
     layout.performLayout (getLocalBounds ().toFloat ());
     LayoutBars (bar_layout.getBounds ().toFloat ());
+    LayoutClippingIndicators (clipping_indicator_layout.getBounds ().toFloat ());
 }
 
 juce::FlexBox MeterComponent::CreateSideLayout ()
@@ -73,6 +84,16 @@ juce::FlexBox MeterComponent::CreateSideLayout ()
                                .withWidth (3 * kSpacing)
                                .withMargin (juce::FlexItem::Margin (kMargin, 0, kMargin, 0)));
     return side_layout;
+}
+
+juce::FlexBox MeterComponent::CreateClippingIndicatorLayout ()
+{
+    juce::FlexBox indicator_layout;
+    indicator_layout.flexDirection = juce::FlexBox::Direction::row;
+    indicator_layout.items.add (
+        juce::FlexItem ().withWidth (kDiscreteLevelLabelWidth + 3 * kSpacing));
+    indicator_layout.items.add (juce::FlexItem ().withWidth (kSpacing));
+    return indicator_layout;
 }
 
 void MeterComponent::LayoutBars (const juce::Rectangle<float> & bar_bounds)
@@ -115,17 +136,19 @@ void MeterComponent::LayoutBars (const juce::Rectangle<float> & bar_bounds)
     bar_layout.performLayout (bar_bounds);
 }
 
-juce::FlexBox MeterComponent::CreateClippingIndicatorLayout ()
+void MeterComponent::LayoutClippingIndicators (const juce::Rectangle<float> & clipping_bounds)
 {
-    juce::FlexBox indicator_layout;
-    indicator_layout.flexDirection = juce::FlexBox::Direction::row;
-    indicator_layout.items.add (
-        juce::FlexItem ().withWidth (kDiscreteLevelLabelWidth + 3 * kSpacing));
-    indicator_layout.items.add (juce::FlexItem ().withWidth (kSpacing));
-    indicator_layout.items.add (juce::FlexItem (clipping_indicators_component_)
-                                    .withFlex (1.f)
-                                    .withMargin (juce::FlexItem::Margin (0, kMargin, 0, kMargin)));
-    return indicator_layout;
+    for (auto & channel_group : channel_groups_)
+    {
+        for (auto & channel : channel_group)
+        {
+            auto bar_bounds = channel->bar.getBounds ().toFloat ();
+            auto indicator_bounds = bar_bounds.withHeight (clipping_bounds.getHeight ())
+                                        .withY (clipping_bounds.getY ())
+                                        .toNearestInt ();
+            channel->clipping_indicator.setBounds (indicator_bounds);
+        }
+    }
 }
 
 void MeterComponent::paint (juce::Graphics & g)
@@ -185,8 +208,8 @@ void MeterComponent::update ()
             }
 
             channel->bar.SetTarget (smoothed_target, peak_target);
-            if (peak >= 1.f)
-                clipping_indicators_component_.SetIndicator (channel_index, true);
+            //            if (peak >= 1.f)
+            //                clipping_indicators_component_.SetIndicator (channel_index, true);
         }
     };
 

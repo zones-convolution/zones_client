@@ -12,14 +12,3 @@ public:
 private:
     bool is_clipping_ = false;
 };
-
-class ClippingIndicatorsComponent : public juce::Component
-{
-public:
-    ClippingIndicatorsComponent ();
-
-    void resized () override;
-    void SetIndicator (size_t channel_index, bool is_clipping);
-
-    std::array<ClippingIndicator, 2> clipping_indicators_;
-};

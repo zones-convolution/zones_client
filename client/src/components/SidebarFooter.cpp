@@ -41,7 +41,7 @@ void SidebarFooter::resized ()
 
     layout.items.add (juce::FlexItem (ir_label_panel_).withFlex (2.f));
     layout.items.add (LookAndFeel::kFlexSpacer);
-    layout.items.add (juce::FlexItem (meter_component_).withFlex (1.f));
+    layout.items.add (juce::FlexItem (meter_component_).withFlex (2.f));
 
     layout.performLayout (getLocalBounds ().toFloat ());
 }

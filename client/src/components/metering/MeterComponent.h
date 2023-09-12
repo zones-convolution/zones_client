@@ -1,6 +1,6 @@
 #pragma once
 #include "ChannelBar.h"
-#include "ClippingIndicatorsComponent.h"
+#include "ClippingIndicator.h"
 #include "DiscreteLevelLabels.h"
 #include "audio_engine/AudioGraphMetering.h"
 #include "zones_look_and_feel/LookAndFeel.h"
@@ -31,11 +31,13 @@ public:
 private:
     juce::FlexBox CreateClippingIndicatorLayout ();
     void LayoutBars (const juce::Rectangle<float> & bar_bounds);
+    void LayoutClippingIndicators (const juce::Rectangle<float> & clipping_bounds);
     juce::FlexBox CreateSideLayout ();
 
     struct ChannelMeter
     {
         ChannelBar bar;
+        ClippingIndicator clipping_indicator;
         ChannelMeterDelegate delegate;
         float smoothed_value = 0.f;
         float smoothed_peak = 0.f;
@@ -46,6 +48,5 @@ private:
 
     DiscreteLevelBars discrete_level_bars_;
     DiscreteLevelLabels discrete_level_labels_;
-    ClippingIndicatorsComponent clipping_indicators_component_;
     juce::Rectangle<float> GetChannelBounds ();
 };
