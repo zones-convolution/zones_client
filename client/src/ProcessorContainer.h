@@ -14,19 +14,21 @@
 #include "model/Model.h"
 #include "model/controllers/IrWatchController.h"
 
+#include <juce_audio_processors/juce_audio_processors.h>
 #include <lager/event_loop/manual.hpp>
 #include <lager/store.hpp>
 
 class ProcessorContainer
 {
 public:
-    ProcessorContainer ();
+    ProcessorContainer (juce::AudioProcessor & audio_processor);
 
     lager::store<Action, Model> store_ =
         lager::make_store<Action> (Model {},
                                    lager::with_manual_event_loop {},
                                    lager::with_reducer (Update));
 
+    juce::AudioProcessorValueTreeState parameter_tree_;
     AudioGraphMetering input_graph_metering_;
     AudioGraphMetering output_graph_metering_;
     AudioGraph graph_ {input_graph_metering_, output_graph_metering_};

@@ -1,10 +1,8 @@
 #include "EditorComponent.h"
 
-EditorComponent::EditorComponent (
-    lager::context<RealtimeParameterAction> & realtime_parameter_context,
-    lager::context<IrEngineParameterAction> & ir_engine_parameter_context)
-    : io_ (realtime_parameter_context)
-    , ir_engine_ (ir_engine_parameter_context)
+EditorComponent::EditorComponent (juce::AudioProcessorValueTreeState & parameter_tree)
+    : io_ (parameter_tree)
+    , ir_engine_ (parameter_tree)
 {
     addAndMakeVisible (io_panel_);
     addAndMakeVisible (visualiser_panel_);

@@ -1,13 +1,13 @@
 #pragma once
 
 #include "ir_engine/IrEngine.h"
-#include "model/ParameterAction.h"
 #include "panels/IOPanel.h"
 #include "panels/IrEnginePanel.h"
 #include "panels/VisualiserPanel.h"
 #include "zones_look_and_feel/LookAndFeel.h"
 #include "zones_look_and_feel/components/PanelComponent.h"
 
+#include <juce_audio_processors/juce_audio_processors.h>
 #include <juce_gui_basics/juce_gui_basics.h>
 #include <lager/context.hpp>
 
@@ -16,9 +16,7 @@ class EditorComponent
     , public IrEngine::Listener
 {
 public:
-    explicit EditorComponent (
-        lager::context<RealtimeParameterAction> & realtime_parameter_context,
-        lager::context<IrEngineParameterAction> & ir_engine_parameter_context);
+    explicit EditorComponent (juce::AudioProcessorValueTreeState & parameter_tree);
     void resized () override;
 
     void RenderFinished (IrGraphState state, IrGraphProcessor::BoxedBuffer render_result) override;

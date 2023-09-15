@@ -2,11 +2,10 @@ zones_add_module(
         MODULE
         model
         SOURCES
+        src/model/ParameterTree.h
+        src/model/ParameterTree.cpp
         src/model/controllers/IrWatchController.h
         src/model/controllers/IrWatchController.cpp
-        src/model/ParameterModel.h
-        src/model/ParameterAction.h
-        src/model/ParameterAction.cpp
         src/model/Model.h
         src/model/Action.h
         src/model/Action.cpp

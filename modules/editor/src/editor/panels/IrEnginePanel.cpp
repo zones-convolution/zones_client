@@ -1,6 +1,12 @@
 #include "IrEnginePanel.h"
 
-IrEnginePanel::IrEnginePanel (lager::context<IrEngineParameterAction> & ir_engine_parameter_context)
+const std::string IrEnginePanel::kIrEnginePanelKey = "ir_engine_panel";
+
+IrEnginePanel::IrEnginePanel (juce::AudioProcessorValueTreeState & parameter_tree)
+    : room_size_attachment_ (parameter_tree, ParameterTree::kRoomSizeParameterId, room_size_slider_)
+    , reverb_time_attachment_ (parameter_tree,
+                               ParameterTree::kReverbTimeParameterId,
+                               reverb_time_slider_)
 {
     addAndMakeVisible (ir_engine_label_);
     addAndMakeVisible (top_divider_);
@@ -9,25 +15,15 @@ IrEnginePanel::IrEnginePanel (lager::context<IrEngineParameterAction> & ir_engin
     addAndMakeVisible (reverb_time_slider_);
     addAndMakeVisible (reverb_time_label_);
 
-    ir_engine_label_.setText ("IR ENGINE", juce::dontSendNotification);
+    ir_engine_label_.setText (juce::translate (kIrEnginePanelKey), juce::dontSendNotification);
 
-    room_size_label_.setText ("Room Size", juce::dontSendNotification);
-    room_size_slider_.setRange ({0.1f, 2.f}, 0);
+    room_size_label_.setText (juce::translate (ParameterTree::kRoomSizeParameterId),
+                              juce::dontSendNotification);
     room_size_slider_.setPopupDisplayEnabled (true, true, getTopLevelComponent ());
-    room_size_slider_.onDragEnd = [&]
-    {
-        ir_engine_parameter_context.dispatch (
-            UpdateRoomSize (static_cast<float> (room_size_slider_.getValue ())));
-    };
 
-    reverb_time_label_.setText ("Reverb Time", juce::dontSendNotification);
-    reverb_time_slider_.setRange ({0.f, 1.f}, 0);
+    reverb_time_label_.setText (juce::translate (ParameterTree::kReverbTimeParameterId),
+                                juce::dontSendNotification);
     reverb_time_slider_.setPopupDisplayEnabled (true, true, getTopLevelComponent ());
-    reverb_time_slider_.onDragEnd = [&]
-    {
-        ir_engine_parameter_context.dispatch (
-            UpdateReverbTime (static_cast<float> (reverb_time_slider_.getValue ())));
-    };
 }
 
 void IrEnginePanel::resized ()

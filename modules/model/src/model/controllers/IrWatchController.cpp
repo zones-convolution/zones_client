@@ -4,17 +4,23 @@ IrWatchController::IrWatchController (
     IrEngine & ir_engine,
     ProjectIrLoadController & load_controller,
     const lager::reader<ProjectIrRepositoryModel> & project_ir_reader,
-    const lager::reader<BoxedIrEngineParameterModel> & parameter_model_reader)
+    juce::AudioProcessorValueTreeState & parameter_tree)
     : ir_engine_ (ir_engine)
     , load_controller_ (load_controller)
     , current_ir_reader_ (ProjectIrRepositoryModel::CurrentProjectIrReader (project_ir_reader))
-    , parameter_model_reader_ (parameter_model_reader)
+    , parameter_tree_ (parameter_tree)
 {
-    current_graph_state_.room_size = 1.f;
-    current_graph_state_.reverb_time = 1.f;
+    parameter_tree.addParameterListener (ParameterTree::kRoomSizeParameterId, this);
+    parameter_tree.addParameterListener (ParameterTree::kReverbTimeParameterId, this);
 
     WatchCurrentIr ();
-    WatchParameterModel ();
+    UpdateParametersFromTree ();
+}
+
+void IrWatchController::parameterChanged (const juce::String & parameter_id, float new_value)
+{
+    UpdateParametersFromTree ();
+    PerformRender ();
 }
 
 void IrWatchController::WatchCurrentIr ()
@@ -35,15 +41,14 @@ void IrWatchController::WatchCurrentIr ()
                   });
 }
 
-void IrWatchController::WatchParameterModel ()
+void IrWatchController::UpdateParametersFromTree ()
 {
-    lager::watch (parameter_model_reader_,
-                  [&] (const BoxedIrEngineParameterModel & parameter_model)
-                  {
-                      current_graph_state_.room_size = parameter_model->room_size;
-                      current_graph_state_.reverb_time = parameter_model->reverb_time;
-                      PerformRender ();
-                  });
+    auto room_size_parameter = parameter_tree_.getParameter (ParameterTree::kRoomSizeParameterId);
+    current_graph_state_.room_size = room_size_parameter->getValue ();
+
+    auto reverb_time_parameter =
+        parameter_tree_.getParameter (ParameterTree::kReverbTimeParameterId);
+    current_graph_state_.reverb_time = reverb_time_parameter->getValue ();
 }
 
 void IrWatchController::PerformRender ()

@@ -1,18 +1,13 @@
 #include "AudioEngine.h"
 
 AudioEngine::AudioEngine (CommandQueue::VisitorQueue & command_queue,
-                          lager::reader<BoxedRealtimeParameterModel> realtime_parameter_reader)
+                          juce::AudioProcessorValueTreeState & parameter_tree)
     : command_queue_ (command_queue)
-    , realtime_parameter_reader_ (realtime_parameter_reader)
+    , parameter_tree_ (parameter_tree)
 {
-    lager::watch (realtime_parameter_reader_,
-                  [&] (const BoxedRealtimeParameterModel & parameter_model)
-                  {
-                      command_queue_.PushCommand (CommandQueue::UpdateParameters {
-                          .dry_wet_mix = parameter_model->dry_wet_mix,
-                          .input_gain = parameter_model->input_gain,
-                          .output_gain = parameter_model->output_gain});
-                  });
+    parameter_tree.addParameterListener (ParameterTree::kDryWetMixParameterId, this);
+    parameter_tree.addParameterListener (ParameterTree::kOutputGainParameterId, this);
+    parameter_tree.addParameterListener (ParameterTree::kInputGainParameterId, this);
 }
 
 void AudioEngine::LoadIr (const IrData & ir_data)
@@ -31,4 +26,18 @@ void AudioEngine::RenderFinished (IrGraphState state, IrGraphProcessor::BoxedBuf
         .sample_rate = state.sample_rate,
         .bit_depth = state.bit_depth,
     });
+}
+
+void AudioEngine::parameterChanged (const juce::String & parameterID, float newValue)
+{
+    auto dry_wet_mix_parameter =
+        parameter_tree_.getParameter (ParameterTree::kDryWetMixParameterId);
+    auto input_gain_parameter = parameter_tree_.getParameter (ParameterTree::kInputGainParameterId);
+    auto output_gain_parameter =
+        parameter_tree_.getParameter (ParameterTree::kOutputGainParameterId);
+
+    command_queue_.PushCommand (
+        CommandQueue::UpdateParameters {.dry_wet_mix = dry_wet_mix_parameter->getValue (),
+                                        .input_gain = input_gain_parameter->getValue (),
+                                        .output_gain = output_gain_parameter->getValue ()});
 }

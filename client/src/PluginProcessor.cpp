@@ -10,17 +10,9 @@ AudioPluginAudioProcessor::AudioPluginAudioProcessor ()
     #endif
                           .withOutput ("Output", juce::AudioChannelSet::stereo (), true)
 #endif
-      )
+                          )
+    , processor_container_ (*this)
 {
-    //    auto attributes =
-    //        juce::AudioParameterFloatAttributes ()
-    //            .withStringFromValueFunction ([] (auto x, auto) { return juce::String (x * 100);
-    //            }) .withLabel ("%") .withAutomatable (true);
-    //    auto param = std::make_unique<juce::AudioParameterFloat> (
-    //        "paramID", "Parameter Name", juce::NormalisableRange<float> (), 0.5f, attributes);
-    //    auto param_ptr = param.release ();
-    //    addParameter (param_ptr);
-    //    param_ptr->setValueNotifyingHost (0.6f);
 }
 
 const juce::String AudioPluginAudioProcessor::getName () const
