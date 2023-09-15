@@ -43,12 +43,10 @@ void IrWatchController::WatchCurrentIr ()
 
 void IrWatchController::UpdateParametersFromTree ()
 {
-    auto room_size_parameter = parameter_tree_.getParameter (ParameterTree::kRoomSizeParameterId);
-    current_graph_state_.room_size = room_size_parameter->getValue ();
-
-    auto reverb_time_parameter =
-        parameter_tree_.getParameter (ParameterTree::kReverbTimeParameterId);
-    current_graph_state_.reverb_time = reverb_time_parameter->getValue ();
+    current_graph_state_.room_size =
+        *parameter_tree_.getRawParameterValue (ParameterTree::kRoomSizeParameterId);
+    current_graph_state_.reverb_time =
+        *parameter_tree_.getRawParameterValue (ParameterTree::kReverbTimeParameterId);
 }
 
 void IrWatchController::PerformRender ()

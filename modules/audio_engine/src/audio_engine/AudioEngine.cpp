@@ -30,14 +30,9 @@ void AudioEngine::RenderFinished (IrGraphState state, IrGraphProcessor::BoxedBuf
 
 void AudioEngine::parameterChanged (const juce::String & parameterID, float newValue)
 {
-    auto dry_wet_mix_parameter =
-        parameter_tree_.getParameter (ParameterTree::kDryWetMixParameterId);
-    auto input_gain_parameter = parameter_tree_.getParameter (ParameterTree::kInputGainParameterId);
-    auto output_gain_parameter =
-        parameter_tree_.getParameter (ParameterTree::kOutputGainParameterId);
-
-    command_queue_.PushCommand (
-        CommandQueue::UpdateParameters {.dry_wet_mix = dry_wet_mix_parameter->getValue (),
-                                        .input_gain = input_gain_parameter->getValue (),
-                                        .output_gain = output_gain_parameter->getValue ()});
+    command_queue_.PushCommand (CommandQueue::UpdateParameters {
+        .dry_wet_mix = *parameter_tree_.getRawParameterValue (ParameterTree::kDryWetMixParameterId),
+        .input_gain = *parameter_tree_.getRawParameterValue (ParameterTree::kInputGainParameterId),
+        .output_gain =
+            *parameter_tree_.getRawParameterValue (ParameterTree::kOutputGainParameterId)});
 }
