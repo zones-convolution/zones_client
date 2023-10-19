@@ -13,18 +13,7 @@ public:
         int status;
     };
 
-    struct Callbacks
-    {
-        using Success = std::function<void (Result)>;
-        using Fail = std::function<void (Result)>;
-        using Progress = std::function<void (float)>;
-        using Start = std::function<void ()>;
-
-        Success success = nullptr;
-        Fail fail = nullptr;
-        Progress progress = nullptr;
-        Start start = nullptr;
-    };
+    using Callbacks = ApiRequestCallbacks<Result, Result>;
 
     ApiRequestJob (ApiRequest api_request, Callbacks callbacks);
     ~ApiRequestJob () override = default;

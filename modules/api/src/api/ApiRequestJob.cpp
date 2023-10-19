@@ -11,13 +11,7 @@ void ApiRequestJob::NotifyStart ()
 {
     if (callbacks_.start == nullptr)
         return;
-
-    juce::MessageManager::callAsync (
-        [startCallback = callbacks_.start] ()
-        {
-            if (startCallback != nullptr)
-                startCallback ();
-        });
+    callbacks_.start ();
 }
 
 void ApiRequestJob::NotifyProgress ()
@@ -34,12 +28,7 @@ void ApiRequestJob::NotifyProgress ()
     if (std::fabsf (progress - last_progress_) > 0.15f)
     {
         last_progress_ = progress;
-        juce::MessageManager::callAsync (
-            [progressCallback = callbacks_.progress, progress] ()
-            {
-                if (progressCallback != nullptr)
-                    progressCallback (progress);
-            });
+        callbacks_.progress (progress);
     }
 }
 
@@ -47,26 +36,14 @@ void ApiRequestJob::NotifySuccess ()
 {
     if (callbacks_.success == nullptr)
         return;
-
-    juce::MessageManager::callAsync (
-        [successCallback = callbacks_.success, data = memory_block_, status = status_code_] ()
-        {
-            if (successCallback != nullptr)
-                successCallback ({.data = data, .status = status});
-        });
+    callbacks_.success ({.data = memory_block_, .status = status_code_});
 }
 
 void ApiRequestJob::NotifyFail ()
 {
     if (callbacks_.fail == nullptr)
         return;
-
-    juce::MessageManager::callAsync (
-        [failCallback = callbacks_.fail, data = memory_block_, status = status_code_] ()
-        {
-            if (failCallback != nullptr)
-                failCallback ({.data = data, .status = status});
-        });
+    callbacks_.fail ({.data = memory_block_, .status = status_code_});
 }
 
 void ApiRequestJob::CreateInputStream ()

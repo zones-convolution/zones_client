@@ -20,9 +20,7 @@ ApiRequest::StringPairArrayToHeaderString (const juce::StringPairArray & string_
 {
     juce::String result;
     for (const auto & key : string_pair_array.getAllKeys ())
-    {
         result += key + ": " + string_pair_array.getValue (key, "") + "\n";
-    }
     return result;
 }
 
@@ -38,23 +36,23 @@ ApiRequest ApiRequest::WithMethod (HttpVerb new_http_verb,
 
 ApiRequest ApiRequest::WithField (const juce::String & key, const juce::var & value) const
 {
-    auto newFields = juce::DynamicObject (fields);
-    newFields.setProperty (key, value);
+    auto new_fields = juce::DynamicObject (fields);
+    new_fields.setProperty (key, value);
 
     return {.base_url = base_url,
             .headers = headers,
             .http_verb = http_verb,
             .endpoint_url = endpoint_url,
-            .fields = newFields};
+            .fields = new_fields};
 }
 
 ApiRequest ApiRequest::WithHeader (const juce::String & key, const juce::String & value) const
 {
-    auto newHeaders = juce::StringPairArray (headers);
-    newHeaders.set (key, value);
+    auto new_headers = juce::StringPairArray (headers);
+    new_headers.set (key, value);
 
     return {.base_url = base_url,
-            .headers = newHeaders,
+            .headers = new_headers,
             .http_verb = http_verb,
             .endpoint_url = endpoint_url,
             .fields = fields};

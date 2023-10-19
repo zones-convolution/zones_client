@@ -2,6 +2,20 @@
 
 #include <juce_core/juce_core.h>
 
+template <typename S, typename F>
+struct ApiRequestCallbacks
+{
+    using Success = std::function<void (S)>;
+    using Fail = std::function<void (F)>;
+    using Progress = std::function<void (float)>;
+    using Start = std::function<void ()>;
+
+    Success success = nullptr;
+    Fail fail = nullptr;
+    Progress progress = nullptr;
+    Start start = nullptr;
+};
+
 struct ApiRequest
 {
 public:

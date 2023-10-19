@@ -8,8 +8,10 @@ zones_add_module(
         src/api/ApiRequestJob.cpp
         src/api/ApiRequestService.h
         src/api/ApiRequestService.cpp
+        src/api/DeviceApi.h
+        src/api/DeviceApi.cpp
         DEPS
         juce::juce_core
         juce::juce_events)
 
-zones_add_test(MODULE api SOURCES test/TestApiRequest.cpp DEPS api)
+zones_add_test(MODULE api SOURCES test/TestApiRequest.cpp test/TestDeviceApi.cpp DEPS api)
