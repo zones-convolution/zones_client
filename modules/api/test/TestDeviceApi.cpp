@@ -1,4 +1,3 @@
-#include "ScopedMessageThread.h"
 #include "api/DeviceApi.h"
 
 #include <catch2/catch_test_macros.hpp>
