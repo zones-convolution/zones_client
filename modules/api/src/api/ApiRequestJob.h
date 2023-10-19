@@ -3,8 +3,7 @@
 
 #include <juce_core/juce_core.h>
 #include <juce_events/juce_events.h>
-namespace zones
-{
+
 class ApiRequestJob : public juce::ThreadPoolJob
 {
 public:
@@ -27,28 +26,27 @@ public:
         Start start = nullptr;
     };
 
-    ApiRequestJob (ApiRequest apiRequest, Callbacks callbacks);
+    ApiRequestJob (ApiRequest api_request, Callbacks callbacks);
     ~ApiRequestJob () override = default;
     JobStatus runJob () override;
 
 private:
-    static constexpr int m_maxNumBytesToRead = 1024 * 8;
+    static constexpr int kMaxNumBytesToRead = 1024 * 8;
 
-    ApiRequest m_apiRequest;
-    const Callbacks m_callbacks;
-    int m_statusCode;
-    juce::StringPairArray m_responseHeaders;
-    juce::MemoryBlock m_memoryBlock;
-    float m_lastProgress = 0.f;
+    ApiRequest api_request_;
+    const Callbacks callbacks_;
+    int status_code_;
+    juce::StringPairArray response_headers_;
+    juce::MemoryBlock memory_block_;
+    float last_progress_ = 0.f;
 
-    std::unique_ptr<juce::InputStream> m_inputStream;
+    std::unique_ptr<juce::InputStream> input_stream_;
 
-    void notifyStart ();
-    void notifyProgress ();
-    void notifySuccess ();
-    void notifyFail ();
+    void NotifyStart ();
+    void NotifyProgress ();
+    void NotifySuccess ();
+    void NotifyFail ();
 
-    void createInputStream ();
-    void processStream ();
+    void CreateInputStream ();
+    void ProcessStream ();
 };
-}

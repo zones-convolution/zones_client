@@ -3,23 +3,20 @@
 #include "ApiRequestJob.h"
 
 #include <juce_core/juce_core.h>
-namespace zones
-{
+
 class ApiRequestService
 {
 public:
     explicit ApiRequestService (juce::Thread::Priority priority = juce::Thread::Priority::normal);
 
-    juce::ThreadPoolJob * beginRequest (const ApiRequest & apiRequest,
+    juce::ThreadPoolJob * BeginRequest (const ApiRequest & api_request,
                                         const ApiRequestJob::Callbacks & callbacks);
-    bool cancelRequest (juce::ThreadPoolJob * requestJob);
-    bool cancelAllRequests ();
+    bool CancelRequest (juce::ThreadPoolJob * request_job);
+    bool CancelAllRequests ();
 
 private:
-    static constexpr int m_numberOfThreads = 10;
-    static constexpr int m_jobTimeout = 100;
+    static constexpr int kNumberOfThreads = 10;
+    static constexpr int kJobTimeout = 100;
 
-    juce::ThreadPool m_threadPool;
+    juce::ThreadPool thread_pool_;
 };
-
-}
