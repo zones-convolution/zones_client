@@ -25,3 +25,6 @@
 [submodule "lib/tinycolormap"]
 	path = lib/tinycolormap
 	url = git@github.com:yuki-koyama/tinycolormap.git
+[submodule "lib/keychain"]
+	path = lib/keychain
+	url = git@github.com:hrantzsch/keychain.git

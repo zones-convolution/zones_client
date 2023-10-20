@@ -10,6 +10,8 @@ zones_add_module(
         DEPS
         api
         juce::juce_core
-        juce::juce_events)
+        juce::juce_events
+        lager
+        keychain)
 
 zones_add_test(MODULE account SOURCES test/AccountControllerTests.cpp DEPS account)
