@@ -9,6 +9,8 @@
     <mapping directory="$PROJECT_DIR$/lib/immer/extra/python/lib/pybind11" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/immer/extra/python/lib/pybind11/tools/clang" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/immer/tools/sinusoidal-sphinx-theme" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/lib/jwt-cpp" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/lib/keychain" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/lager" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/lager/tools/sinusoidal-sphinx-theme" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/stretch" vcs="Git" />

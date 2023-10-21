@@ -7,11 +7,14 @@ zones_add_module(
         src/account/AccountModel.h
         src/account/AccountAction.h
         src/account/AccountAction.cpp
+        src/account/AccountUtils.h
+        src/account/AccountUtils.cpp
         DEPS
         api
         juce::juce_core
         juce::juce_events
         lager
-        keychain)
+        keychain
+        jwt-cpp)
 
-zones_add_test(MODULE account SOURCES test/AccountControllerTests.cpp DEPS account)
+zones_add_test(MODULE account SOURCES test/AccountControllerTests.cpp test/AccountActionTests.cpp test/AccountUtilsTests.cpp DEPS account)

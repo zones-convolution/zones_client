@@ -16,9 +16,8 @@ struct AccountModel
     struct Profile
     {
         std::string email;
-        std::string name;
-        std::string image_url;
-        immer::flex_vector<std::string> roles;
+        std::string username;
+        immer::flex_vector<std::string> groups;
     };
 
     struct Session

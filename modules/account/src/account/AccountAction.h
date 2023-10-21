@@ -1,5 +1,7 @@
 #pragma once
+
 #include "AccountModel.h"
+#include "api/ApiRequestService.h"
 
 #include <filesystem>
 #include <lager/effect.hpp>
@@ -19,8 +21,15 @@ struct LoadSessionFromTokensAction
     AccountModel::Tokens tokens;
 };
 
-using AccountAction = std::variant<LoadSessionFromKeychainAction, SaveSessionToKeychainAction>;
-using AccountEffect = lager::effect<AccountAction, lager::deps<>>;
-using AccountResult = std::pair<AccountModel, AccountEffect>;
+struct LoadSessionAction
+{
+    AccountModel::Session session;
+};
 
+using AccountAction = std::variant<LoadSessionFromKeychainAction,
+                                   SaveSessionToKeychainAction,
+                                   LoadSessionFromTokensAction,
+                                   LoadSessionAction>;
+using AccountDeps = lager::deps<ApiRequestService &>;
+using AccountResult = lager::result<AccountModel, AccountAction, AccountDeps>;
 AccountResult UpdateAccount (AccountModel model, AccountAction action);

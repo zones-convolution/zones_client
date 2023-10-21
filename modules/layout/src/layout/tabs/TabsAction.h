@@ -24,7 +24,7 @@ struct TabsControllerDelegate
 };
 
 using TabsAction = std::variant<LoadTabAction, TabLoadedAction>;
-using TabsEffect = lager::effect<TabsAction, lager::deps<TabsControllerDelegate &>>;
-using TabsResult = std::pair<TabsModel, TabsEffect>;
+using TabsDeps = lager::deps<TabsControllerDelegate &>;
+using TabsResult = lager::result<TabsModel, TabsAction, TabsDeps>;
 
 TabsResult UpdateTabs (TabsModel tabs_model, TabsAction tabs_action);

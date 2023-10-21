@@ -28,3 +28,6 @@
 [submodule "lib/keychain"]
 	path = lib/keychain
 	url = git@github.com:hrantzsch/keychain.git
+[submodule "lib/jwt-cpp"]
+	path = lib/jwt-cpp
+	url = git@github.com:Thalhammer/jwt-cpp.git
