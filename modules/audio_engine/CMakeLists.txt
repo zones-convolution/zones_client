@@ -10,6 +10,8 @@ zones_add_module(
         src/audio_engine/CommandQueue.h
         src/audio_engine/AudioGraphMetering.h
         src/audio_engine/AudioGraphMetering.cpp
+        src/audio_engine/TimeDomainConvolver.h
+        src/audio_engine/TimeDomainConvolver.cpp
         DEPS
         model
         ir_repository
