@@ -1,6 +1,5 @@
 #pragma once
 #include <juce_dsp/juce_dsp.h>
-#include <choc/containers/c
 
 class TimeDomainConvolver : public juce::dsp::ProcessorBase
 {

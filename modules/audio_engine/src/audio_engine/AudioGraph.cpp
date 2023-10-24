@@ -42,7 +42,7 @@ void AudioGraph::operator() (const CommandQueue::LoadIr & load_ir)
 {
     auto & convolver = processor_chain_.get<0> ();
     auto ir_buffer = *load_ir.ir_buffer;
-    convolver.LoadImpulseResponse (juce::dsp::AudioBlock {ir_buffer}, load_ir.sample_rate);
+    convolver.LoadImpulseResponse (ir_buffer, load_ir.sample_rate);
 
     delete load_ir
         .ir_buffer; // ABSOLUTELY HORRIFIC BUT STOPS MEMORY LEAK FOR NOW WHILE USING JUCE'S CONV...
