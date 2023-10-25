@@ -28,11 +28,11 @@ struct AccountModel
 
     enum class Status
     {
+        kUnauthenticated,
         kLoading,
         kAuthenticated,
-        kUnauthenticated
     };
 
-    Status status;
-    std::optional<Session> session;
+    Status status = Status::kUnauthenticated;
+    std::optional<Session> session = std::nullopt;
 };

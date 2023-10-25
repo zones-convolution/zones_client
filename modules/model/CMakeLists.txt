@@ -15,6 +15,7 @@ zones_add_module(
         immer
         audio_engine
         ir_engine
+        account
 )
 
 zones_add_test(MODULE model SOURCES

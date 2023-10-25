@@ -30,6 +30,5 @@ using AccountAction = std::variant<LoadSessionFromKeychainAction,
                                    SaveSessionToKeychainAction,
                                    LoadSessionFromTokensAction,
                                    LoadSessionAction>;
-using AccountDeps = lager::deps<ApiRequestService &>;
-using AccountResult = lager::result<AccountModel, AccountAction, AccountDeps>;
+using AccountResult = lager::result<AccountModel, AccountAction, lager::deps<ApiRequestService &>>;
 AccountResult UpdateAccount (AccountModel model, AccountAction action);

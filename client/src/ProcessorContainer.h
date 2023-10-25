@@ -21,12 +21,16 @@
 class ProcessorContainer
 {
 public:
-    ProcessorContainer (juce::AudioProcessor & audio_processor);
+    explicit ProcessorContainer (juce::AudioProcessor & audio_processor);
 
-    lager::store<Action, Model> store_ =
-        lager::make_store<Action> (Model {},
-                                   lager::with_manual_event_loop {},
-                                   lager::with_reducer (Update));
+    ApiRequestService api_request_service_;
+    std::string dep_string_;
+
+    lager::store<Action, Model, Deps> store_ = lager::make_store<Action> (
+        Model {},
+        lager::with_manual_event_loop {},
+        lager::with_reducer (Update),
+        lager::with_deps (std::ref (api_request_service_), std::ref (dep_string_)));
 
     juce::AudioProcessorValueTreeState parameter_tree_;
     AudioGraphMetering input_graph_metering_;

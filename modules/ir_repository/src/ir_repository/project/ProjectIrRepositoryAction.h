@@ -62,10 +62,7 @@ using ProjectIrRepositoryAction = std::variant<AddProjectPathAction,
                                                LoadProjectIrSuccessAction,
                                                LoadProjectIrFailureAction>;
 
-using ProjectIrRepositoryEffect =
-    lager::effect<ProjectIrRepositoryAction, lager::deps<std::string &>>;
-
-using ProjectIrRepositoryResult = std::pair<ProjectIrRepositoryModel, ProjectIrRepositoryEffect>;
-
+using ProjectIrRepositoryResult =
+    lager::result<ProjectIrRepositoryModel, ProjectIrRepositoryAction, lager::deps<std::string &>>;
 ProjectIrRepositoryResult UpdateProjectIrRepository (ProjectIrRepositoryModel model,
                                                      ProjectIrRepositoryAction action);
