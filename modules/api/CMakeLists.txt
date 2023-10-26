@@ -10,6 +10,8 @@ zones_add_module(
         src/api/ApiRequestService.cpp
         src/api/DeviceApi.h
         src/api/DeviceApi.cpp
+        src/api/OidcApi.h
+        src/api/OidcApi.cpp
         DEPS
         juce::juce_core
         juce::juce_events)
