@@ -7,6 +7,9 @@ void TimeDomainConvolver::prepare (const juce::dsp::ProcessSpec & spec)
 
 void TimeDomainConvolver::process (const juce::dsp::ProcessContextReplacing<float> & replacing)
 {
+    if (ir_buffer_.getNumChannels () == 0)
+        return;
+
     auto input_block = replacing.getInputBlock ();
     auto output_block = replacing.getOutputBlock ();
 
@@ -25,6 +28,8 @@ void TimeDomainConvolver::process (const juce::dsp::ProcessContextReplacing<floa
                 convolved_output += ir_block [ir_sample_index] *
                                     delay_line_.popSample (channel_index, ir_sample_index, false);
             }
+
+            channel_block [sample_index] = convolved_output;
 
             delay_line_.popSample (channel_index, -1, true);
         }

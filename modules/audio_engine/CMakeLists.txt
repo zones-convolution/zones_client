@@ -20,5 +20,5 @@ zones_add_module(
         juce::juce_dsp
         juce::juce_audio_basics)
 
-zones_add_test(MODULE audio_engine SOURCES test/VisitorQueueTests.cpp
-        DEPS audio_engine)
+zones_add_test(MODULE audio_engine SOURCES test/VisitorQueueTests.cpp test/TimeDomainConvolverTests.cpp
+        DEPS audio_engine melatonin_test_helpers melatonin_audio_sparklines)
