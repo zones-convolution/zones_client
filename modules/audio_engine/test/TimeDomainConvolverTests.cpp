@@ -106,29 +106,32 @@ SCENARIO ("Time Domain Convolution", "[TimeDomainConvolver]")
 
         WHEN ("process is called")
         {
-            juce::AudioBuffer<float> input_buffer (kProcessSpec.numChannels, 24);
+            juce::AudioBuffer<float> input_buffer (kProcessSpec.numChannels, 36);
             juce::dsp::AudioBlock<float> input_block {input_buffer};
             input_block.getSubBlock (0, 12).fill (1.f);
-            input_block.getSubBlock (12, 12).fill (0.f);
+            input_block.getSubBlock (12, 12).fill (1.f);
+            input_block.getSubBlock (24, 12).fill (0.f);
 
             juce::AudioBuffer<float> output_buffer (input_buffer);
             juce::dsp::AudioBlock<float> output_block {output_buffer};
 
             auto b1 = output_block.getSubBlock (0, 12);
             auto b2 = output_block.getSubBlock (12, 12);
+            auto b3 = output_block.getSubBlock (24, 12);
 
             convolver.process (b1);
             convolver.process (b2);
+            convolver.process (b3);
 
             THEN ("the output is convolved correctly")
             {
-                std::array<float, 24> c1 {
-                    1.f,  1.6f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-                    0.8f, 0.2f, 0.f,  0.f,  0.f,  0.f,  0.f,  0.f,  0.f,  0.f,  0.f,  0.f,
-                };
+                std::array<float, 36> c1 {1.f,  1.6f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
+                                          1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
+                                          1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 0.8f, 0.2f, 0.f,
+                                          0.f,  0.f,  0.f,  0.f,  0.f,  0.f,  0.f,  0.f,  0.f};
 
                 float * convolved_result [1] = {c1.data ()};
-                auto convolved_block = juce::dsp::AudioBlock<float> {convolved_result, 1, 24};
+                auto convolved_block = juce::dsp::AudioBlock<float> {convolved_result, 1, 36};
                 REQUIRE_THAT (output_block, melatonin::isEqualTo<float> (convolved_block));
             }
         }
