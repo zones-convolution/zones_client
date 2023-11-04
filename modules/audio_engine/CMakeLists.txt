@@ -12,6 +12,8 @@ zones_add_module(
         src/audio_engine/AudioGraphMetering.cpp
         src/audio_engine/TimeDomainConvolver.h
         src/audio_engine/TimeDomainConvolver.cpp
+        src/audio_engine/OverlapAddConvolver.h
+        src/audio_engine/OverlapAddConvolver.cpp
         DEPS
         model
         ir_repository
