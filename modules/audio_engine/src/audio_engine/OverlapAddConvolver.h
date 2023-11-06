@@ -10,6 +10,9 @@ public:
     void LoadImpulseResponse (juce::dsp::AudioBlock<float> ir_block, double sample_rate);
 
 private:
+    void WriteDelayBlock ();
+    void ReadDelayBlock (juce::dsp::AudioBlock<float> output_block);
+
     int read_position_ = 0;
     int fft_size_ = 0;
     juce::AudioBuffer<float> delay_line_;

@@ -2,7 +2,7 @@
 
 #include "AudioGraphMetering.h"
 #include "CommandQueue.h"
-#include "TimeDomainConvolver.h"
+#include "OverlapAddConvolver.h"
 
 #include <juce_dsp/juce_dsp.h>
 
@@ -26,7 +26,7 @@ private:
     AudioGraphMetering & output_graph_metering_;
 
     juce::dsp::DryWetMixer<float> dry_wet_mixer_;
-    juce::dsp::ProcessorChain<TimeDomainConvolver> processor_chain_;
+    juce::dsp::ProcessorChain<OverlapAddConvolver> processor_chain_;
     float input_gain_ = 1.f;
     float output_gain_ = 1.f;
 };

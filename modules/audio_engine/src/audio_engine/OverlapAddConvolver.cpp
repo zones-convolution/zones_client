@@ -7,7 +7,8 @@ void OverlapAddConvolver::prepare (const juce::dsp::ProcessSpec & spec)
 
 void OverlapAddConvolver::process (const juce::dsp::ProcessContextReplacing<float> & replacing)
 {
-    // IF WE HAVE LOADED AN IR...
+    if (ir_forward_transform_.getNumChannels () == 0)
+        return;
 
     auto input_block = replacing.getInputBlock ();
     auto output_block = replacing.getOutputBlock ();
@@ -41,39 +42,55 @@ void OverlapAddConvolver::process (const juce::dsp::ProcessContextReplacing<floa
 
         // inverse fft result
         fft_->performRealOnlyInverseTransform (channel);
-
-        auto channel_block = input_block_forward_transform.getSingleChannelBlock (channel_index);
-        auto delay_line_num_samples = delay_line_.getNumSamples ();
-
-        auto output_block_num_samples = input_block.getNumSamples ();
-
-        for (auto sample_index = 0; sample_index < fft_size_; ++sample_index)
-        {
-            auto num_samples_to_fill = delay_line_num_samples - read_position_;
-            auto block_to_fill = delay_block.getSingleChannelBlock (channel_index)
-                                     .getSubBlock (read_position_, num_samples_to_fill);
-
-            auto remaining_samples = delay_line_num_samples - num_samples_to_fill;
-            auto remaining_block = delay_block.getSingleChannelBlock (channel_index)
-                                       .getSubBlock (0, remaining_samples);
-
-            block_to_fill.add (channel_block.getSubBlock (0, num_samples_to_fill));
-            remaining_block.add (
-                channel_block.getSubBlock (num_samples_to_fill, remaining_samples));
-
-            auto num_samples_to_take =
-                std::min (static_cast<int> (output_block_num_samples), num_samples_to_fill);
-            output_block.getSingleChannelBlock (channel_index)
-                .copyFrom (channel_block.getSubBlock (read_position_, num_samples_to_take));
-
-            auto remaining_samples_to_take = output_block_num_samples - num_samples_to_take;
-            output_block.getSingleChannelBlock (channel_index)
-                .getSubBlock (num_samples_to_take)
-                .copyFrom (channel_block.getSubBlock (0, remaining_samples_to_take));
-
-            read_position_ = (read_position_ + output_block_num_samples) % delay_line_num_samples;
-        }
     }
+
+    auto delay_line_num_samples = delay_block.getNumSamples ();
+    auto output_block_num_samples = output_block.getNumSamples ();
+
+    WriteDelayBlock ();
+    ReadDelayBlock (output_block);
+
+    read_position_ = (read_position_ + output_block_num_samples) % delay_line_num_samples;
+}
+
+void OverlapAddConvolver::WriteDelayBlock ()
+{
+    juce::dsp::AudioBlock<float> delay_block {delay_line_};
+    juce::dsp::AudioBlock<float> input_forward_transform_block {input_block_forward_transform_};
+
+    auto delay_line_num_samples = delay_block.getNumSamples ();
+
+    auto first_samples_to_fill = delay_line_num_samples - read_position_;
+    auto remaining_samples = delay_line_num_samples - first_samples_to_fill;
+
+    auto first_block_to_fill = delay_block.getSubBlock (read_position_, first_samples_to_fill);
+    auto remaining_block = delay_block.getSubBlock (0, remaining_samples);
+
+    first_block_to_fill.add (input_forward_transform_block.getSubBlock (0, first_samples_to_fill));
+    remaining_block.add (
+        input_forward_transform_block.getSubBlock (first_samples_to_fill - 1, remaining_samples));
+}
+
+void OverlapAddConvolver::ReadDelayBlock (juce::dsp::AudioBlock<float> output_block)
+{
+    juce::dsp::AudioBlock<float> delay_block {delay_line_};
+
+    auto delay_line_num_samples = delay_block.getNumSamples ();
+    auto output_block_num_samples = output_block.getNumSamples ();
+
+    auto remaining_samples_before_wrap = delay_line_num_samples - read_position_;
+    auto first_samples_to_take = std::min (output_block_num_samples, remaining_samples_before_wrap);
+    auto wrapped_samples_to_take = output_block_num_samples - first_samples_to_take;
+
+    auto first_delay_block_to_take =
+        delay_block.getSubBlock (read_position_, first_samples_to_take);
+    auto wrapped_delay_block_to_take = delay_block.getSubBlock (0, wrapped_samples_to_take);
+
+    output_block.copyFrom (first_delay_block_to_take);
+    output_block.getSubBlock (first_samples_to_take - 1).copyFrom (wrapped_delay_block_to_take);
+
+    first_delay_block_to_take.clear ();
+    wrapped_delay_block_to_take.clear ();
 }
 
 void OverlapAddConvolver::reset ()
