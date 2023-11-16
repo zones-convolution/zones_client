@@ -63,8 +63,7 @@ void OverlapSaveConvolver::ReadCircularBuffer ()
     auto wrapped_block_to_take = circular_block.getSubBlock (0, wrapped_samples_to_take);
 
     forward_transform_block.copyFrom (first_block_to_take);
-    forward_transform_block.getSubBlock (first_samples_to_take - 1)
-        .copyFrom (wrapped_block_to_take);
+    forward_transform_block.getSubBlock (first_samples_to_take).copyFrom (wrapped_block_to_take);
 }
 
 void OverlapSaveConvolver::WriteCircularBuffer (juce::dsp::AudioBlock<const float> input_block)
@@ -82,7 +81,7 @@ void OverlapSaveConvolver::WriteCircularBuffer (juce::dsp::AudioBlock<const floa
 
     first_block_to_fill.copyFrom (input_block.getSubBlock (0, first_samples_to_fill));
     remaining_block_to_fill.copyFrom (
-        input_block.getSubBlock (first_samples_to_fill - 1, remaining_samples_to_fill));
+        input_block.getSubBlock (first_samples_to_fill, remaining_samples_to_fill));
 }
 
 void OverlapSaveConvolver::reset ()
