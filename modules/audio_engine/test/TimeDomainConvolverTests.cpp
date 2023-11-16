@@ -1,7 +1,7 @@
 #include "audio_engine/TimeDomainConvolver.h"
-#include "melatonin_test_helpers/melatonin_test_helpers.h"
 
 #include <catch2/catch_test_macros.hpp>
+#include <melatonin_test_helpers/melatonin_test_helpers.h>
 
 static const juce::dsp::ProcessSpec kProcessSpec {.numChannels = 1,
                                                   .maximumBlockSize = 32,
