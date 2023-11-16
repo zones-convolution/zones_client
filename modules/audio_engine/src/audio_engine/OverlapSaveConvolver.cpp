@@ -17,10 +17,9 @@ void OverlapSaveConvolver::process (const juce::dsp::ProcessContextReplacing<flo
     juce::dsp::AudioBlock<float> ir_forward_transform_block (ir_forward_transform_);
 
     forward_transform_block.getSubBlock (num_samples_to_discard_).copyFrom (input_block);
-    ReadCircularBuffer ();
-    WriteCircularBuffer (input_block);
-    read_position_ =
-        (read_position_ + input_block.getNumSamples ()) % circular_buffer_.getNumSamples ();
+
+    circular_buffer_.GetNext (0).CopyFrom (input_block);
+    circular_buffer_.GetNext (input_block.getNumSamples ()).CopyTo (forward_transform_block);
 
     for (auto channel_index = 0; channel_index < input_block.getNumChannels (); ++channel_index)
     {
@@ -49,41 +48,6 @@ void OverlapSaveConvolver::process (const juce::dsp::ProcessContextReplacing<flo
     forward_transform_block.clear ();
 }
 
-void OverlapSaveConvolver::ReadCircularBuffer ()
-{
-    juce::dsp::AudioBlock<float> circular_block {circular_buffer_};
-    juce::dsp::AudioBlock<float> forward_transform_block {forward_transform_};
-
-    auto circular_num_samples = circular_block.getNumSamples ();
-
-    auto first_samples_to_take = circular_num_samples - read_position_;
-    auto wrapped_samples_to_take = circular_num_samples - first_samples_to_take;
-
-    auto first_block_to_take = circular_block.getSubBlock (read_position_, first_samples_to_take);
-    auto wrapped_block_to_take = circular_block.getSubBlock (0, wrapped_samples_to_take);
-
-    forward_transform_block.copyFrom (first_block_to_take);
-    forward_transform_block.getSubBlock (first_samples_to_take).copyFrom (wrapped_block_to_take);
-}
-
-void OverlapSaveConvolver::WriteCircularBuffer (juce::dsp::AudioBlock<const float> input_block)
-{
-    juce::dsp::AudioBlock<float> circular_block {circular_buffer_};
-    auto circular_num_samples = circular_block.getNumSamples ();
-    auto input_block_num_samples = input_block.getNumSamples ();
-
-    auto remaining_samples_before_wrap = circular_num_samples - read_position_;
-    auto first_samples_to_fill = std::min (input_block_num_samples, remaining_samples_before_wrap);
-    auto remaining_samples_to_fill = input_block_num_samples - first_samples_to_fill;
-
-    auto first_block_to_fill = circular_block.getSubBlock (read_position_, first_samples_to_fill);
-    auto remaining_block_to_fill = circular_block.getSubBlock (0, remaining_samples_to_fill);
-
-    first_block_to_fill.copyFrom (input_block.getSubBlock (0, first_samples_to_fill));
-    remaining_block_to_fill.copyFrom (
-        input_block.getSubBlock (first_samples_to_fill, remaining_samples_to_fill));
-}
-
 void OverlapSaveConvolver::reset ()
 {
 }
@@ -107,9 +71,9 @@ void OverlapSaveConvolver::LoadImpulseResponse (juce::dsp::AudioBlock<float> ir_
     forward_transform_.setSize (process_spec_.numChannels, 2 * fft_size_, false);
     forward_transform_.clear ();
 
-    circular_buffer_.setSize (
+    saved_inputs_.setSize (
         process_spec_.numChannels, num_samples_to_discard_, false); // M - 1 samples long
-    circular_buffer_.clear ();
+    saved_inputs_.clear ();
 
     juce::dsp::AudioBlock<float> ir_forward_transform_block (ir_forward_transform_);
     ir_forward_transform_block.copyFrom (ir_block);

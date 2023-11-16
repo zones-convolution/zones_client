@@ -1,4 +1,6 @@
 #pragma once
+#include "ConvolverUtilities.h"
+
 #include <juce_dsp/juce_dsp.h>
 
 class OverlapSaveConvolver : public juce::dsp::ProcessorBase
@@ -14,12 +16,13 @@ private:
     void WriteCircularBuffer (juce::dsp::AudioBlock<const float> input_block);
     juce::dsp::ProcessSpec process_spec_;
 
-    int read_position_ = 0;
     int num_samples_to_discard_;
     int fft_size_;
     std::unique_ptr<juce::dsp::FFT> fft_;
 
     juce::AudioBuffer<float> ir_forward_transform_;
     juce::AudioBuffer<float> forward_transform_;
-    juce::AudioBuffer<float> circular_buffer_;
+
+    juce::AudioBuffer<float> saved_inputs_;
+    CircularBuffer circular_buffer_ {saved_inputs_};
 };

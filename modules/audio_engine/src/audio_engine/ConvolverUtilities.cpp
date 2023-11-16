@@ -8,7 +8,7 @@ SplitBlock::SplitBlock (juce::dsp::AudioBlock<float> first_block,
     total_num_samples_ = first_block.getNumSamples () + wrapped_block.getNumSamples ();
 }
 
-void SplitBlock::CopyFrom (const juce::dsp::AudioBlock<float> block)
+void SplitBlock::CopyFrom (const juce::dsp::AudioBlock<const float> block)
 {
     auto num_samples = block.getNumSamples ();
     auto first_samples_to_copy = std::min (num_samples, first_block_.getNumSamples ());
@@ -18,7 +18,7 @@ void SplitBlock::CopyFrom (const juce::dsp::AudioBlock<float> block)
     wrapped_block_.copyFrom (block.getSubBlock (first_samples_to_copy, remaining_samples_to_copy));
 }
 
-void SplitBlock::AddFrom (const juce::dsp::AudioBlock<float> block)
+void SplitBlock::AddFrom (const juce::dsp::AudioBlock<const float> block)
 {
     auto num_samples = block.getNumSamples ();
     auto first_samples_to_copy = std::min (num_samples, first_block_.getNumSamples ());
@@ -54,19 +54,20 @@ SplitBlock SplitBlock::GetSubBlock (std::size_t num_samples)
             wrapped_block_.getSubBlock (0, wrapped_samples_to_take)};
 }
 
-CircularBuffer::CircularBuffer (juce::dsp::AudioBlock<float> block)
-    : block_ (block)
+CircularBuffer::CircularBuffer (juce::AudioBuffer<float> & buffer)
+    : buffer_ (buffer)
 {
 }
 
 SplitBlock CircularBuffer::GetNext (std::size_t advancement)
 {
-    auto num_samples = block_.getNumSamples ();
+    juce::dsp::AudioBlock<float> block {buffer_};
+    auto num_samples = buffer_.getNumSamples ();
     head_position_ = (head_position_ + advancement) % num_samples;
 
     auto first_samples_to_take = num_samples - head_position_;
     auto wrapped_samples_to_take = num_samples - first_samples_to_take;
 
-    return {block_.getSubBlock (head_position_, first_samples_to_take),
-            block_.getSubBlock (0, wrapped_samples_to_take)};
+    return {block.getSubBlock (head_position_, first_samples_to_take),
+            block.getSubBlock (0, wrapped_samples_to_take)};
 }
