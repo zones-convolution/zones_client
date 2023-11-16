@@ -19,8 +19,6 @@ void OverlapAddConvolver::process (const juce::dsp::ProcessContextReplacing<floa
 
     juce::dsp::AudioBlock<float> ir_forward_transform_block (ir_forward_transform_);
 
-    juce::dsp::AudioBlock<float> delay_block (delay_line_);
-
     for (auto channel_index = 0; channel_index < output_block.getNumChannels (); ++channel_index)
     {
         auto channel = input_block_forward_transform.getChannelPointer (channel_index);
@@ -44,53 +42,15 @@ void OverlapAddConvolver::process (const juce::dsp::ProcessContextReplacing<floa
         fft_->performRealOnlyInverseTransform (channel);
     }
 
-    auto delay_line_num_samples = delay_block.getNumSamples ();
     auto output_block_num_samples = output_block.getNumSamples ();
 
-    WriteDelayBlock ();
-    ReadDelayBlock (output_block);
+    auto split_block = circular_buffer_.GetNext (0);
 
-    read_position_ = (read_position_ + output_block_num_samples) % delay_line_num_samples;
-}
+    split_block.AddFrom (input_block_forward_transform.getSubBlock (0, fft_size_));
+    split_block.CopyTo (output_block);
+    split_block.GetSubBlock (output_block_num_samples).Clear ();
 
-void OverlapAddConvolver::WriteDelayBlock ()
-{
-    juce::dsp::AudioBlock<float> delay_block {delay_line_};
-    juce::dsp::AudioBlock<float> input_forward_transform_block {input_block_forward_transform_};
-
-    auto delay_line_num_samples = delay_block.getNumSamples ();
-
-    auto first_samples_to_fill = delay_line_num_samples - read_position_;
-    auto remaining_samples = delay_line_num_samples - first_samples_to_fill;
-
-    auto first_block_to_fill = delay_block.getSubBlock (read_position_, first_samples_to_fill);
-    auto remaining_block = delay_block.getSubBlock (0, remaining_samples);
-
-    first_block_to_fill.add (input_forward_transform_block.getSubBlock (0, first_samples_to_fill));
-    remaining_block.add (
-        input_forward_transform_block.getSubBlock (first_samples_to_fill - 1, remaining_samples));
-}
-
-void OverlapAddConvolver::ReadDelayBlock (juce::dsp::AudioBlock<float> output_block)
-{
-    juce::dsp::AudioBlock<float> delay_block {delay_line_};
-
-    auto delay_line_num_samples = delay_block.getNumSamples ();
-    auto output_block_num_samples = output_block.getNumSamples ();
-
-    auto remaining_samples_before_wrap = delay_line_num_samples - read_position_;
-    auto first_samples_to_take = std::min (output_block_num_samples, remaining_samples_before_wrap);
-    auto wrapped_samples_to_take = output_block_num_samples - first_samples_to_take;
-
-    auto first_delay_block_to_take =
-        delay_block.getSubBlock (read_position_, first_samples_to_take);
-    auto wrapped_delay_block_to_take = delay_block.getSubBlock (0, wrapped_samples_to_take);
-
-    output_block.copyFrom (first_delay_block_to_take);
-    output_block.getSubBlock (first_samples_to_take - 1).copyFrom (wrapped_delay_block_to_take);
-
-    first_delay_block_to_take.clear ();
-    wrapped_delay_block_to_take.clear ();
+    circular_buffer_.GetNext (output_block_num_samples);
 }
 
 void OverlapAddConvolver::reset ()
@@ -115,8 +75,8 @@ void OverlapAddConvolver::LoadImpulseResponse (juce::dsp::AudioBlock<float> ir_b
     input_block_forward_transform_.setSize (process_spec_.numChannels, 2 * fft_size_, false);
     input_block_forward_transform_.clear ();
 
-    delay_line_.setSize (process_spec_.numChannels, fft_size_, false);
-    delay_line_.clear ();
+    saved_outputs_.setSize (process_spec_.numChannels, fft_size_, false);
+    saved_outputs_.clear ();
 
     juce::dsp::AudioBlock<float> ir_forward_transform_block (ir_forward_transform_);
     ir_forward_transform_block.copyFrom (ir_block);
