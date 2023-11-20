@@ -61,7 +61,9 @@ private:
 class FrequencyDelayLine
 {
 public:
-    FrequencyDelayLine (std::size_t num_blocks, std::size_t num_elements_per_block);
+    FrequencyDelayLine (std::size_t num_channels,
+                        std::size_t num_blocks,
+                        std::size_t num_elements_per_block);
 
     ComplexBuffer & GetNextBlock ();
     [[nodiscard]] const ComplexBuffer & GetBlockWithOffset (std::size_t offset) const;

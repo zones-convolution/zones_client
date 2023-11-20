@@ -93,14 +93,13 @@ std::size_t ComplexBuffer::GetNumPoints () const
 
 const std::complex<float> * ComplexBuffer::GetReadPointer (std::size_t channel_index) const
 {
-    //    jassert (isPositiveAndBelow (channel, numChannels));
-
+    jassert (juce::isPositiveAndBelow (channel_index, num_channels_));
     return channel_pointers_ [channel_index];
 }
 
 std::complex<float> * ComplexBuffer::GetWritePointer (std::size_t channel_index)
 {
-    //    jassert (isPositiveAndBelow (channel, numChannels));
+    jassert (juce::isPositiveAndBelow (channel_index, num_channels_));
     return channel_pointers_ [channel_index];
 }
 
@@ -141,14 +140,23 @@ void ComplexBuffer::ComplexMultiplyAccumulateFrom (const ComplexBuffer & a, cons
 
 void ComplexBuffer::CopyFromAudioBlock (const juce::dsp::AudioBlock<const float> block)
 {
+    jassert (num_channels_ == block.getNumChannels ());
+    jassert (num_points_ == block.getNumSamples ());
+
+    for (auto channel_index = 0; channel_index < num_channels_; ++channel_index)
+        for (auto point_index = 0; point_index < num_points_; +point_index)
+            GetWritePointer (channel_index) [point_index] = {
+                block.getSample (channel_index, point_index), 0.f};
 }
 
-FrequencyDelayLine::FrequencyDelayLine (std::size_t num_blocks, std::size_t num_elements_per_block)
+FrequencyDelayLine::FrequencyDelayLine (std::size_t num_channels,
+                                        std::size_t num_blocks,
+                                        std::size_t num_elements_per_block)
 {
     num_blocks_ = num_blocks;
     for (auto i = 0; i < num_blocks; ++i)
     {
-        ComplexBuffer buffer {num_elements_per_block, 1};
+        ComplexBuffer buffer {num_elements_per_block, num_channels};
         buffer.Clear ();
         delay_line_.emplace_back (std::move (buffer));
     }
@@ -169,20 +177,4 @@ ComplexBuffer & FrequencyDelayLine::GetNextBlock ()
 const ComplexBuffer & FrequencyDelayLine::GetBlockWithOffset (std::size_t offset) const
 {
     return delay_line_ [(head_position_ + offset) % num_blocks_];
-}
-
-void ComplexMultiply (ComplexBuffer & output, const ComplexBuffer & a, const ComplexBuffer & b)
-{
-    jassert (output.size () == a.size () == b.size ());
-    for (auto i = 0; i < output.size (); ++i)
-        output [i] = a [i] * b [i];
-}
-
-void ComplexMultiplyAccumulate (ComplexBuffer & output,
-                                const ComplexBuffer & a,
-                                const ComplexBuffer & b)
-{
-    jassert (output.size () == a.size () == b.size ());
-    for (auto i = 0; i < output.size (); ++i)
-        output [i] += a [i] * b [i];
 }
