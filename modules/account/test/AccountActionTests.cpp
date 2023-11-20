@@ -9,13 +9,11 @@ SCENARIO ("updating account model", "[AccountAction]")
 {
     GIVEN ("an empty account model")
     {
-        ApiRequestService api_request_service;
-
-        auto deps = AccountDeps::with (std::ref (api_request_service));
+        auto deps = lager::deps<> ();
         auto loop = lager::with_manual_event_loop {};
 
         std::optional<AccountAction> last_tab_action;
-        lager::context<AccountAction, AccountDeps> context (
+        lager::context<AccountAction, lager::deps<>> context (
             [&] (auto && action) -> lager::future
             {
                 last_tab_action = action;

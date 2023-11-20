@@ -20,16 +20,24 @@ public:
                                                   const juce::String & oidc_provider,
                                                   const DiscoverCallbacks & callbacks);
 
-    struct TokenFailResponse
+    struct RefreshTokenFailResponse
     {
     };
 
-    struct TokenSuccessResponse
+    struct RefreshTokenSuccessResponse
     {
+        juce::String access_token;
+        juce::String token_type;
+        int expires_in;
+        juce::StringArray scope;
+        juce::String refresh_token;
+        juce::String id_token;
     };
 
-    using TokenCallbacks = ApiRequestCallbacks<TokenSuccessResponse, TokenFailResponse>;
-    static juce::ThreadPoolJob * TokenRequest (ApiRequestService & api_request_service,
-                                               const juce::String & token_endpoint,
-                                               const DiscoverCallbacks & callbacks);
+    using RefreshTokenCallbacks =
+        ApiRequestCallbacks<RefreshTokenSuccessResponse, RefreshTokenFailResponse>;
+    static juce::ThreadPoolJob * RefreshTokenRequest (ApiRequestService & api_request_service,
+                                                      const juce::String & token_endpoint,
+                                                      const juce::String & refresh_token,
+                                                      const RefreshTokenCallbacks & callbacks);
 };

@@ -8,6 +8,6 @@
 #include <variant>
 
 using Action = std::variant<ProjectIrRepositoryAction, AccountAction>;
-using Deps = lager::deps<ApiRequestService &, std::string &>;
+using Deps = lager::deps<std::string &>;
 using Result = lager::result<Model, Action, Deps>;
 Result Update (Model model, Action action);

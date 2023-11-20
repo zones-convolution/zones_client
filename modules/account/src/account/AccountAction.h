@@ -1,7 +1,6 @@
 #pragma once
 
 #include "AccountModel.h"
-#include "api/ApiRequestService.h"
 
 #include <filesystem>
 #include <lager/effect.hpp>
@@ -30,5 +29,5 @@ using AccountAction = std::variant<LoadSessionFromKeychainAction,
                                    SaveSessionToKeychainAction,
                                    LoadSessionFromTokensAction,
                                    LoadSessionAction>;
-using AccountResult = lager::result<AccountModel, AccountAction, lager::deps<ApiRequestService &>>;
+using AccountResult = lager::result<AccountModel, AccountAction, lager::deps<>>;
 AccountResult UpdateAccount (AccountModel model, AccountAction action);

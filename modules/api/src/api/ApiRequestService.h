@@ -9,12 +9,12 @@ class ApiRequestService
 public:
     explicit ApiRequestService (juce::Thread::Priority priority = juce::Thread::Priority::normal);
 
-    juce::ThreadPoolJob * BeginRequest (const ApiRequest & api_request,
-                                        const ApiRequestJob::Callbacks & callbacks);
+    virtual juce::ThreadPoolJob * BeginRequest (const ApiRequest & api_request,
+                                                const ApiRequestJob::Callbacks & callbacks);
     bool CancelRequest (juce::ThreadPoolJob * request_job);
     bool CancelAllRequests ();
 
-private:
+protected:
     static constexpr int kNumberOfThreads = 10;
     static constexpr int kJobTimeout = 100;
 
