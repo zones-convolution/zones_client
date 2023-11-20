@@ -32,3 +32,42 @@ private:
     std::size_t head_position_ = 0;
     juce::AudioBuffer<float> & buffer_;
 };
+
+class ComplexBuffer
+{
+public:
+    ComplexBuffer (std::size_t num_points, std::size_t num_channels);
+    [[nodiscard]] std::size_t GetNumChannels () const;
+    [[nodiscard]] std::size_t GetNumPoints () const;
+
+    [[nodiscard]] const std::complex<float> * GetReadPointer (std::size_t channel_index) const;
+    std::complex<float> * GetWritePointer (std::size_t channel_index);
+
+    [[nodiscard]] const std::complex<float> * const * GetArrayOfReadPointer () const;
+    std::complex<float> * const * GetArrayOfWritePointer ();
+
+    void Clear ();
+    void ComplexMultiplyFrom (const ComplexBuffer & a, const ComplexBuffer & b);
+    void ComplexMultiplyAccumulateFrom (const ComplexBuffer & a, const ComplexBuffer & b);
+    void CopyFromAudioBlock (const juce::dsp::AudioBlock<const float> block);
+
+private:
+    std::size_t num_channels_ = 0;
+    std::size_t num_points_ = 0;
+    std::vector<std::complex<float>> channel_data_;
+    std::vector<std::complex<float> *> channel_pointers_;
+};
+
+class FrequencyDelayLine
+{
+public:
+    FrequencyDelayLine (std::size_t num_blocks, std::size_t num_elements_per_block);
+
+    ComplexBuffer & GetNextBlock ();
+    [[nodiscard]] const ComplexBuffer & GetBlockWithOffset (std::size_t offset) const;
+
+private:
+    std::vector<ComplexBuffer> delay_line_;
+    std::size_t head_position_ = 0;
+    std::size_t num_blocks_;
+};

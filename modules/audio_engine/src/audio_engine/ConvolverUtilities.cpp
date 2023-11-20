@@ -71,3 +71,115 @@ SplitBlock CircularBuffer::GetNext (std::size_t advancement)
     return {block.getSubBlock (head_position_, first_samples_to_take),
             block.getSubBlock (0, wrapped_samples_to_take)};
 }
+
+ComplexBuffer::ComplexBuffer (std::size_t num_points, std::size_t num_channels)
+    : num_channels_ (num_channels)
+    , num_points_ (num_points)
+{
+    channel_data_.resize (num_points * num_channels);
+    for (auto channel_index = 0; channel_index < num_channels; ++channel_index)
+        channel_pointers_.push_back (&channel_data_ [channel_index * num_points]);
+}
+
+std::size_t ComplexBuffer::GetNumChannels () const
+{
+    return num_channels_;
+}
+
+std::size_t ComplexBuffer::GetNumPoints () const
+{
+    return num_points_;
+}
+
+const std::complex<float> * ComplexBuffer::GetReadPointer (std::size_t channel_index) const
+{
+    return channel_pointers_ [channel_index];
+}
+
+std::complex<float> * ComplexBuffer::GetWritePointer (std::size_t channel_index)
+{
+    return channel_pointers_ [channel_index];
+}
+
+const std::complex<float> * const * ComplexBuffer::GetArrayOfReadPointer () const
+{
+    return channel_pointers_.data ();
+}
+
+std::complex<float> * const * ComplexBuffer::GetArrayOfWritePointer ()
+{
+    return channel_pointers_.data ();
+}
+
+void ComplexBuffer::Clear ()
+{
+    for (auto & sample_index : channel_data_)
+        sample_index = {0, 0};
+}
+
+void ComplexBuffer::ComplexMultiplyFrom (const ComplexBuffer & a, const ComplexBuffer & b)
+{
+    jassert (num_channels_ == a.num_channels_ == b.num_channels_);
+    jassert (num_points_ == a.num_points_ == b.num_points_);
+
+    for (auto point_index = 0; point_index < num_points_; ++point_index)
+        channel_data_ [point_index] = a.channel_data_ [point_index] * b.channel_data_ [point_index];
+}
+
+void ComplexBuffer::ComplexMultiplyAccumulateFrom (const ComplexBuffer & a, const ComplexBuffer & b)
+{
+    jassert (num_channels_ == a.num_channels_ == b.num_channels_);
+    jassert (num_points_ == a.num_points_ == b.num_points_);
+
+    for (auto point_index = 0; point_index < num_points_; ++point_index)
+        channel_data_ [point_index] +=
+            a.channel_data_ [point_index] * b.channel_data_ [point_index];
+}
+
+void ComplexBuffer::CopyFromAudioBlock (const juce::dsp::AudioBlock<const float> block)
+{
+}
+
+FrequencyDelayLine::FrequencyDelayLine (std::size_t num_blocks, std::size_t num_elements_per_block)
+{
+    num_blocks_ = num_blocks;
+    for (auto i = 0; i < num_blocks; ++i)
+    {
+        ComplexBuffer buffer {num_elements_per_block, 1};
+        buffer.Clear ();
+        delay_line_.emplace_back (std::move (buffer));
+    }
+}
+
+static inline std::size_t ReverseWrap (int a, int b)
+{
+    return static_cast<std::size_t> ((b + (a % b)) % b);
+}
+
+ComplexBuffer & FrequencyDelayLine::GetNextBlock ()
+{
+    head_position_ =
+        ReverseWrap (static_cast<int> (head_position_) - 1, static_cast<int> (num_blocks_));
+    return delay_line_ [head_position_];
+}
+
+const ComplexBuffer & FrequencyDelayLine::GetBlockWithOffset (std::size_t offset) const
+{
+    return delay_line_ [(head_position_ + offset) % num_blocks_];
+}
+
+void ComplexMultiply (ComplexBuffer & output, const ComplexBuffer & a, const ComplexBuffer & b)
+{
+    jassert (output.size () == a.size () == b.size ());
+    for (auto i = 0; i < output.size (); ++i)
+        output [i] = a [i] * b [i];
+}
+
+void ComplexMultiplyAccumulate (ComplexBuffer & output,
+                                const ComplexBuffer & a,
+                                const ComplexBuffer & b)
+{
+    jassert (output.size () == a.size () == b.size ());
+    for (auto i = 0; i < output.size (); ++i)
+        output [i] += a [i] * b [i];
+}

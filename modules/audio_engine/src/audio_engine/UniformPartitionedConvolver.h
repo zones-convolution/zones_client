@@ -1,0 +1,24 @@
+#pragma once
+#include "ConvolverUtilities.h"
+
+#include <juce_dsp/juce_dsp.h>
+
+class UniformPartitionedConvolver : juce::dsp::ProcessorBase
+{
+public:
+    void prepare (const juce::dsp::ProcessSpec & spec) override;
+    void process (const juce::dsp::ProcessContextReplacing<float> & replacing) override;
+    void reset () override;
+    void LoadImpulseResponse (juce::dsp::AudioBlock<float> ir_block, double sample_rate);
+
+private:
+    juce::dsp::ProcessSpec process_spec_;
+
+    int fft_size_;
+    std::unique_ptr<juce::dsp::FFT> fft_;
+
+    std::vector<ComplexBuffer> filter_partitions_;
+
+    juce::AudioBuffer<float> saved_inputs_;
+    CircularBuffer circular_buffer_ {saved_inputs_};
+};

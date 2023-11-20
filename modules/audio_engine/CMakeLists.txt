@@ -18,6 +18,8 @@ zones_add_module(
         src/audio_engine/OverlapSaveConvolver.cpp
         src/audio_engine/ConvolverUtilities.h
         src/audio_engine/ConvolverUtilities.cpp
+        src/audio_engine/UniformPartitionedConvolver.h
+        src/audio_engine/UniformPartitionedConvolver.cpp
         DEPS
         model
         ir_repository
