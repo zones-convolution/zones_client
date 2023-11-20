@@ -14,8 +14,11 @@ public:
     };
 
     using Callbacks = ApiRequestCallbacks<Result, Result>;
+    using Middleware = std::function<void (ApiRequest &)>;
 
-    ApiRequestJob (ApiRequest api_request, Callbacks callbacks);
+    ApiRequestJob (ApiRequest api_request,
+                   Callbacks callbacks,
+                   const std::vector<Middleware> & middleware);
     ~ApiRequestJob () override = default;
     JobStatus runJob () override;
 
@@ -29,12 +32,15 @@ private:
     juce::MemoryBlock memory_block_;
     float last_progress_ = 0.f;
 
+    const std::vector<Middleware> & middleware_;
     std::unique_ptr<juce::InputStream> input_stream_;
 
     void NotifyStart ();
     void NotifyProgress ();
     void NotifySuccess ();
     void NotifyFail ();
+
+    void RunMiddleware ();
 
     void CreateInputStream ();
     void ProcessStream ();

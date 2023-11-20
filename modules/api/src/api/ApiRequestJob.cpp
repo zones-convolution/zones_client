@@ -1,9 +1,12 @@
 #include "ApiRequestJob.h"
 
-ApiRequestJob::ApiRequestJob (ApiRequest api_request, Callbacks callbacks)
-    : juce::ThreadPoolJob ("ApiDownloadJob")
+ApiRequestJob::ApiRequestJob (ApiRequest api_request,
+                              Callbacks callbacks,
+                              const std::vector<Middleware> & middleware)
+    : juce::ThreadPoolJob ("ApiRequestJob")
     , api_request_ (std::move (api_request))
     , callbacks_ (std::move (callbacks))
+    , middleware_ (middleware)
 {
 }
 
@@ -88,8 +91,15 @@ void ApiRequestJob::ProcessStream ()
 juce::ThreadPoolJob::JobStatus ApiRequestJob::runJob ()
 {
     NotifyStart ();
+    RunMiddleware ();
     CreateInputStream ();
     ProcessStream ();
 
     return jobHasFinished;
+}
+
+void ApiRequestJob::RunMiddleware ()
+{
+    for (auto & middleware : middleware_)
+        middleware (api_request_);
 }

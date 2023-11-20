@@ -8,6 +8,7 @@ class ApiRequestService
 {
 public:
     explicit ApiRequestService (juce::Thread::Priority priority = juce::Thread::Priority::normal);
+    void RegisterMiddleware (const ApiRequestJob::Middleware & middleware);
 
     virtual juce::ThreadPoolJob * BeginRequest (const ApiRequest & api_request,
                                                 const ApiRequestJob::Callbacks & callbacks);
@@ -18,5 +19,6 @@ protected:
     static constexpr int kNumberOfThreads = 10;
     static constexpr int kJobTimeout = 100;
 
+    std::vector<Middleware> middleware_;
     juce::ThreadPool thread_pool_;
 };

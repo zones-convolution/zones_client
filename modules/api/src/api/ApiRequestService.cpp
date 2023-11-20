@@ -8,7 +8,7 @@ ApiRequestService::ApiRequestService (juce::Thread::Priority priority)
 juce::ThreadPoolJob * ApiRequestService::BeginRequest (const ApiRequest & api_request,
                                                        const ApiRequestJob::Callbacks & callbacks)
 {
-    auto request_job = new ApiRequestJob (api_request, callbacks);
+    auto request_job = new ApiRequestJob (api_request, callbacks, middleware_);
     thread_pool_.addJob (request_job, true);
     return request_job;
 }
@@ -21,4 +21,9 @@ bool ApiRequestService::CancelRequest (juce::ThreadPoolJob * request_job)
 bool ApiRequestService::CancelAllRequests ()
 {
     return thread_pool_.removeAllJobs (true, kJobTimeout);
+}
+
+void ApiRequestService::RegisterMiddleware (const ApiRequestJob::Middleware & middleware)
+{
+    middleware_.push_back (middleware);
 }
