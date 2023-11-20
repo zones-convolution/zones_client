@@ -93,11 +93,14 @@ std::size_t ComplexBuffer::GetNumPoints () const
 
 const std::complex<float> * ComplexBuffer::GetReadPointer (std::size_t channel_index) const
 {
+    //    jassert (isPositiveAndBelow (channel, numChannels));
+
     return channel_pointers_ [channel_index];
 }
 
 std::complex<float> * ComplexBuffer::GetWritePointer (std::size_t channel_index)
 {
+    //    jassert (isPositiveAndBelow (channel, numChannels));
     return channel_pointers_ [channel_index];
 }
 
