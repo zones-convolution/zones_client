@@ -141,22 +141,35 @@ void ComplexBuffer::ComplexMultiplyAccumulateFrom (const ComplexBuffer & a, cons
 void ComplexBuffer::CopyFromAudioBlock (const juce::dsp::AudioBlock<const float> block)
 {
     jassert (num_channels_ == block.getNumChannels ());
-    jassert (num_points_ == block.getNumSamples ());
 
-    for (auto channel_index = 0; channel_index < num_channels_; ++channel_index)
-        for (auto point_index = 0; point_index < num_points_; +point_index)
+    auto fill_points = std::min (num_points_, block.getNumSamples ());
+
+    for (auto channel_index = 0u; channel_index < num_channels_; ++channel_index)
+        for (auto point_index = 0u; point_index < fill_points; ++point_index)
             GetWritePointer (channel_index) [point_index] = {
                 block.getSample (channel_index, point_index), 0.f};
 }
 
+juce::dsp::AudioBlock<float> ComplexBuffer::GetContinuousBlock ()
+{
+    auto write_pointers = reinterpret_cast<float * const *> (GetArrayOfWritePointer ());
+    return {write_pointers, num_channels_, 2 * num_points_};
+}
+
+juce::dsp::AudioBlock<const float> ComplexBuffer::GetContinuousBlock () const
+{
+    auto write_pointers = reinterpret_cast<const float * const *> (GetArrayOfReadPointer ());
+    return {write_pointers, num_channels_, 2 * num_points_};
+}
+
 FrequencyDelayLine::FrequencyDelayLine (std::size_t num_channels,
                                         std::size_t num_blocks,
-                                        std::size_t num_elements_per_block)
+                                        std::size_t num_points_per_block)
 {
     num_blocks_ = num_blocks;
     for (auto i = 0; i < num_blocks; ++i)
     {
-        ComplexBuffer buffer {num_elements_per_block, num_channels};
+        ComplexBuffer buffer {num_points_per_block, num_channels};
         buffer.Clear ();
         delay_line_.emplace_back (std::move (buffer));
     }

@@ -46,6 +46,9 @@ public:
     [[nodiscard]] const std::complex<float> * const * GetArrayOfReadPointer () const;
     std::complex<float> * const * GetArrayOfWritePointer ();
 
+    [[nodiscard]] juce::dsp::AudioBlock<float> GetContinuousBlock ();
+    [[nodiscard]] juce::dsp::AudioBlock<const float> GetContinuousBlock () const;
+
     void Clear ();
     void ComplexMultiplyFrom (const ComplexBuffer & a, const ComplexBuffer & b);
     void ComplexMultiplyAccumulateFrom (const ComplexBuffer & a, const ComplexBuffer & b);
@@ -63,7 +66,7 @@ class FrequencyDelayLine
 public:
     FrequencyDelayLine (std::size_t num_channels,
                         std::size_t num_blocks,
-                        std::size_t num_elements_per_block);
+                        std::size_t num_points_per_block);
 
     ComplexBuffer & GetNextBlock ();
     [[nodiscard]] const ComplexBuffer & GetBlockWithOffset (std::size_t offset) const;
