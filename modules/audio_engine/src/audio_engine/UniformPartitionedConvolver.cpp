@@ -15,10 +15,11 @@ void UniformPartitionedConvolver::process (
     auto output_block = replacing.getOutputBlock ();
     auto num_channels = input_block.getNumChannels ();
     auto num_partitions = filter_partitions_.size ();
+    auto num_samples = input_block.getNumSamples ();
 
-    auto & next_fdl_block = frequency_delay_line_->GetNextBlock ();
-    next_fdl_block.Clear ();
-    auto continuous_fdl_block = next_fdl_block.GetContinuousBlock ();
+    auto & first_fdl_block = frequency_delay_line_->GetNextBlock ();
+    first_fdl_block.Clear ();
+    auto continuous_fdl_block = first_fdl_block.GetContinuousBlock ();
 
     circular_buffer_.GetNext (0).CopyFrom (input_block);
     circular_buffer_.GetNext (input_block.getNumSamples ()).CopyTo (continuous_fdl_block);
@@ -28,12 +29,13 @@ void UniformPartitionedConvolver::process (
             continuous_fdl_block.getChannelPointer (channel_index), true);
 
     auto & first_partition = filter_partitions_ [0];
-    convolved_output_->ComplexMultiplyFrom (next_fdl_block, first_partition);
+    convolved_output_->ComplexMultiplyFrom (first_fdl_block, first_partition);
 
     for (auto partition_index = 1u; partition_index < num_partitions; ++partition_index)
     {
         auto & previous_fdl_block = frequency_delay_line_->GetBlockWithOffset (partition_index);
         auto & partition = filter_partitions_ [partition_index];
+
         convolved_output_->ComplexMultiplyAccumulateFrom (previous_fdl_block, partition);
     }
 
@@ -42,7 +44,8 @@ void UniformPartitionedConvolver::process (
         fft_->performRealOnlyInverseTransform (
             continuous_output_block.getChannelPointer (channel_index));
 
-    output_block.copyFrom (continuous_output_block.getSubBlock (num_samples_to_discard_));
+    output_block.copyFrom (
+        continuous_output_block.getSubBlock (num_samples_to_discard_, num_samples));
 }
 
 void UniformPartitionedConvolver::reset ()
