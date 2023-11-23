@@ -54,7 +54,13 @@ juce_add_plugin(
         COPY_PLUGIN_AFTER_BUILD
         TRUE
         PRODUCT_NAME
-        Zones)
+        Zones
+        COMPANY_NAME
+        Zones
+        BUNDLE_ID
+        com.zones.zones
+        VERSION
+        0.0.1)
 
 target_sources(${BINARY} PRIVATE ${SOURCES})
 

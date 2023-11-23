@@ -7,58 +7,32 @@
           transpose="0" delayCompensation="0">
       <nodes>
         <node id="2" type="plugin" format="Internal" identifier="audio.output"
-              name="Built-in Output" relativeX="0.2566287878787879" relativeY="0.4441340782122905"
-              numAudioIns="2" numAudioOuts="0" uuid="96c092ebb9c64fac9ff6b8eaf1ec0cf6"
-              bypass="0" persistent="1" renderMode="single" keyStart="0" keyEnd="127"
-              transpose="0" delayCompensation="0.0" enabled="1" x="211.0" y="295.0"
-              program="0" midiProgram="0" globalMidiPrograms="0" midiProgramsEnabled="0"
-              mute="0" muteInput="0" midiProgramsState="" oversamplingFactor="1">
+              name="MacBook Pro&#25196;&#22768;&#22120;" relativeX="0.210077519379845"
+              relativeY="0.3794749403341289" numAudioIns="2" numAudioOuts="0"
+              uuid="96c092ebb9c64fac9ff6b8eaf1ec0cf6" bypass="0" persistent="1"
+              renderMode="single" keyStart="0" keyEnd="127" transpose="0" delayCompensation="0.0"
+              enabled="1" x="211.0" y="295.0" program="0" midiProgram="0" globalMidiPrograms="0"
+              midiProgramsEnabled="0" mute="0" muteInput="0" midiProgramsState=""
+              oversamplingFactor="1">
           <nodes/>
           <ui>
             <block/>
           </ui>
           <ports>
-            <port index="0" channel="0" type="audio" name="Output 1" symbol="audio_in_1"
+            <port index="0" channel="0" type="audio" name="1" symbol="audio_in_1"
                   flow="input"/>
-            <port index="1" channel="1" type="audio" name="Output 2" symbol="audio_in_2"
-                  flow="input"/>
-          </ports>
-        </node>
-        <node id="5" type="plugin" format="AudioUnit" identifier="AudioUnit:Effects/aufx,Zone,Zone"
-              name="Zones" relativeX="0.5523156089193825" relativeY="0.436036036036036"
-              pluginIdentifierString="AudioUnit-Zones-ec83dd73-61756678" uuid="9211415b923e49ff89240308266fcc02"
-              bypass="0" persistent="1" renderMode="single" keyStart="0" keyEnd="127.0"
-              transpose="0" delayCompensation="0.0" x="262.0" y="219.0" windowX="1869"
-              windowY="733" windowVisible="1" state="185.hAGaoMGcv.y0AHv.DTfAGfPBJffDSPAWsEla0YVXiQWcxUlbTQVXzEFWkwVYsUlaz0hag0VYWMWchQWdvU1U1Ulbyk1atQEc4AWYT4VXsUlDZ8lakAjzKvPCPDULQISzN7PTvTURtAWczEsCQX0S0QGb0QGD.HQX0YFdXUkazkFcrUFYHbAIoXiOFsDTUY0Vc8kXjoVazY2d........AD..........U....................PH"
-              programState="185.hAGaoMGcv.y0AHv.DTfAGfPBJffDSPAWsEla0YVXiQWcxUlbTQVXzEFWkwVYsUlaz0hag0VYWMWchQWdvU1U1Ulbyk1atQEc4AWYT4VXsUlDZ8lakAjzKvPCPDULQISzN7PTvTURtAWczEsCQX0S0QGb0QGD.HQX0YFdXUkazkFcrUFYHbAIoXiOFsDTUY0Vc8kXjoVazY2d........AD..........U....................PH"
-              program="-1" midiProgram="0" globalMidiPrograms="0" midiProgramsEnabled="0"
-              mute="0" muteInput="0" midiProgramsState="52.3o8Jnn7SunDysXFXfQFK.BaFXjY3rXkQF.BxKwbSkAFYhUFJtjDKAHKVX0.8XfA.h2YCaB"
-              oversamplingFactor="1" windowOnTop="1" enabled="1">
-          <nodes/>
-          <ui>
-            <block/>
-          </ui>
-          <ports>
-            <port index="0" channel="0" type="audio" name="Input 1" symbol="audio_in_1"
-                  flow="input"/>
-            <port index="1" channel="1" type="audio" name="Input 2" symbol="audio_in_2"
-                  flow="input"/>
-            <port index="2" channel="0" type="audio" name="Output 1" symbol="audio_out_1"
-                  flow="output"/>
-            <port index="3" channel="1" type="audio" name="Output 2" symbol="audio_out_2"
-                  flow="output"/>
-            <port index="4" channel="0" type="midi" name="MIDI In" symbol="element_midi_input"
+            <port index="1" channel="1" type="audio" name="2" symbol="audio_in_2"
                   flow="input"/>
           </ports>
         </node>
         <node id="7" type="plugin" format="Element" identifier="element.audioFilePlayer"
-              name="Audio File Player" relativeX="0.4699828473413379" relativeY="0.2918918918918919"
+              name="Audio File Player" relativeX="0.2124031007751938" relativeY="0.1933174224343675"
               pluginIdentifierString="Element-Audio File Player-53a71901-3e8"
               uuid="626729f8cc6649aa80efb615ac2b0985" bypass="0" persistent="1"
               renderMode="single" keyStart="0" keyEnd="127.0" transpose="0"
-              delayCompensation="0.0" x="214.0" y="139.0" windowX="1068" windowY="890"
-              windowVisible="1" state="171.yQWXzUF.ATPX0QVZuYTZrUF.ADVAuT0bkI2buvTYu4FTsL0KMU2boM1KoQUctU1bujFU04VYyARSkQVZg8RS0MWZi8RUtslaucmafDjbzk1bz8RUtslaucmafDDahUWaujjafPGZkAxavUlafDVZx4xcgYG.vwVX4klamAP.AHvbrElckAP.AL.au8Fb.DP.BzVZjk1TzElbzMEcuA2Pu4Fco4VckAP.AL.."
-              programState="171.yQWXzUF.ATPX0QVZuYTZrUF.ADVAuT0bkI2buvTYu4FTsL0KMU2boM1KoQUctU1bujFU04VYyARSkQVZg8RS0MWZi8RUtslaucmafDjbzk1bz8RUtslaucmafDDahUWaujjafPGZkAxavUlafDVZx4xcgYG.vwVX4klamAP.AHvbrElckAP.AL.au8Fb.DP.BzVZjk1TzElbzMEcuA2Pu4Fco4VckAP.AL.."
+              delayCompensation="0.0" x="214.0" y="139.0" windowX="893" windowY="543"
+              windowVisible="1" state="210.yQWXzUF.ATPX0QVZuYTZrUF.AfXAuX0arUWakM2KMM1Sgs1Ko0VXi8kXgM1Z0A2WxHyWwDyWxLyKz8lasUVZyQWYx8EbuIGcl8Fao81Wsk1bi8RdzUybtj1afzBHtUVZrABZg4lau4FHs.xTuABSu41YfXBHTgVXts1bfX1axARPrwFHzgVYfXTZygFHnLiLv.xZhA2bo3RXoYF.vwVX4klamAP.ALvbrElckAP.AL.au8Fb.DP.BzVZjk1TzElbzMEcuA2Pu4Fco4VckAP.AL.."
+              programState="210.yQWXzUF.ATPX0QVZuYTZrUF.AfXAuX0arUWakM2KMM1Sgs1Ko0VXi8kXgM1Z0A2WxHyWwDyWxLyKz8lasUVZyQWYx8EbuIGcl8Fao81Wsk1bi8RdzUybtj1afzBHtUVZrABZg4lau4FHs.xTuABSu41YfXBHTgVXts1bfX1axARPrwFHzgVYfXTZygFHnLiLv.xZhA2bo3RXoYF.vwVX4klamAP.ALvbrElckAP.AL.au8Fb.DP.BzVZjk1TzElbzMEcuA2Pu4Fco4VckAP.AL.."
               program="0" midiProgram="0" globalMidiPrograms="0" midiProgramsEnabled="0"
               mute="0" muteInput="0" midiProgramsState="52.3o8Jnn7SunDysXFXfQFK.BaFXjY3rXkQF.BxKwbSkAFYhUFJtjDKAHKVX0.8XfA.h2YCaB"
               oversamplingFactor="1" enabled="1">
@@ -86,15 +60,10 @@
       </nodes>
       <ports/>
       <ui>
-        <GraphEditorView width="1056" height="716" horizontalRangeStart="10.0" verticalRangeStart="88.0"
+        <GraphEditorView width="1290" height="838" horizontalRangeStart="10.0" verticalRangeStart="88.0"
                          zoomScale="1.0" nodePropsVisible="0"/>
       </ui>
-      <arcs>
-        <arc sourceNode="5" sourcePort="2" destNode="2" destPort="0"/>
-        <arc sourceNode="5" sourcePort="3" destNode="2" destPort="1"/>
-        <arc sourceNode="7" sourcePort="0" destNode="5" destPort="0"/>
-        <arc sourceNode="7" sourcePort="1" destNode="5" destPort="1"/>
-      </arcs>
+      <arcs/>
     </node>
   </graphs>
   <controllers/>

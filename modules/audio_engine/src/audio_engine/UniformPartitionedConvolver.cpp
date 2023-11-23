@@ -26,7 +26,8 @@ void UniformPartitionedConvolver::process (
 
     for (auto channel_index = 0u; channel_index < num_channels; ++channel_index)
         fft_->performRealOnlyForwardTransform (
-            continuous_fdl_block.getChannelPointer (channel_index), true);
+            continuous_fdl_block.getChannelPointer (channel_index),
+            true);
 
     auto & first_partition = filter_partitions_ [0];
     convolved_output_->ComplexMultiplyFrom (first_fdl_block, first_partition);
@@ -73,7 +74,8 @@ void UniformPartitionedConvolver::LoadImpulseResponse (juce::dsp::AudioBlock<flo
     saved_inputs_.setSize (num_channels, fft_size_);
     saved_inputs_.clear ();
 
-    ComplexBuffer input_partition {fft_size_, num_channels};
+    filter_partitions_.clear ();
+    ComplexBuffer input_partition{fft_size_, num_channels};
 
     for (auto partition_index = 0; partition_index < num_partitions; ++partition_index)
     {
@@ -85,7 +87,7 @@ void UniformPartitionedConvolver::LoadImpulseResponse (juce::dsp::AudioBlock<flo
         input_partition.Clear ();
         input_partition.CopyFromAudioBlock (partition_block);
 
-        ComplexBuffer filter_partition {fft_size_, num_channels};
+        ComplexBuffer filter_partition{fft_size_, num_channels};
         filter_partition.Clear ();
 
         for (auto channel_index = 0u; channel_index < num_channels; ++channel_index)
