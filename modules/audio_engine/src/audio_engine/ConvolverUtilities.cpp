@@ -3,7 +3,7 @@
 SplitBlock::SplitBlock (juce::dsp::AudioBlock<float> first_block,
                         juce::dsp::AudioBlock<float> wrapped_block)
     : first_block_ (first_block)
-    , wrapped_block_ (wrapped_block)
+      , wrapped_block_ (wrapped_block)
 {
     total_num_samples_ = first_block.getNumSamples () + wrapped_block.getNumSamples ();
 }
@@ -14,8 +14,11 @@ void SplitBlock::CopyFrom (const juce::dsp::AudioBlock<const float> block)
     auto first_samples_to_copy = std::min (num_samples, first_block_.getNumSamples ());
     auto remaining_samples_to_copy = num_samples - first_samples_to_copy;
 
-    first_block_.copyFrom (block.getSubBlock (0, first_samples_to_copy));
-    wrapped_block_.copyFrom (block.getSubBlock (first_samples_to_copy, remaining_samples_to_copy));
+    if (first_samples_to_copy > 0)
+        first_block_.copyFrom (block.getSubBlock (0, first_samples_to_copy));
+    if (remaining_samples_to_copy > 0)
+        wrapped_block_.copyFrom (
+            block.getSubBlock (first_samples_to_copy, remaining_samples_to_copy));
 }
 
 void SplitBlock::AddFrom (const juce::dsp::AudioBlock<const float> block)
@@ -24,8 +27,10 @@ void SplitBlock::AddFrom (const juce::dsp::AudioBlock<const float> block)
     auto first_samples_to_copy = std::min (num_samples, first_block_.getNumSamples ());
     auto remaining_samples_to_copy = num_samples - first_samples_to_copy;
 
-    first_block_.add (block.getSubBlock (0, first_samples_to_copy));
-    wrapped_block_.add (block.getSubBlock (first_samples_to_copy, remaining_samples_to_copy));
+    if (first_samples_to_copy > 0)
+        first_block_.add (block.getSubBlock (0, first_samples_to_copy));
+    if (remaining_samples_to_copy > 0)
+        wrapped_block_.add (block.getSubBlock (first_samples_to_copy, remaining_samples_to_copy));
 }
 
 void SplitBlock::CopyTo (juce::dsp::AudioBlock<float> block)
@@ -33,7 +38,7 @@ void SplitBlock::CopyTo (juce::dsp::AudioBlock<float> block)
     block.copyFrom (first_block_);
 
     auto first_num_samples = first_block_.getNumSamples ();
-    if (block.getNumSamples () > first_num_samples)
+    if (block.getNumSamples () > first_num_samples && wrapped_block_.getNumSamples () > 0)
         block.getSubBlock (first_num_samples).copyFrom (wrapped_block_);
 }
 
@@ -61,7 +66,7 @@ CircularBuffer::CircularBuffer (juce::AudioBuffer<float> & buffer)
 
 SplitBlock CircularBuffer::GetNext (std::size_t advancement)
 {
-    juce::dsp::AudioBlock<float> block {buffer_};
+    juce::dsp::AudioBlock<float> block{buffer_};
     auto num_samples = buffer_.getNumSamples ();
     head_position_ = (head_position_ + advancement) % num_samples;
 
@@ -74,7 +79,7 @@ SplitBlock CircularBuffer::GetNext (std::size_t advancement)
 
 ComplexBuffer::ComplexBuffer (std::size_t num_points, std::size_t num_channels)
     : num_channels_ (num_channels)
-    , num_points_ (num_points)
+      , num_points_ (num_points)
 {
     channel_data_.resize (num_points * num_channels);
     for (auto channel_index = 0; channel_index < num_channels; ++channel_index)
@@ -168,7 +173,7 @@ FrequencyDelayLine::FrequencyDelayLine (std::size_t num_channels,
     num_blocks_ = num_blocks;
     for (auto i = 0; i < num_blocks; ++i)
     {
-        ComplexBuffer buffer {num_points_per_block, num_channels};
+        ComplexBuffer buffer{num_points_per_block, num_channels};
         buffer.Clear ();
         delay_line_.emplace_back (std::move (buffer));
     }

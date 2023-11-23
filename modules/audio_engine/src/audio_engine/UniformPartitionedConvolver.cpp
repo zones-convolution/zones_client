@@ -21,8 +21,8 @@ void UniformPartitionedConvolver::process (
     first_fdl_block.Clear ();
     auto continuous_fdl_block = first_fdl_block.GetContinuousBlock ();
 
-    circular_buffer_.GetNext (0).CopyFrom (input_block);
-    circular_buffer_.GetNext (input_block.getNumSamples ()).CopyTo (continuous_fdl_block);
+    circular_buffer_->GetNext (0).CopyFrom (input_block);
+    circular_buffer_->GetNext (input_block.getNumSamples ()).CopyTo (continuous_fdl_block);
 
     for (auto channel_index = 0u; channel_index < num_channels; ++channel_index)
         fft_->performRealOnlyForwardTransform (
@@ -103,4 +103,6 @@ void UniformPartitionedConvolver::LoadImpulseResponse (juce::dsp::AudioBlock<flo
 
     convolved_output_ = std::make_unique<ComplexBuffer> (fft_size_, num_channels);
     convolved_output_->Clear ();
+
+    circular_buffer_ = std::make_unique<CircularBuffer> (saved_inputs_);
 }

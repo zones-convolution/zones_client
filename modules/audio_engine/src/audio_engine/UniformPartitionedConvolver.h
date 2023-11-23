@@ -23,5 +23,5 @@ private:
     std::vector<ComplexBuffer> filter_partitions_;
 
     juce::AudioBuffer<float> saved_inputs_;
-    CircularBuffer circular_buffer_ {saved_inputs_};
+    std::unique_ptr<CircularBuffer> circular_buffer_;
 };
