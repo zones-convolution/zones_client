@@ -115,25 +115,24 @@ std::complex<float> * const * ComplexBuffer::GetArrayOfWritePointer ()
 
 void ComplexBuffer::Clear ()
 {
-    for (auto & sample_index : channel_data_)
-        sample_index = {0, 0};
+    GetContinuousBlock ().clear ();
 }
 
 void ComplexBuffer::ComplexMultiplyFrom (const ComplexBuffer & a, const ComplexBuffer & b)
 {
-    jassert (num_channels_ == a.num_channels_ == b.num_channels_);
-    jassert (num_points_ == a.num_points_ == b.num_points_);
+    jassert (num_channels_ == a.num_channels_ && a.num_channels_ == b.num_channels_);
+    jassert (num_points_ == a.num_points_ && a.num_points_ == b.num_points_);
 
-    for (auto point_index = 0; point_index < num_points_; ++point_index)
+    for (auto point_index = 0; point_index < channel_data_.size (); ++point_index)
         channel_data_ [point_index] = a.channel_data_ [point_index] * b.channel_data_ [point_index];
 }
 
 void ComplexBuffer::ComplexMultiplyAccumulateFrom (const ComplexBuffer & a, const ComplexBuffer & b)
 {
-    jassert (num_channels_ == a.num_channels_ == b.num_channels_);
-    jassert (num_points_ == a.num_points_ == b.num_points_);
+    jassert (num_channels_ == a.num_channels_ && a.num_channels_ == b.num_channels_);
+    jassert (num_points_ == a.num_points_ && a.num_points_ == b.num_points_);
 
-    for (auto point_index = 0; point_index < num_points_; ++point_index)
+    for (auto point_index = 0; point_index < channel_data_.size (); ++point_index)
         channel_data_ [point_index] +=
             a.channel_data_ [point_index] * b.channel_data_ [point_index];
 }

@@ -8,7 +8,7 @@ void UniformPartitionedConvolver::prepare (const juce::dsp::ProcessSpec & spec)
 void UniformPartitionedConvolver::process (
     const juce::dsp::ProcessContextReplacing<float> & replacing)
 {
-    if (filter_partitions_.size () == 0)
+    if (filter_partitions_.empty ())
         return;
 
     auto input_block = replacing.getInputBlock ();
@@ -54,13 +54,18 @@ void UniformPartitionedConvolver::LoadImpulseResponse (juce::dsp::AudioBlock<flo
 {
     auto num_channels = process_spec_.numChannels;
     auto block_size = process_spec_.maximumBlockSize;
-    num_samples_to_discard_ = block_size;
+
     fft_size_ = block_size * 2;
+    fft_size_ = juce::nextPowerOfTwo (fft_size_);
+
     auto fft_order = std::log2 (fft_size_);
     fft_ = std::make_unique<juce::dsp::FFT> (fft_order);
 
+    num_samples_to_discard_ = fft_size_ - block_size;
+
     auto num_samples = ir_block.getNumSamples ();
-    auto num_partitions = std::ceil (num_samples / block_size);
+    auto num_partitions = static_cast<int> (
+        std::ceil (static_cast<float> (num_samples) / static_cast<float> (block_size)));
 
     saved_inputs_.setSize (num_channels, fft_size_);
     saved_inputs_.clear ();
@@ -69,7 +74,11 @@ void UniformPartitionedConvolver::LoadImpulseResponse (juce::dsp::AudioBlock<flo
 
     for (auto partition_index = 0; partition_index < num_partitions; ++partition_index)
     {
-        auto partition_block = ir_block.getSubBlock (partition_index * block_size, block_size);
+        auto partition_offset = partition_index * block_size;
+        auto partition_length =
+            std::min (block_size, static_cast<uint> (num_samples) - partition_offset);
+        auto partition_block = ir_block.getSubBlock (partition_offset, partition_length);
+
         input_partition.Clear ();
         input_partition.CopyFromAudioBlock (partition_block);
 
