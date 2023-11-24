@@ -7,27 +7,32 @@ WaterfallComponent::WaterfallComponent ()
     addAndMakeVisible (status_label_);
     status_label_.setJustificationType (juce::Justification::topLeft);
 
-    addAndMakeVisible (refresh_button_);
-    refresh_button_.onClick = [&] () { waterfall_renderer_.UpdateShaders (); };
+    refresh_button_.onClick = [&] ()
+    {
+        waterfall_renderer_.UpdateShaders ();
+    };
     waterfall_renderer_.UpdateShaders ();
 
-    addAndMakeVisible (scale_slider_);
     scale_slider_.setRange ({0.f, 1.f}, 0.f);
     scale_slider_.setValue (1.f);
     scale_slider_.onValueChange = [&] ()
-    { waterfall_renderer_.scale_ = (float) scale_slider_.getValue (); };
+    {
+        waterfall_renderer_.scale_ = (float) scale_slider_.getValue ();
+    };
 
-    addAndMakeVisible (offset_x_slider_);
     offset_x_slider_.setRange ({-1.f, 1.f}, 0.f);
     offset_x_slider_.setValue (0.f);
     offset_x_slider_.onValueChange = [&] ()
-    { waterfall_renderer_.offset_x_ = (float) offset_x_slider_.getValue (); };
+    {
+        waterfall_renderer_.offset_x_ = (float) offset_x_slider_.getValue ();
+    };
 
-    addAndMakeVisible (offset_y_slider_);
     offset_y_slider_.setRange ({-1.f, 1.f}, 0.f);
     offset_y_slider_.setValue (0.f);
     offset_y_slider_.onValueChange = [&] ()
-    { waterfall_renderer_.offset_y_ = (float) offset_y_slider_.getValue (); };
+    {
+        waterfall_renderer_.offset_y_ = (float) offset_y_slider_.getValue ();
+    };
 }
 
 WaterfallComponent::~WaterfallComponent ()
@@ -89,4 +94,22 @@ void WaterfallComponent::paint (juce::Graphics & g)
 void WaterfallComponent::SetAudioBlock (const juce::dsp::AudioBlock<const float> audio_block)
 {
     waterfall_renderer_.SetupGraphTexture (audio_block);
+}
+
+void WaterfallComponent::EnableDebugControls (bool enabled)
+{
+    if (enabled)
+    {
+        addAndMakeVisible (refresh_button_);
+        addAndMakeVisible (scale_slider_);
+        addAndMakeVisible (offset_x_slider_);
+        addAndMakeVisible (offset_y_slider_);
+    }
+    else
+    {
+        removeChildComponent (&refresh_button_);
+        removeChildComponent (&scale_slider_);
+        removeChildComponent (&offset_x_slider_);
+        removeChildComponent (&offset_y_slider_);
+    }
 }

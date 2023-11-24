@@ -10,6 +10,8 @@ Visualisers::Visualisers ()
     addAndMakeVisible (waterfall_component_);
     addAndMakeVisible (divider_);
 
+    waterfall_component_.EnableDebugControls (true);
+
     load_waterfall_.onClick = [&] ()
     {
         waterfall_chooser_ = std::make_unique<juce::FileChooser> (
@@ -22,7 +24,7 @@ Visualisers::Visualisers ()
 
         waterfall_chooser_->launchAsync (
             chooser_flags,
-            [&] (const juce::FileChooser & chooser)
+            [&](const juce::FileChooser & chooser)
             {
                 juce::File waterfall_file (chooser.getResult ());
 
