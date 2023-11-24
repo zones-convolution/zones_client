@@ -4,40 +4,42 @@ in vec4 graph_coord;
 out vec4 fragColor;
 uniform vec4 colour;
 
-const float blueToYellowBound = 0.1;
-const float yellowToGreenBound = 0.8;
+const float baseToMidBound = 0.02;
+const float midToTopBound = 0.7;
 
 vec4 getColorFromHeight(float y)
 {
-    vec3 blueColor = vec3(0.0, 0.0, 1.0);
-    vec3 yellowColor = vec3(1.0, 1.0, 0.0);
-    vec3 greenColor = vec3(0.0, 1.0, 0.0);
-    vec3 redColor = vec3(1.0, 0.0, 0.0);
+    float normalised_y = (y + 1.0) * 0.5;
+
+    vec3 baseColour = vec3(0.050383, 0.029803, 0.527975);
+    vec3 midColour = vec3(0.819651, 0.306812, 0.448306);
+    vec3 topColour = vec3(0.987621, 0.815978, 0.144363);
+    vec3 highlightColour = vec3(0.940015, 0.975158, 0.131326);
 
     vec3 interpolatedColor;
-    if (y < blueToYellowBound)
+    if (normalised_y < baseToMidBound)
     {
-        interpolatedColor = mix(blueColor, yellowColor, y / blueToYellowBound);
+        interpolatedColor = mix(baseColour, midColour, normalised_y / baseToMidBound);
     }
-    else if (y < yellowToGreenBound)
+    else if (normalised_y < midToTopBound)
     {
-        interpolatedColor = mix(yellowColor, greenColor, (y - blueToYellowBound) / (yellowToGreenBound - blueToYellowBound));
+        interpolatedColor = mix(midColour, topColour, (normalised_y - baseToMidBound) / (midToTopBound - baseToMidBound));
     }
     else
     {
-        interpolatedColor = mix(greenColor, redColor, (y - yellowToGreenBound) / (1.0 - yellowToGreenBound));
+        interpolatedColor = mix(topColour, highlightColour, (normalised_y - midToTopBound) / (1.0 - midToTopBound));
     }
 
     return vec4(interpolatedColor, 1.0);
 }
 
 void main(void) {
-    float factor;
+    vec4 factor;
     if (gl_FrontFacing)
-    factor = 1.0;
+    factor = vec4(1.0, 1.0, 1.0, 1.0);
     else
-    factor = 0.2;
+    factor = vec4(0.2, 0.2, 0.2, 1.0);
 
-    fragColor = getColorFromHeight(abs(graph_coord.z)) * factor * colour;
+    fragColor = getColorFromHeight(graph_coord.z) * factor * colour;
 }
 
