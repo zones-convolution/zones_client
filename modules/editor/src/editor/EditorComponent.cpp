@@ -31,6 +31,6 @@ void EditorComponent::resized ()
 void EditorComponent::RenderFinished (IrGraphState state,
                                       IrGraphProcessor::BoxedBuffer render_result)
 {
-    juce::dsp::AudioBlock<const float> render_block {render_result.get ()};
-    //     graph3d_component_.SetAudioBlock (render_block);
+    juce::dsp::AudioBlock<const float> render_block{render_result.get ()};
+    visualiser_.waterfall_component_.SetAudioBlock (render_block);
 }

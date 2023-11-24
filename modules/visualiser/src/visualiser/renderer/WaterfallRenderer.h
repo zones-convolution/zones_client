@@ -62,8 +62,9 @@ private:
     std::unique_ptr<VertexArray> vertex_array_;
 
     juce::SpinLock shader_mutex_;
-    juce::String new_vertex_shader_;
-    juce::String new_fragment_shader_;
+    std::optional<juce::String> new_vertex_shader_;
+    std::optional<juce::String> new_fragment_shader_;
+
     std::unique_ptr<juce::OpenGLShaderProgram> shader_;
     std::unique_ptr<juce::OpenGLShaderProgram::Uniform> uniform_texture_transform_;
     std::unique_ptr<juce::OpenGLShaderProgram::Uniform> uniform_vertex_transform_;

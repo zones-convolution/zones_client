@@ -23,11 +23,16 @@ static void DrawSpectrogramLine (juce::Image & spectrogram, const float * fft_da
         auto fft_data_index =
             (size_t) juce::jlimit (0, fft_size / 2, (int) (skewed_proportion_y * fft_size / 2));
         auto level = juce::jmap (
-            fft_data [fft_data_index], 0.0f, juce::jmax (max_level.getEnd (), 1e-5f), 0.0f, 1.0f);
+            fft_data [fft_data_index],
+            0.0f,
+            juce::jmax (max_level.getEnd (), 1e-5f),
+            0.0f,
+            1.0f);
+        level = std::clamp (level, 0.f, 1.f);
 
         auto colour = ConvertToJuceColour (
-                          tinycolormap::GetColor (level, tinycolormap::ColormapType::Viridis))
-                          .withAlpha (level);
+                tinycolormap::GetColor (level, tinycolormap::ColormapType::Viridis))
+            .withAlpha (level);
 
         spectrogram.setPixelAt (right_hand_edge, y, colour);
     }
@@ -38,11 +43,11 @@ Spectrogram::PerformFFT (const juce::dsp::AudioBlock<const float> & audio_block)
 {
     static constexpr auto kFFTOrder = 10;
     static constexpr auto kFFTSize = 1 << kFFTOrder;
-    std::array<float, kFFTSize * 2> fft_data {};
+    std::array<float, kFFTSize * 2> fft_data{};
 
-    juce::dsp::FFT fft {kFFTOrder};
-    juce::dsp::WindowingFunction<float> window {kFFTSize,
-                                                juce::dsp::WindowingFunction<float>::hann};
+    juce::dsp::FFT fft{kFFTOrder};
+    juce::dsp::WindowingFunction<float> window{kFFTSize,
+                                               juce::dsp::WindowingFunction<float>::hann};
 
     auto num_samples = static_cast<int> (audio_block.getNumSamples ());
     auto hop_length = kFFTSize / 2;
@@ -85,7 +90,7 @@ juce::Image Spectrogram::CreateSpectrogram (const juce::dsp::AudioBlock<const fl
     auto num_hops = fft_buffer->getNumChannels ();
     auto fft_size = fft_buffer->getNumSamples ();
 
-    juce::Image spectrogram {juce::Image::RGB, num_hops, fft_size, true};
+    juce::Image spectrogram{juce::Image::RGB, num_hops, fft_size, true};
     for (auto fft_data_index = 0; fft_data_index < num_hops; ++fft_data_index)
         DrawSpectrogramLine (spectrogram, fft_buffer->getReadPointer (fft_data_index), fft_size);
     return spectrogram;

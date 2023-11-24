@@ -21,10 +21,6 @@ zones_add_module(
 )
 
 embed_resources(visualiser
-        shaders/osc_2d.frag.glsl
-        shaders/osc_2d.vert.glsl
-        shaders/graph.frag.glsl
-        shaders/graph.vert.glsl
         shaders/graph3d.frag.glsl
         shaders/graph3d.vert.glsl)
 

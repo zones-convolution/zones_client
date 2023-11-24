@@ -98,31 +98,16 @@ void WaterfallRenderer::newOpenGLContextCreated ()
                     0.f,
                     ((std::sin (j * 0.01f) * std::sin (i * 0.01f)) + 1.f) * 0.5f));
 
-    SetupTexture ();
+    GLCall (juce::gl::glActiveTexture (juce::gl::GL_TEXTURE0));
+    GLCall (juce::gl::glGenTextures (1, &graph_texture_id_));
+
+    UpdateShaders ();
 }
 
 void WaterfallRenderer::SetupGraphTexture (const juce::dsp::AudioBlock<const float> block)
 {
     auto spectrogram = Spectrogram::CreateSpectrogram (block).rescaled (1024, 1024);
     texture_ = spectrogram;
-
-    juce::File spec_file (
-        "/Users/LeonPS/Documents/Development/zones_client/modules/zones_look_and_feel/spec.png");
-    spec_file.moveToTrash ();
-    juce::FileOutputStream stream (spec_file);
-    juce::PNGImageFormat png_writer;
-    png_writer.writeImageToStream (spectrogram, stream);
-
-    //    juce::ImageConvolutionKernel convolution_kernel {4};
-    //    convolution_kernel.createGaussianBlur (4.f);
-    //    convolution_kernel.applyToImage (spectrogram, spectrogram, spectrogram.getBounds ());
-
-    //    static const auto kImagePath = kTestAudioDirectory / "result.png";
-    //    auto file = juce::File (kImagePath.string ());
-    //    file.moveToTrash ();
-    //    juce::FileOutputStream stream (file);
-    //    juce::PNGImageFormat writer;
-    //    writer.writeImageToStream (spectrogram, stream);
 }
 
 void WaterfallRenderer::SetupTexture ()
@@ -143,9 +128,6 @@ void WaterfallRenderer::SetupTexture ()
                 channel_pointer [y] = static_cast<GLubyte> (std::roundf (pixel_value * 255));
             }
         }
-
-        GLCall (juce::gl::glActiveTexture (juce::gl::GL_TEXTURE0));
-        GLCall (juce::gl::glGenTextures (1, &graph_texture_id_));
 
         GLCall (juce::gl::glBindTexture (juce::gl::GL_TEXTURE_2D, graph_texture_id_));
         GLCall (juce::gl::glTexImage2D (juce::gl::GL_TEXTURE_2D,
@@ -195,6 +177,7 @@ void WaterfallRenderer::renderOpenGL ()
 
     SetupTexture ();
     CreateShaders ();
+
     shader_->use ();
 
     rot_x_smooth_ =
@@ -213,7 +196,7 @@ void WaterfallRenderer::renderOpenGL ()
     auto rotator = rot_about_x * rot_about_z;
 
     auto view = glm::lookAt (
-        glm::vec3 (0.f, 4.f, 2.f),
+        glm::vec3 (0.f, 2.f, 1.f),
         glm::vec3 (0.0, 0.0, 0.0),
         glm::vec3 (0.0, 0.0, 1.0));
 
@@ -282,16 +265,17 @@ void WaterfallRenderer::CreateShaders ()
     if (! lock.isLocked ())
         return;
 
-    auto gl_shader_program = std::make_unique<juce::OpenGLShaderProgram> (open_gl_context_);
-
-    if (new_vertex_shader_.isNotEmpty () || new_fragment_shader_.isNotEmpty ())
+    if (new_vertex_shader_.has_value () && new_fragment_shader_.has_value ())
     {
+        auto gl_shader_program = std::make_unique<juce::OpenGLShaderProgram> (open_gl_context_);
         juce::String status_text;
-        if (gl_shader_program->addVertexShader (new_vertex_shader_) &&
-            gl_shader_program->addFragmentShader (new_fragment_shader_) &&
+
+        if (gl_shader_program->addVertexShader (*new_vertex_shader_) &&
+            gl_shader_program->addFragmentShader (*new_fragment_shader_) &&
             gl_shader_program->link ())
         {
-            shader_ = std::move (gl_shader_program);
+            shader_.reset (gl_shader_program.release ());
+
             status_text =
                 "GLSL: v" + juce::String (juce::OpenGLShaderProgram::getLanguageVersion (), 2);
             uniform_texture_transform_ = std::make_unique<juce::OpenGLShaderProgram::Uniform> (
@@ -309,9 +293,8 @@ void WaterfallRenderer::CreateShaders ()
             status_text = gl_shader_program->getLastError ();
         }
 
-        //        juce::MessageManager::callAsync (
-        //            [&, status_text] ()
-        //            { status_label_.setText (status_text, juce::dontSendNotification); });
+        new_vertex_shader_ = std::nullopt;
+        new_fragment_shader_ = std::nullopt;
     }
 }
 
