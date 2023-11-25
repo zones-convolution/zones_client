@@ -70,15 +70,33 @@ juce::AudioBuffer<float> PerformFFT (const juce::dsp::AudioBlock<const float> & 
 
 void NormaliseFrequencyData (juce::dsp::AudioBlock<float> frequency_block)
 {
-    auto level_range = frequency_block.findMinAndMax ();
-    for (auto sample_index = 0; sample_index < frequency_block.getNumSamples (); ++sample_index)
+    auto num_channels = frequency_block.getNumChannels ();
+    auto num_samples = frequency_block.getNumSamples ();
+
+    for (auto channel_index = 0; channel_index < num_channels; ++channel_index)
     {
-        auto normalised_level = juce::jmap (frequency_block.getSample (0, sample_index),
-                                            level_range.getStart (),
-                                            std::max (level_range.getEnd (), 1e-5f),
-                                            0.0f,
-                                            1.0f);
-        frequency_block.setSample (0, sample_index, normalised_level);
+        for (auto sample_index = 0; sample_index < num_samples; ++sample_index)
+        {
+            auto scaled_level =
+                std::log10 (frequency_block.getSample (channel_index, sample_index) + 1.f);
+            frequency_block.setSample (channel_index, sample_index, scaled_level);
+        }
+    }
+
+    auto level_range = frequency_block.findMinAndMax ();
+    for (auto channel_index = 0; channel_index < num_channels; ++channel_index)
+    {
+        for (auto sample_index = 0; sample_index < num_samples; ++sample_index)
+        {
+            auto normalised_level =
+                juce::jmap (frequency_block.getSample (channel_index, sample_index),
+                            level_range.getStart (),
+                            std::max (level_range.getEnd (), 1e-5f),
+                            0.0f,
+                            1.0f);
+            normalised_level = std::clamp (normalised_level, 0.f, 1.f);
+            frequency_block.setSample (channel_index, sample_index, normalised_level);
+        }
     }
 }
 
@@ -88,7 +106,6 @@ juce::Image Spectrogram::CreateSpectrogram (const juce::dsp::AudioBlock<const fl
 
     auto frequency_data = PerformFFT (audio_block, kFFTOrder);
     juce::dsp::AudioBlock<float> frequency_block {frequency_data};
-
     NormaliseFrequencyData (frequency_block);
 
     auto width = frequency_data.getNumChannels ();

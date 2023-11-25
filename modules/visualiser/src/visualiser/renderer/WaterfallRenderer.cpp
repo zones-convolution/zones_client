@@ -109,7 +109,7 @@ void WaterfallRenderer::newOpenGLContextCreated ()
 void WaterfallRenderer::SetupGraphTexture (const juce::dsp::AudioBlock<const float> block)
 {
     auto spectrogram = Spectrogram::CreateSpectrogram (block);
-    texture_ = spectrogram.rescaled (100, 100);
+    texture_ = spectrogram.rescaled (512, 512);
 
     // juce::File spec_file (
     //     "/Users/LeonPS/Documents/Development/zones_client/modules/zones_look_and_feel/spec.png");
