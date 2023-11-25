@@ -4,10 +4,7 @@
 
 static juce::Colour ConvertToJuceColour (const tinycolormap::Color & color)
 {
-    return juce::Colour::fromFloatRGBA (static_cast<float> (color.r ()),
-                                        static_cast<float> (color.g ()),
-                                        static_cast<float> (color.b ()),
-                                        1.f);
+    return juce::Colour::fromFloatRGBA (color.r (), color.g (), color.b (), 1.f);
 }
 
 static void DrawSpectrogramLine (juce::Image & spectrogram, const float * fft_data, int fft_size)
