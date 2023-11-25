@@ -23,75 +23,68 @@ static void DrawSpectrogramLine (juce::Image & spectrogram, const float * fft_da
         auto fft_data_index =
             (size_t) juce::jlimit (0, fft_size / 2, (int) (skewed_proportion_y * fft_size / 2));
         auto level = juce::jmap (
-            fft_data [fft_data_index],
-            0.0f,
-            juce::jmax (max_level.getEnd (), 1e-5f),
-            0.0f,
-            1.0f);
+            fft_data [fft_data_index], 0.0f, juce::jmax (max_level.getEnd (), 1e-5f), 0.0f, 1.0f);
         level = std::clamp (level, 0.f, 1.f);
 
         auto colour = ConvertToJuceColour (
-                tinycolormap::GetColor (level, tinycolormap::ColormapType::Viridis))
-            .withAlpha (level);
+                          tinycolormap::GetColor (level, tinycolormap::ColormapType::Viridis))
+                          .withAlpha (level);
 
         spectrogram.setPixelAt (right_hand_edge, y, colour);
     }
 }
 
-immer::box<juce::AudioBuffer<float>>
-Spectrogram::PerformFFT (const juce::dsp::AudioBlock<const float> & audio_block)
+juce::AudioBuffer<float> PerformFFT (const juce::dsp::AudioBlock<const float> & audio_block,
+                                     std::size_t fft_order)
 {
-    static constexpr auto kFFTOrder = 10;
-    static constexpr auto kFFTSize = 1 << kFFTOrder;
-    std::array<float, kFFTSize * 2> fft_data{};
+    auto fft_size = 1u << fft_order;
+    juce::AudioBuffer<float> fft_data {1, 2 * static_cast<int> (fft_size)};
+    juce::dsp::AudioBlock<float> fft_block {fft_data};
 
-    juce::dsp::FFT fft{kFFTOrder};
-    juce::dsp::WindowingFunction<float> window{kFFTSize,
-                                               juce::dsp::WindowingFunction<float>::hann};
+    juce::dsp::FFT fft {static_cast<int> (fft_order)};
+    juce::dsp::WindowingFunction<float> window {fft_size,
+                                                juce::dsp::WindowingFunction<float>::hann};
 
     auto num_samples = static_cast<int> (audio_block.getNumSamples ());
-    auto hop_length = kFFTSize / 2;
-    auto num_hops = (num_samples / hop_length) + 1;
+    auto hop_length = fft_size / 2;
+    auto num_hops = num_samples / hop_length;
 
-    juce::AudioBuffer<float> fft_buffer;
-    fft_buffer.setSize (num_hops, fft_data.size ());
-    fft_buffer.clear ();
+    juce::AudioBuffer<float> frequency_data {static_cast<int> (num_hops),
+                                             static_cast<int> (fft_size)};
+    juce::dsp::AudioBlock<float> frequency_block {frequency_data};
+    frequency_block.clear ();
 
-    auto start_sample_index = 0;
-    while (start_sample_index < num_samples)
+    for (auto hop_index = 0u; hop_index < num_hops; ++hop_index)
     {
-        auto hop_index = start_sample_index / hop_length;
-        auto block_size = (start_sample_index + kFFTSize > num_samples)
-                              ? num_samples - start_sample_index
-                              : kFFTSize;
-        auto sub_block = audio_block.getSubBlock (start_sample_index, block_size);
+        auto sample_index = hop_index * hop_length;
+        auto block_size = std::min (fft_size, num_samples - sample_index);
+        auto sub_block = audio_block.getSubBlock (sample_index, block_size);
 
-        juce::FloatVectorOperations::fill (fft_data.data (), 0.f, fft_data.size ());
-        for (auto channel = 0; channel < audio_block.getNumChannels (); ++channel)
-        {
-            auto read_pointer = sub_block.getChannelPointer (channel);
-            juce::FloatVectorOperations::add (fft_data.data (), read_pointer, kFFTSize);
-        }
+        fft_block.clear ();
+        for (auto channel_index = 0; channel_index < sub_block.getNumChannels (); ++channel_index)
+            fft_block.add (sub_block.getSingleChannelBlock (channel_index));
 
-        window.multiplyWithWindowingTable (fft_data.data (), kFFTSize);
-        fft.performFrequencyOnlyForwardTransform (fft_data.data (), true);
-
-        auto fft_channel = fft_buffer.getWritePointer (hop_index);
-        juce::FloatVectorOperations::copy (fft_channel, fft_data.data (), fft_data.size ());
-        start_sample_index += hop_length;
+        window.multiplyWithWindowingTable (fft_block.getChannelPointer (0), fft_size);
+        fft.performFrequencyOnlyForwardTransform (fft_block.getChannelPointer (0));
+        frequency_block.getSingleChannelBlock (hop_index).copyFrom (
+            fft_block.getSubBlock (0, fft_size));
     }
 
-    return {std::move (fft_buffer)};
+    return {std::move (frequency_data)};
 }
 
 juce::Image Spectrogram::CreateSpectrogram (const juce::dsp::AudioBlock<const float> & audio_block)
 {
-    auto fft_buffer = PerformFFT (audio_block);
-    auto num_hops = fft_buffer->getNumChannels ();
-    auto fft_size = fft_buffer->getNumSamples ();
+    static constexpr auto kFFTOrder = 10u;
 
-    juce::Image spectrogram{juce::Image::RGB, num_hops, fft_size, true};
+    auto frequency_data = PerformFFT (audio_block, kFFTOrder);
+    juce::dsp::AudioBlock<float> frequency_block {frequency_data};
+
+    auto num_hops = frequency_data.getNumChannels ();
+    auto fft_size = frequency_data.getNumSamples ();
+
+    juce::Image spectrogram {juce::Image::RGB, num_hops, fft_size, true};
     for (auto fft_data_index = 0; fft_data_index < num_hops; ++fft_data_index)
-        DrawSpectrogramLine (spectrogram, fft_buffer->getReadPointer (fft_data_index), fft_size);
+        DrawSpectrogramLine (spectrogram, frequency_data.getReadPointer (fft_data_index), fft_size);
     return spectrogram;
 }

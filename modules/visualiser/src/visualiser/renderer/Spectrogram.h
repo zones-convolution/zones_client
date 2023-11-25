@@ -10,6 +10,4 @@ class Spectrogram
 {
 public:
     static juce::Image CreateSpectrogram (const juce::dsp::AudioBlock<const float> & audio_block);
-    static immer::box<juce::AudioBuffer<float>>
-    PerformFFT (const juce::dsp::AudioBlock<const float> & audio_block);
 };

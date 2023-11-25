@@ -11,10 +11,10 @@ vec4 getColorFromHeight(float y)
 {
     float normalised_y = (y + 1.0) * 0.5;
 
-    vec3 baseColour = vec3(0.050383, 0.029803, 0.527975);
-    vec3 midColour = vec3(0.819651, 0.306812, 0.448306);
-    vec3 topColour = vec3(0.987621, 0.815978, 0.144363);
-    vec3 highlightColour = vec3(0.940015, 0.975158, 0.131326);
+    vec3 baseColour = vec3(0.2116, 0.1895, 0.5771);
+    vec3 midColour = vec3(0.0795, 0.5169, 0.8324);
+    vec3 topColour = vec3(0.6382, 0.746, 0.4224);
+    vec3 highlightColour = vec3(0.971, 0.9673, 0.0651);
 
     vec3 interpolatedColor;
     if (normalised_y < baseToMidBound)
