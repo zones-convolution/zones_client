@@ -14,17 +14,6 @@ static void DrawSpectrogramLine (juce::Image & spectrogram,
     auto right_hand_edge_index = spectrogram.getWidth () - 1;
     auto fft_size = static_cast<int> (frequency_block.getNumSamples ());
 
-    auto level_range = frequency_block.findMinAndMax ();
-    for (auto sample_index = 0; sample_index < frequency_block.getNumSamples (); ++sample_index)
-    {
-        auto normalised_level = juce::jmap (frequency_block.getSample (0, sample_index),
-                                            level_range.getStart (),
-                                            std::max (level_range.getEnd (), 1e-5f),
-                                            0.0f,
-                                            1.0f);
-        frequency_block.setSample (0, sample_index, normalised_level);
-    }
-
     for (auto y = 0; y < height; ++y)
     {
         auto y_normalised = static_cast<float> (y) / static_cast<float> (height);
@@ -34,8 +23,9 @@ static void DrawSpectrogramLine (juce::Image & spectrogram,
 
         auto level = frequency_block.getSample (0, fft_data_index);
         auto colour = ConvertToJuceColour (
-            tinycolormap::GetColor (level, tinycolormap::ColormapType::Viridis));
-        spectrogram.setPixelAt (right_hand_edge_index, y, colour);
+                          tinycolormap::GetColor (level, tinycolormap::ColormapType::Viridis))
+                          .withAlpha (level);
+        spectrogram.setPixelAt (right_hand_edge_index, (height - 1) - y, colour);
     }
 }
 
@@ -54,7 +44,7 @@ juce::AudioBuffer<float> PerformFFT (const juce::dsp::AudioBlock<const float> & 
     auto hop_length = fft_size / 2;
     auto num_hops = num_samples / hop_length;
 
-    juce::AudioBuffer<float> frequency_data {static_cast<int> (num_hops) + 600,
+    juce::AudioBuffer<float> frequency_data {static_cast<int> (num_hops),
                                              static_cast<int> ((fft_size / 2) + 1)};
     juce::dsp::AudioBlock<float> frequency_block {frequency_data};
     frequency_block.clear ();
@@ -78,12 +68,28 @@ juce::AudioBuffer<float> PerformFFT (const juce::dsp::AudioBlock<const float> & 
     return {std::move (frequency_data)};
 }
 
+void NormaliseFrequencyData (juce::dsp::AudioBlock<float> frequency_block)
+{
+    auto level_range = frequency_block.findMinAndMax ();
+    for (auto sample_index = 0; sample_index < frequency_block.getNumSamples (); ++sample_index)
+    {
+        auto normalised_level = juce::jmap (frequency_block.getSample (0, sample_index),
+                                            level_range.getStart (),
+                                            std::max (level_range.getEnd (), 1e-5f),
+                                            0.0f,
+                                            1.0f);
+        frequency_block.setSample (0, sample_index, normalised_level);
+    }
+}
+
 juce::Image Spectrogram::CreateSpectrogram (const juce::dsp::AudioBlock<const float> & audio_block)
 {
     static constexpr auto kFFTOrder = 10u;
 
     auto frequency_data = PerformFFT (audio_block, kFFTOrder);
     juce::dsp::AudioBlock<float> frequency_block {frequency_data};
+
+    NormaliseFrequencyData (frequency_block);
 
     auto width = frequency_data.getNumChannels ();
     auto height = frequency_data.getNumSamples ();

@@ -31,8 +31,7 @@ void WaterfallRenderer::CreateZeroCenteredVertexGrid (
             auto half_vertex_buffer_height = static_cast<float> (kVertexBufferHeight / 2.f);
 
             vertices [x][y] = {(x - half_vertex_buffer_width) / half_vertex_buffer_width,
-                               ((y - half_vertex_buffer_height) / half_vertex_buffer_height) *
-                                   0.6f};
+                               (y - half_vertex_buffer_height) / half_vertex_buffer_height};
         }
     }
 }
@@ -48,19 +47,25 @@ void WaterfallRenderer::newOpenGLContextCreated ()
 
     auto grid_index = 0;
 
-    for (int x = 0; x < kVertexBufferWidth - 1; x += 4)
+    // HORIZONTAL LINES
+    for (int x = 0; x < kVertexBufferWidth - 1; ++x)
     {
-        for (int y = 0; y < kVertexBufferHeight - 1; y++)
+        for (int y = 0; y < kVertexBufferHeight - 1; y += 8)
         {
-            // HORIZONTAL LINES
-            // indices [grid_index++] = y * kVertexBufferWidth + x;
-            // indices [grid_index++] = y * kVertexBufferWidth + x + 1;
-
-            // VERTICAL LINES
-            indices [grid_index++] = y * kVertexBufferHeight + x;
-            indices [grid_index++] = (y + 1) * kVertexBufferHeight + x;
+            indices [grid_index++] = y * kVertexBufferWidth + x;
+            indices [grid_index++] = y * kVertexBufferWidth + x + 1;
         }
     }
+
+    // VERTICAL LINES
+    // for (int x = 0; x < kVertexBufferWidth - 1; x += 8)
+    // {
+    //     for (int y = 0; y < kVertexBufferHeight - 1; ++y)
+    //     {
+    //         indices [grid_index++] = y * kVertexBufferHeight + x;
+    //         indices [grid_index++] = (y + 1) * kVertexBufferHeight + x;
+    //     }
+    // }
 
     index_buffer_grid_ = std::make_unique<IndexBuffer> (indices.data (), indices.size ());
 
@@ -104,14 +109,14 @@ void WaterfallRenderer::newOpenGLContextCreated ()
 void WaterfallRenderer::SetupGraphTexture (const juce::dsp::AudioBlock<const float> block)
 {
     auto spectrogram = Spectrogram::CreateSpectrogram (block);
-    texture_ = spectrogram;
+    texture_ = spectrogram.rescaled (100, 100);
 
-    juce::File spec_file (
-        "/Users/LeonPS/Documents/Development/zones_client/modules/zones_look_and_feel/spec.png");
-    spec_file.moveToTrash ();
-    juce::FileOutputStream stream (spec_file);
-    juce::PNGImageFormat png_writer;
-    png_writer.writeImageToStream (spectrogram, stream);
+    // juce::File spec_file (
+    //     "/Users/LeonPS/Documents/Development/zones_client/modules/zones_look_and_feel/spec.png");
+    // spec_file.moveToTrash ();
+    // juce::FileOutputStream stream (spec_file);
+    // juce::PNGImageFormat png_writer;
+    // png_writer.writeImageToStream (spectrogram.rescaled (1920, 1080), stream);
 }
 
 void WaterfallRenderer::SetupTexture ()
