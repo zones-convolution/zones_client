@@ -38,10 +38,10 @@ public:
 private:
     static const std::filesystem::path kShaderDirectory;
 
-    static constexpr size_t kVertexBufferWidth = 100;
+    static constexpr size_t kVertexBufferWidth = 20;
     static constexpr size_t kVertexBufferWidthM1 = kVertexBufferWidth - 1;
 
-    static constexpr size_t kVertexBufferHeight = 100;
+    static constexpr size_t kVertexBufferHeight = 3;
     static constexpr size_t kVertexBufferHeightM1 = kVertexBufferHeight - 1;
 
     void SetupTexture ();
@@ -55,7 +55,7 @@ private:
 
     juce::OpenGLContext & open_gl_context_;
 
-    GLuint graph_texture_id_{};
+    GLuint graph_texture_id_ {};
     std::unique_ptr<VertexBuffer> vertex_buffer_;
     std::unique_ptr<IndexBuffer> index_buffer_graph_;
     std::unique_ptr<IndexBuffer> index_buffer_grid_;

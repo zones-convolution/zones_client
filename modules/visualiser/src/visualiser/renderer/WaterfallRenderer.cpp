@@ -20,15 +20,14 @@ WaterfallRenderer::WaterfallRenderer (juce::OpenGLContext & open_gl_context,
 }
 
 void WaterfallRenderer::CreateZeroCenteredVertexGrid (
-    std::array<std::array<glm::vec2, WaterfallRenderer::kVertexBufferHeight>,
-               WaterfallRenderer::kVertexBufferWidth> & vertices)
+    std::array<std::array<glm::vec2, kVertexBufferHeight>, kVertexBufferWidth> & vertices)
 {
     for (auto x = 0; x < kVertexBufferWidth; x++)
     {
         for (int y = 0; y < kVertexBufferHeight; y++)
         {
-            auto half_vertex_buffer_width = static_cast<float> (kVertexBufferWidth / 2.f);
-            auto half_vertex_buffer_height = static_cast<float> (kVertexBufferHeight / 2.f);
+            auto half_vertex_buffer_width = kVertexBufferWidth / 2.f;
+            auto half_vertex_buffer_height = kVertexBufferHeight / 2.f;
 
             vertices [x][y] = {(x - half_vertex_buffer_width) / half_vertex_buffer_width,
                                (y - half_vertex_buffer_height) / half_vertex_buffer_height};
@@ -47,40 +46,39 @@ void WaterfallRenderer::newOpenGLContextCreated ()
 
     auto grid_index = 0;
 
-    // HORIZONTAL LINES
-    for (int x = 0; x < kVertexBufferWidth - 1; ++x)
+    for (int x = 0; x < kVertexBufferWidth - 1; x++)
     {
-        for (int y = 0; y < kVertexBufferHeight - 1; y += 8)
+        for (int y = 0; y < kVertexBufferHeight; y++)
         {
-            indices [grid_index++] = y * kVertexBufferWidth + x;
-            indices [grid_index++] = y * kVertexBufferWidth + x + 1;
+            indices [grid_index++] = x * kVertexBufferHeight + y;
+            indices [grid_index++] = (x + 1) * kVertexBufferHeight + y;
         }
     }
 
-    // VERTICAL LINES
-    // for (int x = 0; x < kVertexBufferWidth - 1; x += 8)
-    // {
-    //     for (int y = 0; y < kVertexBufferHeight - 1; ++y)
-    //     {
-    //         indices [grid_index++] = y * kVertexBufferHeight + x;
-    //         indices [grid_index++] = (y + 1) * kVertexBufferHeight + x;
-    //     }
-    // }
+    for (int y = 0; y < kVertexBufferHeight - 1; y++)
+    {
+        for (int x = 0; x < kVertexBufferWidth; x++)
+        {
+            indices [grid_index++] = (x * kVertexBufferHeight) + y;
+            indices [grid_index++] = (x * kVertexBufferHeight) + y + 1;
+        }
+    }
 
     index_buffer_grid_ = std::make_unique<IndexBuffer> (indices.data (), indices.size ());
 
     auto graph_index = 0;
-    for (int x = 0; x < kVertexBufferWidth - 1; x++)
+    for (int y = 0; y < kVertexBufferHeight - 1; y++)
     {
-        for (int y = 0; y < kVertexBufferHeight - 1; y++)
+        for (int x = 0; x < kVertexBufferWidth - 1; x++)
         {
-            indices [graph_index++] = y * kVertexBufferWidth + x + 1;
-            indices [graph_index++] = y * kVertexBufferWidth + x;
-            indices [graph_index++] = (y + 1) * kVertexBufferWidth + x + 1;
+            indices [graph_index++] = 0;
+            // indices [graph_index++] = y * kVertexBufferWidth + x;
+            // indices [graph_index++] = y * kVertexBufferWidth + x + 1;
+            // indices [graph_index++] = (y + 1) * kVertexBufferWidth + x + 1;
 
-            indices [graph_index++] = (y + 1) * kVertexBufferWidth + x + 1;
-            indices [graph_index++] = y * kVertexBufferWidth + x;
-            indices [graph_index++] = (y + 1) * kVertexBufferWidth + x;
+            // indices [graph_index++] = y * kVertexBufferHeight + x;
+            // indices [graph_index++] = (y + 1) * kVertexBufferHeight + x + 1;
+            // indices [graph_index++] = (y + 1) * kVertexBufferHeight + x;
         }
     }
 
@@ -222,12 +220,12 @@ void WaterfallRenderer::renderOpenGL ()
     uniform_colour_->set (1.f, 1.f, 1.f, 1.f);
 
     vertex_array_->Bind ();
-    index_buffer_graph_->Bind ();
-    GLCall (juce::gl::glDrawElements (juce::gl::GL_TRIANGLES,
-                                      kVertexBufferWidthM1 * kVertexBufferHeightM1 * 6,
-                                      juce::gl::GL_UNSIGNED_INT,
-                                      0));
-    index_buffer_graph_->Unbind ();
+    // index_buffer_graph_->Bind ();
+    // GLCall (juce::gl::glDrawElements (juce::gl::GL_TRIANGLES,
+    //                                   kVertexBufferWidthM1 * kVertexBufferHeightM1 * 6,
+    //                                   juce::gl::GL_UNSIGNED_INT,
+    //                                   0));
+    // index_buffer_graph_->Unbind ();
 
     index_buffer_grid_->Bind ();
     uniform_colour_->set (4.f, 4.f, 4.f, 1.f);
