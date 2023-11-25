@@ -7,27 +7,33 @@ static juce::Colour ConvertToJuceColour (const tinycolormap::Color & color)
     return juce::Colour::fromFloatRGBA (color.r (), color.g (), color.b (), 1.f);
 }
 
-static void DrawSpectrogramLine (juce::Image & spectrogram, const float * fft_data, int fft_size)
+static void DrawSpectrogramLine (juce::Image & spectrogram,
+                                 juce::dsp::AudioBlock<float> frequency_block)
 {
-    auto right_hand_edge = spectrogram.getWidth () - 1;
-    auto image_height = spectrogram.getHeight ();
-    spectrogram.moveImageSection (0, 0, 1, 0, right_hand_edge, image_height);
-    auto max_level = juce::FloatVectorOperations::findMinAndMax (fft_data, fft_size / 2);
-    for (auto y = 1; y < image_height; ++y)
+    auto height = spectrogram.getHeight ();
+    auto fft_size = static_cast<int> (frequency_block.getNumSamples ());
+
+    auto max_level = juce::FloatVectorOperations::findMinAndMax (
+        frequency_block.getChannelPointer (0), fft_size / 2);
+
+    for (auto y = 1; y < height; ++y)
     {
-        auto y_prop = 1.0f - ((float) y / (float) image_height);
+        auto y_prop = 1.0f - ((float) y / (float) height);
         auto skewed_proportion_y = std::exp (std::log (0.2f * y_prop));
         auto fft_data_index =
             (size_t) juce::jlimit (0, fft_size / 2, (int) (skewed_proportion_y * fft_size / 2));
-        auto level = juce::jmap (
-            fft_data [fft_data_index], 0.0f, juce::jmax (max_level.getEnd (), 1e-5f), 0.0f, 1.0f);
-        level = std::clamp (level, 0.f, 1.f);
+
+        auto level = juce::jmap (frequency_block.getSample (0, fft_data_index),
+                                 0.0f,
+                                 juce::jmax (max_level.getEnd (), 1e-5f),
+                                 0.0f,
+                                 1.0f);
 
         auto colour = ConvertToJuceColour (
                           tinycolormap::GetColor (level, tinycolormap::ColormapType::Viridis))
                           .withAlpha (level);
 
-        spectrogram.setPixelAt (right_hand_edge, y, colour);
+        spectrogram.setPixelAt (0, y, colour);
     }
 }
 
@@ -77,11 +83,15 @@ juce::Image Spectrogram::CreateSpectrogram (const juce::dsp::AudioBlock<const fl
     auto frequency_data = PerformFFT (audio_block, kFFTOrder);
     juce::dsp::AudioBlock<float> frequency_block {frequency_data};
 
-    auto num_hops = frequency_data.getNumChannels ();
-    auto fft_size = frequency_data.getNumSamples ();
+    auto width = frequency_data.getNumChannels ();
+    auto height = frequency_data.getNumSamples ();
 
-    juce::Image spectrogram {juce::Image::RGB, num_hops, fft_size, true};
-    for (auto fft_data_index = 0; fft_data_index < num_hops; ++fft_data_index)
-        DrawSpectrogramLine (spectrogram, frequency_data.getReadPointer (fft_data_index), fft_size);
+    juce::Image spectrogram {juce::Image::RGB, width, height, true};
+    for (auto x = 0; x < width; ++x)
+    {
+        DrawSpectrogramLine (spectrogram, frequency_block.getSingleChannelBlock (x));
+        spectrogram.moveImageSection (0, 0, -1, 0, width, height);
+    }
+
     return spectrogram;
 }
