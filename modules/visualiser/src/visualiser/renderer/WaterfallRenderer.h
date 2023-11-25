@@ -38,11 +38,8 @@ public:
 private:
     static const std::filesystem::path kShaderDirectory;
 
-    static constexpr size_t kVertexBufferWidth = 20;
-    static constexpr size_t kVertexBufferWidthM1 = kVertexBufferWidth - 1;
-
-    static constexpr size_t kVertexBufferHeight = 3;
-    static constexpr size_t kVertexBufferHeightM1 = kVertexBufferHeight - 1;
+    static constexpr size_t kVertexBufferWidth = 120;
+    static constexpr size_t kVertexBufferHeight = 80;
 
     void SetupTexture ();
     static void CreateZeroCenteredVertexGrid (
