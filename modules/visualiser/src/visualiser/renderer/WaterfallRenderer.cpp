@@ -61,14 +61,14 @@ void CreateGridIndices (std::vector<GLuint> & indices, std::size_t width, std::s
         }
     }
 
-    for (int y = 0; y < height - 1; y++)
-    {
-        for (int x = 0; x < width; x += 7)
-        {
-            indices [grid_index++] = (x * height) + y;
-            indices [grid_index++] = (x * height) + y + 1;
-        }
-    }
+    // for (int y = 0; y < height - 1; y++)
+    // {
+    //     for (int x = 0; x < width; x += 7)
+    //     {
+    //         indices [grid_index++] = (x * height) + y;
+    //         indices [grid_index++] = (x * height) + y + 1;
+    //     }
+    // }
 }
 
 void CreateGraphIndices (std::vector<GLuint> & indices, std::size_t width, std::size_t height)
