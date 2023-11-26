@@ -19,61 +19,71 @@ WaterfallRenderer::WaterfallRenderer (juce::OpenGLContext & open_gl_context,
 {
 }
 
-void WaterfallRenderer::CreateZeroCenteredVertexGrid (
-    std::array<std::array<glm::vec2, kVertexBufferHeight>, kVertexBufferWidth> & vertices)
+void SetupDefaultTexture (std::optional<juce::Image> & texture)
 {
-    for (auto x = 0; x < kVertexBufferWidth; x++)
-    {
-        for (int y = 0; y < kVertexBufferHeight; y++)
-        {
-            auto half_vertex_buffer_width = kVertexBufferWidth / 2.f;
-            auto half_vertex_buffer_height = kVertexBufferHeight / 2.f;
+    texture = juce::Image (juce::Image::PixelFormat::ARGB, 1024, 1024, true);
+    for (auto i = 0; i < 1024; ++i)
+        for (auto j = 0; j < 1024; ++j)
+            texture->setPixelAt (
+                i,
+                j,
+                juce::Colour::fromFloatRGBA (
+                    0.f, 0.f, 0.f, ((std::sin (j * 0.01f) * std::sin (i * 0.01f)) + 1.f) * 0.5f));
+}
 
-            vertices [x][y] = {(x - half_vertex_buffer_width) / half_vertex_buffer_width,
-                               ((y - half_vertex_buffer_height) / half_vertex_buffer_height)};
+void CreateZeroCenteredVertexGrid (juce::AudioBuffer<glm::vec2> & vertices)
+{
+    auto width = vertices.getNumChannels ();
+    auto height = vertices.getNumSamples ();
+
+    for (auto x = 0; x < width; x++)
+    {
+        for (int y = 0; y < height; y++)
+        {
+            auto half_vertex_buffer_width = width / 2.f;
+            auto half_vertex_buffer_height = height / 2.f;
+
+            vertices.setSample (x,
+                                y,
+                                {(x - half_vertex_buffer_width) / half_vertex_buffer_width,
+                                 ((y - half_vertex_buffer_height) / half_vertex_buffer_height)});
         }
     }
 }
 
-void WaterfallRenderer::newOpenGLContextCreated ()
+void CreateGridIndices (std::vector<GLuint> & indices, std::size_t width, std::size_t height)
 {
-    std::array<std::array<glm::vec2, kVertexBufferHeight>, kVertexBufferWidth> vertices {};
-
-    CreateZeroCenteredVertexGrid (vertices);
-    vertex_buffer_ = std::make_unique<VertexBuffer> (vertices.data (), sizeof (vertices));
-
-    std::array<GLuint, (kVertexBufferWidth - 1) * (kVertexBufferHeight - 1) * 6> indices {};
-
     auto grid_index = 0;
-    for (int x = 0; x < kVertexBufferWidth - 1; x++)
+    for (int x = 0; x < width - 1; x++)
     {
-        for (int y = 0; y < kVertexBufferHeight; y += 8)
+        for (int y = 0; y < height; y += 8)
         {
-            indices [grid_index++] = x * kVertexBufferHeight + y;
-            indices [grid_index++] = (x + 1) * kVertexBufferHeight + y;
+            indices [grid_index++] = x * height + y;
+            indices [grid_index++] = (x + 1) * height + y;
         }
     }
 
-    // for (int y = 0; y < kVertexBufferHeight - 1; y++)
-    // {
-    //     for (int x = 0; x < kVertexBufferWidth; x += 8)
-    //     {
-    //         indices [grid_index++] = (x * kVertexBufferHeight) + y;
-    //         indices [grid_index++] = (x * kVertexBufferHeight) + y + 1;
-    //     }
-    // }
-
-    index_buffer_grid_ = std::make_unique<IndexBuffer> (indices.data (), indices.size ());
-    auto graph_index = 0;
-
-    for (int y = 0; y < kVertexBufferHeight - 1; y++)
+    for (int y = 0; y < height - 1; y++)
     {
-        for (int x = 0; x < kVertexBufferWidth - 1; x++)
+        for (int x = 0; x < width; x += 8)
         {
-            auto top_left = (x * kVertexBufferHeight) + y;
+            indices [grid_index++] = (x * height) + y;
+            indices [grid_index++] = (x * height) + y + 1;
+        }
+    }
+}
+
+void CreateGraphIndices (std::vector<GLuint> & indices, std::size_t width, std::size_t height)
+{
+    auto graph_index = 0;
+    for (int y = 0; y < height - 1; y++)
+    {
+        for (int x = 0; x < width - 1; x++)
+        {
+            auto top_left = (x * height) + y;
             auto bottom_left = top_left + 1;
 
-            auto top_right = (x + 1) * kVertexBufferHeight + y;
+            auto top_right = (x + 1) * height + y;
             auto bottom_right = top_right + 1;
 
             indices [graph_index++] = top_left;
@@ -85,22 +95,30 @@ void WaterfallRenderer::newOpenGLContextCreated ()
             indices [graph_index++] = top_left;
         }
     }
+}
 
-    index_buffer_graph_ = std::make_unique<IndexBuffer> (indices.data (), indices.size ());
+void WaterfallRenderer::newOpenGLContextCreated ()
+{
+    juce::AudioBuffer<glm::vec2> vertices {kVertexBufferWidth, kVertexBufferHeight};
+    CreateZeroCenteredVertexGrid (vertices);
+    vertex_buffer_ = std::make_unique<VertexBuffer> (
+        vertices.getReadPointer (0), kVertexBufferWidth * kVertexBufferHeight * sizeof (glm::vec2));
 
     vertex_array_ = std::make_unique<VertexArray> ();
     VertexBufferLayout vertex_buffer_layout;
     vertex_buffer_layout.Push<GLfloat> (2);
     vertex_array_->AddBuffer (*vertex_buffer_, vertex_buffer_layout);
 
-    texture_ = juce::Image (juce::Image::PixelFormat::ARGB, 1024, 1024, true);
-    for (auto i = 0; i < 1024; ++i)
-        for (auto j = 0; j < 1024; ++j)
-            texture_->setPixelAt (
-                i,
-                j,
-                juce::Colour::fromFloatRGBA (
-                    0.f, 0.f, 0.f, ((std::sin (j * 0.01f) * std::sin (i * 0.01f)) + 1.f) * 0.5f));
+    std::vector<GLuint> indices;
+    indices.resize ((kVertexBufferWidth - 1) * (kVertexBufferHeight - 1) * 6);
+
+    CreateGridIndices (indices, kVertexBufferWidth, kVertexBufferHeight);
+    index_buffer_grid_ = std::make_unique<IndexBuffer> (indices.data (), indices.size ());
+
+    CreateGraphIndices (indices, kVertexBufferWidth, kVertexBufferHeight);
+    index_buffer_graph_ = std::make_unique<IndexBuffer> (indices.data (), indices.size ());
+
+    SetupDefaultTexture (texture_);
 
     GLCall (juce::gl::glActiveTexture (juce::gl::GL_TEXTURE0));
     GLCall (juce::gl::glGenTextures (1, &graph_texture_id_));
@@ -111,7 +129,7 @@ void WaterfallRenderer::newOpenGLContextCreated ()
 void WaterfallRenderer::SetupGraphTexture (const juce::dsp::AudioBlock<const float> block)
 {
     auto spectrogram = Spectrogram::CreateSpectrogram (block);
-    texture_ = spectrogram.rescaled (256, 256);
+    texture_ = spectrogram.rescaled (100, 100);
 
     // juce::File spec_file (
     //     "/Users/LeonPS/Documents/Development/zones_client/modules/zones_look_and_feel/spec.png");

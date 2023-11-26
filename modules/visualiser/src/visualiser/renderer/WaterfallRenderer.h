@@ -42,9 +42,6 @@ private:
     static constexpr size_t kVertexBufferHeight = 80;
 
     void SetupTexture ();
-    static void CreateZeroCenteredVertexGrid (
-        std::array<std::array<glm::vec2, WaterfallRenderer::kVertexBufferHeight>,
-                   WaterfallRenderer::kVertexBufferWidth> & vertices);
 
     DraggableOrientation & draggable_orientation_;
     float rot_x_smooth_ = 0.f;
