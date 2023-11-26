@@ -126,17 +126,44 @@ void WaterfallRenderer::newOpenGLContextCreated ()
     UpdateShaders ();
 }
 
+void SaveDebugSpectrogram (juce::Image & spectrogram)
+{
+    juce::File spec_file (
+        "/Users/LeonPS/Documents/Development/zones_client/modules/zones_look_and_feel/spec.png");
+    spec_file.moveToTrash ();
+    juce::FileOutputStream stream (spec_file);
+    juce::PNGImageFormat png_writer;
+    png_writer.writeImageToStream (spectrogram.rescaled (1920, 1080), stream);
+}
+
+juce::Image ApplyClearBorder (const juce::Image & image)
+{
+    auto image_with_border = image.createCopy ();
+    auto width = image_with_border.getWidth ();
+    auto height = image_with_border.getHeight ();
+    auto clear = juce::Colour::fromRGBA (0.f, 0.f, 0.f, 0.f);
+
+    for (int y = 0; y < height; ++y)
+    {
+        image_with_border.setPixelAt (0, y, clear);
+        image_with_border.setPixelAt (width - 1, y, clear);
+    }
+
+    for (int x = 1; x < width - 1; ++x)
+    {
+        image_with_border.setPixelAt (x, 0, clear);
+        image_with_border.setPixelAt (x, height - 1, clear);
+    }
+
+    return image_with_border;
+}
+
 void WaterfallRenderer::SetupGraphTexture (const juce::dsp::AudioBlock<const float> block)
 {
     auto spectrogram = Spectrogram::CreateSpectrogram (block);
-    texture_ = spectrogram.rescaled (100, 100);
-
-    // juce::File spec_file (
-    //     "/Users/LeonPS/Documents/Development/zones_client/modules/zones_look_and_feel/spec.png");
-    // spec_file.moveToTrash ();
-    // juce::FileOutputStream stream (spec_file);
-    // juce::PNGImageFormat png_writer;
-    // png_writer.writeImageToStream (spectrogram.rescaled (1920, 1080), stream);
+    auto rescaled = spectrogram.rescaled (256, 256);
+    texture_ = ApplyClearBorder (rescaled);
+    // SaveDebugSpectrogram (spectrogram);
 }
 
 void WaterfallRenderer::SetupTexture ()
@@ -187,22 +214,18 @@ Smoothed (float current_value, float target_value, float speed_factor, float del
     return current_value + (target_value - current_value) * speed_factor * delta_time;
 }
 
-void WaterfallRenderer::renderOpenGL ()
+glm::mat4 WaterfallRenderer::CreateTextureTransform ()
 {
-    jassert (juce::OpenGLHelpers::isContextActive ());
-    juce::OpenGLHelpers::clear (
-        juce::LookAndFeel::getDefaultLookAndFeel ().findColour (LookAndFeel::ColourIds::kPanel));
+    auto scale = scale_.load ();
+    auto offset_x = offset_x_.load ();
+    auto offset_y = offset_y_.load ();
 
-    GLCall (juce::gl::glEnable (juce::gl::GL_DEPTH_TEST));
-    GLCall (juce::gl::glClear (juce::gl::GL_COLOR_BUFFER_BIT | juce::gl::GL_DEPTH_BUFFER_BIT));
-    GLCall (juce::gl::glPolygonOffset (1, 0));
-    GLCall (juce::gl::glEnable (juce::gl::GL_POLYGON_OFFSET_FILL));
+    return glm::translate (glm::scale (glm::mat4 (1.0f), glm::vec3 (scale, -scale, 1)),
+                           glm::vec3 (offset_x, offset_y, 0));
+}
 
-    SetupTexture ();
-    CreateShaders ();
-
-    shader_->use ();
-
+glm::mat4 WaterfallRenderer::CreateVertexTransform ()
+{
     rot_x_smooth_ =
         Smoothed (rot_x_smooth_, draggable_orientation_.x_rotation.load (), 4.f, 1.0f / 60.0f);
     rot_y_smooth_ =
@@ -224,34 +247,22 @@ void WaterfallRenderer::renderOpenGL ()
     auto projection = glm::perspective (45.f, 1920.f / 1080.f, .1f, 10.f);
 
     auto vertex_scale = glm::scale (glm::mat4 (1.0f), glm::vec3 (1, 0.8, 1));
-    auto vertex_transform = projection * view * rotator * vertex_scale;
+    return projection * view * rotator * vertex_scale;
+}
 
-    uniform_vertex_transform_->setMatrix4 (
-        glm::value_ptr (vertex_transform), 1, juce::gl::GL_FALSE);
-
-    auto scale = scale_.load ();
-    auto offset_x = offset_x_.load ();
-    auto offset_y = offset_y_.load ();
-
-    glm::mat4 texture_transform =
-        glm::translate (glm::scale (glm::mat4 (1.0f), glm::vec3 (scale, -scale, 1)),
-                        glm::vec3 (offset_x, offset_y, 0));
-
-    uniform_texture_transform_->setMatrix4 (
-        glm::value_ptr (texture_transform), 1, juce::gl::GL_FALSE);
-
-    uniform_graph_texture_->set (0);
-    GLCall (juce::gl::glBindTexture (juce::gl::GL_TEXTURE_2D, graph_texture_id_));
-    uniform_colour_->set (1.f, 1.f, 1.f, 1.f);
-
-    vertex_array_->Bind ();
+void WaterfallRenderer::DrawGraph ()
+{
     index_buffer_graph_->Bind ();
+    uniform_colour_->set (1.f, 1.f, 1.f, 1.f);
     GLCall (juce::gl::glDrawElements (juce::gl::GL_TRIANGLES,
                                       (kVertexBufferWidth - 1) * (kVertexBufferHeight - 1) * 6,
                                       juce::gl::GL_UNSIGNED_INT,
                                       0));
     index_buffer_graph_->Unbind ();
+}
 
+void WaterfallRenderer::DrawGrid ()
+{
     index_buffer_grid_->Bind ();
     uniform_colour_->set (4.f, 4.f, 4.f, 1.f);
     GLCall (juce::gl::glDrawElements (juce::gl::GL_LINES,
@@ -259,7 +270,37 @@ void WaterfallRenderer::renderOpenGL ()
                                       juce::gl::GL_UNSIGNED_INT,
                                       0));
     index_buffer_grid_->Unbind ();
+}
 
+void WaterfallRenderer::renderOpenGL ()
+{
+    jassert (juce::OpenGLHelpers::isContextActive ());
+    juce::OpenGLHelpers::clear (
+        juce::LookAndFeel::getDefaultLookAndFeel ().findColour (LookAndFeel::ColourIds::kPanel));
+
+    GLCall (juce::gl::glEnable (juce::gl::GL_DEPTH_TEST));
+    GLCall (juce::gl::glClear (juce::gl::GL_COLOR_BUFFER_BIT | juce::gl::GL_DEPTH_BUFFER_BIT));
+    GLCall (juce::gl::glPolygonOffset (1, 0));
+    GLCall (juce::gl::glEnable (juce::gl::GL_POLYGON_OFFSET_FILL));
+
+    SetupTexture ();
+    CreateShaders ();
+    shader_->use ();
+
+    uniform_graph_texture_->set (0);
+    GLCall (juce::gl::glBindTexture (juce::gl::GL_TEXTURE_2D, graph_texture_id_));
+
+    auto vertex_transform = CreateVertexTransform ();
+    uniform_vertex_transform_->setMatrix4 (
+        glm::value_ptr (vertex_transform), 1, juce::gl::GL_FALSE);
+
+    auto texture_transform = CreateTextureTransform ();
+    uniform_texture_transform_->setMatrix4 (
+        glm::value_ptr (texture_transform), 1, juce::gl::GL_FALSE);
+
+    vertex_array_->Bind ();
+    DrawGraph ();
+    DrawGrid ();
     vertex_array_->Unbind ();
 }
 

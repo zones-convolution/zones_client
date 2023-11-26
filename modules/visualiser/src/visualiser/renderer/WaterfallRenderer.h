@@ -42,6 +42,10 @@ private:
     static constexpr size_t kVertexBufferHeight = 80;
 
     void SetupTexture ();
+    glm::mat4 CreateTextureTransform ();
+    glm::mat4 CreateVertexTransform ();
+    void DrawGrid ();
+    void DrawGraph ();
 
     DraggableOrientation & draggable_orientation_;
     float rot_x_smooth_ = 0.f;
