@@ -40,13 +40,11 @@ void CreateZeroCenteredVertexGrid (juce::AudioBuffer<glm::vec2> & vertices)
     {
         for (int y = 0; y < height; y++)
         {
-            auto half_vertex_buffer_width = width / 2.f;
-            auto half_vertex_buffer_height = height / 2.f;
-
-            vertices.setSample (x,
-                                y,
-                                {(x - half_vertex_buffer_width) / half_vertex_buffer_width,
-                                 ((y - half_vertex_buffer_height) / half_vertex_buffer_height)});
+            auto mapped_x = juce::jmap (
+                static_cast<float> (x), 0.f, static_cast<float> (width) - 1.f, -1.f, 1.f);
+            auto mapped_y = juce::jmap (
+                static_cast<float> (y), 0.f, static_cast<float> (height) - 1.f, -1.f, 1.f);
+            vertices.setSample (x, y, {mapped_x, mapped_y});
         }
     }
 }
@@ -56,7 +54,7 @@ void CreateGridIndices (std::vector<GLuint> & indices, std::size_t width, std::s
     auto grid_index = 0;
     for (int x = 0; x < width - 1; x++)
     {
-        for (int y = 0; y < height; y += 8)
+        for (int y = 0; y < height; y += 9)
         {
             indices [grid_index++] = x * height + y;
             indices [grid_index++] = (x + 1) * height + y;
@@ -65,7 +63,7 @@ void CreateGridIndices (std::vector<GLuint> & indices, std::size_t width, std::s
 
     for (int y = 0; y < height - 1; y++)
     {
-        for (int x = 0; x < width; x += 8)
+        for (int x = 0; x < width; x += 7)
         {
             indices [grid_index++] = (x * height) + y;
             indices [grid_index++] = (x * height) + y + 1;
@@ -133,7 +131,7 @@ void SaveDebugSpectrogram (juce::Image & spectrogram)
     spec_file.moveToTrash ();
     juce::FileOutputStream stream (spec_file);
     juce::PNGImageFormat png_writer;
-    png_writer.writeImageToStream (spectrogram.rescaled (1920, 1080), stream);
+    png_writer.writeImageToStream (spectrogram.rescaled (256, 256), stream);
 }
 
 juce::Image ApplyClearBorder (const juce::Image & image)
@@ -162,8 +160,9 @@ void WaterfallRenderer::SetupGraphTexture (const juce::dsp::AudioBlock<const flo
 {
     auto spectrogram = Spectrogram::CreateSpectrogram (block);
     auto rescaled = spectrogram.rescaled (256, 256);
-    texture_ = ApplyClearBorder (rescaled);
-    // SaveDebugSpectrogram (spectrogram);
+    auto with_clear_border = ApplyClearBorder (rescaled);
+    texture_ = with_clear_border;
+    // SaveDebugSpectrogram (with_clear_border);
 }
 
 void WaterfallRenderer::SetupTexture ()

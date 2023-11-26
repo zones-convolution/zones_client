@@ -39,7 +39,7 @@ private:
     static const std::filesystem::path kShaderDirectory;
 
     static constexpr size_t kVertexBufferWidth = 120;
-    static constexpr size_t kVertexBufferHeight = 80;
+    static constexpr size_t kVertexBufferHeight = 82;
 
     void SetupTexture ();
     glm::mat4 CreateTextureTransform ();
