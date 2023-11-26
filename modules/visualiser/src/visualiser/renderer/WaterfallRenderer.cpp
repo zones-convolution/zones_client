@@ -47,7 +47,7 @@ void WaterfallRenderer::newOpenGLContextCreated ()
     auto grid_index = 0;
     for (int x = 0; x < kVertexBufferWidth - 1; x++)
     {
-        for (int y = 0; y < kVertexBufferHeight; y++)
+        for (int y = 0; y < kVertexBufferHeight; y += 8)
         {
             indices [grid_index++] = x * kVertexBufferHeight + y;
             indices [grid_index++] = (x + 1) * kVertexBufferHeight + y;
@@ -56,7 +56,7 @@ void WaterfallRenderer::newOpenGLContextCreated ()
 
     // for (int y = 0; y < kVertexBufferHeight - 1; y++)
     // {
-    //     for (int x = 0; x < kVertexBufferWidth; x++)
+    //     for (int x = 0; x < kVertexBufferWidth; x += 8)
     //     {
     //         indices [grid_index++] = (x * kVertexBufferHeight) + y;
     //         indices [grid_index++] = (x * kVertexBufferHeight) + y + 1;
@@ -111,7 +111,7 @@ void WaterfallRenderer::newOpenGLContextCreated ()
 void WaterfallRenderer::SetupGraphTexture (const juce::dsp::AudioBlock<const float> block)
 {
     auto spectrogram = Spectrogram::CreateSpectrogram (block);
-    texture_ = spectrogram.rescaled (512, 512);
+    texture_ = spectrogram.rescaled (256, 256);
 
     // juce::File spec_file (
     //     "/Users/LeonPS/Documents/Development/zones_client/modules/zones_look_and_feel/spec.png");
@@ -128,15 +128,15 @@ void WaterfallRenderer::SetupTexture ()
         auto width = texture_->getWidth ();
         auto height = texture_->getHeight ();
 
-        juce::AudioBuffer<GLubyte> graph {width, height};
+        juce::AudioBuffer<GLubyte> graph {height, width};
 
-        for (int x = 0; x < width; x++)
+        for (int y = 0; y < height; y++)
         {
-            auto channel_pointer = graph.getWritePointer (x);
-            for (int y = 0; y < height; y++)
+            auto channel_pointer = graph.getWritePointer (y);
+            for (int x = 0; x < width; x++)
             {
                 auto pixel_value = texture_->getPixelAt (x, y).getFloatAlpha ();
-                channel_pointer [y] = static_cast<GLubyte> (std::roundf (pixel_value * 255));
+                channel_pointer [x] = static_cast<GLubyte> (std::roundf (pixel_value * 255));
             }
         }
 
@@ -177,6 +177,8 @@ void WaterfallRenderer::renderOpenGL ()
 
     GLCall (juce::gl::glEnable (juce::gl::GL_DEPTH_TEST));
     GLCall (juce::gl::glClear (juce::gl::GL_COLOR_BUFFER_BIT | juce::gl::GL_DEPTH_BUFFER_BIT));
+    GLCall (juce::gl::glPolygonOffset (1, 0));
+    GLCall (juce::gl::glEnable (juce::gl::GL_POLYGON_OFFSET_FILL));
 
     SetupTexture ();
     CreateShaders ();
@@ -203,7 +205,8 @@ void WaterfallRenderer::renderOpenGL ()
 
     auto projection = glm::perspective (45.f, 1920.f / 1080.f, .1f, 10.f);
 
-    auto vertex_transform = projection * view * rotator;
+    auto vertex_scale = glm::scale (glm::mat4 (1.0f), glm::vec3 (1, 0.8, 1));
+    auto vertex_transform = projection * view * rotator * vertex_scale;
 
     uniform_vertex_transform_->setMatrix4 (
         glm::value_ptr (vertex_transform), 1, juce::gl::GL_FALSE);
@@ -213,7 +216,7 @@ void WaterfallRenderer::renderOpenGL ()
     auto offset_y = offset_y_.load ();
 
     glm::mat4 texture_transform =
-        glm::translate (glm::scale (glm::mat4 (1.0f), glm::vec3 (scale, scale, 1)),
+        glm::translate (glm::scale (glm::mat4 (1.0f), glm::vec3 (scale, -scale, 1)),
                         glm::vec3 (offset_x, offset_y, 0));
 
     uniform_texture_transform_->setMatrix4 (
