@@ -1,7 +1,9 @@
 #include "WaterfallGraph.h"
 
-WaterfallGraph::WaterfallGraph (juce::OpenGLContext & open_gl_context)
+WaterfallGraph::WaterfallGraph (juce::OpenGLContext & open_gl_context,
+                                DynamicShaderLoader & graph_shader_loader)
     : open_gl_context_ (open_gl_context)
+    , graph_shader_loader_ (graph_shader_loader)
 {
 }
 
@@ -146,45 +148,6 @@ void WaterfallGraph::UpdateTexture ()
     }
 }
 
-void WaterfallGraph::LoadShaders (const juce::String & vertex_shader,
-                                  const juce::String & fragment_shader)
-{
-    juce::SpinLock::ScopedLockType lock (shader_mutex_);
-    new_vertex_shader_ = vertex_shader;
-    new_fragment_shader_ = fragment_shader;
-}
-
-void WaterfallGraph::UpdateShaders ()
-{
-    juce::SpinLock::ScopedTryLockType lock (shader_mutex_);
-    if (! lock.isLocked ())
-        return;
-
-    if (new_vertex_shader_.has_value () && new_fragment_shader_.has_value ())
-    {
-        auto gl_shader_program = std::make_unique<juce::OpenGLShaderProgram> (open_gl_context_);
-
-        if (gl_shader_program->addVertexShader (*new_vertex_shader_) &&
-            gl_shader_program->addFragmentShader (*new_fragment_shader_) &&
-            gl_shader_program->link ())
-        {
-            shader_.reset (gl_shader_program.release ());
-
-            uniform_texture_transform_ = std::make_unique<juce::OpenGLShaderProgram::Uniform> (
-                *shader_, "texture_transform");
-            uniform_vertex_transform_ =
-                std::make_unique<juce::OpenGLShaderProgram::Uniform> (*shader_, "vertex_transform");
-            uniform_graph_texture_ =
-                std::make_unique<juce::OpenGLShaderProgram::Uniform> (*shader_, "graph_texture");
-            uniform_colour_ =
-                std::make_unique<juce::OpenGLShaderProgram::Uniform> (*shader_, "colour");
-        }
-
-        new_vertex_shader_ = std::nullopt;
-        new_fragment_shader_ = std::nullopt;
-    }
-}
-
 void WaterfallGraph::DrawGraph () const
 {
     index_buffer_graph_->Bind ();
@@ -211,8 +174,22 @@ void WaterfallGraph::Render (const glm::mat4 & vertex_transform,
                              const glm::mat4 & texture_transform)
 {
     UpdateTexture ();
-    UpdateShaders ();
-    shader_->use ();
+
+    graph_shader_loader_.Update (
+        shader_,
+        [&] ()
+        {
+            uniform_texture_transform_ =
+                std::make_unique<juce::OpenGLShaderProgram::Uniform> (shader_, "texture_transform");
+            uniform_vertex_transform_ =
+                std::make_unique<juce::OpenGLShaderProgram::Uniform> (shader_, "vertex_transform");
+            uniform_graph_texture_ =
+                std::make_unique<juce::OpenGLShaderProgram::Uniform> (shader_, "graph_texture");
+            uniform_colour_ =
+                std::make_unique<juce::OpenGLShaderProgram::Uniform> (shader_, "colour");
+        });
+
+    shader_.use ();
 
     uniform_graph_texture_->set (0);
     GLCall (juce::gl::glBindTexture (juce::gl::GL_TEXTURE_2D, graph_texture_id_));
@@ -235,7 +212,6 @@ void WaterfallGraph::ContextClosing ()
     index_buffer_grid_.reset ();
     vertex_array_.reset ();
 
-    shader_.reset ();
     uniform_texture_transform_.reset ();
     uniform_vertex_transform_.reset ();
     uniform_graph_texture_.reset ();

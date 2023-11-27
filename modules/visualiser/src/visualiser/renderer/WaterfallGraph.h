@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../gl/DynamicShaderLoader.h"
 #include "../gl/IndexBuffer.h"
 #include "../gl/VertexArray.h"
 #include "../gl/VertexBuffer.h"
@@ -7,6 +8,7 @@
 
 #include <filesystem>
 #include <juce_opengl/juce_opengl.h>
+
 #define GLM_FORCE_RADIANS
 #include <glm/common.hpp>
 #include <glm/glm.hpp>
@@ -17,12 +19,12 @@
 class WaterfallGraph
 {
 public:
-    explicit WaterfallGraph (juce::OpenGLContext & open_gl_context);
+    explicit WaterfallGraph (juce::OpenGLContext & open_gl_context,
+                             DynamicShaderLoader & graph_shader_loader);
     void Render (const glm::mat4 & vertex_transform, const glm::mat4 & texture_transform);
     void ContextClosing ();
     void ContextCreated ();
     void LoadTexture (const juce::Image & texture);
-    void LoadShaders (const juce::String & vertex_shader, const juce::String & fragment_shader);
 
 private:
     static constexpr size_t kVertexBufferWidth = 120;
@@ -30,7 +32,6 @@ private:
 
     void DrawGrid () const;
     void DrawGraph () const;
-    void UpdateShaders ();
     void UpdateTexture ();
 
     juce::OpenGLContext & open_gl_context_;
@@ -41,7 +42,8 @@ private:
     std::unique_ptr<IndexBuffer> index_buffer_grid_;
     std::unique_ptr<VertexArray> vertex_array_;
 
-    std::unique_ptr<juce::OpenGLShaderProgram> shader_;
+    DynamicShaderLoader & graph_shader_loader_;
+    juce::OpenGLShaderProgram shader_ {open_gl_context_};
     std::unique_ptr<juce::OpenGLShaderProgram::Uniform> uniform_texture_transform_;
     std::unique_ptr<juce::OpenGLShaderProgram::Uniform> uniform_vertex_transform_;
     std::unique_ptr<juce::OpenGLShaderProgram::Uniform> uniform_graph_texture_;

@@ -1,16 +1,14 @@
 #pragma once
 
 #include "../component/DraggableOrientation.h"
-#include "../gl/IndexBuffer.h"
-#include "../gl/VertexArray.h"
-#include "../gl/VertexBuffer.h"
+#include "../gl/DynamicShaderLoader.h"
 #include "Spectrogram.h"
+#include "WaterfallGraph.h"
 
 #include <filesystem>
 #include <juce_opengl/juce_opengl.h>
-#define GLM_FORCE_RADIANS
-#include "WaterfallGraph.h"
 
+#define GLM_FORCE_RADIANS
 #include <glm/common.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -48,4 +46,6 @@ private:
 
     juce::OpenGLContext & open_gl_context_;
     WaterfallGraph waterfall_graph_;
+
+    DynamicShaderLoader graph_shader_loader_;
 };

@@ -10,9 +10,7 @@ add_library(lager INTERFACE)
 target_include_directories(lager SYSTEM INTERFACE lager)
 target_link_libraries(lager INTERFACE zug immer Boost::headers)
 
-add_library(choc INTERFACE
-        ../modules/visualiser/src/visualiser/renderer/WaterfallGraph.cpp
-        ../modules/visualiser/src/visualiser/renderer/WaterfallGraph.h)
+add_library(choc INTERFACE)
 target_include_directories(choc SYSTEM INTERFACE choc)
 
 add_library(stretch INTERFACE)

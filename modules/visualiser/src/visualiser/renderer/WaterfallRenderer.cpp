@@ -2,21 +2,24 @@
 
 #include "zones_look_and_feel/LookAndFeel.h"
 
-#if JUCE_DEBUG
 const std::filesystem::path WaterfallRenderer::kShaderDirectory = SHADER_DIRECTORY;
-#else
 extern "C" const char shaders_graph3d_frag_glsl [];
 extern "C" const unsigned shaders_graph3d_frag_glsl_size;
 
 extern "C" const char shaders_graph3d_vert_glsl [];
 extern "C" const unsigned shaders3d_graph_vert_glsl_size;
-#endif
 
 WaterfallRenderer::WaterfallRenderer (juce::OpenGLContext & open_gl_context,
                                       DraggableOrientation & draggable_orientation)
     : draggable_orientation_ (draggable_orientation)
     , open_gl_context_ (open_gl_context)
-    , waterfall_graph_ (open_gl_context_)
+    , graph_shader_loader_ (
+          kShaderDirectory,
+          DynamicShaderLoader::ShaderLoader {.shader_file = "graph3d.vert.glsl",
+                                             .shader_value = shaders_graph3d_vert_glsl},
+          DynamicShaderLoader::ShaderLoader {.shader_file = "graph3d.frag.glsl",
+                                             .shader_value = shaders_graph3d_frag_glsl})
+    , waterfall_graph_ (open_gl_context_, graph_shader_loader_)
 {
 }
 
@@ -146,19 +149,5 @@ void WaterfallRenderer::openGLContextClosing ()
 
 void WaterfallRenderer::UpdateShaders ()
 {
-#if JUCE_DEBUG
-    static const auto fragment_shader_filepath = kShaderDirectory / "graph3d.frag.glsl";
-    static const auto vertex_shader_filepath = kShaderDirectory / "graph3d.vert.glsl";
-
-    auto fragment_shader_file = juce::File (fragment_shader_filepath.string ());
-    auto vertex_shader_file = juce::File (vertex_shader_filepath.string ());
-
-    auto fragment_shader = fragment_shader_file.loadFileAsString ();
-    auto vertex_shader = vertex_shader_file.loadFileAsString ();
-    waterfall_graph_.LoadShaders (vertex_shader, fragment_shader);
-#else
-    auto fragment_shader = shaders_graph3d_frag_glsl;
-    auto vertex_shader = shaders_graph3d_vert_glsl;
-    waterfall_graph_.LoadShaders (vertex_shader, fragment_shader);
-#endif
+    graph_shader_loader_.Load ();
 }
