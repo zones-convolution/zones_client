@@ -34,9 +34,11 @@ private:
     void DrawGrid () const;
     void DrawGraph () const;
     void UpdateTexture ();
+    void SetColourMap ();
 
     juce::OpenGLContext & open_gl_context_;
 
+    GLuint colourmap_texture_id_ {};
     GLuint graph_texture_id_ {};
     std::unique_ptr<VertexBuffer> vertex_buffer_;
     std::unique_ptr<IndexBuffer> index_buffer_graph_;

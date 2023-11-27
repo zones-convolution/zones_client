@@ -2,36 +2,8 @@
 
 in vec4 graph_coord;
 out vec4 fragColor;
-uniform vec4 colour;
 
-const float baseToMidBound = 0.02;
-const float midToTopBound = 0.7;
-
-vec4 getColorFromHeight(float y)
-{
-    float normalised_y = (y + 1.0) * 0.5;
-
-    vec3 baseColour = vec3(0.2116, 0.1895, 0.5771);
-    vec3 midColour = vec3(0.0795, 0.5169, 0.8324);
-    vec3 topColour = vec3(0.6382, 0.746, 0.4224);
-    vec3 highlightColour = vec3(0.971, 0.9673, 0.0651);
-
-    vec3 interpolatedColor;
-    if (normalised_y < baseToMidBound)
-    {
-        interpolatedColor = mix(baseColour, midColour, normalised_y / baseToMidBound);
-    }
-    else if (normalised_y < midToTopBound)
-    {
-        interpolatedColor = mix(midColour, topColour, (normalised_y - baseToMidBound) / (midToTopBound - baseToMidBound));
-    }
-    else
-    {
-        interpolatedColor = mix(topColour, highlightColour, (normalised_y - midToTopBound) / (1.0 - midToTopBound));
-    }
-
-    return vec4(interpolatedColor, 1.0);
-}
+uniform sampler1D colourmap;
 
 void main(void) {
     vec4 factor;
@@ -40,6 +12,6 @@ void main(void) {
     else
     factor = vec4(0.2, 0.2, 0.2, 1.0);
 
-    fragColor = getColorFromHeight(graph_coord.z) * factor * colour;
+    fragColor = texture(colourmap, (graph_coord.z + 1.0) / 2.0).rgba * factor;
 }
 

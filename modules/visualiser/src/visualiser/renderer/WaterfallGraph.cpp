@@ -1,5 +1,7 @@
 #include "WaterfallGraph.h"
 
+#include <tinycolormap.hpp>
+
 WaterfallGraph::WaterfallGraph (juce::OpenGLContext & open_gl_context,
                                 DynamicShaderLoader & graph_shader_loader,
                                 DynamicShaderLoader & grid_shader_loader)
@@ -94,8 +96,49 @@ void WaterfallGraph::ContextCreated ()
     CreateGraphIndices (indices, kVertexBufferWidth, kVertexBufferHeight);
     index_buffer_graph_ = std::make_unique<IndexBuffer> (indices.data (), indices.size ());
 
-    GLCall (juce::gl::glActiveTexture (juce::gl::GL_TEXTURE0));
     GLCall (juce::gl::glGenTextures (1, &graph_texture_id_));
+    GLCall (juce::gl::glGenTextures (1, &colourmap_texture_id_));
+
+    SetColourMap ();
+}
+
+void WaterfallGraph::SetColourMap ()
+{
+    struct RGB
+    {
+        GLubyte r;
+        GLubyte g;
+        GLubyte b;
+    };
+
+    static constexpr std::size_t kNumColourSamples = 80;
+    std::array<RGB, kNumColourSamples> sampled_colourmap {};
+    for (auto i = 0; i < kNumColourSamples; ++i)
+    {
+        auto colour =
+            tinycolormap::GetColor (static_cast<float> (i) / static_cast<float> (kNumColourSamples),
+                                    tinycolormap::ColormapType::Turbo);
+        sampled_colourmap [i] = RGB {.r = colour.ri (), .b = colour.bi (), .g = colour.gi ()};
+    }
+
+    GLCall (juce::gl::glBindTexture (juce::gl::GL_TEXTURE_1D, colourmap_texture_id_));
+    GLCall (juce::gl::glTexImage1D (juce::gl::GL_TEXTURE_1D,
+                                    0,
+                                    juce::gl::GL_RGB,
+                                    kNumColourSamples,
+                                    0,
+                                    juce::gl::GL_RGB,
+                                    juce::gl::GL_UNSIGNED_BYTE,
+                                    sampled_colourmap.data ()));
+
+    juce::gl::glTexParameteri (
+        juce::gl::GL_TEXTURE_1D, juce::gl::GL_TEXTURE_WRAP_S, juce::gl::GL_CLAMP_TO_EDGE);
+    juce::gl::glTexParameteri (
+        juce::gl::GL_TEXTURE_1D, juce::gl::GL_TEXTURE_WRAP_T, juce::gl::GL_CLAMP_TO_EDGE);
+    juce::gl::glTexParameteri (
+        juce::gl::GL_TEXTURE_1D, juce::gl::GL_TEXTURE_MIN_FILTER, juce::gl::GL_LINEAR);
+    juce::gl::glTexParameteri (
+        juce::gl::GL_TEXTURE_1D, juce::gl::GL_TEXTURE_MAG_FILTER, juce::gl::GL_LINEAR);
 }
 
 void WaterfallGraph::LoadTexture (const juce::Image & texture)
@@ -171,26 +214,22 @@ void WaterfallGraph::DrawGrid () const
 }
 
 void SetGraphUniforms (juce::OpenGLShaderProgram & graph_shader,
-                       GLuint graph_texture_id,
                        const glm::mat4 & vertex_transform,
                        const glm::mat4 & texture_transform)
 {
     graph_shader.setUniform ("graph_texture", 0);
-    GLCall (juce::gl::glBindTexture (juce::gl::GL_TEXTURE_2D, graph_texture_id));
+    graph_shader.setUniform ("colourmap", 1);
     graph_shader.setUniformMat4 (
         "vertex_transform", glm::value_ptr (vertex_transform), 1, juce::gl::GL_FALSE);
     graph_shader.setUniformMat4 (
         "texture_transform", glm::value_ptr (texture_transform), 1, juce::gl::GL_FALSE);
-    graph_shader.setUniform ("colour", 1.f, 1.f, 1.f, 1.f);
 }
 
 void SetGridUniforms (juce::OpenGLShaderProgram & grid_shader,
-                      GLuint graph_texture_id,
                       const glm::mat4 & vertex_transform,
                       const glm::mat4 & texture_transform)
 {
     grid_shader.setUniform ("graph_texture", 0);
-    GLCall (juce::gl::glBindTexture (juce::gl::GL_TEXTURE_2D, graph_texture_id));
     grid_shader.setUniformMat4 (
         "vertex_transform", glm::value_ptr (vertex_transform), 1, juce::gl::GL_FALSE);
     grid_shader.setUniformMat4 (
@@ -201,18 +240,24 @@ void SetGridUniforms (juce::OpenGLShaderProgram & grid_shader,
 void WaterfallGraph::Render (const glm::mat4 & vertex_transform,
                              const glm::mat4 & texture_transform)
 {
+    GLCall (juce::gl::glActiveTexture (juce::gl::GL_TEXTURE0));
+    GLCall (juce::gl::glBindTexture (juce::gl::GL_TEXTURE_2D, graph_texture_id_));
+
+    GLCall (juce::gl::glActiveTexture (juce::gl::GL_TEXTURE1));
+    GLCall (juce::gl::glBindTexture (juce::gl::GL_TEXTURE_1D, colourmap_texture_id_));
+
     UpdateTexture ();
 
     vertex_array_->Bind ();
 
     graph_shader_loader_.Update (graph_shader_);
     graph_shader_.use ();
-    SetGraphUniforms (graph_shader_, graph_texture_id_, vertex_transform, texture_transform);
+    SetGraphUniforms (graph_shader_, vertex_transform, texture_transform);
     DrawGraph ();
 
     grid_shader_loader_.Update (grid_shader_);
     grid_shader_.use ();
-    SetGridUniforms (grid_shader_, graph_texture_id_, vertex_transform, texture_transform);
+    SetGridUniforms (grid_shader_, vertex_transform, texture_transform);
     DrawGrid ();
 
     vertex_array_->Unbind ();
