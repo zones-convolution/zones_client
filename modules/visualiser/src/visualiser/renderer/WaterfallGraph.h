@@ -15,10 +15,18 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/quaternion.hpp>
+#include <tinycolormap.hpp>
 
 class WaterfallGraph
 {
 public:
+    struct Parameters
+    {
+        bool draw_time_grid;
+        bool draw_frequency_grid;
+        tinycolormap::ColormapType colour_scheme;
+    };
+
     explicit WaterfallGraph (juce::OpenGLContext & open_gl_context,
                              DynamicShaderLoader & graph_shader_loader,
                              DynamicShaderLoader & grid_shader_loader);
@@ -26,6 +34,7 @@ public:
     void ContextClosing ();
     void ContextCreated ();
     void LoadTexture (const juce::Image & texture);
+    void LoadParameters (const Parameters & parameters);
 
 private:
     static constexpr size_t kVertexBufferWidth = 120;
@@ -34,7 +43,8 @@ private:
     void DrawGrid () const;
     void DrawGraph () const;
     void UpdateTexture ();
-    void SetColourMap ();
+    void SetColourMap (tinycolormap::ColormapType colour_scheme) const;
+    void UpdateParameters ();
 
     juce::OpenGLContext & open_gl_context_;
 
@@ -51,10 +61,12 @@ private:
     DynamicShaderLoader & grid_shader_loader_;
     juce::OpenGLShaderProgram grid_shader_ {open_gl_context_};
 
-    juce::SpinLock shader_mutex_;
-    std::optional<juce::String> new_vertex_shader_;
-    std::optional<juce::String> new_fragment_shader_;
-
     juce::SpinLock texture_mutex_;
     std::optional<juce::Image> new_texture_ = std::nullopt;
+
+    juce::SpinLock parameter_mutex_;
+    std::optional<Parameters> parameters_ =
+        Parameters {.draw_time_grid = true,
+                    .draw_frequency_grid = true,
+                    .colour_scheme = tinycolormap::ColormapType::Turbo};
 };

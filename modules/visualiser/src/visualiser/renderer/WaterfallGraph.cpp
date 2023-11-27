@@ -1,7 +1,5 @@
 #include "WaterfallGraph.h"
 
-#include <tinycolormap.hpp>
-
 WaterfallGraph::WaterfallGraph (juce::OpenGLContext & open_gl_context,
                                 DynamicShaderLoader & graph_shader_loader,
                                 DynamicShaderLoader & grid_shader_loader)
@@ -29,26 +27,37 @@ void CreateZeroCenteredVertexGrid (juce::AudioBuffer<glm::vec2> & vertices)
     }
 }
 
-void CreateGridIndices (std::vector<GLuint> & indices, std::size_t width, std::size_t height)
+void CreateGridIndices (std::vector<GLuint> & indices,
+                        std::size_t width,
+                        std::size_t height,
+                        bool draw_time_grid,
+                        bool draw_frequency_grid)
 {
     auto grid_index = 0;
-    for (int x = 0; x < width - 1; x++)
+
+    if (draw_time_grid)
     {
-        for (int y = 0; y < height; y += 9)
+        for (int x = 0; x < width - 1; x++)
         {
-            indices [grid_index++] = x * height + y;
-            indices [grid_index++] = (x + 1) * height + y;
+            for (int y = 0; y < height; y += 9)
+            {
+                indices [grid_index++] = x * height + y;
+                indices [grid_index++] = (x + 1) * height + y;
+            }
         }
     }
 
-    // for (int y = 0; y < height - 1; y++)
-    // {
-    //     for (int x = 0; x < width; x += 7)
-    //     {
-    //         indices [grid_index++] = (x * height) + y;
-    //         indices [grid_index++] = (x * height) + y + 1;
-    //     }
-    // }
+    if (draw_frequency_grid)
+    {
+        for (int y = 0; y < height - 1; y++)
+        {
+            for (int x = 0; x < width; x += 7)
+            {
+                indices [grid_index++] = (x * height) + y;
+                indices [grid_index++] = (x * height) + y + 1;
+            }
+        }
+    }
 }
 
 void CreateGraphIndices (std::vector<GLuint> & indices, std::size_t width, std::size_t height)
@@ -89,20 +98,14 @@ void WaterfallGraph::ContextCreated ()
 
     std::vector<GLuint> indices;
     indices.resize ((kVertexBufferWidth - 1) * (kVertexBufferHeight - 1) * 6);
-
-    CreateGridIndices (indices, kVertexBufferWidth, kVertexBufferHeight);
-    index_buffer_grid_ = std::make_unique<IndexBuffer> (indices.data (), indices.size ());
-
     CreateGraphIndices (indices, kVertexBufferWidth, kVertexBufferHeight);
     index_buffer_graph_ = std::make_unique<IndexBuffer> (indices.data (), indices.size ());
 
     GLCall (juce::gl::glGenTextures (1, &graph_texture_id_));
     GLCall (juce::gl::glGenTextures (1, &colourmap_texture_id_));
-
-    SetColourMap ();
 }
 
-void WaterfallGraph::SetColourMap ()
+void WaterfallGraph::SetColourMap (tinycolormap::ColormapType colour_scheme) const
 {
     struct RGB
     {
@@ -115,9 +118,8 @@ void WaterfallGraph::SetColourMap ()
     std::array<RGB, kNumColourSamples> sampled_colourmap {};
     for (auto i = 0; i < kNumColourSamples; ++i)
     {
-        auto colour =
-            tinycolormap::GetColor (static_cast<float> (i) / static_cast<float> (kNumColourSamples),
-                                    tinycolormap::ColormapType::Turbo);
+        auto colour = tinycolormap::GetColor (
+            static_cast<float> (i) / static_cast<float> (kNumColourSamples), colour_scheme);
         sampled_colourmap [i] = RGB {.r = colour.ri (), .b = colour.bi (), .g = colour.gi ()};
     }
 
@@ -193,6 +195,36 @@ void WaterfallGraph::UpdateTexture ()
     }
 }
 
+void WaterfallGraph::LoadParameters (const Parameters & parameters)
+{
+    juce::SpinLock::ScopedLockType lock (parameter_mutex_);
+    parameters_ = parameters;
+}
+
+void WaterfallGraph::UpdateParameters ()
+{
+    juce::SpinLock::ScopedTryLockType lock (parameter_mutex_);
+    if (! lock.isLocked ())
+        return;
+
+    if (parameters_.has_value ())
+    {
+        std::vector<GLuint> indices;
+        indices.resize ((kVertexBufferWidth - 1) * (kVertexBufferHeight - 1) * 6);
+
+        CreateGridIndices (indices,
+                           kVertexBufferWidth,
+                           kVertexBufferHeight,
+                           parameters_->draw_time_grid,
+                           parameters_->draw_frequency_grid);
+        index_buffer_grid_ = std::make_unique<IndexBuffer> (indices.data (), indices.size ());
+
+        SetColourMap (parameters_->colour_scheme);
+
+        parameters_ = std::nullopt;
+    }
+}
+
 void WaterfallGraph::DrawGraph () const
 {
     index_buffer_graph_->Bind ();
@@ -246,6 +278,7 @@ void WaterfallGraph::Render (const glm::mat4 & vertex_transform,
     GLCall (juce::gl::glActiveTexture (juce::gl::GL_TEXTURE1));
     GLCall (juce::gl::glBindTexture (juce::gl::GL_TEXTURE_1D, colourmap_texture_id_));
 
+    UpdateParameters ();
     UpdateTexture ();
 
     vertex_array_->Bind ();

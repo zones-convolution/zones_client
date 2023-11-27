@@ -25,20 +25,25 @@ private:
     void mouseDrag (const juce::MouseEvent & event) override;
 
     void SetupOpenGl ();
+    void ParametersUpdated ();
 
     DraggableOrientation draggable_orientation_;
 
     juce::OpenGLContext open_gl_context_;
-    WaterfallRenderer waterfall_renderer_{open_gl_context_, draggable_orientation_};
+    WaterfallRenderer waterfall_renderer_ {open_gl_context_, draggable_orientation_};
 
     juce::Label status_label_;
-    juce::TextButton refresh_button_{"Refresh Shaders"};
-    juce::Slider scale_slider_{juce::Slider::SliderStyle::LinearHorizontal,
-                               juce::Slider::TextEntryBoxPosition::NoTextBox};
-    juce::Slider offset_x_slider_{juce::Slider::SliderStyle::LinearHorizontal,
-                                  juce::Slider::TextEntryBoxPosition::NoTextBox};
-    juce::Slider offset_y_slider_{juce::Slider::SliderStyle::LinearHorizontal,
-                                  juce::Slider::TextEntryBoxPosition::NoTextBox};
+    juce::TextButton refresh_button_ {"Refresh Shaders"};
+    juce::Slider scale_slider_ {juce::Slider::SliderStyle::LinearHorizontal,
+                                juce::Slider::TextEntryBoxPosition::NoTextBox};
+    juce::Slider offset_x_slider_ {juce::Slider::SliderStyle::LinearHorizontal,
+                                   juce::Slider::TextEntryBoxPosition::NoTextBox};
+    juce::Slider offset_y_slider_ {juce::Slider::SliderStyle::LinearHorizontal,
+                                   juce::Slider::TextEntryBoxPosition::NoTextBox};
+
+    juce::ToggleButton show_time_grid_ {"Time Grid"};
+    juce::ToggleButton show_frequency_grid_ {"Frequency Grid"};
+    juce::ComboBox colour_scheme_;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (WaterfallComponent)
 };

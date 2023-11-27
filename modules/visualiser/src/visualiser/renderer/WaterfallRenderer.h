@@ -27,6 +27,7 @@ public:
     void openGLContextClosing () override;
 
     void UpdateShaders ();
+    void LoadParameters (const WaterfallGraph::Parameters & parameters);
 
     std::atomic<float> offset_x_;
     std::atomic<float> offset_y_;

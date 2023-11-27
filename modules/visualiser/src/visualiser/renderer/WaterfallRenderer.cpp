@@ -160,3 +160,8 @@ void WaterfallRenderer::UpdateShaders ()
     graph_shader_loader_.Load ();
     grid_shader_loader_.Load ();
 }
+
+void WaterfallRenderer::LoadParameters (const WaterfallGraph::Parameters & parameters)
+{
+    waterfall_graph_.LoadParameters (parameters);
+}
