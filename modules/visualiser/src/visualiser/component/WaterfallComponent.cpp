@@ -44,9 +44,15 @@ WaterfallComponent::WaterfallComponent ()
                                 1);
     addAndMakeVisible (colour_scheme_);
 
+    colour_scheme_.setSelectedId (0);
+    show_time_grid_.setToggleState (true, juce::dontSendNotification);
+    show_frequency_grid_.setToggleState (false, juce::dontSendNotification);
+
     show_time_grid_.onStateChange = [&] () { ParametersUpdated (); };
     show_frequency_grid_.onStateChange = [&] () { ParametersUpdated (); };
     colour_scheme_.onChange = [&] () { ParametersUpdated (); };
+
+    ParametersUpdated ();
 }
 
 WaterfallComponent::~WaterfallComponent ()
@@ -84,10 +90,12 @@ void WaterfallComponent::resized ()
 
     juce::FlexBox parameters_layout;
     parameters_layout.flexDirection = juce::FlexBox::Direction::row;
-    parameters_layout.justifyContent = juce::FlexBox::JustifyContent::spaceBetween;
-    parameters_layout.items.add (juce::FlexItem (show_time_grid_).withFlex (1.f));
+    parameters_layout.justifyContent = juce::FlexBox::JustifyContent::flexStart;
+    parameters_layout.items.add (juce::FlexItem (show_time_grid_).withWidth (100.f));
+    parameters_layout.items.add (LookAndFeel::kFlexSpacer);
+    parameters_layout.items.add (juce::FlexItem (show_frequency_grid_).withWidth (140.f));
+    parameters_layout.items.add (LookAndFeel::kFlexSpacer);
     parameters_layout.items.add (juce::FlexItem (colour_scheme_).withFlex (1.f));
-    parameters_layout.items.add (juce::FlexItem (show_frequency_grid_).withFlex (1.f));
 
     juce::FlexBox layout;
     layout.flexDirection = juce::FlexBox::Direction::column;
@@ -101,9 +109,9 @@ void WaterfallComponent::resized ()
     layout.items.add (LookAndFeel::kFlexSpacer);
     layout.items.add (juce::FlexItem (status_label_).withHeight (20.f));
     layout.items.add (LookAndFeel::kFlexSpacer);
-    layout.items.add (juce::FlexItem (parameters_layout).withHeight (40.f));
-    layout.items.add (LookAndFeel::kFlexSpacer);
     layout.items.add (juce::FlexItem (refresh_button_).withHeight (40.f));
+    layout.items.add (LookAndFeel::kFlexSpacer);
+    layout.items.add (juce::FlexItem (parameters_layout).withHeight (40.f));
 
     layout.performLayout (getLocalBounds ().toFloat ());
 }

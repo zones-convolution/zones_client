@@ -65,8 +65,8 @@ private:
     std::optional<juce::Image> new_texture_ = std::nullopt;
 
     juce::SpinLock parameter_mutex_;
-    std::optional<Parameters> parameters_ =
-        Parameters {.draw_time_grid = true,
-                    .draw_frequency_grid = true,
-                    .colour_scheme = tinycolormap::ColormapType::Turbo};
+    std::optional<Parameters> parameters_ = std::nullopt;
+    Parameters last_parameters_ = Parameters {.draw_time_grid = true,
+                                              .draw_frequency_grid = true,
+                                              .colour_scheme = tinycolormap::ColormapType::Turbo};
 };

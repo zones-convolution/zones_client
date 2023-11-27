@@ -10,7 +10,7 @@ Visualisers::Visualisers ()
     addAndMakeVisible (waterfall_component_);
     addAndMakeVisible (divider_);
 
-    waterfall_component_.EnableDebugControls (true);
+    // waterfall_component_.EnableDebugControls (true);
 
     load_waterfall_.onClick = [&] ()
     {

@@ -101,6 +101,8 @@ void WaterfallGraph::ContextCreated ()
     CreateGraphIndices (indices, kVertexBufferWidth, kVertexBufferHeight);
     index_buffer_graph_ = std::make_unique<IndexBuffer> (indices.data (), indices.size ());
 
+    parameters_ = last_parameters_;
+
     GLCall (juce::gl::glGenTextures (1, &graph_texture_id_));
     GLCall (juce::gl::glGenTextures (1, &colourmap_texture_id_));
 }
@@ -199,6 +201,7 @@ void WaterfallGraph::LoadParameters (const Parameters & parameters)
 {
     juce::SpinLock::ScopedLockType lock (parameter_mutex_);
     parameters_ = parameters;
+    last_parameters_ = parameters;
 }
 
 void WaterfallGraph::UpdateParameters ()
