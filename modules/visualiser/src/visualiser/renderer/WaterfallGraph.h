@@ -49,11 +49,6 @@ private:
     DynamicShaderLoader & grid_shader_loader_;
     juce::OpenGLShaderProgram grid_shader_ {open_gl_context_};
 
-    std::unique_ptr<juce::OpenGLShaderProgram::Uniform> uniform_texture_transform_;
-    std::unique_ptr<juce::OpenGLShaderProgram::Uniform> uniform_vertex_transform_;
-    std::unique_ptr<juce::OpenGLShaderProgram::Uniform> uniform_graph_texture_;
-    std::unique_ptr<juce::OpenGLShaderProgram::Uniform> uniform_colour_;
-
     juce::SpinLock shader_mutex_;
     std::optional<juce::String> new_vertex_shader_;
     std::optional<juce::String> new_fragment_shader_;

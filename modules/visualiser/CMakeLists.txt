@@ -26,7 +26,8 @@ zones_add_module(
 
 embed_resources(visualiser
         shaders/graph3d.frag.glsl
-        shaders/graph3d.vert.glsl)
+        shaders/graph3d.vert.glsl
+        shaders/grid3d.frag.glsl)
 
 target_compile_definitions(
         visualiser

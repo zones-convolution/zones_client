@@ -153,7 +153,6 @@ void WaterfallGraph::UpdateTexture ()
 void WaterfallGraph::DrawGraph () const
 {
     index_buffer_graph_->Bind ();
-    uniform_colour_->set (1.f, 1.f, 1.f, 1.f);
     GLCall (juce::gl::glDrawElements (juce::gl::GL_TRIANGLES,
                                       (kVertexBufferWidth - 1) * (kVertexBufferHeight - 1) * 6,
                                       juce::gl::GL_UNSIGNED_INT,
@@ -164,7 +163,6 @@ void WaterfallGraph::DrawGraph () const
 void WaterfallGraph::DrawGrid () const
 {
     index_buffer_grid_->Bind ();
-    uniform_colour_->set (4.f, 4.f, 4.f, 1.f);
     GLCall (juce::gl::glDrawElements (juce::gl::GL_LINES,
                                       (kVertexBufferWidth - 1) * (kVertexBufferHeight - 1) * 6,
                                       juce::gl::GL_UNSIGNED_INT,
@@ -172,37 +170,49 @@ void WaterfallGraph::DrawGrid () const
     index_buffer_grid_->Unbind ();
 }
 
+void SetGraphUniforms (juce::OpenGLShaderProgram & graph_shader,
+                       GLuint graph_texture_id,
+                       const glm::mat4 & vertex_transform,
+                       const glm::mat4 & texture_transform)
+{
+    graph_shader.setUniform ("graph_texture", 0);
+    GLCall (juce::gl::glBindTexture (juce::gl::GL_TEXTURE_2D, graph_texture_id));
+    graph_shader.setUniformMat4 (
+        "vertex_transform", glm::value_ptr (vertex_transform), 1, juce::gl::GL_FALSE);
+    graph_shader.setUniformMat4 (
+        "texture_transform", glm::value_ptr (texture_transform), 1, juce::gl::GL_FALSE);
+    graph_shader.setUniform ("colour", 1.f, 1.f, 1.f, 1.f);
+}
+
+void SetGridUniforms (juce::OpenGLShaderProgram & grid_shader,
+                      GLuint graph_texture_id,
+                      const glm::mat4 & vertex_transform,
+                      const glm::mat4 & texture_transform)
+{
+    grid_shader.setUniform ("graph_texture", 0);
+    GLCall (juce::gl::glBindTexture (juce::gl::GL_TEXTURE_2D, graph_texture_id));
+    grid_shader.setUniformMat4 (
+        "vertex_transform", glm::value_ptr (vertex_transform), 1, juce::gl::GL_FALSE);
+    grid_shader.setUniformMat4 (
+        "texture_transform", glm::value_ptr (texture_transform), 1, juce::gl::GL_FALSE);
+    grid_shader.setUniform ("colour", 1.f, 1.f, 1.f, 1.f);
+}
+
 void WaterfallGraph::Render (const glm::mat4 & vertex_transform,
                              const glm::mat4 & texture_transform)
 {
     UpdateTexture ();
 
-    graph_shader_loader_.Update (
-        graph_shader_,
-        [&] ()
-        {
-            uniform_texture_transform_ = std::make_unique<juce::OpenGLShaderProgram::Uniform> (
-                graph_shader_, "texture_transform");
-            uniform_vertex_transform_ = std::make_unique<juce::OpenGLShaderProgram::Uniform> (
-                graph_shader_, "vertex_transform");
-            uniform_graph_texture_ = std::make_unique<juce::OpenGLShaderProgram::Uniform> (
-                graph_shader_, "graph_texture");
-            uniform_colour_ =
-                std::make_unique<juce::OpenGLShaderProgram::Uniform> (graph_shader_, "colour");
-        });
-
-    uniform_graph_texture_->set (0);
-    GLCall (juce::gl::glBindTexture (juce::gl::GL_TEXTURE_2D, graph_texture_id_));
-
-    uniform_vertex_transform_->setMatrix4 (
-        glm::value_ptr (vertex_transform), 1, juce::gl::GL_FALSE);
-    uniform_texture_transform_->setMatrix4 (
-        glm::value_ptr (texture_transform), 1, juce::gl::GL_FALSE);
-
     vertex_array_->Bind ();
 
+    graph_shader_loader_.Update (graph_shader_);
     graph_shader_.use ();
+    SetGraphUniforms (graph_shader_, graph_texture_id_, vertex_transform, texture_transform);
     DrawGraph ();
+
+    grid_shader_loader_.Update (grid_shader_);
+    grid_shader_.use ();
+    SetGridUniforms (grid_shader_, graph_texture_id_, vertex_transform, texture_transform);
     DrawGrid ();
 
     vertex_array_->Unbind ();
@@ -214,9 +224,4 @@ void WaterfallGraph::ContextClosing ()
     index_buffer_graph_.reset ();
     index_buffer_grid_.reset ();
     vertex_array_.reset ();
-
-    uniform_texture_transform_.reset ();
-    uniform_vertex_transform_.reset ();
-    uniform_graph_texture_.reset ();
-    uniform_colour_.reset ();
 }

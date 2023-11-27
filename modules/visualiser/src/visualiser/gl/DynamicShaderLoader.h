@@ -18,8 +18,7 @@ public:
                          const std::optional<ShaderLoader> & fragment_shader_loader);
 
     void Load ();
-    void Update (juce::OpenGLShaderProgram & shader_program,
-                 const std::function<void ()> & did_update);
+    void Update (juce::OpenGLShaderProgram & shader_program);
 
 private:
     juce::SpinLock mutex_;

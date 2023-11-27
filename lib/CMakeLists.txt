@@ -10,7 +10,9 @@ add_library(lager INTERFACE)
 target_include_directories(lager SYSTEM INTERFACE lager)
 target_link_libraries(lager INTERFACE zug immer Boost::headers)
 
-add_library(choc INTERFACE)
+add_library(choc INTERFACE
+        ../modules/visualiser/src/visualiser/gl/UniformBuffer.cpp
+        ../modules/visualiser/src/visualiser/gl/UniformBuffer.h)
 target_include_directories(choc SYSTEM INTERFACE choc)
 
 add_library(stretch INTERFACE)

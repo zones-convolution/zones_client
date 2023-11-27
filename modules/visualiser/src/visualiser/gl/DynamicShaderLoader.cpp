@@ -51,8 +51,7 @@ void DynamicShaderLoader::Load ()
 #endif
 }
 
-void DynamicShaderLoader::Update (juce::OpenGLShaderProgram & shader_program,
-                                  const std::function<void ()> & did_update)
+void DynamicShaderLoader::Update (juce::OpenGLShaderProgram & shader_program)
 {
     juce::SpinLock::ScopedTryLockType lock (mutex_);
     if (! lock.isLocked ())
@@ -67,8 +66,7 @@ void DynamicShaderLoader::Update (juce::OpenGLShaderProgram & shader_program,
         if (fragment_shader_.has_value ())
             shader_program.addFragmentShader (*fragment_shader_);
 
-        if (shader_program.link ())
-            did_update ();
+        shader_program.link ();
 
         vertex_shader_ = std::nullopt;
         fragment_shader_ = std::nullopt;

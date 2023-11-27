@@ -7,7 +7,10 @@ extern "C" const char shaders_graph3d_frag_glsl [];
 extern "C" const unsigned shaders_graph3d_frag_glsl_size;
 
 extern "C" const char shaders_graph3d_vert_glsl [];
-extern "C" const unsigned shaders3d_graph_vert_glsl_size;
+extern "C" const unsigned shaders_graph3d_vert_glsl_size;
+
+extern "C" const char shaders_grid3d_frag_glsl [];
+extern "C" const unsigned shaders_grid3d_frag_glsl_size;
 
 WaterfallRenderer::WaterfallRenderer (juce::OpenGLContext & open_gl_context,
                                       DraggableOrientation & draggable_orientation)
@@ -23,8 +26,8 @@ WaterfallRenderer::WaterfallRenderer (juce::OpenGLContext & open_gl_context,
           kShaderDirectory,
           DynamicShaderLoader::ShaderLoader {.shader_file = "graph3d.vert.glsl",
                                              .shader_value = shaders_graph3d_vert_glsl},
-          DynamicShaderLoader::ShaderLoader {.shader_file = "graph3d.frag.glsl",
-                                             .shader_value = shaders_graph3d_frag_glsl})
+          DynamicShaderLoader::ShaderLoader {.shader_file = "grid3d.frag.glsl",
+                                             .shader_value = shaders_grid3d_frag_glsl})
 {
 }
 
@@ -155,4 +158,5 @@ void WaterfallRenderer::openGLContextClosing ()
 void WaterfallRenderer::UpdateShaders ()
 {
     graph_shader_loader_.Load ();
+    grid_shader_loader_.Load ();
 }
