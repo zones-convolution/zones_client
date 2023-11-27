@@ -17,6 +17,8 @@ zones_add_module(
         src/visualiser/gl/VertexArray.h
         src/visualiser/gl/VertexArray.cpp
         src/visualiser/gl/VertexBufferLayout.h
+        src/visualiser/renderer/WaterfallGraph.h
+        src/visualiser/renderer/WaterfallGraph.cpp
         DEPS juce::juce_gui_basics juce::juce_opengl zones_look_and_feel juce::juce_audio_basics juce::juce_dsp juce::juce_audio_formats glm tinycolormap immer
 )
 

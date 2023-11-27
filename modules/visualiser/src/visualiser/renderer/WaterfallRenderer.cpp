@@ -16,111 +16,27 @@ WaterfallRenderer::WaterfallRenderer (juce::OpenGLContext & open_gl_context,
                                       DraggableOrientation & draggable_orientation)
     : draggable_orientation_ (draggable_orientation)
     , open_gl_context_ (open_gl_context)
+    , waterfall_graph_ (open_gl_context_)
 {
 }
 
-void SetupDefaultTexture (std::optional<juce::Image> & texture)
+juce::Image GenerateDefaultTexture ()
 {
-    texture = juce::Image (juce::Image::PixelFormat::ARGB, 1024, 1024, true);
+    juce::Image default_texture {juce::Image::PixelFormat::ARGB, 1024, 1024, true};
     for (auto i = 0; i < 1024; ++i)
         for (auto j = 0; j < 1024; ++j)
-            texture->setPixelAt (
+            default_texture.setPixelAt (
                 i,
                 j,
                 juce::Colour::fromFloatRGBA (
                     0.f, 0.f, 0.f, ((std::sin (j * 0.01f) * std::sin (i * 0.01f)) + 1.f) * 0.5f));
-}
-
-void CreateZeroCenteredVertexGrid (juce::AudioBuffer<glm::vec2> & vertices)
-{
-    auto width = vertices.getNumChannels ();
-    auto height = vertices.getNumSamples ();
-
-    for (auto x = 0; x < width; x++)
-    {
-        for (int y = 0; y < height; y++)
-        {
-            auto mapped_x = juce::jmap (
-                static_cast<float> (x), 0.f, static_cast<float> (width) - 1.f, -1.f, 1.f);
-            auto mapped_y = juce::jmap (
-                static_cast<float> (y), 0.f, static_cast<float> (height) - 1.f, -1.f, 1.f);
-            vertices.setSample (x, y, {mapped_x, mapped_y});
-        }
-    }
-}
-
-void CreateGridIndices (std::vector<GLuint> & indices, std::size_t width, std::size_t height)
-{
-    auto grid_index = 0;
-    for (int x = 0; x < width - 1; x++)
-    {
-        for (int y = 0; y < height; y += 9)
-        {
-            indices [grid_index++] = x * height + y;
-            indices [grid_index++] = (x + 1) * height + y;
-        }
-    }
-
-    // for (int y = 0; y < height - 1; y++)
-    // {
-    //     for (int x = 0; x < width; x += 7)
-    //     {
-    //         indices [grid_index++] = (x * height) + y;
-    //         indices [grid_index++] = (x * height) + y + 1;
-    //     }
-    // }
-}
-
-void CreateGraphIndices (std::vector<GLuint> & indices, std::size_t width, std::size_t height)
-{
-    auto graph_index = 0;
-    for (int y = 0; y < height - 1; y++)
-    {
-        for (int x = 0; x < width - 1; x++)
-        {
-            auto top_left = (x * height) + y;
-            auto bottom_left = top_left + 1;
-
-            auto top_right = (x + 1) * height + y;
-            auto bottom_right = top_right + 1;
-
-            indices [graph_index++] = top_left;
-            indices [graph_index++] = top_right;
-            indices [graph_index++] = bottom_right;
-
-            indices [graph_index++] = bottom_right;
-            indices [graph_index++] = bottom_left;
-            indices [graph_index++] = top_left;
-        }
-    }
+    return default_texture;
 }
 
 void WaterfallRenderer::newOpenGLContextCreated ()
 {
-    juce::AudioBuffer<glm::vec2> vertices {kVertexBufferWidth, kVertexBufferHeight};
-    CreateZeroCenteredVertexGrid (vertices);
-    vertex_buffer_ = std::make_unique<VertexBuffer> (
-        vertices.getReadPointer (0), kVertexBufferWidth * kVertexBufferHeight * sizeof (glm::vec2));
-
-    vertex_array_ = std::make_unique<VertexArray> ();
-    VertexBufferLayout vertex_buffer_layout;
-    vertex_buffer_layout.Push<GLfloat> (2);
-    vertex_array_->AddBuffer (*vertex_buffer_, vertex_buffer_layout);
-
-    std::vector<GLuint> indices;
-    indices.resize ((kVertexBufferWidth - 1) * (kVertexBufferHeight - 1) * 6);
-
-    CreateGridIndices (indices, kVertexBufferWidth, kVertexBufferHeight);
-    index_buffer_grid_ = std::make_unique<IndexBuffer> (indices.data (), indices.size ());
-
-    CreateGraphIndices (indices, kVertexBufferWidth, kVertexBufferHeight);
-    index_buffer_graph_ = std::make_unique<IndexBuffer> (indices.data (), indices.size ());
-
-    SetupDefaultTexture (texture_);
-
-    GLCall (juce::gl::glActiveTexture (juce::gl::GL_TEXTURE0));
-    GLCall (juce::gl::glGenTextures (1, &graph_texture_id_));
-
+    waterfall_graph_.ContextCreated ();
+    waterfall_graph_.LoadTexture (GenerateDefaultTexture ());
     UpdateShaders ();
 }
 
@@ -161,50 +77,8 @@ void WaterfallRenderer::SetupGraphTexture (const juce::dsp::AudioBlock<const flo
     auto spectrogram = Spectrogram::CreateSpectrogram (block);
     auto rescaled = spectrogram.rescaled (256, 256);
     auto with_clear_border = ApplyClearBorder (rescaled);
-    texture_ = with_clear_border;
+    waterfall_graph_.LoadTexture (with_clear_border);
     // SaveDebugSpectrogram (with_clear_border);
-}
-
-void WaterfallRenderer::SetupTexture ()
-{
-    if (texture_.has_value ())
-    {
-        auto width = texture_->getWidth ();
-        auto height = texture_->getHeight ();
-
-        juce::AudioBuffer<GLubyte> graph {height, width};
-
-        for (int y = 0; y < height; y++)
-        {
-            auto channel_pointer = graph.getWritePointer (y);
-            for (int x = 0; x < width; x++)
-            {
-                auto pixel_value = texture_->getPixelAt (x, y).getFloatAlpha ();
-                channel_pointer [x] = static_cast<GLubyte> (std::roundf (pixel_value * 255));
-            }
-        }
-
-        GLCall (juce::gl::glBindTexture (juce::gl::GL_TEXTURE_2D, graph_texture_id_));
-        GLCall (juce::gl::glTexImage2D (juce::gl::GL_TEXTURE_2D,
-                                        0,
-                                        juce::gl::GL_RED,
-                                        width,
-                                        height,
-                                        0,
-                                        juce::gl::GL_RED,
-                                        juce::gl::GL_UNSIGNED_BYTE,
-                                        graph.getReadPointer (0)));
-        juce::gl::glTexParameteri (
-            juce::gl::GL_TEXTURE_2D, juce::gl::GL_TEXTURE_WRAP_S, juce::gl::GL_CLAMP_TO_EDGE);
-        juce::gl::glTexParameteri (
-            juce::gl::GL_TEXTURE_2D, juce::gl::GL_TEXTURE_WRAP_T, juce::gl::GL_CLAMP_TO_EDGE);
-        juce::gl::glTexParameteri (
-            juce::gl::GL_TEXTURE_2D, juce::gl::GL_TEXTURE_MIN_FILTER, juce::gl::GL_LINEAR);
-        juce::gl::glTexParameteri (
-            juce::gl::GL_TEXTURE_2D, juce::gl::GL_TEXTURE_MAG_FILTER, juce::gl::GL_LINEAR);
-
-        texture_ = std::nullopt;
-    }
 }
 
 static float
@@ -213,7 +87,7 @@ Smoothed (float current_value, float target_value, float speed_factor, float del
     return current_value + (target_value - current_value) * speed_factor * delta_time;
 }
 
-glm::mat4 WaterfallRenderer::CreateTextureTransform ()
+glm::mat4 WaterfallRenderer::CreateTextureTransform () const
 {
     auto scale = scale_.load ();
     auto offset_x = offset_x_.load ();
@@ -249,28 +123,6 @@ glm::mat4 WaterfallRenderer::CreateVertexTransform ()
     return projection * view * rotator * vertex_scale;
 }
 
-void WaterfallRenderer::DrawGraph ()
-{
-    index_buffer_graph_->Bind ();
-    uniform_colour_->set (1.f, 1.f, 1.f, 1.f);
-    GLCall (juce::gl::glDrawElements (juce::gl::GL_TRIANGLES,
-                                      (kVertexBufferWidth - 1) * (kVertexBufferHeight - 1) * 6,
-                                      juce::gl::GL_UNSIGNED_INT,
-                                      0));
-    index_buffer_graph_->Unbind ();
-}
-
-void WaterfallRenderer::DrawGrid ()
-{
-    index_buffer_grid_->Bind ();
-    uniform_colour_->set (4.f, 4.f, 4.f, 1.f);
-    GLCall (juce::gl::glDrawElements (juce::gl::GL_LINES,
-                                      (kVertexBufferWidth - 1) * (kVertexBufferHeight - 1) * 6,
-                                      juce::gl::GL_UNSIGNED_INT,
-                                      0));
-    index_buffer_grid_->Unbind ();
-}
-
 void WaterfallRenderer::renderOpenGL ()
 {
     jassert (juce::OpenGLHelpers::isContextActive ());
@@ -282,83 +134,18 @@ void WaterfallRenderer::renderOpenGL ()
     GLCall (juce::gl::glPolygonOffset (1, 0));
     GLCall (juce::gl::glEnable (juce::gl::GL_POLYGON_OFFSET_FILL));
 
-    SetupTexture ();
-    CreateShaders ();
-    shader_->use ();
-
-    uniform_graph_texture_->set (0);
-    GLCall (juce::gl::glBindTexture (juce::gl::GL_TEXTURE_2D, graph_texture_id_));
-
     auto vertex_transform = CreateVertexTransform ();
-    uniform_vertex_transform_->setMatrix4 (
-        glm::value_ptr (vertex_transform), 1, juce::gl::GL_FALSE);
-
     auto texture_transform = CreateTextureTransform ();
-    uniform_texture_transform_->setMatrix4 (
-        glm::value_ptr (texture_transform), 1, juce::gl::GL_FALSE);
-
-    vertex_array_->Bind ();
-    DrawGraph ();
-    DrawGrid ();
-    vertex_array_->Unbind ();
+    waterfall_graph_.Render (vertex_transform, texture_transform);
 }
 
 void WaterfallRenderer::openGLContextClosing ()
 {
-    vertex_buffer_.reset ();
-    index_buffer_graph_.reset ();
-    index_buffer_grid_.reset ();
-    vertex_array_.reset ();
-
-    shader_.reset ();
-    uniform_texture_transform_.reset ();
-    uniform_vertex_transform_.reset ();
-    uniform_graph_texture_.reset ();
-    uniform_colour_.reset ();
-}
-
-void WaterfallRenderer::CreateShaders ()
-{
-    juce::SpinLock::ScopedTryLockType lock (shader_mutex_);
-    if (! lock.isLocked ())
-        return;
-
-    if (new_vertex_shader_.has_value () && new_fragment_shader_.has_value ())
-    {
-        auto gl_shader_program = std::make_unique<juce::OpenGLShaderProgram> (open_gl_context_);
-        juce::String status_text;
-
-        if (gl_shader_program->addVertexShader (*new_vertex_shader_) &&
-            gl_shader_program->addFragmentShader (*new_fragment_shader_) &&
-            gl_shader_program->link ())
-        {
-            shader_.reset (gl_shader_program.release ());
-
-            status_text =
-                "GLSL: v" + juce::String (juce::OpenGLShaderProgram::getLanguageVersion (), 2);
-            uniform_texture_transform_ = std::make_unique<juce::OpenGLShaderProgram::Uniform> (
-                *shader_, "texture_transform");
-            uniform_vertex_transform_ =
-                std::make_unique<juce::OpenGLShaderProgram::Uniform> (*shader_, "vertex_transform");
-            uniform_graph_texture_ =
-                std::make_unique<juce::OpenGLShaderProgram::Uniform> (*shader_, "graph_texture");
-            uniform_colour_ =
-                std::make_unique<juce::OpenGLShaderProgram::Uniform> (*shader_, "colour");
-        }
-        else
-        {
-            status_text = gl_shader_program->getLastError ();
-        }
-
-        new_vertex_shader_ = std::nullopt;
-        new_fragment_shader_ = std::nullopt;
-    }
+    waterfall_graph_.ContextClosing ();
 }
 
 void WaterfallRenderer::UpdateShaders ()
 {
-    juce::SpinLock::ScopedLockType lock (shader_mutex_);
-
 #if JUCE_DEBUG
     static const auto fragment_shader_filepath = kShaderDirectory / "graph3d.frag.glsl";
     static const auto vertex_shader_filepath = kShaderDirectory / "graph3d.vert.glsl";
@@ -366,10 +153,12 @@ void WaterfallRenderer::UpdateShaders ()
     auto fragment_shader_file = juce::File (fragment_shader_filepath.string ());
     auto vertex_shader_file = juce::File (vertex_shader_filepath.string ());
 
-    new_fragment_shader_ = fragment_shader_file.loadFileAsString ();
-    new_vertex_shader_ = vertex_shader_file.loadFileAsString ();
+    auto fragment_shader = fragment_shader_file.loadFileAsString ();
+    auto vertex_shader = vertex_shader_file.loadFileAsString ();
+    waterfall_graph_.LoadShaders (vertex_shader, fragment_shader);
 #else
-    new_fragment_shader_ = shaders_graph3d_frag_glsl;
-    new_vertex_shader_ = shaders_graph3d_vert_glsl;
+    auto fragment_shader = shaders_graph3d_frag_glsl;
+    auto vertex_shader = shaders_graph3d_vert_glsl;
+    waterfall_graph_.LoadShaders (vertex_shader, fragment_shader);
 #endif
 }

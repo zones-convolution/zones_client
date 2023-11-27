@@ -9,13 +9,15 @@
 #include <filesystem>
 #include <juce_opengl/juce_opengl.h>
 #define GLM_FORCE_RADIANS
+#include "WaterfallGraph.h"
+
 #include <glm/common.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/quaternion.hpp>
 
-class WaterfallRenderer : public juce::OpenGLRenderer
+class WaterfallRenderer final : public juce::OpenGLRenderer
 {
 public:
     WaterfallRenderer (juce::OpenGLContext & open_gl_context,
@@ -26,48 +28,24 @@ public:
     void renderOpenGL () override;
     void openGLContextClosing () override;
 
-    void CreateShaders ();
     void UpdateShaders ();
 
     std::atomic<float> offset_x_;
     std::atomic<float> offset_y_;
     std::atomic<float> scale_;
 
-    void SetupGraphTexture (const juce::dsp::AudioBlock<const float> block);
+    void SetupGraphTexture (juce::dsp::AudioBlock<const float> block);
 
 private:
     static const std::filesystem::path kShaderDirectory;
 
-    static constexpr size_t kVertexBufferWidth = 120;
-    static constexpr size_t kVertexBufferHeight = 82;
-
-    void SetupTexture ();
-    glm::mat4 CreateTextureTransform ();
+    glm::mat4 CreateTextureTransform () const;
     glm::mat4 CreateVertexTransform ();
-    void DrawGrid ();
-    void DrawGraph ();
 
     DraggableOrientation & draggable_orientation_;
     float rot_x_smooth_ = 0.f;
     float rot_y_smooth_ = 0.f;
 
     juce::OpenGLContext & open_gl_context_;
-
-    GLuint graph_texture_id_ {};
-    std::unique_ptr<VertexBuffer> vertex_buffer_;
-    std::unique_ptr<IndexBuffer> index_buffer_graph_;
-    std::unique_ptr<IndexBuffer> index_buffer_grid_;
-    std::unique_ptr<VertexArray> vertex_array_;
-
-    juce::SpinLock shader_mutex_;
-    std::optional<juce::String> new_vertex_shader_;
-    std::optional<juce::String> new_fragment_shader_;
-
-    std::unique_ptr<juce::OpenGLShaderProgram> shader_;
-    std::unique_ptr<juce::OpenGLShaderProgram::Uniform> uniform_texture_transform_;
-    std::unique_ptr<juce::OpenGLShaderProgram::Uniform> uniform_vertex_transform_;
-    std::unique_ptr<juce::OpenGLShaderProgram::Uniform> uniform_graph_texture_;
-    std::unique_ptr<juce::OpenGLShaderProgram::Uniform> uniform_colour_;
-
-    std::optional<juce::Image> texture_ = std::nullopt;
+    WaterfallGraph waterfall_graph_;
 };
