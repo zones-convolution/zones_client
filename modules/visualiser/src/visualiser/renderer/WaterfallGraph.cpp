@@ -1,9 +1,11 @@
 #include "WaterfallGraph.h"
 
 WaterfallGraph::WaterfallGraph (juce::OpenGLContext & open_gl_context,
-                                DynamicShaderLoader & graph_shader_loader)
+                                DynamicShaderLoader & graph_shader_loader,
+                                DynamicShaderLoader & grid_shader_loader)
     : open_gl_context_ (open_gl_context)
     , graph_shader_loader_ (graph_shader_loader)
+    , grid_shader_loader_ (grid_shader_loader)
 {
 }
 
@@ -176,20 +178,18 @@ void WaterfallGraph::Render (const glm::mat4 & vertex_transform,
     UpdateTexture ();
 
     graph_shader_loader_.Update (
-        shader_,
+        graph_shader_,
         [&] ()
         {
-            uniform_texture_transform_ =
-                std::make_unique<juce::OpenGLShaderProgram::Uniform> (shader_, "texture_transform");
-            uniform_vertex_transform_ =
-                std::make_unique<juce::OpenGLShaderProgram::Uniform> (shader_, "vertex_transform");
-            uniform_graph_texture_ =
-                std::make_unique<juce::OpenGLShaderProgram::Uniform> (shader_, "graph_texture");
+            uniform_texture_transform_ = std::make_unique<juce::OpenGLShaderProgram::Uniform> (
+                graph_shader_, "texture_transform");
+            uniform_vertex_transform_ = std::make_unique<juce::OpenGLShaderProgram::Uniform> (
+                graph_shader_, "vertex_transform");
+            uniform_graph_texture_ = std::make_unique<juce::OpenGLShaderProgram::Uniform> (
+                graph_shader_, "graph_texture");
             uniform_colour_ =
-                std::make_unique<juce::OpenGLShaderProgram::Uniform> (shader_, "colour");
+                std::make_unique<juce::OpenGLShaderProgram::Uniform> (graph_shader_, "colour");
         });
-
-    shader_.use ();
 
     uniform_graph_texture_->set (0);
     GLCall (juce::gl::glBindTexture (juce::gl::GL_TEXTURE_2D, graph_texture_id_));
@@ -200,8 +200,11 @@ void WaterfallGraph::Render (const glm::mat4 & vertex_transform,
         glm::value_ptr (texture_transform), 1, juce::gl::GL_FALSE);
 
     vertex_array_->Bind ();
+
+    graph_shader_.use ();
     DrawGraph ();
     DrawGrid ();
+
     vertex_array_->Unbind ();
 }
 

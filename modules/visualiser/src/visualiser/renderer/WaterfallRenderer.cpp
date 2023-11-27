@@ -19,7 +19,12 @@ WaterfallRenderer::WaterfallRenderer (juce::OpenGLContext & open_gl_context,
                                              .shader_value = shaders_graph3d_vert_glsl},
           DynamicShaderLoader::ShaderLoader {.shader_file = "graph3d.frag.glsl",
                                              .shader_value = shaders_graph3d_frag_glsl})
-    , waterfall_graph_ (open_gl_context_, graph_shader_loader_)
+    , grid_shader_loader_ (
+          kShaderDirectory,
+          DynamicShaderLoader::ShaderLoader {.shader_file = "graph3d.vert.glsl",
+                                             .shader_value = shaders_graph3d_vert_glsl},
+          DynamicShaderLoader::ShaderLoader {.shader_file = "graph3d.frag.glsl",
+                                             .shader_value = shaders_graph3d_frag_glsl})
 {
 }
 

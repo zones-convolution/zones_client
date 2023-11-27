@@ -20,7 +20,8 @@ class WaterfallGraph
 {
 public:
     explicit WaterfallGraph (juce::OpenGLContext & open_gl_context,
-                             DynamicShaderLoader & graph_shader_loader);
+                             DynamicShaderLoader & graph_shader_loader,
+                             DynamicShaderLoader & grid_shader_loader);
     void Render (const glm::mat4 & vertex_transform, const glm::mat4 & texture_transform);
     void ContextClosing ();
     void ContextCreated ();
@@ -43,7 +44,11 @@ private:
     std::unique_ptr<VertexArray> vertex_array_;
 
     DynamicShaderLoader & graph_shader_loader_;
-    juce::OpenGLShaderProgram shader_ {open_gl_context_};
+    juce::OpenGLShaderProgram graph_shader_ {open_gl_context_};
+
+    DynamicShaderLoader & grid_shader_loader_;
+    juce::OpenGLShaderProgram grid_shader_ {open_gl_context_};
+
     std::unique_ptr<juce::OpenGLShaderProgram::Uniform> uniform_texture_transform_;
     std::unique_ptr<juce::OpenGLShaderProgram::Uniform> uniform_vertex_transform_;
     std::unique_ptr<juce::OpenGLShaderProgram::Uniform> uniform_graph_texture_;

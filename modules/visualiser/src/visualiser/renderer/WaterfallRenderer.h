@@ -45,7 +45,8 @@ private:
     float rot_y_smooth_ = 0.f;
 
     juce::OpenGLContext & open_gl_context_;
-    WaterfallGraph waterfall_graph_;
-
     DynamicShaderLoader graph_shader_loader_;
+    DynamicShaderLoader grid_shader_loader_;
+
+    WaterfallGraph waterfall_graph_ {open_gl_context_, graph_shader_loader_, grid_shader_loader_};
 };
