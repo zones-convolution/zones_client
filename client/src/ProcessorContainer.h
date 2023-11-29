@@ -8,8 +8,6 @@
 #include "ir_repository/io/IrWriter.h"
 #include "ir_repository/project/ProjectIrImportController.h"
 #include "ir_repository/project/ProjectIrLoadController.h"
-#include "ir_repository/project/ProjectIrRepositoryAction.h"
-#include "ir_repository/project/ProjectIrRepositoryModel.h"
 #include "model/Action.h"
 #include "model/Model.h"
 #include "model/controllers/IrWatchController.h"
@@ -23,14 +21,12 @@ class ProcessorContainer
 public:
     explicit ProcessorContainer (juce::AudioProcessor & audio_processor);
 
-    ApiRequestService api_request_service_;
     std::string dep_string_;
-
-    lager::store<Action, Model, Deps> store_ = lager::make_store<Action> (
-        Model {},
-        lager::with_manual_event_loop {},
-        lager::with_reducer (Update),
-        lager::with_deps (std::ref (api_request_service_), std::ref (dep_string_)));
+    lager::store<Action, Model, Deps> store_ =
+        lager::make_store<Action> (Model {},
+                                   lager::with_manual_event_loop {},
+                                   lager::with_reducer (Update),
+                                   lager::with_deps (std::ref (dep_string_)));
 
     juce::AudioProcessorValueTreeState parameter_tree_;
     AudioGraphMetering input_graph_metering_;
