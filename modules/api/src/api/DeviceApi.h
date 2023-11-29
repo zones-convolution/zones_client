@@ -1,15 +1,43 @@
 #pragma once
 
-#include "ApiRequestService.h"
+#include "ApiUtils.h"
+
+#include <cpr/cpr.h>
+#include <juce_core/juce_core.h>
+
 class DeviceApi
 {
 public:
-    struct DeviceFailResponse
+    template <class... Ts>
+    static cpr::AsyncResponse DeviceCodeRequest (const std::string & base_url, Ts &&... ts)
     {
-        juce::String error;
-    };
+        auto session = std::make_shared<cpr::Session> ();
+        session->SetUrl (cpr::Url {base_url} + cpr::Url {"/device/code"});
+        ApiUtils::ForwardSessionOptions (*session, std::forward<Ts> (ts)...);
+        return session->PostAsync ();
+    }
 
-    struct DeviceCodeSuccessResponse
+    template <class... Ts>
+    static cpr::AsyncResponse
+    DeviceTokenRequest (const std::string & base_url, const std::string & device_code, Ts &&... ts)
+    {
+        auto session = std::make_shared<cpr::Session> ();
+        session->SetOption (cpr::Url {base_url} + cpr::Url {"/api/device/token"});
+        session->SetOption (
+            cpr::Payload {{"grant_type", "urn:ietf:params:oauth:grant-type:device_code"},
+                          {"device_code", device_code}});
+        ApiUtils::ForwardSessionOptions (*session, std::forward<Ts> (ts)...);
+        return session->PostAsync ();
+    }
+
+    // struct DeviceFailResponse
+    // {
+    //     juce::String error;
+    // };
+
+    // static DeviceFailResponse ReadDeviceFail (const cpr::Response & response);
+
+    struct DeviceCodeSuccess
     {
         juce::String device_code;
         juce::String user_code;
@@ -19,11 +47,9 @@ public:
         int interval;
     };
 
-    using DeviceCodeCallbacks = ApiRequestCallbacks<DeviceCodeSuccessResponse, DeviceFailResponse>;
-    static juce::ThreadPoolJob * DeviceCodeRequest (ApiRequestService & api_request_service,
-                                                    const DeviceCodeCallbacks & callbacks);
+    static DeviceCodeSuccess ReadDeviceCodeSuccess (const cpr::Response & response);
 
-    struct DeviceTokenSuccessResponse
+    struct DeviceTokenSuccess
     {
         juce::String id_token;
         juce::String access_token;
@@ -32,9 +58,5 @@ public:
         juce::String token_type;
     };
 
-    using DeviceTokenCallbacks =
-        ApiRequestCallbacks<DeviceTokenSuccessResponse, DeviceFailResponse>;
-    static juce::ThreadPoolJob * DeviceTokenRequest (ApiRequestService & api_request_service,
-                                                     const juce::String & device_code,
-                                                     const DeviceTokenCallbacks & callbacks);
+    static DeviceTokenSuccess ReadDeviceTokenSuccess (const cpr::Response & response);
 };

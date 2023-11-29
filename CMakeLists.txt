@@ -17,6 +17,7 @@ include(cmake/embed_resources.cmake)
 
 find_package(Catch2 3 REQUIRED)
 find_package(Boost 1.82.0)
+find_package(cpr REQUIRED)
 add_subdirectory(lib)
 
 add_subdirectory(modules)

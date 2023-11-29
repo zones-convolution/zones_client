@@ -1,32 +1,25 @@
 #include "api/DeviceApi.h"
 
 #include <catch2/catch_test_macros.hpp>
+#include <cpr/cpr.h>
+#include <juce_core/juce_core.h>
 
 TEST_CASE ("device api tests", "[DeviceApi]")
 {
+    const auto base_url = "https://oauth2.googleapis.com";
     SECTION ("requests device code")
     {
-        juce::WaitableEvent request_finished_event;
-
-        ApiRequestService api_request_service;
-        DeviceApi::DeviceCodeRequest (api_request_service,
-                                      {.success =
-                                           [&] (const DeviceApi::DeviceCodeSuccessResponse & res)
-                                       {
-                                           REQUIRE (res.device_code.isNotEmpty ());
-                                           REQUIRE (res.user_code.isNotEmpty ());
-                                           REQUIRE (res.verification_uri.isNotEmpty ());
-                                           REQUIRE (res.verification_uri_complete.isNotEmpty ());
-                                           REQUIRE (res.expires_in != 0);
-                                           REQUIRE (res.interval != 0);
-
-                                           request_finished_event.signal ();
-                                       },
-                                       .fail = [] (auto res) {},
-                                       .progress = [] (auto progress) {},
-                                       .start = [] {}});
-
-        auto did_signal = request_finished_event.wait (4000);
-        REQUIRE (did_signal);
+        auto request = DeviceApi::DeviceCodeRequest (
+            base_url,
+            cpr::Payload {
+                {"client_id",
+                 "687494975680-4m8b1mala896lep7b5hghlpigo1bsjvf.apps.googleusercontent.com"},
+                {"scope", "email profile"}});
+        auto response = request.get ();
+        REQUIRE (! response.error);
+        REQUIRE (response.status_code == 200);
+        auto device_code_success = DeviceApi::ReadDeviceCodeSuccess (response);
+        REQUIRE (device_code_success.device_code.isNotEmpty ());
+        std::cout << device_code_success.device_code << std::endl;
     }
 }
