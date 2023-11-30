@@ -1,4 +1,5 @@
 #pragma once
+#include "api/OidcApi.h"
 #include "immer/flex_vector.hpp"
 
 #include <optional>
@@ -26,13 +27,27 @@ struct AccountModel
         Profile profile;
     };
 
-    enum class Status
+    enum class AccountStatus
     {
         kUnauthenticated,
         kLoading,
         kAuthenticated,
     };
 
-    Status status = Status::kUnauthenticated;
+    enum class OidcStatus
+    {
+        kIdle,
+        kLoading,
+        kSuccess,
+        kFailed
+    };
+
+
+    AccountStatus account_status = AccountStatus::kUnauthenticated;
     std::optional<Session> session = std::nullopt;
+
+    OidcStatus oidc_status = OidcStatus::kIdle;
+    std::optional<OidcApi::DiscoverSuccess> oidc_discovery = std::nullopt;
+
+    bool is_refreshing_token = false;
 };

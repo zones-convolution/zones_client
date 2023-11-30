@@ -15,7 +15,10 @@ TEST_CASE ("device api tests", "[DeviceApi]")
                 {"client_id",
                  "687494975680-4m8b1mala896lep7b5hghlpigo1bsjvf.apps.googleusercontent.com"},
                 {"scope", "email profile"}});
+
+        std::cout << "STARTING" << std::endl;
         auto response = request.get ();
+
         REQUIRE (! response.error);
         REQUIRE (response.status_code == 200);
         auto device_code_success = DeviceApi::ReadDeviceCodeSuccess (response);

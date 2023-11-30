@@ -10,6 +10,7 @@ TEST_CASE ("oidc api tests", "[OidcApi]")
     {
         const auto base_url = "https://cognito-idp.eu-west-2.amazonaws.com/eu-west-2_rzvTaRw3J";
         auto request = OidcApi::DiscoverRequest (base_url);
+        request.Cancel ();
         auto response = request.get ();
         REQUIRE (! response.error);
         REQUIRE (response.status_code == 200);

@@ -10,6 +10,7 @@ zones_add_module(
         src/account/AccountUtils.h
         src/account/AccountUtils.cpp
         DEPS
+        api
         juce::juce_core
         juce::juce_events
         lager

@@ -1,4 +1,3 @@
-#include "layout/WithJuceEventLoop.h"
 #include "layout/tabs/TabsAction.h"
 
 #include <catch2/catch_test_macros.hpp>

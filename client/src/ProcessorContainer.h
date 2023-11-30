@@ -1,5 +1,6 @@
 #pragma once
 
+#include "WithJuceEventLoop.h"
 #include "audio_engine/AudioEngine.h"
 #include "audio_engine/AudioGraph.h"
 #include "audio_engine/CommandQueue.h"
@@ -24,7 +25,7 @@ public:
     std::string dep_string_;
     lager::store<Action, Model, Deps> store_ =
         lager::make_store<Action> (Model {},
-                                   lager::with_manual_event_loop {},
+                                   WithJuceEventLoop {},
                                    lager::with_reducer (Update),
                                    lager::with_deps (std::ref (dep_string_)));
 

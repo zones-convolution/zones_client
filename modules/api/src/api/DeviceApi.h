@@ -12,6 +12,7 @@ public:
     static cpr::AsyncResponse DeviceCodeRequest (const std::string & base_url, Ts &&... ts)
     {
         auto session = std::make_shared<cpr::Session> ();
+        // session->AddInterceptor (std::make_shared<ApiUtils::RefreshTokenInterceptor> ());
         session->SetUrl (cpr::Url {base_url} + cpr::Url {"/device/code"});
         ApiUtils::ForwardSessionOptions (*session, std::forward<Ts> (ts)...);
         return session->PostAsync ();

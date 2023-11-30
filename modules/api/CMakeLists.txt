@@ -7,6 +7,8 @@ zones_add_module(
         src/api/OidcApi.h
         src/api/OidcApi.cpp
         src/api/ApiUtils.h
+        src/api/RefreshTokenInterceptor.h
+        src/api/RefreshTokenInterceptor.cpp
         DEPS
         juce::juce_core
         juce::juce_events

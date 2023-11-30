@@ -38,7 +38,8 @@ set(SOURCES
         src/components/SidebarHeader.h
         src/components/SidebarHeader.cpp
         src/components/SidebarFooter.h
-        src/components/SidebarFooter.cpp)
+        src/components/SidebarFooter.cpp
+        src/WithJuceEventLoop.h)
 
 juce_add_plugin(
         ${BINARY}
