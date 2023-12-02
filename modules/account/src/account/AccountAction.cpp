@@ -170,39 +170,37 @@ AccountResult UpdateAccount (AccountModel model, AccountAction action)
 
                 auto updated_model = model;
                 updated_model.device_flow_status = AccountModel::DeviceFlowStatus::kFetchingCode;
-                return {
-                    updated_model,
-                    [] (const lager::context<AccountAction> & context)
-                    {
-                        context.loop ().async (
-                            [context] ()
-                            {
-                                const auto base_url = "https://oauth2.googleapis.com";
-
-                                auto req = DeviceApi::DeviceCodeRequest (
-                                    base_url,
-                                    "687494975680-4m8b1mala896lep7b5hghlpigo1bsjvf.apps.googleusercontent.com",
-                                    "email profile");
-                                auto res = req.get ();
-
-                                if (res.status_code == 200)
+                return {updated_model,
+                        [] (const lager::context<AccountAction> & context)
+                        {
+                            context.loop ().async (
+                                [context] ()
                                 {
-                                    auto device_code_success =
-                                        DeviceApi::ReadDeviceCodeSuccess (res);
-                                    context.dispatch (DeviceCodeSuccessAction {
-                                        .device_code_success = device_code_success});
-                                }
-                                else
-                                {
-                                    context.dispatch (DeviceCodeFailedAction {});
-                                }
-                            });
-                    }};
+                                    const auto base_url =
+                                        "https://zones-convolution.vercel.app/api";
+
+                                    auto req = DeviceApi::DeviceCodeRequest (base_url);
+                                    auto res = req.get ();
+
+                                    if (res.status_code == 200)
+                                    {
+                                        auto device_code_success =
+                                            DeviceApi::ReadDeviceCodeSuccess (res);
+                                        context.dispatch (DeviceCodeSuccessAction {
+                                            .device_code_success = device_code_success});
+                                    }
+                                    else
+                                    {
+                                        context.dispatch (DeviceCodeFailedAction {});
+                                    }
+                                });
+                        }};
             },
             [&] (const DeviceCodeSuccessAction & device_code_success_action) -> AccountResult
             {
                 auto updated_model = model;
-                juce::URL ("https://accounts.google.com/device").launchInDefaultBrowser ();
+                juce::URL ("https://zones-convolution.vercel.app/device/activate")
+                    .launchInDefaultBrowser ();
                 updated_model.device_flow = device_code_success_action.device_code_success;
                 return {updated_model,
                         [device_code = device_code_success_action.device_code_success.device_code] (
@@ -241,14 +239,9 @@ AccountResult UpdateAccount (AccountModel model, AccountAction action)
                                 auto device_code = device_flow.device_code.toStdString ();
                                 auto poll_interval = device_flow.interval;
 
-                                const auto base_url = "https://oauth2.googleapis.com";
+                                const auto base_url = "https://zones-convolution.vercel.app/api";
 
-                                auto req = DeviceApi::DeviceTokenRequest (
-                                    base_url,
-                                    device_code,
-                                    "687494975680-4m8b1mala896lep7b5hghlpigo1bsjvf.apps.googleusercontent.com",
-                                    "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",
-                                    "email profile");
+                                auto req = DeviceApi::DeviceTokenRequest (base_url, device_code);
                                 auto res = req.get ();
 
                                 if (res.status_code == 200)

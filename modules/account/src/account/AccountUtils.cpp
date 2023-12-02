@@ -69,15 +69,12 @@ AccountModel::Profile ReadProfileFromIdToken (const std::string & id_token)
 {
     auto decoded = jwt::decode (id_token);
     auto email_claim = decoded.get_payload_claim (kEmailClaim).as_string ();
-    // auto username_claim = decoded.get_payload_claim (kUsernameClaim).as_string ();
-    // auto groups_claim = decoded.get_payload_claim (kGroupsClaim).as_array ();
-    //
-    // immer::flex_vector<std::string> groups;
-    // for (auto & group : groups_claim)
-    //     groups = groups.push_back (group.get<std::string> ());
+    auto username_claim = decoded.get_payload_claim (kUsernameClaim).as_string ();
+    auto groups_claim = decoded.get_payload_claim (kGroupsClaim).as_array ();
 
     immer::flex_vector<std::string> groups;
-    std::string username_claim = email_claim;
+    for (auto & group : groups_claim)
+        groups = groups.push_back (group.get<std::string> ());
 
     return {.email = email_claim, .username = username_claim, .groups = groups};
 }

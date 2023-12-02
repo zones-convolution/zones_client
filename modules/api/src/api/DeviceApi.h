@@ -7,31 +7,22 @@ class DeviceApi
 {
 public:
     template <class... Ts>
-    static cpr::AsyncResponse DeviceCodeRequest (const std::string & base_url,
-                                                 const std::string & client_id,
-                                                 const std::string & scope)
+    static cpr::AsyncResponse DeviceCodeRequest (const std::string & base_url)
     {
         auto session = std::make_shared<cpr::Session> ();
         session->SetUrl (cpr::Url {base_url} + cpr::Url {"/device/code"});
-        session->SetOption (cpr::Payload {{"client_id", client_id}, {"scope", scope}});
         return session->PostAsync ();
     }
 
     template <class... Ts>
     static cpr::AsyncResponse DeviceTokenRequest (const std::string & base_url,
-                                                  const std::string & device_code,
-                                                  const std::string & client_id,
-                                                  const std::string & client_secret,
-                                                  const std::string & scope)
+                                                  const std::string & device_code)
     {
         auto session = std::make_shared<cpr::Session> ();
-        session->SetOption (cpr::Url {base_url} + cpr::Url {"/token"});
+        session->SetOption (cpr::Url {base_url} + cpr::Url {"/device/token"});
         session->SetOption (
             cpr::Payload {{"grant_type", "urn:ietf:params:oauth:grant-type:device_code"},
-                          {"device_code", device_code},
-                          {"client_id", client_id},
-                          {"client_secret", client_secret},
-                          {"scope", scope}});
+                          {"device_code", device_code}});
         return session->PostAsync ();
     }
 
