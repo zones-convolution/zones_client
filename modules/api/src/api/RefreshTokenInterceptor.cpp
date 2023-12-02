@@ -11,20 +11,15 @@ RefreshTokenInterceptor::RefreshTokenInterceptor (lager::reader<AccountModel> & 
 
 cpr::Response RefreshTokenInterceptor::intercept (cpr::Session & session)
 {
-    if (account_reader_->account_status != AccountModel::AccountStatus::kAuthenticated)
-        throw 0;
-
-    // if (account_reader_->session.has_value ())
-    // {
-    //     auto account_session = account_reader_->session.value ();
-    //     auto res = OidcApi::RefreshTokenRequest (account_session.tokens.refresh_token);
-    // }
-
-    // lager::watch (account_model_,
-    //               [] (const AccountModel & account_model) {
-    //
-    //               });
-
+    account_context_.dispatch (RefreshTokenAction {});
+    std::promise<std::string> bearer_promise;
+    auto bearer_future = bearer_promise.get_future ();
+    lager::watch (account_reader_,
+                  [&] (const AccountModel & account_model)
+                  { bearer_promise.set_value ("INVALID TOKEN"); });
+    auto bearer = bearer_future.get ();
+    session.SetBearer (cpr::Bearer {bearer});
     cpr::Response response = proceed (session);
+
     return response;
 }

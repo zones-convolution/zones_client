@@ -5,6 +5,10 @@
 #include <lager/effect.hpp>
 #include <variant>
 
+struct ClearSessionAction
+{
+};
+
 struct LoadSessionFromKeychainAction
 {
 };
@@ -50,7 +54,26 @@ struct RefreshTokenFailedAction
 {
 };
 
-using AccountAction = std::variant<LoadSessionFromKeychainAction,
+struct DeviceCodeAction
+{
+};
+
+struct DeviceCodeSuccessAction
+{
+    DeviceApi::DeviceCodeSuccess device_code_success;
+};
+
+struct DeviceCodeFailedAction
+{
+};
+
+struct PollDeviceTokenAction
+{
+    std::string device_code;
+};
+
+using AccountAction = std::variant<ClearSessionAction,
+                                   LoadSessionFromKeychainAction,
                                    SaveSessionToKeychainAction,
                                    LoadSessionFromTokensAction,
                                    LoadSessionAction,
@@ -59,7 +82,11 @@ using AccountAction = std::variant<LoadSessionFromKeychainAction,
                                    DiscoverOidcFailedAction,
                                    RefreshTokenAction,
                                    RefreshTokenSuccessAction,
-                                   RefreshTokenFailedAction>;
+                                   RefreshTokenFailedAction,
+                                   DeviceCodeAction,
+                                   DeviceCodeSuccessAction,
+                                   DeviceCodeFailedAction,
+                                   PollDeviceTokenAction>;
 
 using AccountResult = lager::result<AccountModel, AccountAction, lager::deps<>>;
 AccountResult UpdateAccount (AccountModel model, AccountAction action);

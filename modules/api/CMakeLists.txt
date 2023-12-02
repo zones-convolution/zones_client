@@ -6,7 +6,6 @@ zones_add_module(
         src/api/DeviceApi.cpp
         src/api/OidcApi.h
         src/api/OidcApi.cpp
-        src/api/ApiUtils.h
         src/api/RefreshTokenInterceptor.h
         src/api/RefreshTokenInterceptor.cpp
         DEPS

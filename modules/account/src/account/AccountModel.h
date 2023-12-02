@@ -1,4 +1,5 @@
 #pragma once
+#include "api/DeviceApi.h"
 #include "api/OidcApi.h"
 #include "immer/flex_vector.hpp"
 
@@ -42,6 +43,12 @@ struct AccountModel
         kFailed
     };
 
+    enum class DeviceFlowStatus
+    {
+        kIdle,
+        kFetchingCode,
+        kPollingToken,
+    };
 
     AccountStatus account_status = AccountStatus::kUnauthenticated;
     std::optional<Session> session = std::nullopt;
@@ -50,4 +57,7 @@ struct AccountModel
     std::optional<OidcApi::DiscoverSuccess> oidc_discovery = std::nullopt;
 
     bool is_refreshing_token = false;
+
+    DeviceFlowStatus device_flow_status = DeviceFlowStatus::kIdle;
+    std::optional<DeviceApi::DeviceCodeSuccess> device_flow = std::nullopt;
 };

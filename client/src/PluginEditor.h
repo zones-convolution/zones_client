@@ -2,6 +2,7 @@
 
 #include "PluginProcessor.h"
 #include "ProcessorContainer.h"
+#include "account/ui/AccountComponent.h"
 #include "browser/BrowserComponent.h"
 #include "components/SidebarContent.h"
 #include "components/SidebarFooter.h"
@@ -45,8 +46,8 @@ private:
     BrowserComponent browser_;
     PanelComponent browser_panel_ {browser_};
 
-    juce::TextButton settings_ {"SETTINGS"};
-    PanelComponent settings_panel_ {settings_};
+    AccountComponent account_component_;
+    PanelComponent settings_panel_ {account_component_};
 
     TabsComponent tabs_component_;
     TabsController tabs_controller_ {tabs_component_};

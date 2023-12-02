@@ -1,7 +1,5 @@
 #pragma once
 
-#include "ApiUtils.h"
-
 #include <cpr/cpr.h>
 #include <juce_core/juce_core.h>
 
@@ -9,34 +7,33 @@ class DeviceApi
 {
 public:
     template <class... Ts>
-    static cpr::AsyncResponse DeviceCodeRequest (const std::string & base_url, Ts &&... ts)
+    static cpr::AsyncResponse DeviceCodeRequest (const std::string & base_url,
+                                                 const std::string & client_id,
+                                                 const std::string & scope)
     {
         auto session = std::make_shared<cpr::Session> ();
-        // session->AddInterceptor (std::make_shared<ApiUtils::RefreshTokenInterceptor> ());
         session->SetUrl (cpr::Url {base_url} + cpr::Url {"/device/code"});
-        ApiUtils::ForwardSessionOptions (*session, std::forward<Ts> (ts)...);
+        session->SetOption (cpr::Payload {{"client_id", client_id}, {"scope", scope}});
         return session->PostAsync ();
     }
 
     template <class... Ts>
-    static cpr::AsyncResponse
-    DeviceTokenRequest (const std::string & base_url, const std::string & device_code, Ts &&... ts)
+    static cpr::AsyncResponse DeviceTokenRequest (const std::string & base_url,
+                                                  const std::string & device_code,
+                                                  const std::string & client_id,
+                                                  const std::string & client_secret,
+                                                  const std::string & scope)
     {
         auto session = std::make_shared<cpr::Session> ();
-        session->SetOption (cpr::Url {base_url} + cpr::Url {"/api/device/token"});
+        session->SetOption (cpr::Url {base_url} + cpr::Url {"/token"});
         session->SetOption (
             cpr::Payload {{"grant_type", "urn:ietf:params:oauth:grant-type:device_code"},
-                          {"device_code", device_code}});
-        ApiUtils::ForwardSessionOptions (*session, std::forward<Ts> (ts)...);
+                          {"device_code", device_code},
+                          {"client_id", client_id},
+                          {"client_secret", client_secret},
+                          {"scope", scope}});
         return session->PostAsync ();
     }
-
-    // struct DeviceFailResponse
-    // {
-    //     juce::String error;
-    // };
-
-    // static DeviceFailResponse ReadDeviceFail (const cpr::Response & response);
 
     struct DeviceCodeSuccess
     {

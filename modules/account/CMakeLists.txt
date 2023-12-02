@@ -9,7 +9,10 @@ zones_add_module(
         src/account/AccountAction.cpp
         src/account/AccountUtils.h
         src/account/AccountUtils.cpp
+        src/account/ui/AccountComponent.h
+        src/account/ui/AccountComponent.cpp
         DEPS
+        layout
         api
         juce::juce_core
         juce::juce_events

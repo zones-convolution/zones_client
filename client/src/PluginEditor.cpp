@@ -16,6 +16,7 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (
                                                   [&ProjectIrRepositoryModel::current_project_ir],
                        processor_container.input_graph_metering_,
                        processor_container.output_graph_metering_)
+    , account_component_ (processor_container.store_ [&Model::account_model], context_)
 
 {
     juce::LookAndFeel::setDefaultLookAndFeel (&look_and_feel_);

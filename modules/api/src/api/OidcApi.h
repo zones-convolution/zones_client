@@ -1,7 +1,5 @@
 #pragma once
 
-#include "ApiUtils.h"
-
 #include <cpr/cpr.h>
 #include <juce_core/juce_core.h>
 
@@ -13,7 +11,6 @@ public:
     {
         auto session = std::make_shared<cpr::Session> ();
         session->SetUrl (cpr::Url {base_url} + cpr::Url {"/.well-known/openid-configuration"});
-        ApiUtils::ForwardSessionOptions (*session, std::forward<Ts> (ts)...);
         return session->GetAsync ();
     }
 
@@ -24,10 +21,8 @@ public:
     {
         auto session = std::make_shared<cpr::Session> ();
         session->SetUrl (cpr::Url {token_endpoint});
-        session->SetPayload (cpr::Payload {{"grant_type", "refresh_token"},
-                                           {"scope", "offline_access openid"},
-                                           {"refresh_token", refresh_token}});
-        ApiUtils::ForwardSessionOptions (*session, std::forward<Ts> (ts)...);
+        session->SetPayload (
+            cpr::Payload {{"grant_type", "refresh_token"}, {"scope", "offline_access openid"}});
         return session->PostAsync ();
     }
 
