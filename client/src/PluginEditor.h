@@ -36,6 +36,7 @@ private:
     AudioPluginAudioProcessor & processor_;
 
     const lager::reader<Model> model_;
+
     lager::context<Action> context_;
     lager::context<ProjectIrRepositoryAction> project_ir_repository_context_ {context_};
 

@@ -3,7 +3,7 @@
 #include <jwt-cpp/jwt.h>
 #include <keychain/keychain.h>
 
-const std::string kPackage = "com.zones";
+const std::string kPackage = "com.zones.zones";
 const std::string kUser = "Admin";
 
 const std::string kAccessTokenKey = "access_token";

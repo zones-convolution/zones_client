@@ -9,14 +9,16 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (
       , processor_ (processor)
       , model_ (processor_container.store_)
       , context_ (processor_container.store_)
-      , editor_ (realtime_parameter_context_, ir_engine_parameter_context_)
-      , browser_ (Model::ProjectIrRepositoryReader (processor_container.store_),
+      , editor_ (processor_container.parameter_tree_)
+      , browser_ (processor_container.store_ [&Model::project_ir_repository_model],
                   project_ir_repository_context_)
       , sidebar_footer_ (processor_container.store_ [&Model::project_ir_repository_model]
                          [&ProjectIrRepositoryModel::current_project_ir],
                          processor_container.input_graph_metering_,
                          processor_container.output_graph_metering_)
-      , ir_engine_ (processor_container.ir_engine_)
+      , ir_engine_ (processor_container.ir_engine_),
+      account_component_ (processor_container.store_ [&Model::account_model],
+                          context_)
 
 {
     juce::LookAndFeel::setDefaultLookAndFeel (&look_and_feel_);
