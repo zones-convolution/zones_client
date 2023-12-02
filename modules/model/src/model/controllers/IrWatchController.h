@@ -8,7 +8,9 @@
 
 #include <lager/reader.hpp>
 
-class IrWatchController : public juce::AudioProcessorValueTreeState::Listener
+class IrWatchController
+    : public juce::AudioProcessorValueTreeState::Listener
+    , private juce::Timer
 {
 public:
     IrWatchController (IrEngine & ir_engine,
@@ -18,10 +20,14 @@ public:
     ~IrWatchController () override = default;
     void parameterChanged (const juce::String & parameter_id, float new_value) override;
 
+    void timerCallback () override;
+
 private:
     void UpdateParametersFromTree ();
     void WatchCurrentIr ();
     void PerformRender ();
+
+    static constexpr auto kDebounceTimeMs = 160.f;
 
     IrEngine & ir_engine_;
     ProjectIrLoadController & load_controller_;

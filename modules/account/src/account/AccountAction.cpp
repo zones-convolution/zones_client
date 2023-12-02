@@ -12,6 +12,8 @@ AccountResult UpdateAccount (AccountModel model, AccountAction action)
                 auto updated_model = model;
                 updated_model.session = std::nullopt;
                 updated_model.account_status = AccountModel::AccountStatus::kUnauthenticated;
+                updated_model.device_flow = std::nullopt;
+                updated_model.device_flow_status = AccountModel::DeviceFlowStatus::kIdle;
                 return {updated_model, [] (auto && context) {
                             context.dispatch (SaveSessionToKeychainAction {});
                         }};
@@ -267,6 +269,5 @@ AccountResult UpdateAccount (AccountModel model, AccountAction action)
                             });
                     }};
             }},
-
         action);
 }

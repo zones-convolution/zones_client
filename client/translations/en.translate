@@ -10,3 +10,7 @@ countries: en
 "ir_engine_panel" = "IR Engine"
 "room_size_parameter" = "Room Size"
 "reverb_time_parameter" = "Reverb Time"
+
+# ACCOUNT
+"login" = "Login"
+"logout" = "Logout"

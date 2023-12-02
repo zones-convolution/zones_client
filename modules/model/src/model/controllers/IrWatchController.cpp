@@ -20,7 +20,13 @@ IrWatchController::IrWatchController (
 void IrWatchController::parameterChanged (const juce::String & parameter_id, float new_value)
 {
     UpdateParametersFromTree ();
+    startTimer (kDebounceTimeMs);
+}
+
+void IrWatchController::timerCallback ()
+{
     PerformRender ();
+    stopTimer ();
 }
 
 void IrWatchController::WatchCurrentIr ()
