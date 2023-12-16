@@ -10,6 +10,8 @@ const std::string kAccessTokenKey = "access_token";
 const std::string kRefreshTokenKey = "refresh_token";
 const std::string kIdTokenKey = "id_token";
 
+const std::string kTokensKey = "tokens";
+
 static void
 SetKeychainKey (const std::string & key, const std::string & value, keychain::Error & error)
 {
@@ -28,34 +30,43 @@ static void DeleteKeychainKey (const std::string & key, keychain::Error & error)
 
 void SaveSessionToKeychain (const std::optional<AccountModel::Session> & session)
 {
-    keychain::Error error {};
+    auto composite_key_builder = new juce::DynamicObject ();
+    composite_key_builder->setProperty (juce::Identifier (kAccessTokenKey),
+                                        juce::String (session->tokens.access_token));
 
+    composite_key_builder->setProperty (juce::Identifier (kRefreshTokenKey),
+                                        juce::String (session->tokens.refresh_token));
+
+    composite_key_builder->setProperty (juce::Identifier (kIdTokenKey),
+                                        juce::String (session->tokens.id_token));
+
+    juce::var composite (
+        composite_key_builder); // Takes ownership of dynamic, really dislike this...
+    auto composite_key = juce::JSON::toString (composite).toStdString ();
+
+    keychain::Error error {};
     if (session.has_value ())
-    {
-        SetKeychainKey (kAccessTokenKey, session->tokens.access_token, error);
-        SetKeychainKey (kRefreshTokenKey, session->tokens.refresh_token, error);
-        SetKeychainKey (kIdTokenKey, session->tokens.id_token, error);
-    }
+        SetKeychainKey (kTokensKey, composite_key, error);
     else
-    {
-        DeleteKeychainKey (kAccessTokenKey, error);
-        DeleteKeychainKey (kRefreshTokenKey, error);
-        DeleteKeychainKey (kIdTokenKey, error);
-    }
+        DeleteKeychainKey (kTokensKey, error);
 }
 
 std::optional<AccountModel::Tokens> LoadSessionFromKeychain ()
 {
     keychain::Error error {};
-    auto access_token = GetKeychainKey (kAccessTokenKey, error);
+    auto tokens = GetKeychainKey (kTokensKey, error);
     if (error)
         return std::nullopt;
-    auto refresh_token = GetKeychainKey (kRefreshTokenKey, error);
-    if (error)
-        return std::nullopt;
-    auto id_token = GetKeychainKey (kIdTokenKey, error);
-    if (error)
-        return std::nullopt;
+
+    auto composite = juce::JSON::fromString (tokens);
+    auto composite_key = composite.getDynamicObject ();
+
+    auto access_token =
+        composite_key->getProperty (juce::Identifier (kAccessTokenKey)).toString ().toStdString ();
+    auto refresh_token =
+        composite_key->getProperty (juce::Identifier (kRefreshTokenKey)).toString ().toStdString ();
+    auto id_token =
+        composite_key->getProperty (juce::Identifier (kIdTokenKey)).toString ().toStdString ();
 
     return AccountModel::Tokens {
         .access_token = access_token, .refresh_token = refresh_token, .id_token = id_token};
