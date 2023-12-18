@@ -34,23 +34,41 @@ void MeterBar::SetPeak (float peak)
     peak_target_value_ = peak;
 }
 
+int DiscreteLevelBars::GetHeightForLabel (float dB_value)
+{
+    auto height = getLocalBounds ().getHeight ();
+
+    auto linear_value = std::pow (10, dB_value / 20);
+    auto skewed_value = log10 (1 + (9 * linear_value));
+    auto label_height = height - (skewed_value * height);
+    return label_height;
+}
+
 void DiscreteLevelBars::paint (juce::Graphics & g)
 {
     static constexpr auto kNumDiscreteLevels = 8;
-    static constexpr auto kBarHeight = 2.f;
+    // static constexpr auto kBarHeight = 2.f;
+    //
+    //     juce::FlexBox layout;
+    //     layout.flexDirection = juce::FlexBox::Direction::column;
+    //     layout.justifyContent = juce::FlexBox::JustifyContent::spaceBetween;
+    //
+    //     for (auto level_index = 0; level_index < kNumDiscreteLevels; ++level_index)
+    //         layout.items.add (juce::FlexItem ().withHeight (kBarHeight));
+    //
+    //     layout.performLayout (getLocalBounds ().toFloat ());
+    //
+    //     g.setColour (juce::Colours::white);
+    //     for (auto level_index = 1; level_index < kNumDiscreteLevels - 1; ++level_index)
+    //         g.fillRect (layout.items [level_index].currentBounds.toFloat ());
 
-    juce::FlexBox layout;
-    layout.flexDirection = juce::FlexBox::Direction::column;
-    layout.justifyContent = juce::FlexBox::JustifyContent::spaceBetween;
+    auto width = getWidth ();
+    static constexpr auto kBarHeight = 2;
+    auto height = getHeight ();
 
-    for (auto level_index = 0; level_index < kNumDiscreteLevels; ++level_index)
-        layout.items.add (juce::FlexItem ().withHeight (kBarHeight));
-
-    layout.performLayout (getLocalBounds ().toFloat ());
-
+    // Values = {3, 6, 9, 12, 15, 18, 21, 30, 40, 60};
     g.setColour (juce::Colours::white);
-    for (auto level_index = 1; level_index < kNumDiscreteLevels - 1; ++level_index)
-        g.fillRect (layout.items [level_index].currentBounds.toFloat ());
+    g.fillRect (0, GetHeightForLabel (-3), width, kBarHeight);
 }
 
 ChannelBar::ChannelBar ()

@@ -21,6 +21,7 @@ private:
 class DiscreteLevelBars : public juce::Component
 {
 public:
+    int GetHeightForLabel (float dB_value);
     void paint (juce::Graphics & g) override;
 };
 

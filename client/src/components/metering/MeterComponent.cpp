@@ -212,7 +212,8 @@ void MeterComponent::update ()
                                            kSmoothingConstant * 4);
             }
 
-            channel->bar.SetTarget (smoothed_target, peak_target);
+            channel->bar.SetTarget (log10 (1 + (9 * smoothed_target)),
+                                    log10 (1 + (9 * peak_target)));
             channel->clipping_indicator.SetFill (is_clipping);
         }
     };
