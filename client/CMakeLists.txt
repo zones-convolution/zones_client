@@ -31,6 +31,8 @@ set(SOURCES
         src/components/metering/ChannelBar.cpp
         src/components/metering/DiscreteLevelLabels.h
         src/components/metering/DiscreteLevelLabels.cpp
+        src/components/metering/LabelHeightContainer.h
+        src/components/metering/LabelHeightContainer.cpp
         src/components/metering/ClippingIndicator.h
         src/components/metering/ClippingIndicator.cpp
         src/components/SidebarContent.h

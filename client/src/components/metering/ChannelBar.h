@@ -1,4 +1,5 @@
 #pragma once
+#include "LabelHeightContainer.h"
 #include "juce_gui_extra/juce_gui_extra.h"
 #include "zones_look_and_feel/LookAndFeel.h"
 
@@ -18,10 +19,11 @@ private:
     float peak_target_value_ = 0.0f;
 };
 
-class DiscreteLevelBars : public juce::Component
+class DiscreteLevelBars
+    : public juce::Component
+    , LabelHeightContainer
 {
 public:
-    int GetHeightForLabel (float dB_value);
     void paint (juce::Graphics & g) override;
 };
 
