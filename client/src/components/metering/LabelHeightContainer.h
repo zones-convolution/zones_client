@@ -1,13 +1,17 @@
 #pragma once
 #include "juce_gui_basics/juce_gui_basics.h"
 
+#include <string>
 #include <vector>
 
 class LabelHeightContainer
 {
 public:
+    LabelHeightContainer (std::vector<float> meter_label_list);
+
     std::vector<int> getHeightsWithinBounds (juce::Rectangle<int> local_bounds);
+    std::vector<std::string> getLabelsAsString ();
 
 private:
-    std::vector<float> meter_label_list_ {-3, -6, -9};
+    std::vector<float> meter_label_list_;
 };

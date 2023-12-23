@@ -36,18 +36,16 @@ void MeterBar::SetPeak (float peak)
 
 void DiscreteLevelBars::paint (juce::Graphics & g)
 {
-    static constexpr auto kNumDiscreteLevels = 8;
-
     auto width = getWidth ();
     static constexpr auto kBarHeight = 2;
     auto height = getHeight ();
 
-    g.setColour (juce::Colours::white);
-    auto label_heights = LabelHeightContainer::getHeightsWithinBounds (getLocalBounds ());
-    for (auto & label_height : label_heights)
-    {
-        g.fillRect (0, label_height, width, kBarHeight);
-    }
+    //    g.setColour (juce::Colours::white);
+    //    auto label_heights = LabelHeightContainer::getHeightsWithinBounds (getLocalBounds ());
+    //    for (auto & label_height : label_heights)
+    //    {
+    //        g.fillRect (0, label_height, width, kBarHeight);
+    //    }
 }
 
 ChannelBar::ChannelBar ()

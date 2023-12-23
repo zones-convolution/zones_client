@@ -3,6 +3,8 @@
 #include <zones_look_and_feel/LookAndFeel.h>
 
 MeterComponent::MeterComponent ()
+    : label_height_container_ (label_values_)
+    , discrete_level_labels_ (label_height_container_)
 {
     addAndMakeVisible (discrete_level_bars_);
     addAndMakeVisible (discrete_level_labels_);

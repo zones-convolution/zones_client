@@ -19,9 +19,7 @@ private:
     float peak_target_value_ = 0.0f;
 };
 
-class DiscreteLevelBars
-    : public juce::Component
-    , LabelHeightContainer
+class DiscreteLevelBars : public juce::Component
 {
 public:
     void paint (juce::Graphics & g) override;
