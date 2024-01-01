@@ -12,8 +12,8 @@ public:
     std::vector<int> getHeightsWithinBounds (juce::Rectangle<int> local_bounds);
     std::vector<std::string> getLabelsAsString ();
 
-private:
     float skewValue (float linear_value);
 
+private:
     std::vector<float> meter_label_list_;
 };

@@ -3,9 +3,9 @@
 #include <zones_look_and_feel/LookAndFeel.h>
 
 MeterComponent::MeterComponent ()
-    : label_height_container_ (label_values_)
-    , discrete_level_bars_ (label_height_container_)
-    , discrete_level_labels_ (label_height_container_)
+    : label_container_ (label_values_)
+    , discrete_level_bars_ (label_container_)
+    , discrete_level_labels_ (label_container_)
 {
     addAndMakeVisible (discrete_level_bars_);
     addAndMakeVisible (discrete_level_labels_);
@@ -37,7 +37,7 @@ void MeterComponent::SetConfiguration (MeterComponent::ChannelConfiguration conf
 
         for (auto & channel_configuration : group_configuration)
         {
-            auto channel = std::make_unique<ChannelMeter> (label_height_container_);
+            auto channel = std::make_unique<ChannelMeter> (label_container_);
             channel->delegate = channel_configuration;
             addAndMakeVisible (channel->bar);
             addAndMakeVisible (channel->clipping_indicator);
@@ -217,8 +217,8 @@ void MeterComponent::update ()
                                            kSmoothingConstant * 4);
             }
 
-            channel->bar.SetTarget (log10 (1 + (9 * smoothed_target)),
-                                    log10 (1 + (9 * peak_target)));
+            channel->bar.SetTarget (label_container_.skewValue (smoothed_target),
+                                    label_container_.skewValue (peak_target));
             channel->clipping_indicator.SetFill (is_clipping);
         }
     };

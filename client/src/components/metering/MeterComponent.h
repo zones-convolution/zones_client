@@ -37,7 +37,7 @@ private:
     juce::FlexBox CreateSideLayout ();
 
     const std::vector<float> label_values_ {-3, -6, -9, -12, -18, -30, -60};
-    LabelContainer label_height_container_;
+    LabelContainer label_container_;
 
     struct ChannelMeter
     {
