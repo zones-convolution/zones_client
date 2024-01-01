@@ -14,4 +14,6 @@ public:
 
 private:
     LabelHeightContainer & label_height_container_;
+    std::vector<std::unique_ptr<juce::Label>> labels_;
+    std::unique_ptr<juce::Label> test_l_;
 };

@@ -12,8 +12,8 @@ MeterComponent::MeterComponent ()
 
     setSynchroniseToVBlank (true);
 }
-
-static constexpr auto kDiscreteLevelLabelWidth = 26.f;
+// 26.f
+static constexpr auto kDiscreteLevelLabelWidth = 32.f;
 static constexpr auto kClippingIndicatorHeight = 6.f;
 
 void MeterComponent::SetConfiguration (MeterComponent::ChannelConfiguration configuration)
