@@ -22,6 +22,7 @@ std::vector<int> LabelHeightContainer::getHeightsWithinBounds (juce::Rectangle<i
     }
     return label_heights;
 }
+
 std::vector<std::string> LabelHeightContainer::getLabelsAsString ()
 {
     std::vector<std::string> string_label_list;

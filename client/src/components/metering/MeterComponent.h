@@ -36,8 +36,15 @@ private:
     void LayoutClippingIndicators (const juce::Rectangle<float> & clipping_bounds);
     juce::FlexBox CreateSideLayout ();
 
+    const std::vector<float> label_values_ {-3, -6, -9, -12, -15, -18, -21, -30, -60};
+    LabelHeightContainer label_height_container_;
+
     struct ChannelMeter
     {
+        ChannelMeter (LabelHeightContainer & label_height_container)
+            : bar (label_height_container)
+        {
+        }
         ChannelBar bar;
         ClippingIndicator clipping_indicator;
         ChannelMeterDelegate delegate;
@@ -48,8 +55,6 @@ private:
 
     std::vector<std::vector<std::unique_ptr<ChannelMeter>>> channel_groups_;
 
-    std::vector<float> label_values_ {-3, -6, -9, -12, -15, -18, -21, -30, -60};
-    LabelHeightContainer label_height_container_;
     DiscreteLevelBars discrete_level_bars_;
     DiscreteLevelLabels discrete_level_labels_;
     juce::Rectangle<float> GetChannelBounds ();

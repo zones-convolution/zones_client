@@ -1,6 +1,6 @@
 #include "DiscreteLevelLabels.h"
 
-DiscreteLevelLabels::DiscreteLevelLabels (const LabelHeightContainer & label_height_container)
+DiscreteLevelLabels::DiscreteLevelLabels (LabelHeightContainer & label_height_container)
     : label_height_container_ (label_height_container)
 {
 }
@@ -21,7 +21,7 @@ void DiscreteLevelLabels::paint (juce::Graphics & g)
 {
     auto width = getWidth ();
     auto height = getHeight ();
-    setLookAndFeel (LookAndFeel);
+    // setLookAndFeel (LookAndFeel);
     g.setColour (juce::Colours::white);
 
     //

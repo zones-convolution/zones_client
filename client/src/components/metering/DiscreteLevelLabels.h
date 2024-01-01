@@ -7,11 +7,11 @@
 class DiscreteLevelLabels : public juce::Component
 {
 public:
-    DiscreteLevelLabels (const LabelHeightContainer & label_height_container);
+    DiscreteLevelLabels (LabelHeightContainer & label_height_container);
 
     void resized () override;
     void paint (juce::Graphics & g) override;
 
 private:
-    LabelHeightContainer label_height_container_;
+    LabelHeightContainer & label_height_container_;
 };

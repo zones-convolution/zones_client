@@ -4,6 +4,7 @@
 
 MeterComponent::MeterComponent ()
     : label_height_container_ (label_values_)
+    , discrete_level_bars_ (label_height_container_)
     , discrete_level_labels_ (label_height_container_)
 {
     addAndMakeVisible (discrete_level_bars_);
@@ -38,7 +39,7 @@ void MeterComponent::SetConfiguration (MeterComponent::ChannelConfiguration conf
 
         for (auto & channel_configuration : group_configuration)
         {
-            auto channel = std::make_unique<ChannelMeter> ();
+            auto channel = std::make_unique<ChannelMeter> (label_height_container_);
             channel->delegate = channel_configuration;
             addAndMakeVisible (channel->bar);
             addAndMakeVisible (channel->clipping_indicator);

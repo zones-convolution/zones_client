@@ -22,13 +22,17 @@ private:
 class DiscreteLevelBars : public juce::Component
 {
 public:
+    DiscreteLevelBars (LabelHeightContainer & label_height_container);
     void paint (juce::Graphics & g) override;
+
+private:
+    LabelHeightContainer & label_height_container_;
 };
 
 class ChannelBar : public juce::Component
 {
 public:
-    ChannelBar ();
+    ChannelBar (LabelHeightContainer & label_height_container);
     void resized () override;
     void paint (juce::Graphics & g) override;
     void SetTarget (float target, float peak);
