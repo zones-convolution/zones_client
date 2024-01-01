@@ -4,10 +4,10 @@
 #include <string>
 #include <vector>
 
-class LabelHeightContainer
+class LabelContainer
 {
 public:
-    LabelHeightContainer (std::vector<float> meter_label_list);
+    LabelContainer (std::vector<float> meter_label_list);
 
     std::vector<int> getHeightsWithinBounds (juce::Rectangle<int> local_bounds);
     std::vector<std::string> getLabelsAsString ();

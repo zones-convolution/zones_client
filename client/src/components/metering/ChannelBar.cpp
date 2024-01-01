@@ -34,8 +34,8 @@ void MeterBar::SetPeak (float peak)
     peak_target_value_ = peak;
 }
 
-DiscreteLevelBars::DiscreteLevelBars (LabelHeightContainer & label_height_container)
-    : label_height_container_ (label_height_container)
+DiscreteLevelBars::DiscreteLevelBars (LabelContainer & label_container)
+    : label_container_ (label_container)
 {
 }
 
@@ -46,14 +46,7 @@ void DiscreteLevelBars::paint (juce::Graphics & g)
     auto height = getHeight ();
 
     g.setColour (juce::Colours::white);
-    //    auto label_heights = LabelHeightContainer::getHeightsWithinBounds (getLocalBounds ());
-    //    for (auto & label_height : label_heights)
-    //    {
-    //        g.fillRect (0, label_height, width, kBarHeight);
-    //    }
-
-    auto local_b = getLocalBounds ();
-    auto label_heights = label_height_container_.getHeightsWithinBounds (getLocalBounds ());
+    auto label_heights = label_container_.getHeightsWithinBounds (getLocalBounds ());
 
     for (auto & label_height : label_heights)
     {
@@ -61,7 +54,7 @@ void DiscreteLevelBars::paint (juce::Graphics & g)
     }
 }
 
-ChannelBar::ChannelBar (LabelHeightContainer & label_height_container)
+ChannelBar::ChannelBar (LabelContainer & label_height_container)
     : discrete_level_bars_ (label_height_container)
 {
     addAndMakeVisible (meter_bar_);

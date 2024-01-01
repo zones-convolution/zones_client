@@ -1,18 +1,18 @@
-#include "LabelHeightContainer.h"
+#include "LabelContainer.h"
 
 #include <sstream>
 
-LabelHeightContainer::LabelHeightContainer (std::vector<float> meter_label_list)
+LabelContainer::LabelContainer (std::vector<float> meter_label_list)
 {
     meter_label_list_ = meter_label_list;
 }
 
-float LabelHeightContainer::skewValue (float linear_value)
+float LabelContainer::skewValue (float linear_value)
 {
     return log10 (1 + (9 * linear_value));
 }
 
-std::vector<int> LabelHeightContainer::getHeightsWithinBounds (juce::Rectangle<int> local_bounds)
+std::vector<int> LabelContainer::getHeightsWithinBounds (juce::Rectangle<int> local_bounds)
 {
     auto height = local_bounds.getHeight ();
 
@@ -28,7 +28,7 @@ std::vector<int> LabelHeightContainer::getHeightsWithinBounds (juce::Rectangle<i
     return label_heights;
 }
 
-std::vector<std::string> LabelHeightContainer::getLabelsAsString ()
+std::vector<std::string> LabelContainer::getLabelsAsString ()
 {
     std::vector<std::string> string_label_list;
 

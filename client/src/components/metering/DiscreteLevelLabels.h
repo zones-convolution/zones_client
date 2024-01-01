@@ -1,5 +1,5 @@
 #pragma once
-#include "LabelHeightContainer.h"
+#include "LabelContainer.h"
 #include "zones_look_and_feel/LookAndFeel.h"
 
 #include <juce_gui_basics/juce_gui_basics.h>
@@ -7,13 +7,11 @@
 class DiscreteLevelLabels : public juce::Component
 {
 public:
-    DiscreteLevelLabels (LabelHeightContainer & label_height_container);
+    DiscreteLevelLabels (LabelContainer & label_height_container);
 
     void resized () override;
-    void paint (juce::Graphics & g) override;
 
 private:
-    LabelHeightContainer & label_height_container_;
+    LabelContainer & label_height_container_;
     std::vector<std::unique_ptr<juce::Label>> labels_;
-    std::unique_ptr<juce::Label> test_l_;
 };

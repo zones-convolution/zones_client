@@ -1,5 +1,5 @@
 #pragma once
-#include "LabelHeightContainer.h"
+#include "LabelContainer.h"
 #include "juce_gui_extra/juce_gui_extra.h"
 #include "zones_look_and_feel/LookAndFeel.h"
 
@@ -22,17 +22,17 @@ private:
 class DiscreteLevelBars : public juce::Component
 {
 public:
-    DiscreteLevelBars (LabelHeightContainer & label_height_container);
+    DiscreteLevelBars (LabelContainer & label_container);
     void paint (juce::Graphics & g) override;
 
 private:
-    LabelHeightContainer & label_height_container_;
+    LabelContainer & label_container_;
 };
 
 class ChannelBar : public juce::Component
 {
 public:
-    ChannelBar (LabelHeightContainer & label_height_container);
+    ChannelBar (LabelContainer & label_height_container);
     void resized () override;
     void paint (juce::Graphics & g) override;
     void SetTarget (float target, float peak);

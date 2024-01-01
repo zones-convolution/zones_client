@@ -2,7 +2,7 @@
 #include "ChannelBar.h"
 #include "ClippingIndicator.h"
 #include "DiscreteLevelLabels.h"
-#include "LabelHeightContainer.h"
+#include "LabelContainer.h"
 #include "audio_engine/AudioGraphMetering.h"
 #include "zones_look_and_feel/LookAndFeel.h"
 #include "zones_look_and_feel/components/PanelComponent.h"
@@ -37,12 +37,12 @@ private:
     juce::FlexBox CreateSideLayout ();
 
     const std::vector<float> label_values_ {-3, -6, -9, -12, -18, -30, -60};
-    LabelHeightContainer label_height_container_;
+    LabelContainer label_height_container_;
 
     struct ChannelMeter
     {
-        ChannelMeter (LabelHeightContainer & label_height_container)
-            : bar (label_height_container)
+        ChannelMeter (LabelContainer & label_container)
+            : bar (label_container)
         {
         }
         ChannelBar bar;
