@@ -21,14 +21,13 @@ void DiscreteLevelLabels::paint (juce::Graphics & g)
 {
     auto width = getWidth ();
     auto height = getHeight ();
-    // setLookAndFeel (LookAndFeel);
     g.setColour (juce::Colours::white);
 
-    //
     auto bounds = getLocalBounds ();
-    bounds.reduce (0, 6);
-    auto labels = label_height_container_.getLabelsAsString ();
+    bounds.reduce (0, LookAndFeel::kMeterMargin);
     auto label_heights = label_height_container_.getHeightsWithinBounds (bounds);
+
+    auto labels = label_height_container_.getLabelsAsString ();
 
     for (auto i = 0; i < labels.size (); ++i)
     {

@@ -11,6 +11,9 @@ public:
     static constexpr float kHalfGap = 0.5f * kGap;
     static constexpr float kDoubleGap = 2.f * kGap;
 
+    static constexpr auto kMeterSpacing = 2.f;
+    static constexpr auto kMeterMargin = 6.f;
+
     static constexpr float kPadding = 8.f;
     static constexpr float kRounding = 8.f;
 

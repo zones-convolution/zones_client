@@ -13,8 +13,6 @@ MeterComponent::MeterComponent ()
     setSynchroniseToVBlank (true);
 }
 
-static constexpr auto kSpacing = 2.f;
-static constexpr auto kMargin = 6.f;
 static constexpr auto kDiscreteLevelLabelWidth = 26.f;
 static constexpr auto kClippingIndicatorHeight = 6.f;
 
@@ -57,8 +55,9 @@ void MeterComponent::resized ()
     juce::Component bar_layout;
 
     auto side_layout = CreateSideLayout ();
-    side_layout.items.add (
-        juce::FlexItem (bar_layout).withFlex (1.f).withMargin (juce::FlexItem::Margin (kMargin)));
+    side_layout.items.add (juce::FlexItem (bar_layout)
+                               .withFlex (1.f)
+                               .withMargin (juce::FlexItem::Margin (LookAndFeel::kMeterMargin)));
 
     auto clipping_side_layout = CreateClippingIndicatorLayout ();
 
@@ -66,7 +65,8 @@ void MeterComponent::resized ()
     clipping_side_layout.items.add (
         juce::FlexItem (clipping_indicator_layout)
             .withFlex (1.f)
-            .withMargin (juce::FlexItem::Margin (0, kMargin, 0, kMargin)));
+            .withMargin (juce::FlexItem::Margin (
+                0, LookAndFeel::kMeterMargin, 0, LookAndFeel::kMeterMargin)));
 
     juce::FlexBox layout;
     layout.flexDirection = juce::FlexBox::Direction::column;
@@ -86,10 +86,11 @@ juce::FlexBox MeterComponent::CreateSideLayout ()
 
     side_layout.items.add (
         juce::FlexItem (discrete_level_labels_).withWidth (kDiscreteLevelLabelWidth));
-    side_layout.items.add (juce::FlexItem ().withWidth (kSpacing));
+    side_layout.items.add (juce::FlexItem ().withWidth (LookAndFeel::kMeterSpacing));
     side_layout.items.add (juce::FlexItem (discrete_level_bars_)
-                               .withWidth (3 * kSpacing)
-                               .withMargin (juce::FlexItem::Margin (kMargin, 0, kMargin, 0)));
+                               .withWidth (3 * LookAndFeel::kMeterSpacing)
+                               .withMargin (juce::FlexItem::Margin (
+                                   LookAndFeel::kMeterMargin, 0, LookAndFeel::kMeterMargin, 0)));
     return side_layout;
 }
 
@@ -98,8 +99,8 @@ juce::FlexBox MeterComponent::CreateClippingIndicatorLayout ()
     juce::FlexBox indicator_layout;
     indicator_layout.flexDirection = juce::FlexBox::Direction::row;
     indicator_layout.items.add (
-        juce::FlexItem ().withWidth (kDiscreteLevelLabelWidth + 3 * kSpacing));
-    indicator_layout.items.add (juce::FlexItem ().withWidth (kSpacing));
+        juce::FlexItem ().withWidth (kDiscreteLevelLabelWidth + 3 * LookAndFeel::kMeterSpacing));
+    indicator_layout.items.add (juce::FlexItem ().withWidth (LookAndFeel::kMeterSpacing));
     return indicator_layout;
 }
 
@@ -112,13 +113,14 @@ void MeterComponent::LayoutBars (const juce::Rectangle<float> & bar_bounds)
      * the same, something FlexBox doesn't always guarantee. */
 
     int num_bars = 0;
-    auto group_spacing = (channel_groups_.size () - 1.0f) * (2.0f * kSpacing);
+    auto group_spacing = (channel_groups_.size () - 1.0f) * (2.0f * LookAndFeel::kMeterSpacing);
 
     for (auto & channel_group : channel_groups_)
         num_bars += channel_group.size ();
 
-    auto spaced_bounds =
-        bar_bounds.getWidth () - (static_cast<float> (num_bars) * kSpacing) - group_spacing;
+    auto spaced_bounds = bar_bounds.getWidth () -
+                         (static_cast<float> (num_bars) * LookAndFeel::kMeterSpacing) -
+                         group_spacing;
     auto fixed_bar_width = std::ceil (spaced_bounds / static_cast<float> (num_bars));
 
     auto layout_channel_group =
@@ -127,7 +129,7 @@ void MeterComponent::LayoutBars (const juce::Rectangle<float> & bar_bounds)
         for (auto & channel : channel_group)
         {
             bar_layout.items.add (juce::FlexItem (channel->bar).withWidth (fixed_bar_width));
-            bar_layout.items.add (juce::FlexItem ().withWidth (kSpacing));
+            bar_layout.items.add (juce::FlexItem ().withWidth (LookAndFeel::kMeterSpacing));
         }
 
         bar_layout.items.removeLast ();
@@ -162,7 +164,7 @@ void MeterComponent::paint (juce::Graphics & g)
 {
     g.fillAll (getLookAndFeel ().findColour (LookAndFeel::ColourIds::kPanel));
 
-    auto channels_bounds = GetChannelBounds ().expanded (kMargin);
+    auto channels_bounds = GetChannelBounds ().expanded (LookAndFeel::kMeterMargin);
     g.setColour (getLookAndFeel ().findColour (juce::ResizableWindow::backgroundColourId));
     g.fillRect (channels_bounds);
 }
@@ -227,7 +229,7 @@ void MeterComponent::update ()
 
 void MeterComponent::paintOverChildren (juce::Graphics & g)
 {
-    auto channels_bounds = GetChannelBounds ().expanded (kMargin);
+    auto channels_bounds = GetChannelBounds ().expanded (LookAndFeel::kMeterMargin);
 
     juce::Path rounded_path;
     static constexpr auto kLineThickness = 1.f;
