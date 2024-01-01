@@ -25,9 +25,10 @@ void DiscreteLevelLabels::paint (juce::Graphics & g)
     g.setColour (juce::Colours::white);
 
     //
-
+    auto bounds = getLocalBounds ();
+    bounds.reduce (0, 6);
     auto labels = label_height_container_.getLabelsAsString ();
-    auto label_heights = label_height_container_.getHeightsWithinBounds (getLocalBounds ());
+    auto label_heights = label_height_container_.getHeightsWithinBounds (bounds);
 
     for (auto i = 0; i < labels.size (); ++i)
     {

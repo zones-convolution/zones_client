@@ -13,5 +13,7 @@ public:
     std::vector<std::string> getLabelsAsString ();
 
 private:
+    float skewValue (float linear_value);
+
     std::vector<float> meter_label_list_;
 };
