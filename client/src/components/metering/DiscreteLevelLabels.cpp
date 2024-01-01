@@ -46,7 +46,7 @@ void DiscreteLevelLabels::resized ()
         //  g.fillRect (0, label_height, width, kBarHeight);
 
         // auto font_width = (int) labels_ [i]->getFont ().getStringWidth (labels_ [i]->getText ());
-        juce::Rectangle<int> label_bounds (0, label_heights [i], width, font_height);
+        juce::Rectangle<int> label_bounds (0, label_heights [i] - 1, width, font_height);
         labels_ [i]->setBounds (label_bounds);
     }
 
