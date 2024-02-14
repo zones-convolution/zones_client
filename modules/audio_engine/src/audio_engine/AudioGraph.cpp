@@ -11,8 +11,6 @@ AudioGraph::AudioGraph (AudioGraphMetering & input_graph_metering,
 void AudioGraph::prepare (const juce::dsp::ProcessSpec & spec)
 {
     dry_wet_mixer_.prepare (spec);
-    processor_chain_.prepare (spec);
-
     input_graph_metering_.Prepare (spec.numChannels);
     output_graph_metering_.Prepare (spec.numChannels);
 }
@@ -26,7 +24,7 @@ void AudioGraph::process (const juce::dsp::ProcessContextReplacing<float> & repl
     input_graph_metering_.UpdateChannelPeak (input_block);
 
     dry_wet_mixer_.pushDrySamples (replacing.getInputBlock ());
-    processor_chain_.process (replacing);
+    time_distributed_upc_.Process (replacing);
     dry_wet_mixer_.mixWetSamples (replacing.getOutputBlock ());
     output_block.multiplyBy (output_gain_);
     output_graph_metering_.UpdateChannelPeak (input_block);
@@ -35,14 +33,14 @@ void AudioGraph::process (const juce::dsp::ProcessContextReplacing<float> & repl
 void AudioGraph::reset ()
 {
     dry_wet_mixer_.reset ();
-    processor_chain_.reset ();
 }
 
 void AudioGraph::operator() (const CommandQueue::LoadIr & load_ir)
 {
-    auto & convolver = processor_chain_.get<0> ();
-    auto ir_buffer = *load_ir.ir_buffer;
-    convolver.LoadImpulseResponse (ir_buffer, load_ir.sample_rate);
+    retain_ir_buffer_ = *load_ir.ir_buffer;
+
+    juce::dsp::ProcessSpec spec {48000, 1024, 1};
+    time_distributed_upc_.Prepare (spec, 4096, retain_ir_buffer_);
 
     delete load_ir
         .ir_buffer; // ABSOLUTELY HORRIFIC BUT STOPS MEMORY LEAK FOR NOW WHILE USING JUCE'S CONV...
