@@ -37,3 +37,6 @@
 [submodule "lib/jwt-cpp"]
 	path = lib/jwt-cpp
 	url = git@github.com:Thalhammer/jwt-cpp.git
+[submodule "lib/zones_convolver"]
+	path = lib/zones_convolver
+	url = git@github.com:zones-convolution/zones_convolver.git

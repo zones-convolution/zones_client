@@ -24,6 +24,7 @@ zones_add_module(
         model
         ir_repository
         choc
+        zones_convolver
         juce::juce_core
         juce::juce_dsp
         juce::juce_audio_basics)
