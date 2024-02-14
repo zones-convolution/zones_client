@@ -28,6 +28,7 @@ private:
     juce::dsp::DryWetMixer<float> dry_wet_mixer_;
     TimeDistributedUPC time_distributed_upc_;
 
+    bool is_ready_ = false;
     juce::AudioBuffer<float> retain_ir_buffer_;
 
     float input_gain_ = 1.f;

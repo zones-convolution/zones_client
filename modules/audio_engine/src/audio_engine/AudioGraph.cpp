@@ -24,7 +24,9 @@ void AudioGraph::process (const juce::dsp::ProcessContextReplacing<float> & repl
     input_graph_metering_.UpdateChannelPeak (input_block);
 
     dry_wet_mixer_.pushDrySamples (replacing.getInputBlock ());
-    time_distributed_upc_.Process (replacing);
+
+    if (is_ready_)
+        time_distributed_upc_.Process (replacing);
     dry_wet_mixer_.mixWetSamples (replacing.getOutputBlock ());
     output_block.multiplyBy (output_gain_);
     output_graph_metering_.UpdateChannelPeak (input_block);
@@ -41,6 +43,7 @@ void AudioGraph::operator() (const CommandQueue::LoadIr & load_ir)
 
     juce::dsp::ProcessSpec spec {48000, 1024, 1};
     time_distributed_upc_.Prepare (spec, 4096, retain_ir_buffer_);
+    is_ready_ = true;
 
     delete load_ir
         .ir_buffer; // ABSOLUTELY HORRIFIC BUT STOPS MEMORY LEAK FOR NOW WHILE USING JUCE'S CONV...
