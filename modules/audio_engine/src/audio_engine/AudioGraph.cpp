@@ -42,7 +42,7 @@ void AudioGraph::operator() (const CommandQueue::LoadIr & load_ir)
     retain_ir_buffer_ = *load_ir.ir_buffer;
 
     juce::dsp::ProcessSpec spec {48000, 1024, 1};
-    time_distributed_upc_.Prepare (spec, 4096, retain_ir_buffer_);
+    time_distributed_upc_.Prepare (spec, 8192, retain_ir_buffer_);
     is_ready_ = true;
 
     delete load_ir
