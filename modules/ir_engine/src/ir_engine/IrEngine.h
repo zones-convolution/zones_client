@@ -58,17 +58,19 @@ private:
     std::shared_ptr<ReverbTimeProcessor> reverb_time_processor_ =
         std::make_shared<ReverbTimeProcessor> ();
 
-    IrGraph ir_graph_ = IrGraph ()
-                            .WithProcessor ({IrGraph::CachePolicy ()
-                                                 .WithPolicyIdentifier ("base_ir_processor")
-                                                 .WithCachedHandle (&IrGraphState::CacheBaseIr),
-                                             base_ir_processor_})
-                            .WithProcessor ({IrGraph::CachePolicy ()
-                                                 .WithPolicyIdentifier ("room_size_processor")
-                                                 .WithCachedHandle (&IrGraphState::CacheRoomSize),
-                                             room_size_processor_})
-                            .WithProcessor ({IrGraph::CachePolicy ()
-                                                 .WithPolicyIdentifier ("reverb_time_processor")
-                                                 .WithCachedHandle (&IrGraphState::CacheReverbTime),
-                                             reverb_time_processor_});
+    IrGraph ir_graph_ =
+        IrGraph ().WithProcessor ({IrGraph::CachePolicy ()
+                                       .WithPolicyIdentifier ("base_ir_processor")
+                                       .WithCachedHandle (&IrGraphState::CacheBaseIr),
+                                   base_ir_processor_});
+    //                            .WithProcessor ({IrGraph::CachePolicy ()
+    //                                                 .WithPolicyIdentifier ("room_size_processor")
+    //                                                 .WithCachedHandle
+    //                                                 (&IrGraphState::CacheRoomSize),
+    //                                             room_size_processor_})
+    //                            .WithProcessor ({IrGraph::CachePolicy ()
+    //                                                 .WithPolicyIdentifier
+    //                                                 ("reverb_time_processor") .WithCachedHandle
+    //                                                 (&IrGraphState::CacheReverbTime),
+    //                                             reverb_time_processor_});
 };
