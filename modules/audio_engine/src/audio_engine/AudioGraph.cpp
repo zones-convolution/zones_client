@@ -10,10 +10,10 @@ AudioGraph::AudioGraph (AudioGraphMetering & input_graph_metering,
 
 void AudioGraph::prepare (const juce::dsp::ProcessSpec & spec)
 {
+    spec_ = spec;
     dry_wet_mixer_.prepare (spec);
     input_graph_metering_.Prepare (spec.numChannels);
     output_graph_metering_.Prepare (spec.numChannels);
-    non_uniform_partitioned_convolver_.prepare (spec);
 }
 
 void AudioGraph::process (const juce::dsp::ProcessContextReplacing<float> & replacing)
@@ -27,7 +27,7 @@ void AudioGraph::process (const juce::dsp::ProcessContextReplacing<float> & repl
     dry_wet_mixer_.pushDrySamples (replacing.getInputBlock ());
 
     if (is_ready_)
-        non_uniform_partitioned_convolver_.process (replacing);
+        time_distributed_nupc_->Process (replacing);
 
     dry_wet_mixer_.mixWetSamples (replacing.getOutputBlock ());
     output_block.multiplyBy (output_gain_);
@@ -41,8 +41,7 @@ void AudioGraph::reset ()
 
 void AudioGraph::operator() (const CommandQueue::LoadIr & load_ir)
 {
-    non_uniform_partitioned_convolver_.LoadImpulseResponse (*load_ir.ir_buffer,
-                                                            load_ir.sample_rate);
+    time_distributed_nupc_ = std::make_unique<TimeDistributedNUPC> (*load_ir.ir_buffer, spec_);
     is_ready_ = true;
 
     delete load_ir

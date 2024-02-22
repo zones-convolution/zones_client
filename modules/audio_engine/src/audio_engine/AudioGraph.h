@@ -26,7 +26,9 @@ private:
     AudioGraphMetering & output_graph_metering_;
 
     juce::dsp::DryWetMixer<float> dry_wet_mixer_;
-    NonUniformPartitionedConvolver non_uniform_partitioned_convolver_;
+    std::unique_ptr<TimeDistributedNUPC> time_distributed_nupc_;
+
+    juce::dsp::ProcessSpec spec_;
 
     bool is_ready_ = false;
     juce::AudioBuffer<float> retain_ir_buffer_;
