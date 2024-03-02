@@ -2,8 +2,8 @@
 
 #include <juce_events/juce_events.h>
 
-IrEngine::IrEngine ()
-    : thread_pool_ ()
+IrEngine::IrEngine (juce::ThreadPool & thread_pool)
+    : thread_pool_ (thread_pool)
 {
 }
 

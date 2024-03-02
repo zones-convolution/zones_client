@@ -11,7 +11,7 @@ BrowserComponent::BrowserComponent (
     : project_ir_reader_ (project_ir_reader)
     , project_ir_context_ (project_ir_context)
     , project_paths_reader_ (ProjectIrRepositoryModel::ProjectPathsReader (project_ir_reader))
-    , current_ir_reader_ (ProjectIrRepositoryModel::CurrentProjectIrReader (project_ir_reader))
+    , current_ir_reader_ (project_ir_reader [&ProjectIrRepositoryModel::current_project_ir])
     , importing_state_reader_ (
           ProjectIrRepositoryModel::ImportingProjectIrStateReader (project_ir_reader))
 {
@@ -76,7 +76,7 @@ void BrowserComponent::UpdateIrList ()
     IrReader ir_reader;
     project_ir_combo_box_.clear (juce::NotificationType::dontSendNotification);
 
-    auto load_path = ProjectIrPaths (project_ir_reader_).GetAvailableProjectPath ();
+    auto load_path = GetAvailableProjectPath (*project_ir_reader_);
     if (! load_path.has_value ())
         return;
     auto ir_list = ir_reader.GetIrsInPath (load_path.value ());

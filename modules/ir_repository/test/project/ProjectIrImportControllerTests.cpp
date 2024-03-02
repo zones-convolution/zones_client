@@ -1,6 +1,6 @@
 #include "LagerTestUtils.h"
 #include "ReaderWriterMocks.h"
-#include "ir_repository/project/ProjectIrImportController.h"
+#include "ir_repository/project/ImportProjectIr.Ah"
 #include "ir_repository/project/ProjectIrRepositoryAction.h"
 #include "ir_repository/project/ProjectIrRepositoryModel.h"
 

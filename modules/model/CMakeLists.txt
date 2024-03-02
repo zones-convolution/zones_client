@@ -4,8 +4,6 @@ zones_add_module(
         SOURCES
         src/model/ParameterTree.h
         src/model/ParameterTree.cpp
-        src/model/controllers/IrWatchController.h
-        src/model/controllers/IrWatchController.cpp
         src/model/Model.h
         src/model/Action.h
         src/model/Action.cpp

@@ -15,15 +15,16 @@ zones_add_module(
         src/ir_repository/project/ProjectIrRepositoryModel.h
         src/ir_repository/project/ProjectIrRepositoryAction.h
         src/ir_repository/project/ProjectIrRepositoryAction.cpp
-        src/ir_repository/project/ProjectIrImportController.h
-        src/ir_repository/project/ProjectIrImportController.cpp
-        src/ir_repository/project/ProjectIrLoadController.h
-        src/ir_repository/project/ProjectIrLoadController.cpp
+        src/ir_repository/project/effect/ImportProjectIrEffect.h
+        src/ir_repository/project/effect/ImportProjectIrEffect.cpp
+        src/ir_repository/project/effect/LoadProjectIrEffect.h
+        src/ir_repository/project/effect/LoadProjectIrEffect.cpp
         DEPS
         juce::juce_audio_basics
         juce::juce_audio_formats
         lager
-        immer)
+        immer
+        ir_engine)
 
 zones_add_test(
         MODULE

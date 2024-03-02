@@ -1,10 +1,10 @@
 #pragma once
 
 #include "ProjectIrRepositoryModel.h"
+#include "ir_engine/IrController.h"
 
 #include <filesystem>
 #include <lager/effect.hpp>
-#include <lager/util.hpp>
 #include <variant>
 
 struct AddProjectPathAction
@@ -45,6 +45,7 @@ struct LoadProjectIrLoadingAction
 
 struct LoadProjectIrSuccessAction
 {
+    std::string ir_identifier;
 };
 
 struct LoadProjectIrFailureAction
@@ -63,6 +64,8 @@ using ProjectIrRepositoryAction = std::variant<AddProjectPathAction,
                                                LoadProjectIrFailureAction>;
 
 using ProjectIrRepositoryResult =
-    lager::result<ProjectIrRepositoryModel, ProjectIrRepositoryAction, lager::deps<std::string &>>;
+    lager::result<ProjectIrRepositoryModel, ProjectIrRepositoryAction, lager::deps<IrController &>>;
+using ProjectIrRepositoryContext = ProjectIrRepositoryResult::effect_t::context_t;
+
 ProjectIrRepositoryResult UpdateProjectIrRepository (ProjectIrRepositoryModel model,
                                                      ProjectIrRepositoryAction action);
