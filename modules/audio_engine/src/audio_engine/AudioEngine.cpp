@@ -12,18 +12,9 @@ AudioEngine::AudioEngine (CommandQueue::VisitorQueue & command_queue,
     parameter_tree.addParameterListener (ParameterTree::kInputGainParameterId, this);
 }
 
-void AudioEngine::LoadIr (const IrData & ir_data)
-{
-    convolution_engine_.LoadIR (ir_data.buffer);
-}
-
 void AudioEngine::RenderFinished (IrGraphState state, IrGraphProcessor::BoxedBuffer render_result)
 {
-    LoadIr ({
-        .buffer = render_result,
-        .sample_rate = state.sample_rate,
-        .bit_depth = state.bit_depth,
-    });
+    convolution_engine_.LoadIR (*render_result);
 }
 
 void AudioEngine::parameterChanged (const juce::String & parameterID, float newValue)

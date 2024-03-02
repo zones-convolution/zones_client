@@ -14,7 +14,6 @@ public:
     explicit AudioEngine (CommandQueue::VisitorQueue & command_queue,
                           juce::AudioProcessorValueTreeState & parameter_tree,
                           ConvolutionEngine & convolution_engine);
-    void LoadIr (const IrData & ir_data);
     void RenderFinished (IrGraphState state, IrGraphProcessor::BoxedBuffer render_result) override;
     ~AudioEngine () override = default;
     void parameterChanged (const juce::String & parameterID, float newValue) override;
