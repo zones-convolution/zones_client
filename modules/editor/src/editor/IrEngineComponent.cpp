@@ -1,8 +1,8 @@
-#include "IrEnginePanel.h"
+#include "IrEngineComponent.h"
 
-const std::string IrEnginePanel::kIrEnginePanelKey = "ir_engine_panel";
+const std::string IrEngineComponent::kIrEnginePanelKey = "ir_engine_panel";
 
-IrEnginePanel::IrEnginePanel (juce::AudioProcessorValueTreeState & parameter_tree)
+IrEngineComponent::IrEngineComponent (juce::AudioProcessorValueTreeState & parameter_tree)
     : room_size_attachment_ (parameter_tree, ParameterTree::kRoomSizeParameterId, room_size_slider_)
     , reverb_time_attachment_ (parameter_tree,
                                ParameterTree::kReverbTimeParameterId,
@@ -26,7 +26,7 @@ IrEnginePanel::IrEnginePanel (juce::AudioProcessorValueTreeState & parameter_tre
     reverb_time_slider_.setPopupDisplayEnabled (true, true, getTopLevelComponent ());
 }
 
-void IrEnginePanel::resized ()
+void IrEngineComponent::resized ()
 {
     auto room_size_layout = LookAndFeel::SliderLabelLayout (room_size_slider_, room_size_label_);
     auto reverb_time_layout =

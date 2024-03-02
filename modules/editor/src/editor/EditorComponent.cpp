@@ -1,8 +1,8 @@
 #include "EditorComponent.h"
 
 EditorComponent::EditorComponent (juce::AudioProcessorValueTreeState & parameter_tree)
-    : io_ (parameter_tree)
-    , ir_engine_ (parameter_tree)
+    : io_component_ (parameter_tree)
+    , ir_engine_component_ (parameter_tree)
 {
     addAndMakeVisible (io_panel_);
     addAndMakeVisible (visualiser_panel_);
@@ -32,5 +32,5 @@ void EditorComponent::RenderFinished (IrGraphState state,
                                       IrGraphProcessor::BoxedBuffer render_result)
 {
     juce::dsp::AudioBlock<const float> render_block {render_result.get ()};
-    visualiser_.waterfall_component_.SetAudioBlock (render_block);
+    waterfall_component_.SetAudioBlock (render_block);
 }

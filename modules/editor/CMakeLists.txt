@@ -4,12 +4,10 @@ zones_add_module(
         SOURCES
         src/editor/EditorComponent.h
         src/editor/EditorComponent.cpp
-        src/editor/panels/IOPanel.h
-        src/editor/panels/IOPanel.cpp
-        src/editor/panels/IrEnginePanel.h
-        src/editor/panels/IrEnginePanel.cpp
-        src/editor/panels/VisualiserPanel.h
-        src/editor/panels/VisualiserPanel.cpp
+        src/editor/IOComponent.h
+        src/editor/IOComponent.cpp
+        src/editor/IrEngineComponent.h
+        src/editor/IrEngineComponent.cpp
         DEPS
         juce::juce_core
         juce::juce_gui_basics

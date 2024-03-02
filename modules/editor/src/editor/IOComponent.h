@@ -1,14 +1,13 @@
 #include "model/ParameterTree.h"
-#include "zones_look_and_feel/LookAndFeel.h"
 #include "zones_look_and_feel/components/DividerComponent.h"
 
 #include <juce_audio_processors/juce_audio_processors.h>
 #include <juce_gui_basics/juce_gui_basics.h>
 
-class IOPanel : public juce::Component
+class IOComponent : public juce::Component
 {
 public:
-    explicit IOPanel (juce::AudioProcessorValueTreeState & parameter_tree);
+    explicit IOComponent (juce::AudioProcessorValueTreeState & parameter_tree);
     void resized () override;
 
 private:
