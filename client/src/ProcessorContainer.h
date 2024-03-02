@@ -24,16 +24,17 @@ public:
     explicit ProcessorContainer (juce::AudioProcessor & audio_processor);
 
     std::string dep_string_;
+    juce::ThreadPool thread_pool_;
+
     lager::store<Action, Model, Deps> store_ =
         lager::make_store<Action> (Model {},
-                                   WithJuceEventLoop {},
+                                   WithJuceEventLoop {thread_pool_},
                                    lager::with_reducer (Update),
                                    lager::with_deps (std::ref (dep_string_)));
 
     juce::AudioProcessorValueTreeState parameter_tree_;
     AudioGraphMetering input_graph_metering_;
     AudioGraphMetering output_graph_metering_;
-    juce::ThreadPool thread_pool_;
     ConvolutionEngine convolution_engine_ {thread_pool_};
     AudioGraph graph_ {input_graph_metering_, output_graph_metering_, convolution_engine_};
     CommandQueue::VisitorQueue command_queue_ {graph_};
