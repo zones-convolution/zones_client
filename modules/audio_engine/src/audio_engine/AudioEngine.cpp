@@ -1,9 +1,11 @@
 #include "AudioEngine.h"
 
 AudioEngine::AudioEngine (CommandQueue::VisitorQueue & command_queue,
-                          juce::AudioProcessorValueTreeState & parameter_tree)
+                          juce::AudioProcessorValueTreeState & parameter_tree,
+                          ConvolutionEngine & convolution_engine)
     : command_queue_ (command_queue)
     , parameter_tree_ (parameter_tree)
+    , convolution_engine_ (convolution_engine)
 {
     parameter_tree.addParameterListener (ParameterTree::kDryWetMixParameterId, this);
     parameter_tree.addParameterListener (ParameterTree::kOutputGainParameterId, this);
@@ -12,11 +14,7 @@ AudioEngine::AudioEngine (CommandQueue::VisitorQueue & command_queue,
 
 void AudioEngine::LoadIr (const IrData & ir_data)
 {
-    auto handover_ir_buffer = new juce::AudioBuffer<float> ();
-    handover_ir_buffer->makeCopyOf (ir_data.buffer);
-
-    command_queue_.PushCommand (
-        CommandQueue::LoadIr {.ir_buffer = handover_ir_buffer, .sample_rate = ir_data.sample_rate});
+    convolution_engine_.LoadIR (ir_data.buffer);
 }
 
 void AudioEngine::RenderFinished (IrGraphState state, IrGraphProcessor::BoxedBuffer render_result)

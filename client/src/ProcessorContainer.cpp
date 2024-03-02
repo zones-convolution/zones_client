@@ -12,7 +12,7 @@ ProcessorContainer::ProcessorContainer (juce::AudioProcessor & audio_processor)
                                      store_,
                                      ir_reader_,
                                      ir_writer_}
-    , audio_engine_ (command_queue_, parameter_tree_)
+    , audio_engine_ (command_queue_, parameter_tree_, convolution_engine_)
     , ir_watch_controller_ (ir_engine_,
                             project_ir_load_controller_,
                             store_ [&Model::project_ir_repository_model],

@@ -12,6 +12,7 @@
 #include "model/Action.h"
 #include "model/Model.h"
 #include "model/controllers/IrWatchController.h"
+#include "zones_convolver/zones_convolver.h"
 
 #include <juce_audio_processors/juce_audio_processors.h>
 #include <lager/event_loop/manual.hpp>
@@ -32,7 +33,9 @@ public:
     juce::AudioProcessorValueTreeState parameter_tree_;
     AudioGraphMetering input_graph_metering_;
     AudioGraphMetering output_graph_metering_;
-    AudioGraph graph_ {input_graph_metering_, output_graph_metering_};
+    juce::ThreadPool thread_pool_;
+    ConvolutionEngine convolution_engine_ {thread_pool_};
+    AudioGraph graph_ {input_graph_metering_, output_graph_metering_, convolution_engine_};
     CommandQueue::VisitorQueue command_queue_ {graph_};
     IrEngine ir_engine_;
 

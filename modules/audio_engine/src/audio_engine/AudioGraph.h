@@ -12,13 +12,13 @@ class AudioGraph
 {
 public:
     explicit AudioGraph (AudioGraphMetering & input_graph_metering,
-                         AudioGraphMetering & output_graph_metering);
+                         AudioGraphMetering & output_graph_metering,
+                         ConvolutionEngine & convolution_engine);
     ~AudioGraph () override = default;
     void prepare (const juce::dsp::ProcessSpec & spec) override;
     void process (const juce::dsp::ProcessContextReplacing<float> & replacing) override;
     void reset () override;
 
-    void operator() (const CommandQueue::LoadIr & load_ir) override;
     void operator() (const CommandQueue::UpdateParameters & update_parameters) override;
 
 private:
@@ -26,12 +26,7 @@ private:
     AudioGraphMetering & output_graph_metering_;
 
     juce::dsp::DryWetMixer<float> dry_wet_mixer_;
-    std::unique_ptr<TimeDistributedNUPC> time_distributed_nupc_;
-
-    juce::dsp::ProcessSpec spec_;
-
-    bool is_ready_ = false;
-    juce::AudioBuffer<float> retain_ir_buffer_;
+    ConvolutionEngine & convolution_engine_;
 
     float input_gain_ = 1.f;
     float output_gain_ = 1.f;

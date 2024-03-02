@@ -4,6 +4,7 @@
 #include "ir_repository/project/ProjectIrLoadController.h"
 #include "model/Model.h"
 #include "model/ParameterTree.h"
+#include "zones_convolver/zones_convolver.h"
 
 class AudioEngine
     : public IrEngine::Listener
@@ -11,7 +12,8 @@ class AudioEngine
 {
 public:
     explicit AudioEngine (CommandQueue::VisitorQueue & command_queue,
-                          juce::AudioProcessorValueTreeState & parameter_tree);
+                          juce::AudioProcessorValueTreeState & parameter_tree,
+                          ConvolutionEngine & convolution_engine);
     void LoadIr (const IrData & ir_data);
     void RenderFinished (IrGraphState state, IrGraphProcessor::BoxedBuffer render_result) override;
     ~AudioEngine () override = default;
@@ -20,4 +22,5 @@ public:
 private:
     CommandQueue::VisitorQueue & command_queue_;
     juce::AudioProcessorValueTreeState & parameter_tree_;
+    ConvolutionEngine & convolution_engine_;
 };
