@@ -85,6 +85,9 @@ juce::Image ApplyClearBorder (const juce::Image & image)
 
 void WaterfallRenderer::SetupGraphTexture (const juce::dsp::AudioBlock<const float> block)
 {
+    if (block.getNumChannels () == 0 || block.getNumSamples () == 0)
+        return;
+
     auto spectrogram = Spectrogram::CreateSpectrogram (block);
     auto rescaled = spectrogram.rescaled (256, 256);
     auto with_clear_border = ApplyClearBorder (rescaled);

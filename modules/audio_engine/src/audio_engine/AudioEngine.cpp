@@ -14,6 +14,9 @@ AudioEngine::AudioEngine (CommandQueue::VisitorQueue & command_queue,
 
 void AudioEngine::RenderFinished (IrGraphState state, IrGraphProcessor::BoxedBuffer render_result)
 {
+    if (render_result->getNumChannels () == 0 || render_result->getNumSamples () == 0)
+        return;
+
     convolution_engine_.LoadIR (*render_result);
 }
 

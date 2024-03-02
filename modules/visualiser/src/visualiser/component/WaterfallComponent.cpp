@@ -44,7 +44,7 @@ WaterfallComponent::WaterfallComponent ()
                                 1);
     addAndMakeVisible (colour_scheme_);
 
-    colour_scheme_.setSelectedId (0);
+    colour_scheme_.setSelectedItemIndex (0);
     show_time_grid_.setToggleState (true, juce::dontSendNotification);
     show_frequency_grid_.setToggleState (false, juce::dontSendNotification);
 
