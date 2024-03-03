@@ -17,7 +17,7 @@ public:
     void resized () override;
     void paint (juce::Graphics & g) override;
 
-    void SetAudioBlock (const juce::dsp::AudioBlock<const float> audio_block);
+    void SetAudioBlock (const immer::box<juce::AudioBuffer<float>> & boxed_buffer);
     void EnableDebugControls (bool enabled);
 
 private:

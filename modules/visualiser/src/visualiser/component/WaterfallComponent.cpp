@@ -131,9 +131,9 @@ void WaterfallComponent::paint (juce::Graphics & g)
     juce::ignoreUnused (g);
 }
 
-void WaterfallComponent::SetAudioBlock (const juce::dsp::AudioBlock<const float> audio_block)
+void WaterfallComponent::SetAudioBlock (const immer::box<juce::AudioBuffer<float>> & boxed_buffer)
 {
-    waterfall_renderer_.SetupGraphTexture (audio_block);
+    waterfall_renderer_.SetupGraphTexture (boxed_buffer);
 }
 
 void WaterfallComponent::EnableDebugControls (bool enabled)

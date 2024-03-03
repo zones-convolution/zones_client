@@ -21,7 +21,16 @@ zones_add_module(
         src/visualiser/renderer/WaterfallGraph.cpp
         src/visualiser/gl/DynamicShaderLoader.h
         src/visualiser/gl/DynamicShaderLoader.cpp
-        DEPS juce::juce_gui_basics juce::juce_opengl zones_look_and_feel juce::juce_audio_basics juce::juce_dsp juce::juce_audio_formats glm tinycolormap immer
+        DEPS
+        juce::juce_gui_basics
+        juce::juce_opengl
+        zones_look_and_feel
+        juce::juce_audio_basics
+        juce::juce_dsp
+        juce::juce_audio_formats
+        glm
+        tinycolormap
+        immer
 )
 
 embed_resources(visualiser

@@ -15,6 +15,19 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/quaternion.hpp>
 
+class CreateTextureJob : public juce::ThreadPoolJob
+{
+public:
+    CreateTextureJob (const immer::box<juce::AudioBuffer<float>> & boxed_buffer,
+                      std::function<void (const juce::Image & texture)> callback);
+    ~CreateTextureJob () override = default;
+    JobStatus runJob () override;
+
+private:
+    immer::box<juce::AudioBuffer<float>> boxed_buffer_;
+    std::function<void (const juce::Image & texture)> callback_;
+};
+
 class WaterfallRenderer final : public juce::OpenGLRenderer
 {
 public:
@@ -33,7 +46,7 @@ public:
     std::atomic<float> offset_y_;
     std::atomic<float> scale_;
 
-    void SetupGraphTexture (juce::dsp::AudioBlock<const float> block);
+    void SetupGraphTexture (const immer::box<juce::AudioBuffer<float>> & boxed_buffer);
 
 private:
     static const std::filesystem::path kShaderDirectory;
@@ -49,5 +62,9 @@ private:
     DynamicShaderLoader graph_shader_loader_;
     DynamicShaderLoader grid_shader_loader_;
 
+    std::mutex graph_mutex_;
     WaterfallGraph waterfall_graph_ {open_gl_context_, graph_shader_loader_, grid_shader_loader_};
+
+    juce::ThreadPool thread_pool_;
+    juce::ThreadPoolJob * last_texture_job_ = nullptr;
 };

@@ -31,6 +31,5 @@ void EditorComponent::resized ()
 void EditorComponent::RenderFinished (IrGraphState state,
                                       IrGraphProcessor::BoxedBuffer render_result)
 {
-    juce::dsp::AudioBlock<const float> render_block {render_result.get ()};
-    waterfall_component_.SetAudioBlock (render_block);
+    waterfall_component_.SetAudioBlock (render_result);
 }
