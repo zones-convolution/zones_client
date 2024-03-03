@@ -122,18 +122,6 @@ void SaveDebugSpectrogram (juce::Image & spectrogram)
 void WaterfallRenderer::SetupGraphTexture (
     const immer::box<juce::AudioBuffer<float>> & boxed_buffer)
 {
-    // auto retain_buffer = boxed_buffer;
-    // juce::dsp::AudioBlock<float> block {retain_buffer.get ()};
-    // if (block.getNumChannels () == 0 || block.getNumSamples () == 0)
-    //     return;
-    //
-    // auto spectrogram = Spectrogram::CreateSpectrogram (block);
-    // auto rescaled = spectrogram.rescaled (256, 256);
-    // auto with_clear_border = ApplyClearBorder (rescaled);
-    // // SaveDebugSpectrogram (with_clear_border);
-
-    // waterfall_graph_.LoadTexture (with_clear_border);
-
     thread_pool_.removeJob (last_texture_job_, true, 0);
     last_texture_job_ = new CreateTextureJob (boxed_buffer,
                                               [&] (const juce::Image & texture)
@@ -199,11 +187,14 @@ void WaterfallRenderer::renderOpenGL ()
 
     auto vertex_transform = CreateVertexTransform ();
     auto texture_transform = CreateTextureTransform ();
+
+    std::lock_guard lock {graph_mutex_};
     waterfall_graph_.Render (vertex_transform, texture_transform);
 }
 
 void WaterfallRenderer::openGLContextClosing ()
 {
+    std::lock_guard lock {graph_mutex_};
     waterfall_graph_.ContextClosing ();
 }
 
@@ -215,5 +206,6 @@ void WaterfallRenderer::UpdateShaders ()
 
 void WaterfallRenderer::LoadParameters (const WaterfallGraph::Parameters & parameters)
 {
+    std::lock_guard lock {graph_mutex_};
     waterfall_graph_.LoadParameters (parameters);
 }
