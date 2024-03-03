@@ -32,7 +32,8 @@ class WaterfallRenderer final : public juce::OpenGLRenderer
 {
 public:
     WaterfallRenderer (juce::OpenGLContext & open_gl_context,
-                       DraggableOrientation & draggable_orientation);
+                       DraggableOrientation & draggable_orientation,
+                       juce::ThreadPool & thread_pool);
 
     ~WaterfallRenderer () override = default;
     void newOpenGLContextCreated () override;
@@ -65,6 +66,6 @@ private:
     std::mutex graph_mutex_;
     WaterfallGraph waterfall_graph_ {open_gl_context_, graph_shader_loader_, grid_shader_loader_};
 
-    juce::ThreadPool thread_pool_;
+    juce::ThreadPool & thread_pool_;
     juce::ThreadPoolJob * last_texture_job_ = nullptr;
 };

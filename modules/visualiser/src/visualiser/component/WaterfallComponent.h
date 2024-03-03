@@ -11,7 +11,7 @@
 class WaterfallComponent : public juce::Component
 {
 public:
-    explicit WaterfallComponent ();
+    explicit WaterfallComponent (juce::ThreadPool & thread_pool);
     ~WaterfallComponent () override;
 
     void resized () override;
@@ -29,8 +29,9 @@ private:
 
     DraggableOrientation draggable_orientation_;
 
+    juce::ThreadPool & thread_pool_;
     juce::OpenGLContext open_gl_context_;
-    WaterfallRenderer waterfall_renderer_ {open_gl_context_, draggable_orientation_};
+    WaterfallRenderer waterfall_renderer_ {open_gl_context_, draggable_orientation_, thread_pool_};
 
     juce::Label status_label_;
     juce::TextButton refresh_button_ {"Refresh Shaders"};

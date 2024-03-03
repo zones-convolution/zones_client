@@ -46,6 +46,9 @@ CreateTextureJob::CreateTextureJob (const immer::box<juce::AudioBuffer<float>> &
 
 juce::ThreadPoolJob::JobStatus CreateTextureJob::runJob ()
 {
+    if (shouldExit ())
+        return jobHasFinished;
+
     juce::dsp::AudioBlock<const float> block {boxed_buffer_.get ()};
     if (block.getNumChannels () == 0 || block.getNumSamples () == 0)
         return jobHasFinished;
@@ -71,7 +74,8 @@ juce::ThreadPoolJob::JobStatus CreateTextureJob::runJob ()
 }
 
 WaterfallRenderer::WaterfallRenderer (juce::OpenGLContext & open_gl_context,
-                                      DraggableOrientation & draggable_orientation)
+                                      DraggableOrientation & draggable_orientation,
+                                      juce::ThreadPool & thread_pool)
     : draggable_orientation_ (draggable_orientation)
     , open_gl_context_ (open_gl_context)
     , graph_shader_loader_ (
@@ -86,6 +90,7 @@ WaterfallRenderer::WaterfallRenderer (juce::OpenGLContext & open_gl_context,
                                              .shader_value = shaders_graph3d_vert_glsl},
           DynamicShaderLoader::ShaderLoader {.shader_file = "grid3d.frag.glsl",
                                              .shader_value = shaders_grid3d_frag_glsl})
+    , thread_pool_ (thread_pool)
 {
 }
 

@@ -1,6 +1,7 @@
 #include "WaterfallComponent.h"
 
-WaterfallComponent::WaterfallComponent ()
+WaterfallComponent::WaterfallComponent (juce::ThreadPool & thread_pool)
+    : thread_pool_ (thread_pool)
 {
     SetupOpenGl ();
 

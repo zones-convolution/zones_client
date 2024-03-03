@@ -28,6 +28,7 @@ struct ProjectIrRepositoryModel
     immer::flex_vector<std::filesystem::path> project_paths;
 
     ProjectIrLoadingState importing_project_ir_state;
+
     CurrentProjectIrOptional current_project_ir;
     ProjectIrLoadingState current_project_ir_state;
 

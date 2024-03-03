@@ -14,7 +14,8 @@ class EditorComponent
     , public IrEngine::Listener
 {
 public:
-    explicit EditorComponent (juce::AudioProcessorValueTreeState & parameter_tree);
+    explicit EditorComponent (juce::AudioProcessorValueTreeState & parameter_tree,
+                              juce::ThreadPool & thread_pool);
     void resized () override;
 
     void RenderFinished (IrGraphState state, IrGraphProcessor::BoxedBuffer render_result) override;
