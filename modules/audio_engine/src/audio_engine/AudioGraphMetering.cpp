@@ -12,7 +12,7 @@ void AudioGraphMetering::UpdateChannelPeak (const juce::dsp::AudioBlock<const fl
     {
         auto channel_block = audio_block.getSingleChannelBlock (channel_index);
         auto peak = read_peak (channel_block);
-        auto & channel = *channels_ [channel_index];
+        auto & channel = *channels_ [channel_index % channels_.size ()];
         channel.peak_value.store (peak);
         if (peak >= 1.f)
             channel.is_clipping.store (true);
@@ -21,7 +21,7 @@ void AudioGraphMetering::UpdateChannelPeak (const juce::dsp::AudioBlock<const fl
 
 void AudioGraphMetering::ResetClipping (size_t channel_index)
 {
-    auto & channel = channels_ [channel_index];
+    auto & channel = channels_ [channel_index % channels_.size ()];
     channel->is_clipping.store (false);
 }
 
@@ -34,10 +34,10 @@ void AudioGraphMetering::Prepare (size_t num_channels)
 
 float AudioGraphMetering::GetChannelPeak (size_t channel_index)
 {
-    return channels_ [channel_index]->peak_value;
+    return channels_ [channel_index % channels_.size ()]->peak_value;
 }
 
 bool AudioGraphMetering::GetChannelClipping (size_t channel_index)
 {
-    return channels_ [channel_index]->is_clipping;
+    return channels_ [channel_index % channels_.size ()]->is_clipping;
 }

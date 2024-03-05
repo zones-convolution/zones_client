@@ -29,3 +29,5 @@ add_subdirectory(jwt-cpp)
 juce_add_module(melatonin_audio_sparklines)
 juce_add_module(melatonin_test_helpers)
 juce_add_module(zones_convolver/zones_convolver)
+
+add_subdirectory(JUCE/extras/AudioPluginHost)
