@@ -1,16 +1,11 @@
 #pragma once
+
 #include "ProjectIrRepositoryModel.h"
 
 #include <filesystem>
-#include <lager/reader.hpp>
 #include <optional>
 
-class ProjectIrPaths
-{
-public:
-    explicit ProjectIrPaths (lager::reader<ProjectIrRepositoryModel> reader);
-    std::optional<std::filesystem::path> GetAvailableProjectPath ();
+bool IsPathValidDirectory (const std::filesystem::path & path);
 
-private:
-    lager::reader<ProjectIrRepositoryModel> reader_;
-};
+std::optional<std::filesystem::path>
+GetAvailableProjectPath (const ProjectIrRepositoryModel & model);

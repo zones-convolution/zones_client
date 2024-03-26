@@ -6,19 +6,18 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (
     AudioPluginAudioProcessor & processor,
     ProcessorContainer & processor_container)
     : AudioProcessorEditor (&processor)
-      , processor_ (processor)
-      , model_ (processor_container.store_)
-      , context_ (processor_container.store_)
-      , editor_ (processor_container.parameter_tree_)
-      , browser_ (processor_container.store_ [&Model::project_ir_repository_model],
-                  project_ir_repository_context_)
-      , sidebar_footer_ (processor_container.store_ [&Model::project_ir_repository_model]
-                         [&ProjectIrRepositoryModel::current_project_ir],
-                         processor_container.input_graph_metering_,
-                         processor_container.output_graph_metering_)
-      , ir_engine_ (processor_container.ir_engine_),
-      account_component_ (processor_container.store_ [&Model::account_model],
-                          context_)
+    , processor_ (processor)
+    , model_ (processor_container.store_)
+    , context_ (processor_container.store_)
+    , editor_ (processor_container.parameter_tree_, processor_container.thread_pool_)
+    , browser_ (processor_container.store_ [&Model::project_ir_repository_model],
+                project_ir_repository_context_)
+    , sidebar_footer_ (processor_container.store_ [&Model::project_ir_repository_model]
+                                                  [&ProjectIrRepositoryModel::current_project_ir],
+                       processor_container.input_graph_metering_,
+                       processor_container.output_graph_metering_)
+    , ir_engine_ (processor_container.ir_engine_)
+    , account_component_ (processor_container.store_ [&Model::account_model], context_)
 
 {
     juce::LookAndFeel::setDefaultLookAndFeel (&look_and_feel_);
@@ -38,7 +37,7 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (
     addAndMakeVisible (tabs_component_);
     addAndMakeVisible (sidebar_component_);
 
-    store_.dispatch (LoadTabAction{.tab_name = "editor"});
+    store_.dispatch (LoadTabAction {.tab_name = "editor"});
 
     auto & ir_engine_listeners = ir_engine_.GetListeners ();
     ir_engine_listeners.add (&editor_);

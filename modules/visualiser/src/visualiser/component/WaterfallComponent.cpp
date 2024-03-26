@@ -1,6 +1,7 @@
 #include "WaterfallComponent.h"
 
-WaterfallComponent::WaterfallComponent ()
+WaterfallComponent::WaterfallComponent (juce::ThreadPool & thread_pool)
+    : thread_pool_ (thread_pool)
 {
     SetupOpenGl ();
 
@@ -44,7 +45,7 @@ WaterfallComponent::WaterfallComponent ()
                                 1);
     addAndMakeVisible (colour_scheme_);
 
-    colour_scheme_.setSelectedId (0);
+    colour_scheme_.setSelectedItemIndex (0);
     show_time_grid_.setToggleState (true, juce::dontSendNotification);
     show_frequency_grid_.setToggleState (false, juce::dontSendNotification);
 
@@ -131,9 +132,9 @@ void WaterfallComponent::paint (juce::Graphics & g)
     juce::ignoreUnused (g);
 }
 
-void WaterfallComponent::SetAudioBlock (const juce::dsp::AudioBlock<const float> audio_block)
+void WaterfallComponent::SetAudioBlock (const immer::box<juce::AudioBuffer<float>> & boxed_buffer)
 {
-    waterfall_renderer_.SetupGraphTexture (audio_block);
+    waterfall_renderer_.SetupGraphTexture (boxed_buffer);
 }
 
 void WaterfallComponent::EnableDebugControls (bool enabled)

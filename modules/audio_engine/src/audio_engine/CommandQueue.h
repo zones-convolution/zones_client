@@ -5,12 +5,6 @@
 
 struct CommandQueue
 {
-    struct LoadIr
-    {
-        juce::AudioBuffer<float> * ir_buffer;
-        double sample_rate;
-    };
-
     struct UpdateParameters
     {
         float dry_wet_mix;
@@ -18,10 +12,9 @@ struct CommandQueue
         float output_gain;
     };
 
-    using Commands = std::variant<LoadIr, UpdateParameters>;
+    using Commands = std::variant<UpdateParameters>;
     struct Visitor
     {
-        virtual void operator() (const LoadIr & load_ir) = 0;
         virtual void operator() (const UpdateParameters & update_parameters) = 0;
     };
 

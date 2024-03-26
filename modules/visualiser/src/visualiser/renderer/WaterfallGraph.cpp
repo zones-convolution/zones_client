@@ -305,4 +305,6 @@ void WaterfallGraph::ContextClosing ()
     index_buffer_graph_.reset ();
     index_buffer_grid_.reset ();
     vertex_array_.reset ();
+    graph_shader_.release ();
+    grid_shader_.release ();
 }

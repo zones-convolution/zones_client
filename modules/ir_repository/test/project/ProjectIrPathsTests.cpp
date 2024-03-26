@@ -10,20 +10,14 @@ TEST_CASE ("can retrieve first available project path", "[ProjectIrPaths]")
 {
     SECTION ("returns nulloptional when no project paths are available")
     {
-        auto model_state = lager::make_state (ProjectIrRepositoryModel {});
-        ProjectIrPaths project_ir_paths (model_state);
-
-        auto first_available_path = project_ir_paths.GetAvailableProjectPath ();
+        auto first_available_path = GetAvailableProjectPath (ProjectIrRepositoryModel {});
         REQUIRE (! first_available_path.has_value ());
     }
 
     SECTION ("returns nulloptional when no valid project paths are available")
     {
-        auto model_state = lager::make_state (ProjectIrRepositoryModel {
+        auto first_available_path = GetAvailableProjectPath (ProjectIrRepositoryModel {
             .project_paths = {"invalid/directory_1", "invalid/directory_2"}});
-        ProjectIrPaths project_ir_paths (model_state);
-
-        auto first_available_path = project_ir_paths.GetAvailableProjectPath ();
         REQUIRE (! first_available_path.has_value ());
     }
 
@@ -36,20 +30,16 @@ TEST_CASE ("can retrieve first available project path", "[ProjectIrPaths]")
 
         SECTION ("returns valid project path when a single valid project path is available")
         {
-            auto model_state = lager::make_state (ProjectIrRepositoryModel {
+            auto first_available_path = GetAvailableProjectPath (ProjectIrRepositoryModel {
                 .project_paths = {valid_dir.getFullPathName ().toStdString ()}});
-            ProjectIrPaths project_ir_paths (model_state);
-            auto first_available_path = project_ir_paths.GetAvailableProjectPath ();
             REQUIRE (first_available_path.value () == valid_dir.getFullPathName ().toStdString ());
         }
 
         SECTION ("returns valid project path when valid and invalid project paths are available")
         {
-            auto model_state = lager::make_state (ProjectIrRepositoryModel {
+            auto first_available_path = GetAvailableProjectPath (ProjectIrRepositoryModel {
                 .project_paths = {"invalid/project/path",
                                   valid_dir.getFullPathName ().toStdString ()}});
-            ProjectIrPaths project_ir_paths (model_state);
-            auto first_available_path = project_ir_paths.GetAvailableProjectPath ();
             REQUIRE (first_available_path.value () == valid_dir.getFullPathName ().toStdString ());
         }
 

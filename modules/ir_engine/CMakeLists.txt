@@ -19,7 +19,10 @@ zones_add_module(
         src/ir_engine/processors/RoomSizeProcessor.cpp
         src/ir_engine/processors/ReverbTimeProcessor.h
         src/ir_engine/processors/ReverbTimeProcessor.cpp
+        src/ir_engine/IrController.h
+        src/ir_engine/IrController.cpp
         DEPS
+        model
         ir_repository
         audio_engine
         lager

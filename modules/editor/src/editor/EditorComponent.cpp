@@ -1,8 +1,10 @@
 #include "EditorComponent.h"
 
-EditorComponent::EditorComponent (juce::AudioProcessorValueTreeState & parameter_tree)
-    : io_ (parameter_tree)
-    , ir_engine_ (parameter_tree)
+EditorComponent::EditorComponent (juce::AudioProcessorValueTreeState & parameter_tree,
+                                  juce::ThreadPool & thread_pool)
+    : waterfall_component_ (thread_pool)
+    , io_component_ (parameter_tree)
+    , ir_engine_component_ (parameter_tree)
 {
     addAndMakeVisible (io_panel_);
     addAndMakeVisible (visualiser_panel_);
@@ -31,6 +33,5 @@ void EditorComponent::resized ()
 void EditorComponent::RenderFinished (IrGraphState state,
                                       IrGraphProcessor::BoxedBuffer render_result)
 {
-    juce::dsp::AudioBlock<const float> render_block{render_result.get ()};
-    visualiser_.waterfall_component_.SetAudioBlock (render_block);
+    waterfall_component_.SetAudioBlock (render_result);
 }

@@ -1,14 +1,7 @@
 #include "ProjectIrRepositoryAction.h"
 
-#include <iostream>
-#include <juce_core/juce_core.h>
-
-// ProjectIrRepositoryEffect string_effect = [] (const ProjectIrRepositoryEffect::context_t & ctx)
-//{
-//     ctx.dispatch (RemoveProjectPathAction {});
-//     auto & string = lager::get<std::string> (ctx);
-//     DBG (string);
-// };
+#include "effect/ImportProjectIrEffect.h"
+#include "effect/LoadProjectIrEffect.h"
 
 ProjectIrRepositoryResult UpdateProjectIrRepository (ProjectIrRepositoryModel model,
                                                      ProjectIrRepositoryAction action)
@@ -31,13 +24,14 @@ ProjectIrRepositoryResult UpdateProjectIrRepository (ProjectIrRepositoryModel mo
             [&] (
                 const ImportProjectIrAction & import_project_ir_action) -> ProjectIrRepositoryResult
             {
-                model.import_project_ir = import_project_ir_action.import_project_ir;
                 model.importing_project_ir_state = ProjectIrLoadingState::kPending;
-                return {model, lager::noop};
+                return {model,
+                        [import_project_ir = import_project_ir_action.import_project_ir,
+                         model] (auto && context)
+                        { ImportProjectIrEffect (model, import_project_ir, context); }};
             },
             [&] (const ImportProjectIrLoadingAction &) -> ProjectIrRepositoryResult
             {
-                model.import_project_ir = std::nullopt;
                 model.importing_project_ir_state = ProjectIrLoadingState::kLoading;
                 return {model, lager::noop};
             },
@@ -53,17 +47,21 @@ ProjectIrRepositoryResult UpdateProjectIrRepository (ProjectIrRepositoryModel mo
             },
             [&] (const LoadProjectIrAction & load_project_ir_action) -> ProjectIrRepositoryResult
             {
-                model.current_project_ir = load_project_ir_action.ir_identifier;
                 model.current_project_ir_state = ProjectIrLoadingState::kPending;
-                return {model, lager::noop};
+                return {
+                    model,
+                    [model, ir_identifier = load_project_ir_action.ir_identifier] (auto && context)
+                    { LoadProjectIrEffect (model, ir_identifier, context); }};
             },
             [&] (const LoadProjectIrLoadingAction &) -> ProjectIrRepositoryResult
             {
                 model.current_project_ir_state = ProjectIrLoadingState::kLoading;
                 return {model, lager::noop};
             },
-            [&] (const LoadProjectIrSuccessAction &) -> ProjectIrRepositoryResult
+            [&] (const LoadProjectIrSuccessAction & load_project_ir_success_action)
+                -> ProjectIrRepositoryResult
             {
+                model.current_project_ir = load_project_ir_success_action.ir_identifier;
                 model.current_project_ir_state = ProjectIrLoadingState::kSuccess;
                 return {model, lager::noop};
             },

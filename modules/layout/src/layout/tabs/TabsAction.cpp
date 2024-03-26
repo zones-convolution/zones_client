@@ -6,6 +6,9 @@ TabsResult UpdateTabs (TabsModel tabs_model, TabsAction tabs_action)
         lager::visitor {
             [&] (const LoadTabAction & load_tab_action) -> TabsResult
             {
+                if (tabs_model.current_tab == load_tab_action.tab_name)
+                    return {tabs_model, lager::noop};
+
                 return {tabs_model,
                         [tab_name = load_tab_action.tab_name] (auto && context)
                         {

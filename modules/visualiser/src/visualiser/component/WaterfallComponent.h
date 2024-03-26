@@ -11,13 +11,13 @@
 class WaterfallComponent : public juce::Component
 {
 public:
-    explicit WaterfallComponent ();
+    explicit WaterfallComponent (juce::ThreadPool & thread_pool);
     ~WaterfallComponent () override;
 
     void resized () override;
     void paint (juce::Graphics & g) override;
 
-    void SetAudioBlock (const juce::dsp::AudioBlock<const float> audio_block);
+    void SetAudioBlock (const immer::box<juce::AudioBuffer<float>> & boxed_buffer);
     void EnableDebugControls (bool enabled);
 
 private:
@@ -29,8 +29,9 @@ private:
 
     DraggableOrientation draggable_orientation_;
 
+    juce::ThreadPool & thread_pool_;
     juce::OpenGLContext open_gl_context_;
-    WaterfallRenderer waterfall_renderer_ {open_gl_context_, draggable_orientation_};
+    WaterfallRenderer waterfall_renderer_ {open_gl_context_, draggable_orientation_, thread_pool_};
 
     juce::Label status_label_;
     juce::TextButton refresh_button_ {"Refresh Shaders"};

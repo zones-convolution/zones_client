@@ -1,17 +1,19 @@
 #include "AudioGraph.h"
 
 AudioGraph::AudioGraph (AudioGraphMetering & input_graph_metering,
-                        AudioGraphMetering & output_graph_metering)
+                        AudioGraphMetering & output_graph_metering,
+                        ConvolutionEngine & convolution_engine)
     : input_graph_metering_ (input_graph_metering)
     , output_graph_metering_ (output_graph_metering)
+    , convolution_engine_ (convolution_engine)
 {
     dry_wet_mixer_.setWetMixProportion (0.5f);
 }
 
 void AudioGraph::prepare (const juce::dsp::ProcessSpec & spec)
 {
-    spec_ = spec;
     dry_wet_mixer_.prepare (spec);
+    convolution_engine_.prepare (spec);
     input_graph_metering_.Prepare (spec.numChannels);
     output_graph_metering_.Prepare (spec.numChannels);
 }
@@ -26,8 +28,7 @@ void AudioGraph::process (const juce::dsp::ProcessContextReplacing<float> & repl
 
     dry_wet_mixer_.pushDrySamples (replacing.getInputBlock ());
 
-    if (is_ready_)
-        time_distributed_nupc_->Process (replacing);
+    convolution_engine_.process (replacing);
 
     dry_wet_mixer_.mixWetSamples (replacing.getOutputBlock ());
     output_block.multiplyBy (output_gain_);
@@ -37,15 +38,7 @@ void AudioGraph::process (const juce::dsp::ProcessContextReplacing<float> & repl
 void AudioGraph::reset ()
 {
     dry_wet_mixer_.reset ();
-}
-
-void AudioGraph::operator() (const CommandQueue::LoadIr & load_ir)
-{
-    time_distributed_nupc_ = std::make_unique<TimeDistributedNUPC> (*load_ir.ir_buffer, spec_);
-    is_ready_ = true;
-
-    delete load_ir
-        .ir_buffer; // ABSOLUTELY HORRIFIC BUT STOPS MEMORY LEAK FOR NOW WHILE USING JUCE'S CONV...
+    convolution_engine_.reset ();
 }
 
 void AudioGraph::operator() (const CommandQueue::UpdateParameters & update_parameters)

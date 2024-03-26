@@ -2,6 +2,8 @@
 
 #include "zones_look_and_feel/LookAndFeel.h"
 
+#include <utility>
+
 const std::filesystem::path WaterfallRenderer::kShaderDirectory = SHADER_DIRECTORY;
 extern "C" const char shaders_graph3d_frag_glsl [];
 extern "C" const unsigned shaders_graph3d_frag_glsl_size;
@@ -12,8 +14,68 @@ extern "C" const unsigned shaders_graph3d_vert_glsl_size;
 extern "C" const char shaders_grid3d_frag_glsl [];
 extern "C" const unsigned shaders_grid3d_frag_glsl_size;
 
+juce::Image ApplyClearBorder (const juce::Image & image)
+{
+    auto image_with_border = image.createCopy ();
+    auto width = image_with_border.getWidth ();
+    auto height = image_with_border.getHeight ();
+    auto clear = juce::Colour::fromRGBA (0.f, 0.f, 0.f, 0.f);
+
+    for (int y = 0; y < height; ++y)
+    {
+        image_with_border.setPixelAt (0, y, clear);
+        image_with_border.setPixelAt (width - 1, y, clear);
+    }
+
+    for (int x = 1; x < width - 1; ++x)
+    {
+        image_with_border.setPixelAt (x, 0, clear);
+        image_with_border.setPixelAt (x, height - 1, clear);
+    }
+
+    return image_with_border;
+}
+
+CreateTextureJob::CreateTextureJob (const immer::box<juce::AudioBuffer<float>> & boxed_buffer,
+                                    std::function<void (const juce::Image & texture)> callback)
+    : ThreadPoolJob ("create_texture_job")
+    , boxed_buffer_ (boxed_buffer)
+    , callback_ (std::move (callback))
+{
+}
+
+juce::ThreadPoolJob::JobStatus CreateTextureJob::runJob ()
+{
+    if (shouldExit ())
+        return jobHasFinished;
+
+    juce::dsp::AudioBlock<const float> block {boxed_buffer_.get ()};
+    if (block.getNumChannels () == 0 || block.getNumSamples () == 0)
+        return jobHasFinished;
+
+    auto spectrogram = Spectrogram::CreateSpectrogram (block);
+    if (shouldExit ())
+        return jobHasFinished;
+
+    auto rescaled = spectrogram.rescaled (256, 256);
+    if (shouldExit ())
+        return jobHasFinished;
+
+    auto with_clear_border = ApplyClearBorder (rescaled);
+    if (shouldExit ())
+        return jobHasFinished;
+
+    // SaveDebugSpectrogram (with_clear_border);
+    // if (shouldExit ())
+    //     return jobHasFinished;
+
+    callback_ (with_clear_border);
+    return jobHasFinished;
+}
+
 WaterfallRenderer::WaterfallRenderer (juce::OpenGLContext & open_gl_context,
-                                      DraggableOrientation & draggable_orientation)
+                                      DraggableOrientation & draggable_orientation,
+                                      juce::ThreadPool & thread_pool)
     : draggable_orientation_ (draggable_orientation)
     , open_gl_context_ (open_gl_context)
     , graph_shader_loader_ (
@@ -28,6 +90,7 @@ WaterfallRenderer::WaterfallRenderer (juce::OpenGLContext & open_gl_context,
                                              .shader_value = shaders_graph3d_vert_glsl},
           DynamicShaderLoader::ShaderLoader {.shader_file = "grid3d.frag.glsl",
                                              .shader_value = shaders_grid3d_frag_glsl})
+    , thread_pool_ (thread_pool)
 {
 }
 
@@ -61,35 +124,17 @@ void SaveDebugSpectrogram (juce::Image & spectrogram)
     png_writer.writeImageToStream (spectrogram.rescaled (256, 256), stream);
 }
 
-juce::Image ApplyClearBorder (const juce::Image & image)
+void WaterfallRenderer::SetupGraphTexture (
+    const immer::box<juce::AudioBuffer<float>> & boxed_buffer)
 {
-    auto image_with_border = image.createCopy ();
-    auto width = image_with_border.getWidth ();
-    auto height = image_with_border.getHeight ();
-    auto clear = juce::Colour::fromRGBA (0.f, 0.f, 0.f, 0.f);
-
-    for (int y = 0; y < height; ++y)
-    {
-        image_with_border.setPixelAt (0, y, clear);
-        image_with_border.setPixelAt (width - 1, y, clear);
-    }
-
-    for (int x = 1; x < width - 1; ++x)
-    {
-        image_with_border.setPixelAt (x, 0, clear);
-        image_with_border.setPixelAt (x, height - 1, clear);
-    }
-
-    return image_with_border;
-}
-
-void WaterfallRenderer::SetupGraphTexture (const juce::dsp::AudioBlock<const float> block)
-{
-    auto spectrogram = Spectrogram::CreateSpectrogram (block);
-    auto rescaled = spectrogram.rescaled (256, 256);
-    auto with_clear_border = ApplyClearBorder (rescaled);
-    waterfall_graph_.LoadTexture (with_clear_border);
-    // SaveDebugSpectrogram (with_clear_border);
+    thread_pool_.removeJob (last_texture_job_, true, 0);
+    last_texture_job_ = new CreateTextureJob (boxed_buffer,
+                                              [&] (const juce::Image & texture)
+                                              {
+                                                  std::lock_guard lock {graph_mutex_};
+                                                  waterfall_graph_.LoadTexture (texture);
+                                              });
+    thread_pool_.addJob (last_texture_job_, true);
 }
 
 static float
@@ -147,11 +192,14 @@ void WaterfallRenderer::renderOpenGL ()
 
     auto vertex_transform = CreateVertexTransform ();
     auto texture_transform = CreateTextureTransform ();
+
+    std::lock_guard lock {graph_mutex_};
     waterfall_graph_.Render (vertex_transform, texture_transform);
 }
 
 void WaterfallRenderer::openGLContextClosing ()
 {
+    std::lock_guard lock {graph_mutex_};
     waterfall_graph_.ContextClosing ();
 }
 
@@ -163,5 +211,6 @@ void WaterfallRenderer::UpdateShaders ()
 
 void WaterfallRenderer::LoadParameters (const WaterfallGraph::Parameters & parameters)
 {
+    std::lock_guard lock {graph_mutex_};
     waterfall_graph_.LoadParameters (parameters);
 }

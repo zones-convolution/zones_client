@@ -11,7 +11,8 @@ set(LINK_COMMON
         model
         layout
         browser
-        editor)
+        editor
+        zones_convolver)
 
 # ##############################################################################
 # SRC

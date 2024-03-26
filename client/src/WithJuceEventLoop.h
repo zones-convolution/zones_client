@@ -8,13 +8,12 @@
 struct WithJuceEventLoop
 {
 private:
-    std::shared_ptr<juce::ThreadPool> thread_pool_;
+    juce::ThreadPool & thread_pool_;
 
 public:
-    WithJuceEventLoop ()
+    WithJuceEventLoop (juce::ThreadPool & thread_pool)
+        : thread_pool_ (thread_pool)
     {
-        thread_pool_ = std::make_shared<juce::ThreadPool> ();
-
         if (! juce::MessageManager::getInstance ()->isThisTheMessageThread ())
             throw std::runtime_error ("WithJuceEventLoop must be created in the message thread!");
     }
@@ -22,13 +21,13 @@ public:
     ~WithJuceEventLoop ()
     {
         static constexpr int kTimeoutMs = 1000;
-        jassert (thread_pool_->removeAllJobs (true, kTimeoutMs));
+        jassert (thread_pool_.removeAllJobs (true, kTimeoutMs));
     }
 
     template <typename Fn>
     void async (Fn && fn)
     {
-        thread_pool_->addJob (std::forward<Fn> (fn));
+        thread_pool_.addJob (std::forward<Fn> (fn));
     }
 
     template <typename Fn>

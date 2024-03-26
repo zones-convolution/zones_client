@@ -1,8 +1,8 @@
-#include "IOPanel.h"
+#include "IOComponent.h"
 
-const std::string IOPanel::kIOPanelKey = "io_panel";
+const std::string IOComponent::kIOPanelKey = "io_panel";
 
-IOPanel::IOPanel (juce::AudioProcessorValueTreeState & parameter_tree)
+IOComponent::IOComponent (juce::AudioProcessorValueTreeState & parameter_tree)
     : dry_wet_mix_attachment_ (parameter_tree,
                                ParameterTree::kDryWetMixParameterId,
                                dry_wet_mix_slider_)
@@ -39,7 +39,7 @@ IOPanel::IOPanel (juce::AudioProcessorValueTreeState & parameter_tree)
     addAndMakeVisible (output_gain_label_);
 }
 
-void IOPanel::resized ()
+void IOComponent::resized ()
 {
     auto dry_wet_layout = LookAndFeel::SliderLabelLayout (dry_wet_mix_slider_, dry_wet_label_);
     auto input_gain_layout = LookAndFeel::SliderLabelLayout (input_gain_slider_, input_gain_label_);
