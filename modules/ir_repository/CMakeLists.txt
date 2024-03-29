@@ -22,9 +22,6 @@ zones_add_test(
         MODULE
         ir_repository
         SOURCES
-        test/io/IrReaderTests.cpp
-        test/io/IrWriterTests.cpp
-        test/IrMetdataTests.cpp
         test/project/ProjectIrPathsTests.cpp
         test/project/ProjectIrRepositoryActionTests.cpp
         test/project/ProjectIrImportControllerTests.cpp

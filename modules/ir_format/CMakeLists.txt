@@ -24,6 +24,8 @@ zones_add_test(
         ir_format
         SOURCES
         test/IrMetadataTests.cpp
+        test/io/IrReaderTests.cpp
+        test/io/IrWriterTests.cpp
         DEPS
         ir_format)
 

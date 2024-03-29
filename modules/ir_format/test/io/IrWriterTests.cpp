@@ -1,5 +1,5 @@
-#include "ir_repository/io/IrReader.h"
-#include "ir_repository/io/IrWriter.h"
+#include "ir_format/io/IrReader.h"
+#include "ir_format/io/IrWriter.h"
 
 #include <catch2/catch_test_macros.hpp>
 
@@ -7,9 +7,14 @@ TEST_CASE ("ir writer can write to disk", "[IrWriter]")
 {
     IrWriter ir_writer;
     IrReader ir_reader;
+
     SECTION ("writes valid metadata")
     {
-        IrMetadata write_ir_metadata {.name = "name", .description = "description"};
+        IrMetadata write_ir_metadata {.channel_format = ChannelFormat::kFoa,
+                                      .position_map =
+                                          PositionMap {.centre = "c", .left = "l", .right = "r"},
+                                      .name = "name",
+                                      .description = "description"};
         auto temp_dir =
             juce::File::getSpecialLocation (juce::File::SpecialLocationType::tempDirectory)
                 .getFullPathName ()
@@ -18,8 +23,14 @@ TEST_CASE ("ir writer can write to disk", "[IrWriter]")
         ir_writer.WriteIrMetadata (temp_dir, ir_identifier, write_ir_metadata);
 
         auto read_ir_metadata = ir_reader.ReadIrMetadata (temp_dir, ir_identifier);
+
         REQUIRE (read_ir_metadata.name == write_ir_metadata.name);
         REQUIRE (read_ir_metadata.description == write_ir_metadata.description);
+        REQUIRE (read_ir_metadata.channel_format == ChannelFormat::kFoa);
+
+        REQUIRE (read_ir_metadata.position_map->centre == "c");
+        REQUIRE (read_ir_metadata.position_map->left == "l");
+        REQUIRE (read_ir_metadata.position_map->right == "r");
 
         auto absolute_path =
             temp_dir / IrDataFormat::GetMetadataFileNameForIdentifier (ir_identifier);
