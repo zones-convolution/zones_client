@@ -2,7 +2,7 @@
 
 AudioGraph::AudioGraph (AudioGraphMetering & input_graph_metering,
                         AudioGraphMetering & output_graph_metering,
-                        ConvolutionEngine & convolution_engine)
+                        zones::ConvolutionEngine & convolution_engine)
     : input_graph_metering_ (input_graph_metering)
     , output_graph_metering_ (output_graph_metering)
     , convolution_engine_ (convolution_engine)

@@ -27,38 +27,39 @@ IrMetadata IrReader::ReadIrMetadata (const std::filesystem::path & load_path,
     return IrMetadata::FromDynamic (ReadJsonFileToDynamic (metadata_file));
 }
 
-IrReader::ProjectData IrReader::GetIrsInPath (const std::filesystem::path & load_path)
-{
-    auto project_directory = juce::File (load_path.string ());
-    auto project_files = project_directory.findChildFiles (
-        juce::File::TypesOfFileToFind::findFiles | juce::File::TypesOfFileToFind::ignoreHiddenFiles,
-        false,
-        "*.json",
-        juce::File::FollowSymlinks::no);
-
-    ProjectData project_data;
-    for (const auto & file : project_files)
-    {
-        std::filesystem::path file_path = file.getFullPathName ().toStdString ();
-        auto ir_identifier = file_path.stem ();
-        project_data = project_data.push_back (
-            std::make_pair (ir_identifier, ReadIrMetadata (load_path, ir_identifier)));
-    }
-
-    return project_data;
-}
+// IrReader::ProjectData IrReader::GetIrsInPath (const std::filesystem::path & load_path)
+//{
+//     auto project_directory = juce::File (load_path.string ());
+//     auto project_files = project_directory.findChildFiles (
+//         juce::File::TypesOfFileToFind::findFiles |
+//         juce::File::TypesOfFileToFind::ignoreHiddenFiles, false,
+//         "*.json",
+//         juce::File::FollowSymlinks::no);
+//
+//     ProjectData project_data;
+//     for (const auto & file : project_files)
+//     {
+//         std::filesystem::path file_path = file.getFullPathName ().toStdString ();
+//         auto ir_identifier = file_path.stem ();
+//         project_data = project_data.push_back (
+//             std::make_pair (ir_identifier, ReadIrMetadata (load_path, ir_identifier)));
+//     }
+//
+//     return project_data;
+// }
 
 void IrReader::ReadAudioFileToIrData (const std::filesystem::path & audio_path, IrData & ir_data)
 {
-    juce::AudioFormatManager audioFormatManager;
-    audioFormatManager.registerBasicFormats ();
+    juce::AudioFormatManager audio_format_manager;
+    audio_format_manager.registerBasicFormats ();
 
     auto ir_file = juce::File (audio_path.string ());
 
     if (! ir_file.existsAsFile ())
         throw NoIrFileException {};
 
-    std::unique_ptr<juce::AudioFormatReader> reader (audioFormatManager.createReaderFor (ir_file));
+    std::unique_ptr<juce::AudioFormatReader> reader (
+        audio_format_manager.createReaderFor (ir_file));
     if (reader.get () == nullptr)
         throw FailedToReadIrException {};
 

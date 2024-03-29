@@ -1,8 +1,10 @@
 #pragma once
+
 #include "../IrData.h"
+#include "../IrMetadata.h"
+#include "juce_audio_formats/juce_audio_formats.h"
 
 #include <filesystem>
-#include <juce_audio_formats/juce_audio_formats.h>
 
 class IrWriter
 {

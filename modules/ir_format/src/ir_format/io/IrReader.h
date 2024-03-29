@@ -1,11 +1,12 @@
 #pragma once
 
 #include "../IrData.h"
+#include "../IrMetadata.h"
+#include "juce_audio_formats/juce_audio_formats.h"
+#include "juce_core/juce_core.h"
 
 #include <filesystem>
 #include <immer/flex_vector.hpp>
-#include <juce_audio_formats/juce_audio_formats.h>
-#include <juce_core/juce_core.h>
 #include <optional>
 #include <variant>
 
@@ -19,8 +20,8 @@ public:
     [[nodiscard]] virtual IrMetadata ReadIrMetadata (const std::filesystem::path & load_path,
                                                      const std::string & ir_identifier);
 
-    using ProjectData = immer::flex_vector<std::pair<std::string, IrMetadata>>;
-    [[nodiscard]] virtual ProjectData GetIrsInPath (const std::filesystem::path & load_path);
+    //    using ProjectData = immer::flex_vector<std::pair<std::string, IrMetadata>>;
+    //    [[nodiscard]] virtual ProjectData GetIrsInPath (const std::filesystem::path & load_path);
 
     struct NoMetadataFileException : std::exception
     {

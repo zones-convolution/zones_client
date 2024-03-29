@@ -1,9 +1,37 @@
 #pragma once
 
-#include "IrMetadata.h"
-
 #include <filesystem>
 #include <juce_audio_basics/juce_audio_basics.h>
+
+enum class TargetFormat
+{
+    kMono,
+    kStereo,
+    kTrueStereo,
+    kFoa
+};
+
+enum class ChannelFormat
+{
+    kMono,
+    kStereo,
+    kFoa,
+};
+
+struct PositionMap
+{
+    std::optional<std::string> centre;
+    std::optional<std::string> left;
+    std::optional<std::string> right;
+};
+
+struct IrFormatData
+{
+    ChannelFormat channel_format;
+    PositionMap position_map;
+
+    [[nodiscard]] bool SupportsTarget (TargetFormat target_format) const;
+};
 
 struct IrData
 {

@@ -13,7 +13,7 @@ class AudioGraph
 public:
     explicit AudioGraph (AudioGraphMetering & input_graph_metering,
                          AudioGraphMetering & output_graph_metering,
-                         ConvolutionEngine & convolution_engine);
+                         zones::ConvolutionEngine & convolution_engine);
     ~AudioGraph () override = default;
     void prepare (const juce::dsp::ProcessSpec & spec) override;
     void process (const juce::dsp::ProcessContextReplacing<float> & replacing) override;
@@ -26,7 +26,7 @@ private:
     AudioGraphMetering & output_graph_metering_;
 
     juce::dsp::DryWetMixer<float> dry_wet_mixer_;
-    ConvolutionEngine & convolution_engine_;
+    zones::ConvolutionEngine & convolution_engine_;
 
     float input_gain_ = 1.f;
     float output_gain_ = 1.f;
