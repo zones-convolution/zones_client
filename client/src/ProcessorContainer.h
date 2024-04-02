@@ -34,7 +34,7 @@ public:
     AudioEngine audio_engine_;
     IrController ir_controller_ {ir_engine_, parameter_tree_};
 
-    ConvolutionEngine convolution_engine_ {thread_pool_};
+    zones::ConvolutionEngine convolution_engine_ {thread_pool_};
 
     lager::store<Action, Model, Deps> store_ =
         lager::make_store<Action> (Model {},

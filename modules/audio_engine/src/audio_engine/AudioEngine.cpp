@@ -2,7 +2,7 @@
 
 AudioEngine::AudioEngine (CommandQueue::VisitorQueue & command_queue,
                           juce::AudioProcessorValueTreeState & parameter_tree,
-                          ConvolutionEngine & convolution_engine)
+                          zones::ConvolutionEngine & convolution_engine)
     : command_queue_ (command_queue)
     , parameter_tree_ (parameter_tree)
     , convolution_engine_ (convolution_engine)
