@@ -61,15 +61,16 @@ private:
     std::shared_ptr<ResamplerProcessor> resampler_processor_ =
         std::make_shared<ResamplerProcessor> ();
 
-    IrGraph ir_graph_ = IrGraph ()
-                            .WithProcessor ({IrGraph::CachePolicy ()
-                                                 .WithPolicyIdentifier ("base_ir_processor")
-                                                 .WithCachedHandle (&IrGraphState::CacheBaseIr),
-                                             base_ir_processor_})
-                            .WithProcessor ({IrGraph::CachePolicy ()
-                                                 .WithPolicyIdentifier ("resampler_processor")
-                                                 .WithCachedHandle (&IrGraphState::CacheRoomSize),
-                                             resampler_processor_});
+    IrGraph ir_graph_ =
+        IrGraph ()
+            .WithProcessor ({IrGraph::CachePolicy ()
+                                 .WithPolicyIdentifier ("base_ir_processor")
+                                 .WithCachedHandle (&IrGraphState::CacheBaseIr),
+                             base_ir_processor_})
+            .WithProcessor ({IrGraph::CachePolicy ()
+                                 .WithPolicyIdentifier ("resampler_processor")
+                                 .WithCachedHandle (&IrGraphState::CacheResamplerRatio),
+                             resampler_processor_});
     //                            .WithProcessor ({IrGraph::CachePolicy ()
     //                                                 .WithPolicyIdentifier ("room_size_processor")
     //                                                 .WithCachedHandle

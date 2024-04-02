@@ -7,6 +7,7 @@ IrController::IrController (IrEngine & ir_engine,
 {
     parameter_tree.addParameterListener (ParameterTree::kRoomSizeParameterId, this);
     parameter_tree.addParameterListener (ParameterTree::kReverbTimeParameterId, this);
+    parameter_tree.addParameterListener (ParameterTree::kResamplerParameterId, this);
 
     UpdateParametersFromTree ();
 }
@@ -46,6 +47,10 @@ void IrController::UpdateParametersFromTree ()
         parameter_tree_.getParameter (ParameterTree::kReverbTimeParameterId);
     current_graph_state_.reverb_time =
         reverb_time_parameter->convertFrom0to1 (reverb_time_parameter->getValue ());
+
+    auto resampler_parameter = parameter_tree_.getParameter (ParameterTree::kResamplerParameterId);
+    current_graph_state_.resampler_ratio =
+        resampler_parameter->convertFrom0to1 (resampler_parameter->getValue ());
 }
 
 void IrController::PerformRender ()
