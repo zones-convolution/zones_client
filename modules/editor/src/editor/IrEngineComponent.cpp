@@ -46,9 +46,9 @@ void IrEngineComponent::resized ()
     juce::FlexBox parameter_layout;
     parameter_layout.flexDirection = juce::FlexBox::Direction::row;
 
+    parameter_layout.items.add (juce::FlexItem (resampler_layout).withFlex (1.f));
     parameter_layout.items.add (juce::FlexItem (room_size_layout).withFlex (1.f));
     parameter_layout.items.add (juce::FlexItem (reverb_time_layout).withFlex (1.f));
-    parameter_layout.items.add (juce::FlexItem (resampler_layout).withFlex (1.f));
 
     juce::FlexBox layout;
     layout.flexDirection = juce::FlexBox::Direction::column;

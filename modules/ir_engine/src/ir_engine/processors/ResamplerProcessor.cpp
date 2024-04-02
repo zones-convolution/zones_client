@@ -1,14 +1,5 @@
 #include "ResamplerProcessor.h"
 
-ResamplerProcessor::ResamplerProcessor ()
-{
-    auto num_channels = 2;
-    for (auto i = 0; i < num_channels; ++i)
-    {
-        interpolators_.push_back (std::make_unique<juce::LagrangeInterpolator> ());
-    }
-}
-
 void ResamplerProcessor::Process (IrGraphProcessor::BoxedBuffer & input_buffer,
                                   juce::AudioBuffer<float> & output_buffer,
                                   const IrGraphState & state)
@@ -17,6 +8,11 @@ void ResamplerProcessor::Process (IrGraphProcessor::BoxedBuffer & input_buffer,
     juce::dsp::AudioBlock<const float> input_block {*buf};
 
     auto num_channels = input_block.getNumChannels ();
+
+    for (auto i = 0; i < num_channels; ++i)
+    {
+        interpolators_.push_back (std::make_unique<juce::LagrangeInterpolator> ());
+    }
 
     auto ratio = state.resampler_ratio;
     if (ratio <= 0.f)
