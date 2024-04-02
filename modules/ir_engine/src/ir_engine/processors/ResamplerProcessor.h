@@ -12,5 +12,4 @@ public:
     ~ResamplerProcessor () override = default;
 
 private:
-    std::vector<std::unique_ptr<juce::LagrangeInterpolator>> interpolators_;
 };

@@ -41,7 +41,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout ParameterTree::CreateParamet
                                                      reverb_time_attributes),
         std::make_unique<juce::AudioParameterFloat> (juce::ParameterID {kResamplerParameterId, 1},
                                                      juce::translate (kResamplerParameterId),
-                                                     juce::NormalisableRange<float> (0.f, 2.f),
+                                                     juce::NormalisableRange<float> (0.1f, 2.f),
                                                      1.0,
                                                      resampler_attributes)};
 }
