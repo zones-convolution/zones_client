@@ -3,6 +3,7 @@
 #include "IrGraph.h"
 #include "juce_core/juce_core.h"
 #include "processors/BaseIrProcessor.h"
+#include "processors/ResamplerProcessor.h"
 #include "processors/ReverbTimeProcessor.h"
 #include "processors/RoomSizeProcessor.h"
 
@@ -57,12 +58,18 @@ private:
         std::make_shared<RoomSizeProcessor> ();
     std::shared_ptr<ReverbTimeProcessor> reverb_time_processor_ =
         std::make_shared<ReverbTimeProcessor> ();
+    std::shared_ptr<ResamplerProcessor> resampler_processor_ =
+        std::make_shared<ResamplerProcessor> ();
 
-    IrGraph ir_graph_ =
-        IrGraph ().WithProcessor ({IrGraph::CachePolicy ()
-                                       .WithPolicyIdentifier ("base_ir_processor")
-                                       .WithCachedHandle (&IrGraphState::CacheBaseIr),
-                                   base_ir_processor_});
+    IrGraph ir_graph_ = IrGraph ()
+                            .WithProcessor ({IrGraph::CachePolicy ()
+                                                 .WithPolicyIdentifier ("base_ir_processor")
+                                                 .WithCachedHandle (&IrGraphState::CacheBaseIr),
+                                             base_ir_processor_})
+                            .WithProcessor ({IrGraph::CachePolicy ()
+                                                 .WithPolicyIdentifier ("resampler_processor")
+                                                 .WithCachedHandle (&IrGraphState::CacheRoomSize),
+                                             resampler_processor_});
     //                            .WithProcessor ({IrGraph::CachePolicy ()
     //                                                 .WithPolicyIdentifier ("room_size_processor")
     //                                                 .WithCachedHandle

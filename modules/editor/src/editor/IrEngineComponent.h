@@ -27,4 +27,9 @@ private:
     juce::Slider reverb_time_slider_ {juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag,
                                       juce::Slider::TextEntryBoxPosition::NoTextBox};
     ParameterTree::SliderAttachment reverb_time_attachment_;
+
+    juce::Label resampler_label_;
+    juce::Slider resampler_slider_ {juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag,
+                                    juce::Slider::TextEntryBoxPosition::NoTextBox};
+    ParameterTree::SliderAttachment resampler_attachment_;
 };

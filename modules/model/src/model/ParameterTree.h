@@ -16,6 +16,7 @@ public:
 
     static const juce::String kReverbTimeParameterId;
     static const juce::String kRoomSizeParameterId;
+    static const juce::String kResamplerParameterId;
 
     static juce::AudioProcessorValueTreeState::ParameterLayout CreateParameterLayout ();
 };

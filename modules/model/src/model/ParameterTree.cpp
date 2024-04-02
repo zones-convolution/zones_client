@@ -8,11 +8,13 @@ const juce::String ParameterTree::kOutputGainParameterId {"output_gain_parameter
 
 const juce::String ParameterTree::kReverbTimeParameterId {"reverb_time_parameter"};
 const juce::String ParameterTree::kRoomSizeParameterId {"room_size_parameter"};
+const juce::String ParameterTree::kResamplerParameterId {"resampler_parameter"};
 
 juce::AudioProcessorValueTreeState::ParameterLayout ParameterTree::CreateParameterLayout ()
 {
     auto room_size_attributes = juce::AudioParameterFloatAttributes ().withAutomatable (false);
     auto reverb_time_attributes = juce::AudioParameterFloatAttributes ().withAutomatable (false);
+    auto resampler_attributes = juce::AudioParameterFloatAttributes ().withAutomatable (false);
 
     return {
         std::make_unique<juce::AudioParameterFloat> (juce::ParameterID {kDryWetMixParameterId, 1},
@@ -36,5 +38,10 @@ juce::AudioProcessorValueTreeState::ParameterLayout ParameterTree::CreateParamet
                                                      juce::translate (kReverbTimeParameterId),
                                                      juce::NormalisableRange<float> (0.f, 1.f),
                                                      1.0,
-                                                     reverb_time_attributes)};
+                                                     reverb_time_attributes),
+        std::make_unique<juce::AudioParameterFloat> (juce::ParameterID {kResamplerParameterId, 1},
+                                                     juce::translate (kResamplerParameterId),
+                                                     juce::NormalisableRange<float> (0.1f, 2.f),
+                                                     1.0,
+                                                     resampler_attributes)};
 }
