@@ -12,4 +12,5 @@ public:
     ~ResamplerProcessor () override = default;
 
 private:
+    juce::LagrangeInterpolator interpolator_;
 };
