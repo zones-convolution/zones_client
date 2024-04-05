@@ -1,0 +1,10 @@
+{
+  "name": "Stereo",
+  "description": "valid_description",
+  "channel_format": "stereo",
+  "position_map": {
+    "centre": "centre",
+    "left": "left",
+    "right": "right"
+  }
+}
