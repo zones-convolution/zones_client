@@ -16,7 +16,8 @@ zones_add_module(
         juce::juce_audio_formats
         lager
         immer
-        ir_engine)
+        ir_engine
+        ir_format)
 
 zones_add_test(
         MODULE

@@ -24,6 +24,7 @@ zones_add_module(
         DEPS
         model
         ir_repository
+        ir_format
         audio_engine
         lager
         immer

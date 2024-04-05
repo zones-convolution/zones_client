@@ -6,6 +6,8 @@ zones_add_module(
         src/ir_format/IrMetadata.cpp
         src/ir_format/IrFormatter.h
         src/ir_format/IrFormatter.cpp
+        src/ir_format/formatter/MonoFormatter.h
+        src/ir_format/formatter/MonoFormatter.cpp
         src/ir_format/formatter/StereoFormatter.h
         src/ir_format/formatter/StereoFormatter.cpp
         src/ir_format/io/IrReader.h

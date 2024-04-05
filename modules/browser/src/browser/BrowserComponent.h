@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ir_repository/io/IrReader.h"
+#include "ir_format/io/IrReader.h"
 #include "ir_repository/project/ProjectIrPaths.h"
 #include "ir_repository/project/ProjectIrRepositoryAction.h"
 #include "ir_repository/project/ProjectIrRepositoryModel.h"

@@ -1,8 +1,8 @@
 #pragma once
 
 #include "IrEngine.h"
-#include "ir_repository/IrData.h"
-#include "ir_repository/IrMetadata.h"
+#include "ir_format/IrData.h"
+#include "ir_format/IrMetadata.h"
 #include "model/ParameterTree.h"
 
 class IrController

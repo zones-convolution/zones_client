@@ -1,8 +1,8 @@
 #include "ImportProjectIrEffect.h"
 
-#include "../../io/IrReader.h"
-#include "../../io/IrWriter.h"
 #include "../ProjectIrPaths.h"
+#include "ir_format/io/IrReader.h"
+#include "ir_format/io/IrWriter.h"
 
 static void TransferIrToProject (const std::filesystem::path & project_path,
                                  const ImportProjectIr & import_project_ir)

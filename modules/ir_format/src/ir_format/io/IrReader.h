@@ -20,8 +20,9 @@ public:
     [[nodiscard]] virtual IrMetadata ReadIrMetadata (const std::filesystem::path & load_path,
                                                      const std::string & ir_identifier);
 
-    //    using ProjectData = immer::flex_vector<std::pair<std::string, IrMetadata>>;
-    //    [[nodiscard]] virtual ProjectData GetIrsInPath (const std::filesystem::path & load_path);
+    // kept for browser component
+    using ProjectData = immer::flex_vector<std::pair<std::string, IrMetadata>>;
+    [[nodiscard]] virtual ProjectData GetIrsInPath (const std::filesystem::path & load_path);
 
     struct NoMetadataFileException : std::exception
     {

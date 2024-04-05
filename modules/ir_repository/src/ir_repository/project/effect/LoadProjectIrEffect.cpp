@@ -1,8 +1,8 @@
 #include "LoadProjectIrEffect.h"
 
-#include "../../io/IrReader.h"
 #include "../ProjectIrPaths.h"
 #include "ir_engine/IrController.h"
+#include "ir_format/io/IrReader.h"
 
 static void LoadProjectIr (const std::filesystem::path & project_path,
                            const std::string & ir_identifier,

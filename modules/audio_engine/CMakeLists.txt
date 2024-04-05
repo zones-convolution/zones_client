@@ -13,6 +13,7 @@ zones_add_module(
         DEPS
         model
         ir_repository
+        ir_format
         choc
         zones_convolver
         juce::juce_core
