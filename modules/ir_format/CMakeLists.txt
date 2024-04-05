@@ -10,6 +10,8 @@ zones_add_module(
         src/ir_format/formatter/MonoFormatter.cpp
         src/ir_format/formatter/StereoFormatter.h
         src/ir_format/formatter/StereoFormatter.cpp
+        src/ir_format/formatter/FoaFormatter.h
+        src/ir_format/formatter/FoaFormatter.cpp
         src/ir_format/io/IrReader.h
         src/ir_format/io/IrReader.cpp
         src/ir_format/io/IrWriter.h
