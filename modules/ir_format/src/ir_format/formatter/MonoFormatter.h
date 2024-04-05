@@ -1,12 +1,15 @@
-//
-// Created by Micah Strange on 05/04/2024.
-//
+#pragma once
 
-#ifndef ZONES_MODULES_IR_FORMAT_SRC_IR_FORMAT_FORMATTER_MONOFORMATTER_H_
-#define ZONES_MODULES_IR_FORMAT_SRC_IR_FORMAT_FORMATTER_MONOFORMATTER_H_
+#include "../IrData.h"
 
-class MonoFormatter
+#include <filesystem>
+#include <juce_audio_basics/juce_audio_basics.h>
+
+namespace MonoFormatter
 {
-};
-
-#endif // ZONES_MODULES_IR_FORMAT_SRC_IR_FORMAT_FORMATTER_MONOFORMATTER_H_
+bool SupportsTarget (const IrFormatData & ir_format_data, TargetFormat target_format);
+void Format (const std::filesystem::path & load_path,
+             const IrFormatData & ir_format_data,
+             TargetFormat target_format,
+             IrData & ir_data);
+}

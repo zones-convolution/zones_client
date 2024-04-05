@@ -10,7 +10,7 @@ bool StereoFormatter::SupportsTarget (const IrFormatData & ir_format_data,
     switch (target_format)
     {
         case TargetFormat::kMono:
-            return ir_format_data.position_map.centre.has_value ();
+            return true;
         case TargetFormat::kStereo:
             return true;
         case TargetFormat::kTrueStereo:
