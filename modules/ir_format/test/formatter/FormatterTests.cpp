@@ -10,6 +10,12 @@ static std::filesystem::path kMonoTestDataDirectory =
 static std::filesystem::path kStereoTestDataDirectory =
     kTestDataDirectory / std::filesystem::path {"Stereo"};
 
+static void RequirePreservesSamplingData (const IrData & a, const IrData & b)
+{
+    REQUIRE (a.bit_depth == b.bit_depth);
+    REQUIRE (a.sample_rate == b.sample_rate);
+}
+
 TEST_CASE ("mono formatter correctly loads files", "[MonoFormatter]")
 {
     IrFormatData ir_format_data {.channel_format = ChannelFormat::kMono,
@@ -22,11 +28,10 @@ TEST_CASE ("mono formatter correctly loads files", "[MonoFormatter]")
     IrData ir_data;
     MonoFormatter::Format (kMonoTestDataDirectory, ir_format_data, TargetFormat::kMono, ir_data);
 
-    REQUIRE (ir_data.buffer.getNumChannels () == correct_ir_data.buffer.getNumChannels ());
+    REQUIRE (ir_data.buffer.getNumChannels () == 1);
     REQUIRE (ir_data.buffer.getNumSamples () == correct_ir_data.buffer.getNumSamples ());
 
-    REQUIRE (ir_data.bit_depth == correct_ir_data.bit_depth);
-    REQUIRE (ir_data.sample_rate == correct_ir_data.sample_rate);
+    RequirePreservesSamplingData (correct_ir_data, ir_data);
 }
 
 TEST_CASE ("stereo formatter correctly loads files", "[StereoFormatter]")
