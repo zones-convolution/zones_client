@@ -3,17 +3,17 @@
 const PanelComponent::ColourPair SidebarFooter::kIrPanelGradient = {juce::Colours::darkmagenta,
                                                                     juce::Colours::darkorange};
 
-SidebarFooter::SidebarFooter (const lager::reader<CurrentProjectIrOptional> & project_ir_reader,
+SidebarFooter::SidebarFooter (const lager::reader<std::optional<std::filesystem::path>> & ir_reader,
                               AudioGraphMetering & input_graph_metering,
                               AudioGraphMetering & output_graph_metering)
-    : project_ir_reader_ (project_ir_reader)
+    : ir_reader_ (ir_reader)
     , ir_label_panel_ (ir_label_, kIrPanelGradient)
 {
     addAndMakeVisible (ir_label_panel_);
     addAndMakeVisible (meter_component_);
 
     UpdateIrLabel ();
-    lager::watch (project_ir_reader_, [&] (const auto &) { UpdateIrLabel (); });
+    lager::watch (ir_reader_, [&] (const auto &) { UpdateIrLabel (); });
 
     auto create_meter_delegate = [] (AudioGraphMetering & graph_metering, int channel_index)
     {
@@ -51,7 +51,6 @@ void SidebarFooter::resized ()
 void SidebarFooter::UpdateIrLabel ()
 {
     static const auto kNoIrLabelText = "No Ir Loaded!";
-    auto ir_label_text =
-        project_ir_reader_->has_value () ? project_ir_reader_->value () : kNoIrLabelText;
+    auto ir_label_text = ir_reader_->has_value () ? ir_reader_->value ().string () : kNoIrLabelText;
     ir_label_.setText (ir_label_text, juce::dontSendNotification);
 }

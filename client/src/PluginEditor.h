@@ -38,39 +38,39 @@ private:
     const lager::reader<Model> model_;
 
     lager::context<Action> context_;
-    lager::context<ProjectIrRepositoryAction> project_ir_repository_context_ {context_};
+    lager::context<IrLoadingAction> ir_loading_context_ {context_};
 
     LookAndFeel look_and_feel_;
 
     EditorComponent editor_;
 
     BrowserComponent browser_;
-    PanelComponent browser_panel_{browser_};
+    PanelComponent browser_panel_ {browser_};
 
     AccountComponent account_component_;
     PanelComponent settings_panel_ {account_component_};
 
     TabsComponent tabs_component_;
-    TabsController tabs_controller_{tabs_component_};
+    TabsController tabs_controller_ {tabs_component_};
 
     lager::store<TabsAction, TabsModel> store_ = lager::make_store<TabsAction> (
-        TabsModel{},
-        lager::with_manual_event_loop{},
+        TabsModel {},
+        lager::with_manual_event_loop {},
         lager::with_deps (std::reference_wrapper<TabsControllerDelegate> (tabs_controller_)),
         lager::with_reducer (UpdateTabs));
 
     SidebarHeader sidebar_header_;
-    PanelComponent sidebar_header_panel_{sidebar_header_};
+    PanelComponent sidebar_header_panel_ {sidebar_header_};
 
-    SidebarContent sidebar_content_{store_};
-    PanelComponent sidebar_content_panel_{sidebar_content_};
+    SidebarContent sidebar_content_ {store_};
+    PanelComponent sidebar_content_panel_ {sidebar_content_};
 
     SidebarFooter sidebar_footer_;
-    PanelComponent sidebar_footer_panel_{sidebar_footer_};
+    PanelComponent sidebar_footer_panel_ {sidebar_footer_};
 
-    SidebarComponent sidebar_component_{sidebar_header_panel_,
-                                        sidebar_content_panel_,
-                                        sidebar_footer_panel_};
+    SidebarComponent sidebar_component_ {sidebar_header_panel_,
+                                         sidebar_content_panel_,
+                                         sidebar_footer_panel_};
 
     IrEngine & ir_engine_;
 

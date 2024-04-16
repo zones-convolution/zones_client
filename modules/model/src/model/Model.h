@@ -1,10 +1,10 @@
 #pragma once
 
 #include "account/AccountModel.h"
-#include "ir_repository/project/ProjectIrRepositoryModel.h"
+#include "ir_repository/project/IrLoadingModel.h"
 
 struct Model
 {
-    ProjectIrRepositoryModel project_ir_repository_model;
+    IrLoadingModel ir_loading_model;
     AccountModel account_model;
 };

@@ -2,15 +2,11 @@ zones_add_module(
         MODULE
         ir_repository
         SOURCES
-        src/ir_repository/project/ProjectIrPaths.h
-        src/ir_repository/project/ProjectIrPaths.cpp
-        src/ir_repository/project/ProjectIrRepositoryModel.h
-        src/ir_repository/project/ProjectIrRepositoryAction.h
-        src/ir_repository/project/ProjectIrRepositoryAction.cpp
-        src/ir_repository/project/effect/ImportProjectIrEffect.h
-        src/ir_repository/project/effect/ImportProjectIrEffect.cpp
-        src/ir_repository/project/effect/LoadProjectIrEffect.h
-        src/ir_repository/project/effect/LoadProjectIrEffect.cpp
+        src/ir_repository/project/IrLoadingModel.h
+        src/ir_repository/project/IrLoadingAction.h
+        src/ir_repository/project/IrLoadingAction.cpp
+        src/ir_repository/project/effect/LoadIrEffect.h
+        src/ir_repository/project/effect/LoadIrEffect.cpp
         DEPS
         juce::juce_audio_basics
         juce::juce_audio_formats

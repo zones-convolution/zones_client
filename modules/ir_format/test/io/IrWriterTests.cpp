@@ -22,7 +22,8 @@ TEST_CASE ("ir writer can write to disk", "[IrWriter]")
         auto ir_identifier = juce::Uuid ().toString ().toStdString ();
         ir_writer.WriteIrMetadata (temp_dir, ir_identifier, write_ir_metadata);
 
-        auto read_ir_metadata = ir_reader.ReadIrMetadata (temp_dir, ir_identifier);
+        auto read_ir_metadata =
+            ir_reader.ReadIrMetadata (std::filesystem::path (temp_dir) / ir_identifier);
 
         REQUIRE (read_ir_metadata.name == write_ir_metadata.name);
         REQUIRE (read_ir_metadata.description == write_ir_metadata.description);

@@ -14,7 +14,7 @@ TEST_CASE ("ir_reader can read from disk", "[IrReader]")
 
     SECTION ("reads valid metadata")
     {
-        auto ir_metadata = ir_reader.ReadIrMetadata (kTestDataDirectory, kValidIrIdentifier);
+        auto ir_metadata = ir_reader.ReadIrMetadata (kTestDataDirectory / kValidIrIdentifier);
 
         REQUIRE (ir_metadata.name == "valid_name");
         REQUIRE (ir_metadata.description == "valid_description");
@@ -27,7 +27,7 @@ TEST_CASE ("ir_reader can read from disk", "[IrReader]")
 
     SECTION ("throws NoMetadataFileException when metadata file does not exist")
     {
-        REQUIRE_THROWS_AS (ir_reader.ReadIrMetadata (kTestDataDirectory, kNonExistentIr),
+        REQUIRE_THROWS_AS (ir_reader.ReadIrMetadata (kTestDataDirectory / kNonExistentIr),
                            IrReader::NoMetadataFileException);
     }
 

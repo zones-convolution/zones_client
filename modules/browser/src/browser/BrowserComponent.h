@@ -1,9 +1,8 @@
 #pragma once
 
 #include "ir_format/io/IrReader.h"
-#include "ir_repository/project/ProjectIrPaths.h"
-#include "ir_repository/project/ProjectIrRepositoryAction.h"
-#include "ir_repository/project/ProjectIrRepositoryModel.h"
+#include "ir_repository/project/IrLoadingAction.h"
+#include "ir_repository/project/IrLoadingModel.h"
 
 #include <juce_gui_basics/juce_gui_basics.h>
 #include <lager/reader.hpp>
@@ -11,38 +10,30 @@
 class BrowserComponent : public juce::Component
 {
 public:
-    BrowserComponent (const lager::reader<ProjectIrRepositoryModel> & project_ir_reader,
-                      lager::context<ProjectIrRepositoryAction> & project_ir_context);
+    BrowserComponent (const lager::reader<IrLoadingModel> & ir_loading_reader,
+                      lager::context<IrLoadingAction> & ir_loading_context);
 
 private:
-    static const juce::String kProjectPickerDialogTitle;
-    static const juce::String kIrPickerDialogTitle;
+    static const juce::String kPathPickerDialogTitle;
 
-    void DisplayProjectPaths ();
     void DisplayCurrentIr ();
     void UpdateIrList ();
 
-    void AddProjectPath ();
-    void ImportProjectIr ();
-    void SelectProjectIr () const;
+    void AddPath ();
+    void SelectIr () const;
 
     void resized () override;
 
-    juce::TextButton add_project_path_button_ {"Add Project Path"};
-    juce::TextButton import_project_ir_button_ {"Import Project Ir"};
+    lager::reader<IrLoadingModel> ir_loading_reader_;
+    lager::context<IrLoadingAction> ir_loading_context_;
+    lager::reader<std::optional<std::filesystem::path>> ir_reader_;
 
-    juce::ComboBox project_ir_combo_box_ {};
+    juce::TextButton add_path_button_ {"Add Path"};
+    immer::flex_vector<std::filesystem::path> current_paths_;
 
-    juce::Label current_project_paths_;
-    juce::Label current_ir_;
+    juce::ComboBox ir_combo_box_ {};
+    juce::Label current_ir_label_;
 
-    lager::reader<ProjectIrRepositoryModel> project_ir_reader_;
-    lager::context<ProjectIrRepositoryAction> project_ir_context_;
-    lager::reader<immer::flex_vector<std::filesystem::path>> project_paths_reader_;
-    lager::reader<CurrentProjectIrOptional> current_ir_reader_;
-    lager::reader<ProjectIrLoadingState> importing_state_reader_;
-
-    IrReader::ProjectData project_data_;
     std::unique_ptr<juce::FileChooser> directory_picker_;
     std::unique_ptr<juce::FileChooser> ir_picker_;
 };

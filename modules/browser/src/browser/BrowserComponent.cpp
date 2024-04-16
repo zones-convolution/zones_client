@@ -2,133 +2,83 @@
 
 #include "zones_look_and_feel/LookAndFeel.h"
 
-const juce::String BrowserComponent::kProjectPickerDialogTitle = "Pick Project Directory";
-const juce::String BrowserComponent::kIrPickerDialogTitle = "Pick Ir Directory";
+const juce::String BrowserComponent::kPathPickerDialogTitle = "Pick Project Directory";
 
-BrowserComponent::BrowserComponent (
-    const lager::reader<ProjectIrRepositoryModel> & project_ir_reader,
-    lager::context<ProjectIrRepositoryAction> & project_ir_context)
-    : project_ir_reader_ (project_ir_reader)
-    , project_ir_context_ (project_ir_context)
-    , project_paths_reader_ (ProjectIrRepositoryModel::ProjectPathsReader (project_ir_reader))
-    , current_ir_reader_ (project_ir_reader [&ProjectIrRepositoryModel::current_project_ir])
-    , importing_state_reader_ (
-          ProjectIrRepositoryModel::ImportingProjectIrStateReader (project_ir_reader))
+BrowserComponent::BrowserComponent (const lager::reader<IrLoadingModel> & ir_loading_reader,
+                                    lager::context<IrLoadingAction> & ir_loading_context)
+    : ir_loading_reader_ (ir_loading_reader)
+    , ir_loading_context_ (ir_loading_context)
+    , ir_reader_ (ir_loading_reader [&IrLoadingModel::ir_path])
 {
-    addAndMakeVisible (current_project_paths_);
-    addAndMakeVisible (current_ir_);
-    addAndMakeVisible (add_project_path_button_);
-    addAndMakeVisible (import_project_ir_button_);
-    addAndMakeVisible (project_ir_combo_box_);
+    addAndMakeVisible (current_ir_label_);
+    addAndMakeVisible (add_path_button_);
+    addAndMakeVisible (ir_combo_box_);
 
-    UpdateIrList ();
-    DisplayProjectPaths ();
     DisplayCurrentIr ();
 
-    lager::watch (project_paths_reader_,
-                  [&] (const auto &)
-                  {
-                      DisplayProjectPaths ();
-                      UpdateIrList ();
-                  });
-
-    lager::watch (current_ir_reader_,
+    lager::watch (ir_reader_,
                   [&] (const auto &)
                   {
                       DisplayCurrentIr ();
                       UpdateIrList ();
                   });
 
-    import_project_ir_button_.setEnabled (false);
-    add_project_path_button_.onClick = [&] { AddProjectPath (); };
-    import_project_ir_button_.onClick = [&] { ImportProjectIr (); };
-    project_ir_combo_box_.onChange = [&] { SelectProjectIr (); };
+    add_path_button_.onClick = [&] { AddPath (); };
+    ir_combo_box_.onChange = [&] { SelectIr (); };
 }
 
-void BrowserComponent::SelectProjectIr () const
+void BrowserComponent::SelectIr () const
 {
-    auto & [identifier, _] = project_data_ [project_ir_combo_box_.getSelectedItemIndex ()];
-    project_ir_context_.dispatch (LoadProjectIrAction {.ir_identifier = identifier});
-}
-
-void BrowserComponent::DisplayProjectPaths ()
-{
-    auto project_paths = project_paths_reader_.get ();
-    std::string path_list = "Project Paths: ";
-    for (auto & project_path : project_paths)
-        path_list += project_path.string () + ",";
-
-    current_project_paths_.setText (path_list, juce::dontSendNotification);
-    if (! project_paths.empty ())
-        import_project_ir_button_.setEnabled (true);
+    ir_loading_context_.dispatch (LoadIrAction {
+        .search_paths = current_paths_, .ir_path = ir_combo_box_.getText ().toStdString ()});
 }
 
 void BrowserComponent::DisplayCurrentIr ()
 {
-    auto current_project_ir = current_ir_reader_.get ();
-    if (current_project_ir.has_value ())
-        current_ir_.setText ("Current Ir: " + current_project_ir.value (),
-                             juce::dontSendNotification);
+    auto ir = ir_reader_.get ();
+    if (ir.has_value ())
+        current_ir_label_.setText ("Ir: " + ir.value ().string (), juce::dontSendNotification);
 }
 
 void BrowserComponent::UpdateIrList ()
 {
     IrReader ir_reader;
-    project_ir_combo_box_.clear (juce::NotificationType::dontSendNotification);
+    ir_combo_box_.clear (juce::NotificationType::dontSendNotification);
 
-    auto load_path = GetAvailableProjectPath (*project_ir_reader_);
-    if (! load_path.has_value ())
-        return;
-    auto ir_list = ir_reader.GetIrsInPath (load_path.value ());
-    project_data_ = ir_list;
-
-    for (auto item_number = 0; item_number < ir_list.size (); ++item_number)
+    std::vector<std::string> ir_paths;
+    for (auto & path : current_paths_)
     {
-        auto identifier = ir_list [item_number].first;
-        project_ir_combo_box_.addItem (identifier, item_number + 1);
-    }
-}
+        auto search_directory = juce::File (path.string ());
+        auto ir_files =
+            search_directory.findChildFiles (juce::File::TypesOfFileToFind::findDirectories, false);
 
-void BrowserComponent::ImportProjectIr ()
-{
-    ir_picker_ = std::make_unique<juce::FileChooser> (kIrPickerDialogTitle);
-    auto directory_flags =
-        juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectFiles;
-    ir_picker_->launchAsync (
-        directory_flags,
-        [&] (const juce::FileChooser & chooser)
+        for (const auto & ir_file : ir_files)
         {
-            std::filesystem::path ir_path = chooser.getResult ().getFullPathName ().toStdString ();
-            auto identifier = ir_path.stem ();
+            auto ir_path =
+                std::filesystem::path (ir_file.getFullPathName ().toStdString ()).stem ();
+            ir_paths.push_back (ir_path);
+        }
+    }
 
-            lager::watch (importing_state_reader_,
-                          [&] (const ProjectIrLoadingState & state)
-                          {
-                              if (state == ProjectIrLoadingState::kSuccess)
-                                  project_ir_context_.dispatch (
-                                      LoadProjectIrAction {.ir_identifier = identifier});
-                          });
-
-            project_ir_context_.dispatch (ImportProjectIrAction {.import_project_ir {
-                .ir_path = ir_path,
-                .name = ir_path.stem (),
-                .description = "None",
-            }});
-        });
+    for (auto i = 0; i < ir_paths.size (); ++i)
+        ir_combo_box_.addItem (ir_paths [i], i + 1);
 }
 
-void BrowserComponent::AddProjectPath ()
+void BrowserComponent::AddPath ()
 {
-    directory_picker_ = std::make_unique<juce::FileChooser> (kProjectPickerDialogTitle);
+    directory_picker_ = std::make_unique<juce::FileChooser> (kPathPickerDialogTitle);
     auto directory_flags =
         juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectDirectories;
-    directory_picker_->launchAsync (
-        directory_flags,
-        [&] (const juce::FileChooser & chooser)
-        {
-            project_ir_context_.dispatch (AddProjectPathAction {
-                .project_path = chooser.getResult ().getFullPathName ().toStdString ()});
-        });
+
+    directory_picker_->launchAsync (directory_flags,
+                                    [&] (const juce::FileChooser & chooser)
+                                    {
+                                        auto path_name =
+                                            chooser.getResult ().getFullPathName ().toStdString ();
+                                        current_paths_ = current_paths_.push_back (
+                                            chooser.getResult ().getFullPathName ().toStdString ());
+                                        UpdateIrList ();
+                                    });
 }
 
 void BrowserComponent::resized ()
@@ -136,15 +86,11 @@ void BrowserComponent::resized ()
     juce::FlexBox layout;
     layout.flexDirection = juce::FlexBox::Direction::column;
 
-    layout.items.add (LookAndFeel::LabelFlexItem (current_project_paths_));
+    layout.items.add (LookAndFeel::ButtonFlexItem (add_path_button_));
     layout.items.add (LookAndFeel::kFlexSpacer);
-    layout.items.add (LookAndFeel::ButtonFlexItem (add_project_path_button_));
+    layout.items.add (LookAndFeel::LabelFlexItem (current_ir_label_));
     layout.items.add (LookAndFeel::kFlexSpacer);
-    layout.items.add (LookAndFeel::ButtonFlexItem (import_project_ir_button_));
-    layout.items.add (LookAndFeel::kFlexSpacer);
-    layout.items.add (LookAndFeel::LabelFlexItem (current_ir_));
-    layout.items.add (LookAndFeel::kFlexSpacer);
-    layout.items.add (LookAndFeel::ComboFlexItem (project_ir_combo_box_));
+    layout.items.add (LookAndFeel::ComboFlexItem (ir_combo_box_));
 
     layout.performLayout (getLocalBounds ().toFloat ());
 }
