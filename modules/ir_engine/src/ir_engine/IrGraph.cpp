@@ -31,7 +31,8 @@ IrGraph::Process (const IrGraphState & state,
     auto keys = GetKeysForState (state);
     std::optional<IrGraphProcessor::BoxedBuffer> last_result;
 
-    for (auto processor_index = 0; processor_index < processors_.size (); ++processor_index)
+    auto num_processors = processors_.size ();
+    for (auto processor_index = 0; processor_index < num_processors; ++processor_index)
     {
         if (abort_callback ())
             return std::nullopt;
@@ -41,6 +42,9 @@ IrGraph::Process (const IrGraphState & state,
 
         if (result.has_value ())
         {
+            if (processor_index == num_processors - 1)
+                return std::nullopt;
+
             last_result = result;
             continue;
         }
