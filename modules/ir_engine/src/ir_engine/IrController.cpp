@@ -37,7 +37,7 @@ void IrController::LoadIr (const std::filesystem::path & absolute_ir_path)
     };
 
     IrData ir_data;
-    CreateTargetIR (absolute_ir_path, ir_format_data, TargetFormat::kStereo, ir_data);
+    CreateTargetIR (absolute_ir_path, ir_format_data, TargetFormat::kTrueStereo, ir_data);
 
     std::lock_guard lock {current_graph_state_mutex_};
 

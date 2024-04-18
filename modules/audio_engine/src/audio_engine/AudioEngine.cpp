@@ -17,7 +17,9 @@ void AudioEngine::RenderFinished (IrGraphState state, IrGraphProcessor::BoxedBuf
     if (render_result->getNumChannels () == 0 || render_result->getNumSamples () == 0)
         return;
 
-    convolution_engine_.LoadIR (*render_result);
+    convolution_engine_.LoadIR (*render_result,
+                                zones::Convolver::ConvolverSpec {.input_routing = {0, 0, 1, 1},
+                                                                 .output_routing = {0, 1, 0, 1}});
 }
 
 void AudioEngine::parameterChanged (const juce::String & parameterID, float newValue)
