@@ -11,6 +11,7 @@ struct LoadIrAction
 {
     immer::flex_vector<std::filesystem::path> search_paths;
     std::filesystem::path ir_path;
+    TargetFormat target_format;
 };
 
 struct LoadIrSuccessAction

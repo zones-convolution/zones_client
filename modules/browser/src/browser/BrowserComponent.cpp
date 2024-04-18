@@ -29,8 +29,9 @@ BrowserComponent::BrowserComponent (const lager::reader<IrLoadingModel> & ir_loa
 
 void BrowserComponent::SelectIr () const
 {
-    ir_loading_context_.dispatch (LoadIrAction {
-        .search_paths = current_paths_, .ir_path = ir_combo_box_.getText ().toStdString ()});
+    ir_loading_context_.dispatch (LoadIrAction {.search_paths = current_paths_,
+                                                .ir_path = ir_combo_box_.getText ().toStdString (),
+                                                .target_format = TargetFormat::kStereo});
 }
 
 void BrowserComponent::DisplayCurrentIr ()

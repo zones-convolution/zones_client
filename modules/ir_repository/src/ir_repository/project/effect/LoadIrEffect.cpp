@@ -28,7 +28,7 @@ void LoadIrEffect (const IrLoadingModel & model,
                     if (! std::filesystem::exists (absolute_ir_path))
                         continue;
 
-                    ir_controller.LoadIr (absolute_ir_path);
+                    ir_controller.LoadIr (absolute_ir_path, load_ir_action.target_format);
                     context.dispatch (LoadIrSuccessAction {.ir_path = ir_path});
                     return;
                 }

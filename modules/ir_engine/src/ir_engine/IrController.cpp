@@ -26,7 +26,8 @@ void IrController::timerCallback ()
     stopTimer ();
 }
 
-void IrController::LoadIr (const std::filesystem::path & absolute_ir_path)
+void IrController::LoadIr (const std::filesystem::path & absolute_ir_path,
+                           TargetFormat target_format)
 {
     IrReader ir_reader;
     auto metadata = ir_reader.ReadIrMetadata (absolute_ir_path);
@@ -37,10 +38,11 @@ void IrController::LoadIr (const std::filesystem::path & absolute_ir_path)
     };
 
     IrData ir_data;
-    CreateTargetIR (absolute_ir_path, ir_format_data, TargetFormat::kTrueStereo, ir_data);
+    CreateTargetIR (absolute_ir_path, ir_format_data, target_format, ir_data);
 
     std::lock_guard lock {current_graph_state_mutex_};
 
+    current_graph_state_.target_format = target_format;
     current_graph_state_.base_ir_buffer = IrGraphProcessor::BoxedBuffer {ir_data.buffer};
     current_graph_state_.sample_rate = ir_data.sample_rate;
     current_graph_state_.bit_depth = ir_data.bit_depth;

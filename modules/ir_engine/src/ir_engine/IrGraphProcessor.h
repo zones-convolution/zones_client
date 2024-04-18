@@ -1,6 +1,9 @@
 #pragma once
-#include "immer/box.hpp"
-#include "juce_dsp/juce_dsp.h"
+
+#include "ir_format/IrData.h"
+
+#include <immer/box.hpp>
+#include <juce_dsp/juce_dsp.h>
 
 struct IrGraphState;
 
@@ -17,6 +20,7 @@ public:
 
 struct IrGraphState
 {
+    TargetFormat target_format;
     float param_1;
     int param_2;
     std::string param_3;

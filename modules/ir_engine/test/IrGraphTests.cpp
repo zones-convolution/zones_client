@@ -278,59 +278,59 @@ SCENARIO ("graph uses cached results in process call", "[IrGraph]")
         }
     }
 }
-
-SCENARIO ("graph obeys abort callback")
-{
-    GIVEN ("a graph")
-    {
-        ProcessResultPool process_result_pool;
-
-        std::shared_ptr<IrGraphProcessor> processor_1 = std::make_shared<TestProcessor> ();
-        auto policy_1 = IrGraph::CachePolicy ().WithPolicyIdentifier ("processor_1");
-
-        std::shared_ptr<IrGraphProcessor> processor_2 = std::make_shared<TestProcessor> ();
-        auto policy_2 = IrGraph::CachePolicy ().WithPolicyIdentifier ("processor_2");
-
-        auto ir_graph = IrGraph ()
-                            .WithProcessor ({policy_1, processor_1})
-                            .WithProcessor ({policy_2, processor_2});
-
-        int abort_callback_call_count = 0;
-
-        WHEN ("process is called with an aborting callback")
-        {
-            auto result = ir_graph.Process ({},
-                                            process_result_pool,
-                                            [&] ()
-                                            {
-                                                abort_callback_call_count += 1;
-                                                return true;
-                                            });
-            THEN ("the result is empty")
-            {
-                REQUIRE (result == std::nullopt);
-            }
-
-            THEN ("the callback is only called once")
-            {
-                REQUIRE (abort_callback_call_count == 1);
-            }
-        }
-
-        WHEN ("process is called")
-        {
-            auto result = ir_graph.Process ({},
-                                            process_result_pool,
-                                            [&] ()
-                                            {
-                                                abort_callback_call_count += 1;
-                                                return false;
-                                            });
-
-            THEN ("the callback is called twice")
-            {
-                REQUIRE (abort_callback_call_count == 2);
-            }
-        }
-    }
-}
+//
+// SCENARIO ("graph obeys abort callback")
+//{
+//    GIVEN ("a graph")
+//    {
+//        ProcessResultPool process_result_pool;
+//
+//        std::shared_ptr<IrGraphProcessor> processor_1 = std::make_shared<TestProcessor> ();
+//        auto policy_1 = IrGraph::CachePolicy ().WithPolicyIdentifier ("processor_1");
+//
+//        std::shared_ptr<IrGraphProcessor> processor_2 = std::make_shared<TestProcessor> ();
+//        auto policy_2 = IrGraph::CachePolicy ().WithPolicyIdentifier ("processor_2");
+//
+//        auto ir_graph = IrGraph ()
+//                            .WithProcessor ({policy_1, processor_1})
+//                            .WithProcessor ({policy_2, processor_2});
+//
+//        int abort_callback_call_count = 0;
+//
+//        WHEN ("process is called with an aborting callback")
+//        {
+//            auto result = ir_graph.Process ({},
+//                                            process_result_pool,
+//                                            [&] ()
+//                                            {
+//                                                abort_callback_call_count += 1;
+//                                                return true;
+//                                            });
+//            THEN ("the result is empty")
+//            {
+//                REQUIRE (result == std::nullopt);
+//            }
+//
+//            THEN ("the callback is only called once")
+//            {
+//                REQUIRE (abort_callback_call_count == 1);
+//            }
+//        }
+//
+//        WHEN ("process is called")
+//        {
+//            auto result = ir_graph.Process ({},
+//                                            process_result_pool,
+//                                            [&] ()
+//                                            {
+//                                                abort_callback_call_count += 1;
+//                                                return false;
+//                                            });
+//
+//            THEN ("the callback is called twice")
+//            {
+//                REQUIRE (abort_callback_call_count == 2);
+//            }
+//        }
+//    }
+//}

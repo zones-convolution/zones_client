@@ -21,6 +21,12 @@ bool StereoFormatter::SupportsTarget (const IrFormatData & ir_format_data,
     }
 }
 
+void CopyIrDataMeta (IrData & to, const IrData & from)
+{
+    to.bit_depth = from.bit_depth;
+    to.sample_rate = from.sample_rate;
+}
+
 void StereoFormatter::Format (const std::filesystem::path & load_path,
                               const IrFormatData & ir_format_data,
                               TargetFormat target_format,
@@ -47,6 +53,8 @@ void StereoFormatter::Format (const std::filesystem::path & load_path,
                 ir_block.copyFrom (centre_block.getSingleChannelBlock (0));
                 ir_block.add (centre_block.getSingleChannelBlock (1));
                 ir_block.multiplyBy (0.5f);
+
+                CopyIrDataMeta (ir_data, centre_position);
             }
             else if (ir_format_data.position_map.right.has_value () &&
                      ir_format_data.position_map.left.has_value ())
@@ -67,6 +75,8 @@ void StereoFormatter::Format (const std::filesystem::path & load_path,
                 ir_block.add (
                     juce::dsp::AudioBlock<float> {right_position.buffer}.getSingleChannelBlock (1));
                 ir_block.multiplyBy (0.5f);
+
+                CopyIrDataMeta (ir_data, left_position);
             }
 
             // Throw error...
@@ -95,6 +105,8 @@ void StereoFormatter::Format (const std::filesystem::path & load_path,
                 juce::dsp::AudioBlock<float> ir_block {ir_data.buffer};
                 ir_block.add (juce::dsp::AudioBlock<float> {right_position.buffer});
                 ir_block.multiplyBy (0.5f);
+
+                CopyIrDataMeta (ir_data, left_position);
             }
 
             // Throw error...
@@ -118,6 +130,8 @@ void StereoFormatter::Format (const std::filesystem::path & load_path,
                 ir_block.copyFrom (juce::dsp::AudioBlock<float> {left_position.buffer});
                 ir_block.getSubsetChannelBlock (2, 2).copyFrom (
                     juce::dsp::AudioBlock<float> {right_position.buffer});
+
+                CopyIrDataMeta (ir_data, left_position);
             }
 
             // Throw error...

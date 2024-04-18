@@ -1,4 +1,5 @@
 #pragma once
+
 #include "CommandQueue.h"
 #include "ir_engine/IrEngine.h"
 #include "model/Model.h"
@@ -18,6 +19,9 @@ public:
     void parameterChanged (const juce::String & parameterID, float newValue) override;
 
 private:
+    [[nodiscard]] static zones::Convolver::ConvolverSpec
+    CreateConvolverSpecForState (const IrGraphState & ir_graph_state);
+
     CommandQueue::VisitorQueue & command_queue_;
     juce::AudioProcessorValueTreeState & parameter_tree_;
     zones::ConvolutionEngine & convolution_engine_;
