@@ -15,6 +15,13 @@ public:
 
     static juce::DynamicObject ToDynamic (const IrMetadata & ir_metadata);
     static IrMetadata FromDynamic (const juce::DynamicObject & ir_metadata_dynamic);
+    static std::string ChannelFormatToString (ChannelFormat channel_format);
+
+    bool operator== (const IrMetadata & rhs) const
+    {
+        return std::tie (channel_format, position_map, name, description) ==
+               std::tie (rhs.channel_format, rhs.position_map, rhs.name, rhs.description);
+    }
 
 private:
     static juce::var PositionMapToVar (const PositionMap & position_map);

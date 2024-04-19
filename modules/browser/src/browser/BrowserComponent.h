@@ -1,17 +1,16 @@
 #pragma once
 
-#include "ir_format/io/IrReader.h"
-#include "ir_repository/IrLoadingAction.h"
-#include "ir_repository/IrLoadingModel.h"
+#include "model/Action.h"
+#include "model/Model.h"
 
+#include <immer/flex_vector.hpp>
 #include <juce_gui_basics/juce_gui_basics.h>
 #include <lager/reader.hpp>
 
 class BrowserComponent : public juce::Component
 {
 public:
-    BrowserComponent (const lager::reader<IrLoadingModel> & ir_loading_reader,
-                      lager::context<IrLoadingAction> & ir_loading_context);
+    BrowserComponent (const lager::reader<Model> & model, lager::context<Action> & context);
 
 private:
     static const juce::String kPathPickerDialogTitle;
@@ -24,9 +23,13 @@ private:
 
     void resized () override;
 
+    lager::context<Action> context_;
+
     lager::reader<IrLoadingModel> ir_loading_reader_;
-    lager::context<IrLoadingAction> ir_loading_context_;
     lager::reader<std::optional<std::filesystem::path>> ir_reader_;
+
+    lager::reader<IrRepositoryModel> ir_repository_reader_;
+    lager::reader<immer::flex_vector<IrMetadata>> user_irs_reader_;
 
     juce::TextButton add_path_button_ {"Add Path"};
     immer::flex_vector<std::filesystem::path> current_paths_;

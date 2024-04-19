@@ -9,4 +9,5 @@ zones_add_module(
         juce::juce_gui_basics
         lager
         zones_look_and_feel
-        ir_repository)
+        ir_repository
+        model)

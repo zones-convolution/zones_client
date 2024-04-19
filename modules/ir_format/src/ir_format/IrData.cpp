@@ -41,3 +41,9 @@ bool IsTargetSupported (const juce::AudioChannelSet & channel_set, TargetFormat 
             return channel_set == juce::AudioChannelSet::ambisonic (1);
     }
 }
+
+void CopyIrDataMeta (IrData & to, const IrData & from)
+{
+    to.bit_depth = from.bit_depth;
+    to.sample_rate = from.sample_rate;
+}

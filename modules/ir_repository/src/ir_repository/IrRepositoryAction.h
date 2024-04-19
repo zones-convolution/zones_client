@@ -6,6 +6,7 @@
 #include "ir_engine/IrController.h"
 
 #include <filesystem>
+#include <immer/vector.hpp>
 #include <lager/effect.hpp>
 #include <variant>
 

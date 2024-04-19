@@ -21,12 +21,6 @@ bool StereoFormatter::SupportsTarget (const IrFormatData & ir_format_data,
     }
 }
 
-void CopyIrDataMeta (IrData & to, const IrData & from)
-{
-    to.bit_depth = from.bit_depth;
-    to.sample_rate = from.sample_rate;
-}
-
 void StereoFormatter::Format (const std::filesystem::path & load_path,
                               const IrFormatData & ir_format_data,
                               TargetFormat target_format,
@@ -79,8 +73,6 @@ void StereoFormatter::Format (const std::filesystem::path & load_path,
                 CopyIrDataMeta (ir_data, left_position);
             }
 
-            // Throw error...
-
             break;
         case TargetFormat::kStereo:
             if (ir_format_data.position_map.centre.has_value ())
@@ -108,9 +100,7 @@ void StereoFormatter::Format (const std::filesystem::path & load_path,
 
                 CopyIrDataMeta (ir_data, left_position);
             }
-
-            // Throw error...
-
+            
             break;
         case TargetFormat::kTrueStereo:
             if (ir_format_data.position_map.right.has_value () &&

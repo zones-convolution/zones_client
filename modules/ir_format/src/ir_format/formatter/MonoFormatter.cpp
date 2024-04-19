@@ -9,6 +9,7 @@ bool MonoFormatter::SupportsTarget (const IrFormatData & ir_format_data, TargetF
     switch (target_format)
     {
         case TargetFormat::kMono:
+        case TargetFormat::kStereo:
             return true;
 
         default:
@@ -29,6 +30,23 @@ void MonoFormatter::Format (const std::filesystem::path & load_path,
             {
                 IrReader ir_reader;
                 ir_reader.ReadIrData (load_path, *ir_format_data.position_map.centre, ir_data);
+            }
+        case TargetFormat::kStereo:
+            if (ir_format_data.position_map.centre.has_value ())
+
+            {
+                IrReader ir_reader;
+
+                IrData mono_ir_data;
+                ir_reader.ReadIrData (load_path, *ir_format_data.position_map.centre, mono_ir_data);
+
+                CopyIrDataMeta (ir_data, mono_ir_data);
+                ir_data.buffer.setSize (2, mono_ir_data.buffer.getNumSamples ());
+                juce::dsp::AudioBlock<float> ir_block {ir_data.buffer};
+                ir_block.getSingleChannelBlock (0).copyFrom (
+                    juce::dsp::AudioBlock<float> {mono_ir_data.buffer});
+                ir_block.getSingleChannelBlock (1).copyFrom (
+                    juce::dsp::AudioBlock<float> {mono_ir_data.buffer});
             }
     }
 }

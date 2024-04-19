@@ -5,7 +5,7 @@ const juce::Identifier IrMetadata::kDescriptionIdentifier = "description";
 const juce::Identifier IrMetadata::kChannelFormatIdentifier = "channel_format";
 const juce::Identifier IrMetadata::kPositionMapIdentifier = "position_map";
 
-std::string ChannelFormatToString (ChannelFormat channel_format)
+std::string IrMetadata::ChannelFormatToString (ChannelFormat channel_format)
 {
     switch (channel_format)
     {

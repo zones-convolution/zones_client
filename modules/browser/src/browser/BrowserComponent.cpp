@@ -4,11 +4,13 @@
 
 const juce::String BrowserComponent::kPathPickerDialogTitle = "Pick Project Directory";
 
-BrowserComponent::BrowserComponent (const lager::reader<IrLoadingModel> & ir_loading_reader,
-                                    lager::context<IrLoadingAction> & ir_loading_context)
-    : ir_loading_reader_ (ir_loading_reader)
-    , ir_loading_context_ (ir_loading_context)
-    , ir_reader_ (ir_loading_reader [&IrLoadingModel::ir_path])
+BrowserComponent::BrowserComponent (const lager::reader<Model> & model,
+                                    lager::context<Action> & context)
+    : context_ (context)
+    , ir_loading_reader_ (model [&Model::ir_loading_model])
+    , ir_reader_ (model [&Model::ir_loading_model][&IrLoadingModel::ir_path])
+    , ir_repository_reader_ (model [&Model::ir_repository_model])
+    , user_irs_reader_ (model [&Model::ir_repository_model][&IrRepositoryModel::user_irs])
 {
     addAndMakeVisible (current_ir_label_);
     addAndMakeVisible (add_path_button_);
@@ -16,12 +18,8 @@ BrowserComponent::BrowserComponent (const lager::reader<IrLoadingModel> & ir_loa
 
     DisplayCurrentIr ();
 
-    lager::watch (ir_reader_,
-                  [&] (const auto &)
-                  {
-                      DisplayCurrentIr ();
-                      UpdateIrList ();
-                  });
+    lager::watch (ir_reader_, [&] (const auto &) { DisplayCurrentIr (); });
+    lager::watch (user_irs_reader_, [&] (const auto &) { UpdateIrList (); });
 
     add_path_button_.onClick = [&] { AddPath (); };
     ir_combo_box_.onChange = [&] { SelectIr (); };
@@ -29,9 +27,11 @@ BrowserComponent::BrowserComponent (const lager::reader<IrLoadingModel> & ir_loa
 
 void BrowserComponent::SelectIr () const
 {
-    ir_loading_context_.dispatch (LoadIrAction {.search_paths = current_paths_,
-                                                .ir_path = ir_combo_box_.getText ().toStdString (),
-                                                .target_format = TargetFormat::kMono});
+    auto user_irs = user_irs_reader_.get ();
+    const auto & selected_ir = user_irs [ir_combo_box_.getSelectedItemIndex ()];
+    context_.dispatch (LoadIrAction {.search_paths = current_paths_,
+                                     .ir_path = *selected_ir.name,
+                                     .target_format = TargetFormat::kStereo});
 }
 
 void BrowserComponent::DisplayCurrentIr ()
@@ -43,26 +43,16 @@ void BrowserComponent::DisplayCurrentIr ()
 
 void BrowserComponent::UpdateIrList ()
 {
-    IrReader ir_reader;
     ir_combo_box_.clear (juce::NotificationType::dontSendNotification);
-
-    std::vector<std::string> ir_paths;
-    for (auto & path : current_paths_)
+    auto user_irs = user_irs_reader_.get ();
+    for (auto i = 0; i < user_irs.size (); ++i)
     {
-        auto search_directory = juce::File (path.string ());
-        auto ir_files =
-            search_directory.findChildFiles (juce::File::TypesOfFileToFind::findDirectories, false);
-
-        for (const auto & ir_file : ir_files)
-        {
-            auto ir_path =
-                std::filesystem::path (ir_file.getFullPathName ().toStdString ()).stem ();
-            ir_paths.push_back (ir_path);
-        }
+        auto display_name = user_irs [i].name;
+        auto channel_format = user_irs [i].channel_format;
+        if (channel_format.has_value () && display_name.has_value ())
+            ir_combo_box_.addItem (
+                *display_name + " | " + IrMetadata::ChannelFormatToString (*channel_format), i + 1);
     }
-
-    for (auto i = 0; i < ir_paths.size (); ++i)
-        ir_combo_box_.addItem (ir_paths [i], i + 1);
 }
 
 void BrowserComponent::AddPath ()
@@ -71,15 +61,15 @@ void BrowserComponent::AddPath ()
     auto directory_flags =
         juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectDirectories;
 
-    directory_picker_->launchAsync (directory_flags,
-                                    [&] (const juce::FileChooser & chooser)
-                                    {
-                                        auto path_name =
-                                            chooser.getResult ().getFullPathName ().toStdString ();
-                                        current_paths_ = current_paths_.push_back (
-                                            chooser.getResult ().getFullPathName ().toStdString ());
-                                        UpdateIrList ();
-                                    });
+    directory_picker_->launchAsync (
+        directory_flags,
+        [&] (const juce::FileChooser & chooser)
+        {
+            auto path_name = chooser.getResult ().getFullPathName ().toStdString ();
+            current_paths_ =
+                current_paths_.push_back (chooser.getResult ().getFullPathName ().toStdString ());
+            context_.dispatch (RefreshUserIrsAction {.search_paths = current_paths_});
+        });
 }
 
 void BrowserComponent::resized ()

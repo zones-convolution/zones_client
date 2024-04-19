@@ -10,7 +10,7 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (
     , model_ (processor_container.store_)
     , context_ (processor_container.store_)
     , editor_ (processor_container.parameter_tree_, processor_container.thread_pool_)
-    , browser_ (processor_container.store_ [&Model::ir_loading_model], ir_loading_context_)
+    , browser_ (processor_container.store_, context_)
     , account_component_ (processor_container.store_ [&Model::account_model], context_)
     , sidebar_footer_ (
           processor_container.store_ [&Model::ir_loading_model][&IrLoadingModel::ir_path],

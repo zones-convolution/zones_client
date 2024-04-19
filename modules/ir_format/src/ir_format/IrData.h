@@ -25,6 +25,11 @@ struct PositionMap
     std::optional<std::string> centre;
     std::optional<std::string> left;
     std::optional<std::string> right;
+
+    bool operator== (const PositionMap & rhs) const
+    {
+        return std::tie (centre, left, right) == std::tie (rhs.centre, rhs.left, rhs.right);
+    }
 };
 
 struct IrFormatData
@@ -41,6 +46,8 @@ struct IrData
     double sample_rate;
     double bit_depth;
 };
+
+void CopyIrDataMeta (IrData & to, const IrData & from);
 
 class IrDataFormat
 {
