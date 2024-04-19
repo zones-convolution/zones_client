@@ -22,3 +22,9 @@ void TabsComponent::resized ()
     layout.items.add (juce::FlexItem {current_tab_->get ()}.withFlex (1.f));
     layout.performLayout (getLocalBounds ().toFloat ());
 }
+
+TabsComponent::~TabsComponent ()
+{
+    if (current_tab_.has_value ())
+        removeChildComponent (&current_tab_->get ());
+}

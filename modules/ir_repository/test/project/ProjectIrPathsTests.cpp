@@ -1,6 +1,6 @@
 
+#include "ir_repository/project/IrLoadingModel.h"
 #include "ir_repository/project/ProjectIrPaths.h"
-#include "ir_repository/project/ProjectIrRepositoryModel.h"
 
 #include <catch2/catch_test_macros.hpp>
 #include <juce_core/juce_core.h>

@@ -2,37 +2,28 @@ zones_add_module(
         MODULE
         ir_repository
         SOURCES
-        src/ir_repository/io/IrReader.h
-        src/ir_repository/io/IrReader.cpp
-        src/ir_repository/io/IrWriter.h
-        src/ir_repository/io/IrWriter.cpp
-        src/ir_repository/IrData.h
-        src/ir_repository/IrData.cpp
-        src/ir_repository/IrMetadata.h
-        src/ir_repository/IrMetadata.cpp
-        src/ir_repository/project/ProjectIrPaths.h
-        src/ir_repository/project/ProjectIrPaths.cpp
-        src/ir_repository/project/ProjectIrRepositoryModel.h
-        src/ir_repository/project/ProjectIrRepositoryAction.h
-        src/ir_repository/project/ProjectIrRepositoryAction.cpp
-        src/ir_repository/project/effect/ImportProjectIrEffect.h
-        src/ir_repository/project/effect/ImportProjectIrEffect.cpp
-        src/ir_repository/project/effect/LoadProjectIrEffect.h
-        src/ir_repository/project/effect/LoadProjectIrEffect.cpp
+        src/ir_repository/IrLoadingModel.h
+        src/ir_repository/IrLoadingAction.h
+        src/ir_repository/IrLoadingAction.cpp
+        src/ir_repository/effect/LoadIrEffect.h
+        src/ir_repository/effect/LoadIrEffect.cpp
+        src/ir_repository/IrRepositoryModel.h
+        src/ir_repository/IrRepositoryAction.h
+        src/ir_repository/IrRepositoryAction.cpp
+        src/ir_repository/effect/RefreshUserIrsEffect.h
+        src/ir_repository/effect/RefreshUserIrsEffect.cpp
         DEPS
         juce::juce_audio_basics
         juce::juce_audio_formats
         lager
         immer
-        ir_engine)
+        ir_engine
+        ir_format)
 
 zones_add_test(
         MODULE
         ir_repository
         SOURCES
-        test/io/IrReaderTests.cpp
-        test/io/IrWriterTests.cpp
-        test/IrMetdataTests.cpp
         test/project/ProjectIrPathsTests.cpp
         test/project/ProjectIrRepositoryActionTests.cpp
         test/project/ProjectIrImportControllerTests.cpp

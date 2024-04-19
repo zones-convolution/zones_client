@@ -2,8 +2,10 @@
 
 AudioEngine::AudioEngine (CommandQueue::VisitorQueue & command_queue,
                           juce::AudioProcessorValueTreeState & parameter_tree,
-                          zones::ConvolutionEngine & convolution_engine)
-    : command_queue_ (command_queue)
+                          zones::ConvolutionEngine & convolution_engine,
+                          const juce::AudioProcessor & processor)
+    : processor_ (processor)
+    , command_queue_ (command_queue)
     , parameter_tree_ (parameter_tree)
     , convolution_engine_ (convolution_engine)
 {
@@ -12,12 +14,35 @@ AudioEngine::AudioEngine (CommandQueue::VisitorQueue & command_queue,
     parameter_tree.addParameterListener (ParameterTree::kInputGainParameterId, this);
 }
 
+zones::Convolver::ConvolverSpec
+AudioEngine::CreateConvolverSpecForState (const IrGraphState & ir_graph_state)
+{
+    switch (ir_graph_state.target_format)
+    {
+        case TargetFormat::kMono:
+            return zones::Convolver::ConvolverSpec {.input_routing = {0}, .output_routing = {0}};
+        case TargetFormat::kStereo:
+            return zones::Convolver::ConvolverSpec {.input_routing = {0, 1},
+                                                    .output_routing = {0, 1}};
+        case TargetFormat::kTrueStereo:
+            return zones::Convolver::ConvolverSpec {.input_routing = {0, 0, 1, 1},
+                                                    .output_routing = {0, 1, 0, 1}};
+        case TargetFormat::kFoa:
+            return zones::Convolver::ConvolverSpec {.input_routing = {0, 1, 2, 3},
+                                                    .output_routing = {0, 1, 2, 3}};
+    }
+}
+
 void AudioEngine::RenderFinished (IrGraphState state, IrGraphProcessor::BoxedBuffer render_result)
 {
     if (render_result->getNumChannels () == 0 || render_result->getNumSamples () == 0)
         return;
 
-    convolution_engine_.LoadIR (*render_result);
+    auto output_channel_set = processor_.getBusesLayout ().getMainOutputChannelSet ();
+    if (IsTargetSupported (output_channel_set, state.target_format))
+        convolution_engine_.LoadIR (*render_result, CreateConvolverSpecForState (state));
+    else
+        jassertfalse;
 }
 
 void AudioEngine::parameterChanged (const juce::String & parameterID, float newValue)

@@ -12,6 +12,7 @@ public:
     explicit PanelComponent (juce::Component & child,
                              ColourPair horizontal_gradient_colours,
                              bool apply_content_rounding = false);
+    ~PanelComponent () override;
 
     void paint (juce::Graphics & g) override;
 

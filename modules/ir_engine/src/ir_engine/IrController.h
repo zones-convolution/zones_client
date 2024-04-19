@@ -1,8 +1,8 @@
 #pragma once
 
 #include "IrEngine.h"
-#include "ir_repository/IrData.h"
-#include "ir_repository/IrMetadata.h"
+#include "ir_format/IrData.h"
+#include "ir_format/IrMetadata.h"
 #include "model/ParameterTree.h"
 
 class IrController
@@ -15,7 +15,7 @@ public:
     void parameterChanged (const juce::String & parameter_id, float new_value) override;
     void timerCallback () override;
 
-    void LoadIr (const IrMetadata & ir_metadata, const IrData & ir_data);
+    void LoadIr (const std::filesystem::path & absolute_ir_path, TargetFormat target_format);
 
 private:
     void UpdateParametersFromTree ();

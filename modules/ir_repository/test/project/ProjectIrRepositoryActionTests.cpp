@@ -1,5 +1,5 @@
+#include "ir_repository/project/IrLoadingModel.h"
 #include "ir_repository/project/ProjectIrRepositoryAction.h"
-#include "ir_repository/project/ProjectIrRepositoryModel.h"
 
 #include <catch2/catch_test_macros.hpp>
 #include <immer/flex_vector_transient.hpp>

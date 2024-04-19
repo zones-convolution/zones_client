@@ -14,5 +14,6 @@ zones_add_module(
         lager
         zones_look_and_feel
         model
+        ir_format
         visualiser
         ir_engine)

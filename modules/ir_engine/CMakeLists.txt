@@ -19,6 +19,8 @@ zones_add_module(
         src/ir_engine/processors/RoomSizeProcessor.cpp
         src/ir_engine/processors/ReverbTimeProcessor.h
         src/ir_engine/processors/ReverbTimeProcessor.cpp
+        src/ir_engine/processors/TestProcessor.h
+        src/ir_engine/processors/TestProcessor.cpp
         src/ir_engine/processors/ResamplerProcessor.h
         src/ir_engine/processors/ResamplerProcessor.cpp
         src/ir_engine/IrController.h
@@ -26,6 +28,7 @@ zones_add_module(
         DEPS
         model
         ir_repository
+        ir_format
         audio_engine
         lager
         immer

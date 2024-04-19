@@ -7,6 +7,8 @@ class TabsComponent : public juce::Component
 {
 public:
     void DisplayTab (juce::Component & tab);
+    ~TabsComponent () override;
+
     void resized () override;
 
 private:

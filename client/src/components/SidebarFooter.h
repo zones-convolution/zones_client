@@ -1,7 +1,7 @@
 #pragma once
 
 #include "audio_engine/AudioGraphMetering.h"
-#include "ir_repository/project/ProjectIrRepositoryModel.h"
+#include "ir_repository/IrLoadingModel.h"
 #include "metering/MeterComponent.h"
 #include "zones_look_and_feel/LookAndFeel.h"
 #include "zones_look_and_feel/components/PanelComponent.h"
@@ -12,14 +12,14 @@
 class SidebarFooter : public juce::Component
 {
 public:
-    SidebarFooter (const lager::reader<CurrentProjectIrOptional> & project_ir_reader,
+    SidebarFooter (const lager::reader<std::optional<std::filesystem::path>> & ir_reader,
                    AudioGraphMetering & input_graph_metering,
                    AudioGraphMetering & output_graph_metering);
 
     void resized () override;
 
 private:
-    lager::reader<CurrentProjectIrOptional> project_ir_reader_;
+    lager::reader<std::optional<std::filesystem::path>> ir_reader_;
 
     static const PanelComponent::ColourPair kIrPanelGradient;
     juce::Label ir_label_;

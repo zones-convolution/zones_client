@@ -10,18 +10,15 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (
     , model_ (processor_container.store_)
     , context_ (processor_container.store_)
     , editor_ (processor_container.parameter_tree_, processor_container.thread_pool_)
-    , browser_ (processor_container.store_ [&Model::project_ir_repository_model],
-                project_ir_repository_context_)
-    , sidebar_footer_ (processor_container.store_ [&Model::project_ir_repository_model]
-                                                  [&ProjectIrRepositoryModel::current_project_ir],
-                       processor_container.input_graph_metering_,
-                       processor_container.output_graph_metering_)
-    , ir_engine_ (processor_container.ir_engine_)
+    , browser_ (processor_container.store_, context_)
     , account_component_ (processor_container.store_ [&Model::account_model], context_)
+    , sidebar_footer_ (
+          processor_container.store_ [&Model::ir_loading_model][&IrLoadingModel::ir_path],
+          processor_container.input_graph_metering_,
+          processor_container.output_graph_metering_)
+    , ir_engine_ (processor_container.ir_engine_)
 
 {
-    juce::LookAndFeel::setDefaultLookAndFeel (&look_and_feel_);
-
     setResizable (true, true);
     setResizeLimits (kWindowMinimumWidth,
                      static_cast<int> (kWindowMinimumWidth * kPreferredAspectRatio),

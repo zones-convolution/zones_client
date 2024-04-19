@@ -15,6 +15,11 @@ PanelComponent::PanelComponent (juce::Component & child,
     background_gradient_ = horizontal_gradient_colours;
 }
 
+PanelComponent::~PanelComponent ()
+{
+    removeChildComponent (&child_);
+}
+
 void PanelComponent::paint (juce::Graphics & g)
 {
     if (background_gradient_.has_value ())

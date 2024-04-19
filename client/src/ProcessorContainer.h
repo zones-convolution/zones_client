@@ -7,7 +7,7 @@
 #include "audio_engine/VisitorQueue.h"
 #include "ir_engine/IrController.h"
 #include "ir_engine/IrEngine.h"
-#include "ir_repository/io/IrReader.h"
+#include "ir_format/io/IrReader.h"
 #include "model/Action.h"
 #include "model/Model.h"
 #include "zones_convolver/zones_convolver.h"

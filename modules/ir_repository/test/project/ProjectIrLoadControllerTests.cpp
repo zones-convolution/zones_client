@@ -1,8 +1,8 @@
 // #include "LagerTestUtils.h"
 // #include "ReaderWriterMocks.h"
-// #include "ir_repository/project/ProjectIrLoadController.h"
-// #include "ir_repository/project/ProjectIrRepositoryAction.h"
-// #include "ir_repository/project/ProjectIrRepositoryModel.h"
+// #include "ir_format/project/ProjectIrLoadController.h"
+// #include "ir_format/project/ProjectIrRepositoryAction.h"
+// #include "ir_format/project/ProjectIrRepositoryModel.h"
 //
 // #include <catch2/catch_test_macros.hpp>
 // #include <lager/state.hpp>

@@ -4,13 +4,8 @@
 
 AudioPluginAudioProcessor::AudioPluginAudioProcessor ()
     : AudioProcessor (BusesProperties ()
-#if ! JucePlugin_IsMidiEffect
-    #if ! JucePlugin_IsSynth
                           .withInput ("Input", juce::AudioChannelSet::stereo (), true)
-    #endif
-                          .withOutput ("Output", juce::AudioChannelSet::stereo (), true)
-#endif
-                          )
+                          .withOutput ("Output", juce::AudioChannelSet::stereo (), true))
     , processor_container_ (*this)
 {
 }
@@ -22,29 +17,17 @@ const juce::String AudioPluginAudioProcessor::getName () const
 
 bool AudioPluginAudioProcessor::acceptsMidi () const
 {
-#if JucePlugin_WantsMidiInput
-    return true;
-#else
     return false;
-#endif
 }
 
 bool AudioPluginAudioProcessor::producesMidi () const
 {
-#if JucePlugin_ProducesMidiOutput
-    return true;
-#else
     return false;
-#endif
 }
 
 bool AudioPluginAudioProcessor::isMidiEffect () const
 {
-#if JucePlugin_IsMidiEffect
-    return true;
-#else
     return false;
-#endif
 }
 
 double AudioPluginAudioProcessor::getTailLengthSeconds () const
@@ -93,22 +76,17 @@ void AudioPluginAudioProcessor::releaseResources ()
 
 bool AudioPluginAudioProcessor::isBusesLayoutSupported (const BusesLayout & layouts) const
 {
-#if JucePlugin_IsMidiEffect
-    juce::ignoreUnused (layouts);
-    return true;
-#else
+    auto main_output_channel_set = layouts.getMainOutputChannelSet ();
 
-    if (layouts.getMainOutputChannelSet () != juce::AudioChannelSet::mono () &&
-        layouts.getMainOutputChannelSet () != juce::AudioChannelSet::stereo ())
+    if (main_output_channel_set != juce::AudioChannelSet::mono () &&
+        main_output_channel_set != juce::AudioChannelSet::stereo () &&
+        main_output_channel_set != juce::AudioChannelSet::ambisonic (1))
         return false;
 
-    #if ! JucePlugin_IsSynth
-    if (layouts.getMainOutputChannelSet () != layouts.getMainInputChannelSet ())
+    if (main_output_channel_set != layouts.getMainInputChannelSet ())
         return false;
-    #endif
 
     return true;
-#endif
 }
 
 void AudioPluginAudioProcessor::processBlock (juce::AudioBuffer<float> & buffer,
@@ -140,6 +118,7 @@ bool AudioPluginAudioProcessor::hasEditor () const
 
 juce::AudioProcessorEditor * AudioPluginAudioProcessor::createEditor ()
 {
+    LookAndFeel::setDefaultLookAndFeel (&look_and_feel_);
     return new AudioPluginAudioProcessorEditor (*this, processor_container_);
 }
 
