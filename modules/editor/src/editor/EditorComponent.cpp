@@ -2,8 +2,8 @@
 
 EditorComponent::EditorComponent (juce::AudioProcessorValueTreeState & parameter_tree,
                                   juce::ThreadPool & thread_pool)
-    : waterfall_component_ (thread_pool)
-    , io_component_ (parameter_tree)
+    : io_component_ (parameter_tree)
+    , waterfall_component_ (thread_pool)
     , ir_engine_component_ (parameter_tree)
 {
     addAndMakeVisible (io_panel_);
