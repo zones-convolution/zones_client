@@ -38,7 +38,10 @@ void BrowserComponent::DisplayCurrentIr ()
 {
     auto ir = ir_reader_.get ();
     if (ir.has_value ())
-        current_ir_label_.setText ("Ir: " + ir.value ().string (), juce::dontSendNotification);
+    {
+        current_ir_label_.setText ("Ir: " + ir->string (), juce::dontSendNotification);
+        resized ();
+    }
 }
 
 void BrowserComponent::UpdateIrList ()

@@ -39,9 +39,7 @@ private:
 
     lager::context<Action> context_;
     lager::context<IrLoadingAction> ir_loading_context_ {context_};
-
-    LookAndFeel look_and_feel_;
-
+    
     EditorComponent editor_;
 
     BrowserComponent browser_;

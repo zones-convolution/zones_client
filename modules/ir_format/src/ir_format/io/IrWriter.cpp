@@ -10,12 +10,12 @@ void IrWriter::WriteIrMetadata (const std::filesystem::path & write_path,
         throw DirectoryDoesNotExistException {};
 
     auto output_stream = write_file.createOutputStream ();
-    IrMetadata::ToDynamic (ir_metadata).writeAsJSON (*output_stream, 0, true, 4);
+    IrMetadata::ToDynamic (ir_metadata).writeAsJSON (*output_stream, {});
 }
 
 void IrWriter::WriteIrData (const std::filesystem::path & write_path,
-                        const std::string & ir_identifier,
-                        const IrData & ir_data)
+                            const std::string & ir_identifier,
+                            const IrData & ir_data)
 {
     auto file_path =
         write_path / IrDataFormat::GetImpulseResponseFileNameForIdentifier (ir_identifier);

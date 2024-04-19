@@ -8,6 +8,10 @@ const juce::FlexItem LookAndFeel::kFlexSpacer =
 const juce::FlexItem LookAndFeel::kDoubleFlexSpacer =
     juce::FlexItem ().withHeight (kDoubleGap).withWidth (kDoubleGap);
 
+static const auto kBoxIconsTypeface =
+    juce::Typeface::createSystemTypefaceFor (assets_boxicons_ttf, assets_boxicons_ttf_size);
+static const juce::Font kBoxIconsFont {kBoxIconsTypeface};
+
 LookAndFeel::LookAndFeel ()
 {
     setColour (ColourIds::kPanel, juce::Colour (29, 32, 37));
@@ -24,17 +28,9 @@ LookAndFeel::LookAndFeel ()
 
     setColour (juce::TextButton::buttonColourId, findColour (ColourIds::kPanel));
     setColour (juce::Slider::trackColourId, findColour (ColourIds::kPrimary));
-}
 
-static const auto kDefaultFont = juce::Font ("DM Sans", 20.f, juce::Font::FontStyleFlags::bold);
-static const auto kBoxIconsTypeface =
-    juce::Typeface::createSystemTypefaceFor (assets_boxicons_ttf, assets_boxicons_ttf_size);
-
-static const juce::Font kBoxIconsFont {kBoxIconsTypeface};
-
-juce::Font LookAndFeel::getLabelFont (juce::Label & label)
-{
-    return kDefaultFont;
+    auto default_font = juce::Font ("DM Sans", 20.f, juce::Font::FontStyleFlags::bold);
+    setDefaultSansSerifTypeface (default_font.getTypefacePtr ());
 }
 
 void LookAndFeel::drawRotarySlider (juce::Graphics & g,
@@ -199,11 +195,6 @@ void LookAndFeel::drawButtonBackground (juce::Graphics & g,
     auto brightness = isButtonDown ? 0.32f : isMouseOverButton ? 0.16f : 0.08f;
     g.setColour (button_colour.brighter (brightness));
     g.fillPath (button_path);
-}
-
-juce::Font LookAndFeel::getTextButtonFont (juce::TextButton & button, int buttonHeight)
-{
-    return kDefaultFont;
 }
 
 juce::FlexItem LookAndFeel::ButtonFlexItem (juce::Component & button)

@@ -19,8 +19,6 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (
     , ir_engine_ (processor_container.ir_engine_)
 
 {
-    juce::LookAndFeel::setDefaultLookAndFeel (&look_and_feel_);
-
     setResizable (true, true);
     setResizeLimits (kWindowMinimumWidth,
                      static_cast<int> (kWindowMinimumWidth * kPreferredAspectRatio),

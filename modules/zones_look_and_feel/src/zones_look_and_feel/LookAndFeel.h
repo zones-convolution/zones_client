@@ -7,12 +7,12 @@ class LookAndFeel : public juce::LookAndFeel_V4
 public:
     LookAndFeel ();
 
-    static constexpr float kGap = 8.f;
+    static constexpr float kGap = 4.f;
     static constexpr float kHalfGap = 0.5f * kGap;
     static constexpr float kDoubleGap = 2.f * kGap;
 
     static constexpr float kPadding = 8.f;
-    static constexpr float kRounding = 8.f;
+    static constexpr float kRounding = 4.f;
 
     static constexpr float kComboBoxCornerRounding = kRounding;
     static constexpr float kPopupMenuCornerRounding = kRounding;
@@ -67,9 +67,6 @@ public:
                      juce::BubbleComponent & component,
                      const juce::Point<float> & tip,
                      const juce::Rectangle<float> & body) override;
-    juce::Font getTextButtonFont (juce::TextButton & button, int buttonHeight) override;
-
-    juce::Font getLabelFont (juce::Label & label) override;
 
     void drawRotarySlider (juce::Graphics & g,
                            int x,
