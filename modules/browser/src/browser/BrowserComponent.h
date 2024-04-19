@@ -1,8 +1,8 @@
 #pragma once
 
 #include "ir_format/io/IrReader.h"
-#include "ir_repository/project/IrLoadingAction.h"
-#include "ir_repository/project/IrLoadingModel.h"
+#include "ir_repository/IrLoadingAction.h"
+#include "ir_repository/IrLoadingModel.h"
 
 #include <juce_gui_basics/juce_gui_basics.h>
 #include <lager/reader.hpp>

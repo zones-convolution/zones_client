@@ -18,6 +18,8 @@ enum class ChannelFormat
     kFoa,
 };
 
+bool IsTargetSupported (const juce::AudioChannelSet & channel_set, TargetFormat target_format);
+
 struct PositionMap
 {
     std::optional<std::string> centre;

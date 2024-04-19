@@ -2,8 +2,10 @@
 
 AudioEngine::AudioEngine (CommandQueue::VisitorQueue & command_queue,
                           juce::AudioProcessorValueTreeState & parameter_tree,
-                          zones::ConvolutionEngine & convolution_engine)
-    : command_queue_ (command_queue)
+                          zones::ConvolutionEngine & convolution_engine,
+                          const juce::AudioProcessor & processor)
+    : processor_ (processor)
+    , command_queue_ (command_queue)
     , parameter_tree_ (parameter_tree)
     , convolution_engine_ (convolution_engine)
 {
@@ -36,7 +38,11 @@ void AudioEngine::RenderFinished (IrGraphState state, IrGraphProcessor::BoxedBuf
     if (render_result->getNumChannels () == 0 || render_result->getNumSamples () == 0)
         return;
 
-    convolution_engine_.LoadIR (*render_result, CreateConvolverSpecForState (state));
+    auto output_channel_set = processor_.getBusesLayout ().getMainOutputChannelSet ();
+    if (IsTargetSupported (output_channel_set, state.target_format))
+        convolution_engine_.LoadIR (*render_result, CreateConvolverSpecForState (state));
+    else
+        jassertfalse;
 }
 
 void AudioEngine::parameterChanged (const juce::String & parameterID, float newValue)

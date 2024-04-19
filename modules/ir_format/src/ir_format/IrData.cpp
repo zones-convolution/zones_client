@@ -27,3 +27,17 @@ bool IrFormatData::SupportsTarget (TargetFormat target_format) const
             return false;
     }
 }
+
+bool IsTargetSupported (const juce::AudioChannelSet & channel_set, TargetFormat target_format)
+{
+    switch (target_format)
+    {
+        case TargetFormat::kMono:
+            return channel_set == juce::AudioChannelSet::mono ();
+        case TargetFormat::kStereo:
+        case TargetFormat::kTrueStereo:
+            return channel_set == juce::AudioChannelSet::stereo ();
+        case TargetFormat::kFoa:
+            return channel_set == juce::AudioChannelSet::ambisonic (1);
+    }
+}
