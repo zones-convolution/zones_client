@@ -1,6 +1,7 @@
 #include "PluginEditor.h"
 
 #include "PluginProcessor.h"
+#include "look_and_feel/LookAndFeel.h"
 
 AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (
     AudioPluginAudioProcessor & processor,

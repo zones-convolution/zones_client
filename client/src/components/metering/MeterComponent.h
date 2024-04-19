@@ -3,8 +3,7 @@
 #include "ClippingIndicator.h"
 #include "DiscreteLevelLabels.h"
 #include "audio_engine/AudioGraphMetering.h"
-#include "zones_look_and_feel/LookAndFeel.h"
-#include "zones_look_and_feel/components/PanelComponent.h"
+#include "look_and_feel/components/PanelComponent.h"
 
 #include <immer/flex_vector.hpp>
 #include <juce_gui_basics/juce_gui_basics.h>

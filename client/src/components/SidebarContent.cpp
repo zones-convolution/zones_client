@@ -1,5 +1,7 @@
 #include "SidebarContent.h"
 
+#include "look_and_feel/LookAndFeel.h"
+
 SidebarContent::SidebarContent (lager::context<TabsAction> tabs_context)
     : tabs_context_ (tabs_context)
 {

@@ -12,9 +12,8 @@
 #include "layout/tabs/TabsComponent.h"
 #include "layout/tabs/TabsController.h"
 #include "layout/tabs/TabsModel.h"
+#include "look_and_feel/components/PanelComponent.h"
 #include "model/Model.h"
-#include "zones_look_and_feel/LookAndFeel.h"
-#include "zones_look_and_feel/components/PanelComponent.h"
 
 #include <juce_gui_basics/juce_gui_basics.h>
 #include <lager/event_loop/manual.hpp>

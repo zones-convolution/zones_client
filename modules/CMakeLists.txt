@@ -1,4 +1,4 @@
-add_subdirectory(zones_look_and_feel)
+add_subdirectory(look_and_feel)
 add_subdirectory(api)
 add_subdirectory(visualiser)
 add_subdirectory(ir_repository)

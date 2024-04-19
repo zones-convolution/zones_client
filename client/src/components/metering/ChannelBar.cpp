@@ -1,5 +1,7 @@
 #include "ChannelBar.h"
 
+#include "look_and_feel/LookAndFeel.h"
+
 const std::pair<juce::Colour, juce::Colour> MeterBar::kMeterGradientColours = {
     juce::Colour::fromRGB (255, 149, 0),
     juce::Colour::fromRGB (75, 217, 102)};

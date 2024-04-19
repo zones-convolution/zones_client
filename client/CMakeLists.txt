@@ -7,7 +7,7 @@ set(LINK_COMMON
         ir_repository
         ir_format
         ir_engine
-        zones_look_and_feel
+        look_and_feel
         audio_engine
         model
         layout
