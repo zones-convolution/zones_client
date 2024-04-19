@@ -11,7 +11,3 @@ countries: en
 "room_size_parameter" = "Room Size"
 "reverb_time_parameter" = "Reverb Time"
 "resampler_parameter" = "Resample"
-
-# ACCOUNT
-"login" = "Login"
-"logout" = "Logout"

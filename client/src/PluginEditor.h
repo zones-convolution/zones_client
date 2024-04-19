@@ -2,7 +2,6 @@
 
 #include "PluginProcessor.h"
 #include "ProcessorContainer.h"
-#include "account/ui/AccountComponent.h"
 #include "browser/BrowserComponent.h"
 #include "components/SidebarContent.h"
 #include "components/SidebarFooter.h"
@@ -39,14 +38,14 @@ private:
 
     lager::context<Action> context_;
     lager::context<IrLoadingAction> ir_loading_context_ {context_};
-    
+
     EditorComponent editor_;
 
     BrowserComponent browser_;
     PanelComponent browser_panel_ {browser_};
 
-    AccountComponent account_component_;
-    PanelComponent settings_panel_ {account_component_};
+    juce::Component settings_component_;
+    PanelComponent settings_panel_ {settings_component_};
 
     TabsComponent tabs_component_;
     TabsController tabs_controller_ {tabs_component_};

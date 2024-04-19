@@ -11,9 +11,7 @@ zones_add_module(
         juce::juce_core
         lager
         immer
-        audio_engine
-        ir_engine
-        account
+        ir_repository
 )
 
 zones_add_test(MODULE model SOURCES
