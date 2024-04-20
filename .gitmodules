@@ -28,12 +28,6 @@
 [submodule "lib/melatonin_test_helpers"]
 	path = lib/melatonin_test_helpers
 	url = https://github.com/sudara/melatonin_test_helpers.git
-[submodule "lib/keychain"]
-	path = lib/keychain
-	url = git@github.com:hrantzsch/keychain.git
-[submodule "lib/jwt-cpp"]
-	path = lib/jwt-cpp
-	url = git@github.com:Thalhammer/jwt-cpp.git
 [submodule "lib/zones_convolver"]
 	path = lib/zones_convolver
 	url = git@github.com:zones-convolution/zones_convolver.git

@@ -1,6 +1,6 @@
 #include "BrowserComponent.h"
 
-#include "zones_look_and_feel/LookAndFeel.h"
+#include "look_and_feel/LookAndFeel.h"
 
 const juce::String BrowserComponent::kPathPickerDialogTitle = "Pick Project Directory";
 

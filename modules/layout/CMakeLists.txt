@@ -14,7 +14,7 @@ zones_add_module(
         DEPS
         juce::juce_core
         juce::juce_gui_basics
-        zones_look_and_feel
+        look_and_feel
         lager)
 
 zones_add_test(MODULE layout SOURCES test/TabsActionTests.cpp

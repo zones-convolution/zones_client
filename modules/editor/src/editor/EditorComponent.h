@@ -3,8 +3,8 @@
 #include "IOComponent.h"
 #include "IrEngineComponent.h"
 #include "ir_engine/IrEngine.h"
+#include "look_and_feel/components/PanelComponent.h"
 #include "visualiser/component/WaterfallComponent.h"
-#include "zones_look_and_feel/components/PanelComponent.h"
 
 #include <juce_audio_processors/juce_audio_processors.h>
 #include <juce_gui_basics/juce_gui_basics.h>

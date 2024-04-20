@@ -1,5 +1,7 @@
 #include "SidebarFooter.h"
 
+#include "look_and_feel/LookAndFeel.h"
+
 const PanelComponent::ColourPair SidebarFooter::kIrPanelGradient = {juce::Colours::darkmagenta,
                                                                     juce::Colours::darkorange};
 

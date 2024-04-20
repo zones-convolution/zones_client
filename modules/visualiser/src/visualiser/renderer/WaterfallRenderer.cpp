@@ -1,6 +1,6 @@
 #include "WaterfallRenderer.h"
 
-#include "zones_look_and_feel/LookAndFeel.h"
+#include "look_and_feel/LookAndFeel.h"
 
 #include <utility>
 

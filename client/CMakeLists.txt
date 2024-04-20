@@ -7,7 +7,7 @@ set(LINK_COMMON
         ir_repository
         ir_format
         ir_engine
-        zones_look_and_feel
+        look_and_feel
         audio_engine
         model
         layout
@@ -15,9 +15,6 @@ set(LINK_COMMON
         editor
         zones_convolver)
 
-# ##############################################################################
-# SRC
-# ##############################################################################
 set(SOURCES
         src/PluginProcessor.h
         src/PluginProcessor.cpp
@@ -74,14 +71,3 @@ target_link_libraries(
 target_compile_options(${BINARY} INTERFACE -Wall -Wextra -Werror)
 
 embed_resources(${BINARY} translations/en.translate)
-
-# ##############################################################################
-# TEST
-# ##############################################################################
-# set(BINARY_TST ${BINARY}_test) add_executable(${BINARY_TST}
-# ../modules/browser/src/browser/Browser.cpp
-# ../modules/browser/src/browser/Browser.h)
-# target_include_directories(${BINARY_TST} PRIVATE src)
-# target_sources(${BINARY_TST} PRIVATE ${SOURCES}) target_link_libraries(
-# ${BINARY_TST} PRIVATE ${LINK_JUCE} Catch2::Catch2WithMain PUBLIC
-# ${MODULE_LINK_CONF})

@@ -1,5 +1,5 @@
+#include "look_and_feel/components/DividerComponent.h"
 #include "model/ParameterTree.h"
-#include "zones_look_and_feel/components/DividerComponent.h"
 
 #include <juce_audio_processors/juce_audio_processors.h>
 #include <juce_gui_basics/juce_gui_basics.h>

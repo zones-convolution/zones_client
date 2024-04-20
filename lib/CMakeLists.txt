@@ -24,8 +24,6 @@ target_include_directories(glm SYSTEM INTERFACE glm)
 add_library(tinycolormap INTERFACE)
 target_include_directories(tinycolormap SYSTEM INTERFACE tinycolormap/include)
 
-add_subdirectory(keychain)
-add_subdirectory(jwt-cpp)
 juce_add_module(melatonin_test_helpers)
 juce_add_module(zones_convolver/zones_convolver)
 

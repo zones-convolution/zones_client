@@ -24,7 +24,7 @@ zones_add_module(
         DEPS
         juce::juce_gui_basics
         juce::juce_opengl
-        zones_look_and_feel
+        look_and_feel
         juce::juce_audio_basics
         juce::juce_dsp
         juce::juce_audio_formats

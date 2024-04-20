@@ -1,6 +1,6 @@
 #pragma once
+
 #include "juce_gui_extra/juce_gui_extra.h"
-#include "zones_look_and_feel/LookAndFeel.h"
 
 #include <juce_audio_basics/juce_audio_basics.h>
 #include <juce_gui_basics/juce_gui_basics.h>

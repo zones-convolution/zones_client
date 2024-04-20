@@ -2,9 +2,8 @@
 
 #include "audio_engine/AudioGraphMetering.h"
 #include "ir_repository/IrLoadingModel.h"
+#include "look_and_feel/components/PanelComponent.h"
 #include "metering/MeterComponent.h"
-#include "zones_look_and_feel/LookAndFeel.h"
-#include "zones_look_and_feel/components/PanelComponent.h"
 
 #include <juce_gui_basics/juce_gui_basics.h>
 #include <lager/reader.hpp>

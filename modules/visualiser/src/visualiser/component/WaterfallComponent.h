@@ -2,7 +2,7 @@
 
 #include "../renderer/WaterfallRenderer.h"
 #include "DraggableOrientation.h"
-#include "zones_look_and_feel/LookAndFeel.h"
+#include "look_and_feel/LookAndFeel.h"
 
 #include <juce_dsp/juce_dsp.h>
 #include <juce_gui_basics/juce_gui_basics.h>
