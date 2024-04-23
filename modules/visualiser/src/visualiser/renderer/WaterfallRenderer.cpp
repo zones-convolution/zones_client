@@ -175,7 +175,8 @@ glm::mat4 WaterfallRenderer::CreateVertexTransform ()
 
     auto projection = glm::perspective (45.f, 1920.f / 1080.f, .1f, 10.f);
 
-    auto vertex_scale = glm::scale (glm::mat4 (1.0f), glm::vec3 (1, 0.8, 1));
+    auto vertex_scale =
+        glm::scale (glm::mat4 (1.0f), glm::vec3 (1.0, WaterfallGraph::kVertexBufferRatio, 1.0));
     return projection * view * rotator * vertex_scale;
 }
 

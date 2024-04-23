@@ -36,10 +36,12 @@ public:
     void LoadTexture (const juce::Image & texture);
     void LoadParameters (const Parameters & parameters);
 
-private:
     static constexpr size_t kVertexBufferWidth = 120;
     static constexpr size_t kVertexBufferHeight = 82;
+    static constexpr float kVertexBufferRatio =
+        static_cast<float> (kVertexBufferHeight) / static_cast<float> (kVertexBufferWidth);
 
+private:
     void DrawGrid () const;
     void DrawGraph () const;
     void UpdateTexture ();
