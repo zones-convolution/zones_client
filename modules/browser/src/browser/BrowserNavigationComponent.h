@@ -12,12 +12,15 @@
 class BrowserHistoryComponent : public juce::Component
 {
 public:
-    BrowserHistoryComponent ();
+    BrowserHistoryComponent (lager::store<BrowserAction, BrowserModel> & browser_store);
     ~BrowserHistoryComponent () override = default;
 
     void resized () override;
 
 private:
+    lager::reader<BrowserModel> browser_reader_;
+    lager::context<BrowserAction> browser_context_;
+
     IconButton navigate_back_ {"Go Back", BoxIcons::kBxChevronLeft};
     IconButton navigate_forward_ {"Go Forward", BoxIcons::kBxChevronRight};
     juce::Label current_view_;
@@ -32,9 +35,13 @@ public:
     void resized () override;
 
 private:
-    lager::reader<BrowserModel> browser_model_;
+    lager::reader<BrowserModel> browser_reader_;
     lager::context<BrowserAction> browser_context_;
 
     BrowserHistoryComponent history_component_;
     PanelComponent history_panel_ {history_component_};
+
+    IconButton push_home_ {"Push Home", BoxIcons::kBxHome};
+    IconButton push_zone_ {"Push Zone", BoxIcons::kBxAlarm};
+    IconButton push_top_10_ {"Push Top 10", BoxIcons::kBxAnchor};
 };
