@@ -4,10 +4,14 @@ zones_add_module(
         SOURCES
         src/browser/BrowserComponent.h
         src/browser/BrowserComponent.cpp
+        src/browser/BrowserModel.h
+        src/browser/BrowserAction.h
+        src/browser/BrowserAction.cpp
         DEPS
         juce::juce_core
         juce::juce_gui_basics
         lager
+        immer
         look_and_feel
         ir_repository
         model)
