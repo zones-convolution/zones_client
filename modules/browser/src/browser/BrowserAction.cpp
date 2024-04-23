@@ -5,9 +5,15 @@ static void PopStack (BrowserModel & model)
     model.navigation_stack = model.navigation_stack.take (model.stack_pointer + 1);
 }
 
-static void JumpToLastView (BrowserModel & model)
+static void Jump (BrowserModel & model, int position)
 {
-    model.stack_pointer = static_cast<int> (model.navigation_stack.size ()) - 1;
+    model.stack_pointer =
+        std::clamp (position, 0, static_cast<int> (model.navigation_stack.size ()) - 1);
+}
+
+static void JumpToEnd (BrowserModel & model)
+{
+    Jump (model, static_cast<int> (model.navigation_stack.size ()) - 1);
 }
 
 static juce::Uuid LoadView (BrowserModel & model, BrowserView view)
@@ -16,8 +22,7 @@ static juce::Uuid LoadView (BrowserModel & model, BrowserView view)
     auto view_id = juce::Uuid ();
     BrowserStackView stack_view {.id = view_id, .view = view};
     model.navigation_stack = model.navigation_stack.push_back (stack_view);
-    JumpToLastView (model);
-
+    JumpToEnd (model);
     return view_id;
 }
 
@@ -32,10 +37,7 @@ BrowserResult UpdateBrowser (BrowserModel model, BrowserAction action)
             },
             [&] (const JumpAction & jump_action) -> BrowserResult
             {
-                model.stack_pointer =
-                    std::clamp (model.stack_pointer + jump_action.step,
-                                0,
-                                static_cast<int> (model.navigation_stack.size ()) - 1);
+                Jump (model, jump_action.position);
                 return {model, lager::noop};
             },
             [&] (const LoadHomeAction & load_home_action) -> BrowserResult

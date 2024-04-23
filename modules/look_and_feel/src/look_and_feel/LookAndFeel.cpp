@@ -187,7 +187,10 @@ void LookAndFeel::drawButtonBackground (juce::Graphics & g,
     auto corner_size = kButtonCornerRounding;
     auto bounds = button.getLocalBounds ().toFloat ().reduced (0.5f, 0.5f);
 
-    juce::Colour button_colour = button.findColour (juce::TextButton::ColourIds::buttonColourId);
+    juce::Colour button_colour =
+        button.findColour (juce::TextButton::ColourIds::buttonColourId)
+            .withMultipliedSaturation (button.hasKeyboardFocus (true) ? 1.3f : 0.9f)
+            .withMultipliedAlpha (button.isEnabled () ? 1.0f : 0.5f);
 
     juce::Path button_path;
     button_path.addRoundedRectangle (bounds, corner_size);

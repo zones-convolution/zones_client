@@ -1,5 +1,7 @@
 #include "IconTextButton.h"
 
+#include "look_and_feel/LookAndFeel.h"
+
 IconTextButton::IconTextButton ()
     : IconTextButton (juce::String ())
 {
@@ -27,10 +29,6 @@ IconTextButton::IconTextButton (const juce::String & name,
     : IconTextButton (name, icon)
 {
     setTooltip (tool_tip);
-}
-
-IconTextButton::~IconTextButton ()
-{
 }
 
 void IconTextButton::paintButton (juce::Graphics & g,

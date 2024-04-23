@@ -24,7 +24,7 @@ struct PopAction
 
 struct JumpAction
 {
-    int step;
+    int position;
 };
 
 using BrowserAction =

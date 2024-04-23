@@ -4,6 +4,8 @@ zones_add_module(
         SOURCES
         src/browser/BrowserComponent.h
         src/browser/BrowserComponent.cpp
+        src/browser/BrowserNavigationComponent.h
+        src/browser/BrowserNavigationComponent.cpp
         src/browser/BrowserModel.h
         src/browser/BrowserAction.h
         src/browser/BrowserAction.cpp

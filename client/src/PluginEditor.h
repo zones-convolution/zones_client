@@ -3,6 +3,7 @@
 #include "PluginProcessor.h"
 #include "ProcessorContainer.h"
 #include "browser/BrowserComponent.h"
+#include "browser/BrowserNavigationComponent.h"
 #include "components/SidebarContent.h"
 #include "components/SidebarFooter.h"
 #include "components/SidebarHeader.h"
@@ -32,6 +33,7 @@ private:
     static constexpr int kWindowMaxWidth = 2000;
 
     AudioPluginAudioProcessor & processor_;
+    ProcessorContainer & processor_container_;
 
     const lager::reader<Model> model_;
 
@@ -40,8 +42,12 @@ private:
 
     EditorComponent editor_;
 
-    BrowserComponent browser_;
-    PanelComponent browser_panel_ {browser_};
+    lager::store<BrowserAction, BrowserModel> browser_store_ =
+        lager::make_store<BrowserAction> (BrowserModel {},
+                                          WithJuceEventLoop {processor_container_.thread_pool_},
+                                          lager::with_reducer (UpdateBrowser));
+
+    BrowserNavigationComponent browser_ {browser_store_};
 
     juce::Component settings_component_;
     PanelComponent settings_panel_ {settings_component_};
@@ -51,7 +57,7 @@ private:
 
     lager::store<TabsAction, TabsModel> store_ = lager::make_store<TabsAction> (
         TabsModel {},
-        lager::with_manual_event_loop {},
+        WithJuceEventLoop {processor_container_.thread_pool_},
         lager::with_deps (std::reference_wrapper<TabsControllerDelegate> (tabs_controller_)),
         lager::with_reducer (UpdateTabs));
 

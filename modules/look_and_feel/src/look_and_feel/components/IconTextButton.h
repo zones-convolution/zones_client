@@ -1,6 +1,6 @@
 #pragma once
-#include "look_and_feel/LookAndFeel.h"
-#include "look_and_feel/components/IconComponent.h"
+
+#include "IconComponent.h"
 
 #include <juce_gui_basics/juce_gui_basics.h>
 
@@ -14,7 +14,7 @@ public:
                     const juce::String & icon,
                     const juce::String & tool_tip);
 
-    ~IconTextButton () override;
+    ~IconTextButton () override = default;
 
     void paintButton (juce::Graphics &, bool, bool) override;
     void resized () override;

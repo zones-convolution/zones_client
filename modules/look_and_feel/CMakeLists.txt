@@ -14,6 +14,8 @@ zones_add_module(
         src/look_and_feel/components/IconComponent.cpp
         src/look_and_feel/components/IconTextButton.h
         src/look_and_feel/components/IconTextButton.cpp
+        src/look_and_feel/components/IconButton.h
+        src/look_and_feel/components/IconButton.cpp
         src/look_and_feel/BoxIcons.h
         src/look_and_feel/BoxIcons.cpp
         DEPS

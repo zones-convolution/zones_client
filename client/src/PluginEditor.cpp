@@ -8,10 +8,10 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (
     ProcessorContainer & processor_container)
     : AudioProcessorEditor (&processor)
     , processor_ (processor)
+    , processor_container_ (processor_container)
     , model_ (processor_container.store_)
     , context_ (processor_container.store_)
     , editor_ (processor_container.parameter_tree_, processor_container.thread_pool_)
-    , browser_ (processor_container.store_, context_)
     , sidebar_footer_ (
           processor_container.store_ [&Model::ir_loading_model][&IrLoadingModel::ir_path],
           processor_container.input_graph_metering_,
@@ -27,7 +27,7 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (
 
     setSize (1280, 600);
 
-    tabs_controller_.AddTab ("browser", browser_panel_);
+    tabs_controller_.AddTab ("browser", browser_);
     tabs_controller_.AddTab ("editor", editor_);
     tabs_controller_.AddTab ("settings", settings_panel_);
 
