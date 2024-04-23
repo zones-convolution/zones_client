@@ -14,5 +14,4 @@ public:
 
 private:
     LogoComponent logo_component_;
-    IconComponent icon_sad_;
 };

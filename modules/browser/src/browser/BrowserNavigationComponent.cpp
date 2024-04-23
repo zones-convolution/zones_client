@@ -28,15 +28,22 @@ BrowserNavigationComponent::BrowserNavigationComponent (
 
 void BrowserNavigationComponent::resized ()
 {
+    juce::FlexBox nav_layout;
+    nav_layout.flexDirection = juce::FlexBox::Direction::row;
+    nav_layout.justifyContent = juce::FlexBox::JustifyContent::spaceAround;
+
+    nav_layout.items.add (LookAndFeel::MediumIconFlexItem (push_home_));
+    nav_layout.items.add (LookAndFeel::MediumIconFlexItem (push_zone_));
+    nav_layout.items.add (LookAndFeel::MediumIconFlexItem (push_top_10_));
+
     juce::FlexBox layout;
     layout.flexDirection = juce::FlexBox::Direction::column;
 
     layout.items.add (juce::FlexItem {history_panel_}.withHeight (40.f));
-    layout.items.add (LookAndFeel::MediumIconFlexItem (push_home_));
-    layout.items.add (LookAndFeel::MediumIconFlexItem (push_zone_));
-    layout.items.add (LookAndFeel::MediumIconFlexItem (push_top_10_));
     layout.items.add (LookAndFeel::kFlexSpacer);
     layout.items.add (juce::FlexItem (content_panel_).withFlex (1.f));
+    layout.items.add (LookAndFeel::kFlexSpacer);
+    layout.items.add (juce::FlexItem (nav_layout).withHeight (20.0f));
 
     layout.performLayout (getLocalBounds ().toFloat ());
 }

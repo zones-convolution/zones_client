@@ -29,7 +29,9 @@ LookAndFeel::LookAndFeel ()
     setColour (juce::TextButton::buttonColourId, findColour (ColourIds::kPanel));
     setColour (juce::Slider::trackColourId, findColour (ColourIds::kPrimary));
 
-    auto default_font = juce::Font ("DM Sans", 20.f, juce::Font::FontStyleFlags::bold);
+    setColour (juce::ScrollBar::thumbColourId, findColour (ColourIds::kPrimary));
+
+    auto default_font = juce::Font ("Helvetica Neue", 20.f, juce::Font::FontStyleFlags::plain);
     setDefaultSansSerifTypeface (default_font.getTypefacePtr ());
 }
 
