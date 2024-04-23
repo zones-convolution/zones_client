@@ -1,23 +1,42 @@
 #include "PanelComponent.h"
 
-PanelComponent::PanelComponent (juce::Component & child, bool apply_content_rounding)
+PanelComponent::PanelComponent (std::optional<ColourPair> horizontal_gradient_colours,
+                                bool apply_content_rounding)
     : apply_content_rounding_ (apply_content_rounding)
-    , child_ (child)
+    , background_gradient_ (horizontal_gradient_colours)
 {
-    addAndMakeVisible (child_);
+}
+
+PanelComponent::PanelComponent (juce::Component & child, bool apply_content_rounding)
+    : PanelComponent (std::nullopt, apply_content_rounding)
+{
+    SetComponent (&child);
 }
 
 PanelComponent::PanelComponent (juce::Component & child,
                                 ColourPair horizontal_gradient_colours,
                                 bool apply_content_rounding)
-    : PanelComponent (child, apply_content_rounding)
+    : PanelComponent (horizontal_gradient_colours, apply_content_rounding)
 {
-    background_gradient_ = horizontal_gradient_colours;
+    SetComponent (&child);
 }
 
 PanelComponent::~PanelComponent ()
 {
-    removeChildComponent (&child_);
+    if (child_ != nullptr)
+        removeChildComponent (child_);
+}
+
+void PanelComponent::SetComponent (juce::Component * child)
+{
+    if (child_ != nullptr)
+        removeChildComponent (child_);
+
+    child_ = child;
+    if (child_ != nullptr)
+        addAndMakeVisible (child_);
+
+    resized ();
 }
 
 void PanelComponent::paint (juce::Graphics & g)
@@ -36,7 +55,7 @@ void PanelComponent::resized ()
     juce::FlexBox box;
     box.justifyContent = juce::FlexBox::JustifyContent::center;
 
-    box.items.add (juce::FlexItem (child_).withFlex (1.f));
+    box.items.add (juce::FlexItem (*child_).withFlex (1.f));
     box.performLayout (getLocalBounds ().toFloat ().reduced (LookAndFeel::kPadding));
 }
 

@@ -7,7 +7,7 @@
 class TabsController : public TabsControllerDelegate
 {
 public:
-    TabsController (TabsComponent & tabs_component);
+    explicit TabsController (TabsComponent & tabs_component);
     ~TabsController () override = default;
     bool LoadTab (const std::string & tab_name, bool animate) override;
     void AddTab (const std::string & tab_name, juce::Component & component);

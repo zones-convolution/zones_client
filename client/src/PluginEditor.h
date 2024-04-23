@@ -47,7 +47,7 @@ private:
                                           WithJuceEventLoop {processor_container_.thread_pool_},
                                           lager::with_reducer (UpdateBrowser));
 
-    BrowserNavigationComponent browser_ {browser_store_};
+    BrowserNavigationComponent browser_ {browser_store_, model_, context_};
 
     juce::Component settings_component_;
     PanelComponent settings_panel_ {settings_component_};

@@ -9,6 +9,14 @@ zones_add_module(
         src/browser/BrowserModel.h
         src/browser/BrowserAction.h
         src/browser/BrowserAction.cpp
+        src/browser/components/HomeViewComponent.h
+        src/browser/components/HomeViewComponent.cpp
+        src/browser/components/Top10ViewComponent.h
+        src/browser/components/Top10ViewComponent.cpp
+        src/browser/components/ZoneViewComponent.h
+        src/browser/components/ZoneViewComponent.cpp
+        src/browser/components/BrowserHistoryComponent.h
+        src/browser/components/BrowserHistoryComponent.cpp
         DEPS
         juce::juce_core
         juce::juce_gui_basics
