@@ -2,7 +2,6 @@
 
 #include "PluginProcessor.h"
 #include "ProcessorContainer.h"
-#include "browser/BrowserComponent.h"
 #include "browser/BrowserNavigationComponent.h"
 #include "components/SidebarContent.h"
 #include "components/SidebarFooter.h"

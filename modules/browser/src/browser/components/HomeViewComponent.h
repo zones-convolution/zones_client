@@ -14,10 +14,13 @@ public:
     void Update (const HomeView & home_view);
     void resized () override;
 
-    void AddPath ();
-
 private:
     static const juce::String kPathPickerDialogTitle;
+
+    void DisplayCurrentIr ();
+    void UpdateIrList ();
+    void SelectIr () const;
+    void AddPath ();
 
     lager::context<Action> context_;
 
@@ -29,6 +32,9 @@ private:
 
     juce::TextButton add_path_button_ {"Add Path"};
     immer::flex_vector<std::filesystem::path> current_paths_;
+
+    juce::ComboBox ir_combo_box_ {};
+    juce::Label current_ir_label_;
 
     std::unique_ptr<juce::FileChooser> directory_picker_;
 };
