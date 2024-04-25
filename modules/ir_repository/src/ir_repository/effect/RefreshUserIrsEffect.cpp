@@ -1,18 +1,20 @@
 #include "RefreshUserIrsEffect.h"
 
 #include "ir_format/io/IrReader.h"
+#include "preferences/Preferences.h"
 
 void RefreshUserIrsEffect (const RefreshUserIrsAction & action, const IrRepositoryContext & context)
 {
     context.loop ().async (
         [action, context]
         {
-            immer::flex_vector<std::filesystem::path> search_paths {
-                "/Users/leonps/Documents/development/zones_client/modules/ir_format/test_data"};
+            Preferences preferences;
+            preferences.Load ();
+
             RefreshUserIrsResultAction result;
             IrReader ir_reader;
 
-            for (auto & search_path : search_paths)
+            for (auto & search_path : preferences.user_paths)
             {
                 auto search_directory = juce::File (search_path.string ());
                 auto ir_paths =

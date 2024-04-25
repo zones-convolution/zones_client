@@ -13,7 +13,8 @@ set(LINK_COMMON
         layout
         browser
         editor
-        zones_convolver)
+        zones_convolver
+        preferences)
 
 set(SOURCES
         src/PluginProcessor.h

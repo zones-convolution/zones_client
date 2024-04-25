@@ -13,6 +13,3 @@ zones_add_module(
         immer
         ir_repository
 )
-
-zones_add_test(MODULE model SOURCES
-        DEPS model)

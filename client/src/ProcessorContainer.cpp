@@ -10,6 +10,7 @@ ProcessorContainer::ProcessorContainer (juce::AudioProcessor & audio_processor)
     , audio_engine_ (command_queue_, parameter_tree_, convolution_engine_, audio_processor)
 {
     RegisterIrEngineListeners ();
+    store_.dispatch (RefreshUserIrsAction {});
 }
 
 void ProcessorContainer::RegisterIrEngineListeners ()

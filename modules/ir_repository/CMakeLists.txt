@@ -15,7 +15,8 @@ zones_add_module(
         lager
         immer
         ir_engine
-        ir_format)
+        ir_format
+        preferences)
 
 zones_add_test(
         MODULE

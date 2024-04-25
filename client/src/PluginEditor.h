@@ -14,6 +14,7 @@
 #include "layout/tabs/TabsModel.h"
 #include "look_and_feel/components/PanelComponent.h"
 #include "model/Model.h"
+#include "preferences/PreferencesComponent.h"
 
 #include <juce_gui_basics/juce_gui_basics.h>
 #include <lager/event_loop/manual.hpp>
@@ -46,8 +47,8 @@ private:
 
     BrowserNavigationComponent browser_ {browser_store_, model_, context_};
 
-    juce::Component settings_component_;
-    PanelComponent settings_panel_ {settings_component_};
+    PreferencesComponent preferences_component_;
+    PanelComponent settings_panel_ {preferences_component_};
 
     TabsComponent tabs_component_;
     TabsController tabs_controller_ {tabs_component_};
