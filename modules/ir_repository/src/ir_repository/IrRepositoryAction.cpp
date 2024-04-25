@@ -1,5 +1,6 @@
 #include "IrRepositoryAction.h"
 
+#include "effect/LoadIrEffect.h"
 #include "effect/RefreshUserIrsEffect.h"
 
 IrRepositoryResult UpdateIrRepository (IrRepositoryModel model, IrRepositoryAction action)
@@ -18,6 +19,24 @@ IrRepositoryResult UpdateIrRepository (IrRepositoryModel model, IrRepositoryActi
             {
                 model.user_irs = action.user_irs;
                 model.user_irs_loading = false;
+                return {model, lager::noop};
+            },
+            [&] (const LoadIrAction & load_ir_action) -> IrRepositoryResult
+            {
+                model.ir_loading_state = IrLoadingState::kLoading;
+                return {model, [model, load_ir_action] (auto && context) {
+                            LoadIrEffect (model, load_ir_action, context);
+                        }};
+            },
+            [&] (const LoadIrSuccessAction & load_ir_success_action) -> IrRepositoryResult
+            {
+                model.ir_path = load_ir_success_action.ir_path;
+                model.ir_loading_state = IrLoadingState::kSuccess;
+                return {model, lager::noop};
+            },
+            [&] (const LoadIrFailureAction &) -> IrRepositoryResult
+            {
+                model.ir_loading_state = IrLoadingState::kFailure;
                 return {model, lager::noop};
             },
         },

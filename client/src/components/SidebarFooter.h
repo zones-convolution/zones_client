@@ -1,7 +1,7 @@
 #pragma once
 
 #include "audio_engine/AudioGraphMetering.h"
-#include "ir_repository/IrLoadingModel.h"
+#include "ir_repository/IrRepositoryModel.h"
 #include "look_and_feel/components/PanelComponent.h"
 #include "metering/MeterComponent.h"
 

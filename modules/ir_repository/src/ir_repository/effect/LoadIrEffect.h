@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../IrLoadingAction.h"
-#include "../IrLoadingModel.h"
+#include "../IrRepositoryAction.h"
+#include "../IrRepositoryModel.h"
 
-void LoadIrEffect (const IrLoadingModel & model,
-                   const LoadIrAction & load_ir_action,
-                   const IrLoadingContext & context);
+void LoadIrEffect (const IrRepositoryModel & model,
+                   const LoadIrAction & action,
+                   const IrRepositoryContext & context);

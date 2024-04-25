@@ -2,14 +2,11 @@ zones_add_module(
         MODULE
         ir_repository
         SOURCES
-        src/ir_repository/IrLoadingModel.h
-        src/ir_repository/IrLoadingAction.h
-        src/ir_repository/IrLoadingAction.cpp
-        src/ir_repository/effect/LoadIrEffect.h
-        src/ir_repository/effect/LoadIrEffect.cpp
         src/ir_repository/IrRepositoryModel.h
         src/ir_repository/IrRepositoryAction.h
         src/ir_repository/IrRepositoryAction.cpp
+        src/ir_repository/effect/LoadIrEffect.h
+        src/ir_repository/effect/LoadIrEffect.cpp
         src/ir_repository/effect/RefreshUserIrsEffect.h
         src/ir_repository/effect/RefreshUserIrsEffect.cpp
         DEPS

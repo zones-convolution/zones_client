@@ -30,10 +30,8 @@ private:
     lager::context<Action> context_;
     lager::context<BrowserAction> browser_context_;
 
-    lager::reader<IrLoadingModel> ir_loading_reader_;
-    lager::reader<std::optional<std::filesystem::path>> ir_reader_;
-
     lager::reader<IrRepositoryModel> ir_repository_reader_;
+    lager::reader<std::optional<std::filesystem::path>> ir_reader_;
     lager::reader<immer::flex_vector<IrMetadata>> user_irs_reader_;
 
     juce::TextButton add_path_button_ {"Add Path"};

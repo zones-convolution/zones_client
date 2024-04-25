@@ -20,8 +20,29 @@ struct RefreshUserIrsResultAction
     immer::flex_vector<IrMetadata> user_irs;
 };
 
-using IrRepositoryAction = std::variant<RefreshUserIrsAction, RefreshUserIrsResultAction>;
-using IrRepositoryResult = lager::result<IrRepositoryModel, IrRepositoryAction, lager::deps<>>;
+struct LoadIrAction
+{
+    immer::flex_vector<std::filesystem::path> search_paths;
+    std::filesystem::path ir_path;
+    TargetFormat target_format;
+};
+
+struct LoadIrSuccessAction
+{
+    std::filesystem::path ir_path;
+};
+
+struct LoadIrFailureAction
+{
+};
+
+using IrRepositoryAction = std::variant<RefreshUserIrsAction,
+                                        RefreshUserIrsResultAction,
+                                        LoadIrAction,
+                                        LoadIrSuccessAction,
+                                        LoadIrFailureAction>;
+using IrRepositoryResult =
+    lager::result<IrRepositoryModel, IrRepositoryAction, lager::deps<IrController &>>;
 using IrRepositoryContext = IrRepositoryResult::effect_t::context_t;
 
 IrRepositoryResult UpdateIrRepository (IrRepositoryModel model, IrRepositoryAction action);

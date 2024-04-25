@@ -34,10 +34,8 @@ private:
     AudioPluginAudioProcessor & processor_;
     ProcessorContainer & processor_container_;
 
-    const lager::reader<Model> model_;
-
+    lager::reader<Model> model_;
     lager::context<Action> context_;
-    lager::context<IrLoadingAction> ir_loading_context_ {context_};
 
     EditorComponent editor_;
 

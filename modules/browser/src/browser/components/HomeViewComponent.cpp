@@ -11,8 +11,7 @@ HomeViewComponent::HomeViewComponent (lager::store<BrowserAction, BrowserModel> 
                                       lager::context<Action> & context)
     : context_ (context)
     , browser_context_ (browser_store)
-    , ir_loading_reader_ (model [&Model::ir_loading_model])
-    , ir_reader_ (model [&Model::ir_loading_model][&IrLoadingModel::ir_path])
+    , ir_reader_ (model [&Model::ir_repository_model][&IrRepositoryModel::ir_path])
     , ir_repository_reader_ (model [&Model::ir_repository_model])
     , user_irs_reader_ (model [&Model::ir_repository_model][&IrRepositoryModel::user_irs])
 {

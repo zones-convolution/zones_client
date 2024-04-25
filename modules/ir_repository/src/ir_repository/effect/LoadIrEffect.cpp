@@ -2,25 +2,25 @@
 
 #include "ir_engine/IrController.h"
 
-void LoadIrEffect (const IrLoadingModel & model,
-                   const LoadIrAction & load_ir_action,
-                   const IrLoadingContext & context)
+void LoadIrEffect (const IrRepositoryModel & model,
+                   const LoadIrAction & action,
+                   const IrRepositoryContext & context)
 {
-    if (load_ir_action.search_paths.empty ())
+    if (action.search_paths.empty ())
     {
         context.dispatch (LoadIrFailureAction {});
         return;
     }
 
     context.loop ().async (
-        [context, load_ir_action] ()
+        [context, action] ()
         {
             try
             {
                 auto & ir_controller = lager::get<IrController> (context);
 
-                auto & search_paths = load_ir_action.search_paths;
-                auto & ir_path = load_ir_action.ir_path;
+                auto & search_paths = action.search_paths;
+                auto & ir_path = action.ir_path;
 
                 for (auto & search_path : search_paths)
                 {
@@ -28,7 +28,7 @@ void LoadIrEffect (const IrLoadingModel & model,
                     if (! std::filesystem::exists (absolute_ir_path))
                         continue;
 
-                    ir_controller.LoadIr (absolute_ir_path, load_ir_action.target_format);
+                    ir_controller.LoadIr (absolute_ir_path, action.target_format);
                     context.dispatch (LoadIrSuccessAction {.ir_path = ir_path});
                     return;
                 }

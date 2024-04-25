@@ -9,13 +9,6 @@ Result Update (Model model, Action action)
                                 model.ir_repository_model, ir_repository_action);
                             model.ir_repository_model = updated_model;
                             return {model, effect};
-                        },
-                        [&] (const IrLoadingAction & ir_loading_action) -> Result
-                        {
-                            auto [updated_model, effect] =
-                                UpdateIrLoading (model.ir_loading_model, ir_loading_action);
-                            model.ir_loading_model = updated_model;
-                            return {model, effect};
                         }},
         action);
 }
