@@ -15,6 +15,10 @@ zones_add_module(
         src/browser/components/ZoneViewComponent.cpp
         src/browser/components/BrowserHistoryComponent.h
         src/browser/components/BrowserHistoryComponent.cpp
+        src/browser/components/layout/BannerGrid.h
+        src/browser/components/layout/BannerGrid.cpp
+        src/browser/components/cards/UserZoneCard.h
+        src/browser/components/cards/UserZoneCard.cpp
         DEPS
         juce::juce_core
         juce::juce_gui_basics

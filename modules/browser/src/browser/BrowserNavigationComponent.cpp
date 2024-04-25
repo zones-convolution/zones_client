@@ -9,10 +9,12 @@ BrowserNavigationComponent::BrowserNavigationComponent (
     : browser_reader_ (browser_store)
     , browser_context_ (browser_store)
     , history_component_ (browser_store)
-    , home_view_component_ (model, context)
+    , home_view_component_ (browser_store, model, context)
 {
     addAndMakeVisible (history_panel_);
     addAndMakeVisible (content_panel_);
+
+    browser_context_.dispatch (LoadHomeAction {});
 
     push_home_.onClick = [&] { browser_context_.dispatch (LoadHomeAction {}); };
     push_zone_.onClick = [&] { browser_context_.dispatch (LoadZoneAction {}); };
