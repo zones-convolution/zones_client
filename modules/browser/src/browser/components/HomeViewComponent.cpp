@@ -18,6 +18,7 @@ HomeViewComponent::HomeViewComponent (lager::store<BrowserAction, BrowserModel> 
     addAndMakeVisible (top_label_);
 
     lager::watch (user_irs_reader_, [&] (const auto &) { UpdateIrList (); });
+    UpdateIrList ();
 }
 
 void HomeViewComponent::UpdateIrList ()
