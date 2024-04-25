@@ -30,7 +30,7 @@ IrRepositoryResult UpdateIrRepository (IrRepositoryModel model, IrRepositoryActi
             },
             [&] (const LoadIrSuccessAction & load_ir_success_action) -> IrRepositoryResult
             {
-                model.ir_path = load_ir_success_action.ir_path;
+                model.current_ir_metadata = load_ir_success_action.ir_metadata;
                 model.ir_loading_state = IrLoadingState::kSuccess;
                 return {model, lager::noop};
             },

@@ -27,19 +27,17 @@ void IrController::timerCallback ()
     stopTimer ();
 }
 
-void IrController::LoadIr (const std::filesystem::path & absolute_ir_path,
-                           TargetFormat target_format)
+void IrController::LoadIr (const IrMetadata & ir_metadata, TargetFormat target_format)
 {
-    IrReader ir_reader;
-    auto metadata = ir_reader.ReadIrMetadata (absolute_ir_path);
-
     IrFormatData ir_format_data {
-        .channel_format = metadata.channel_format.value (),
-        .position_map = metadata.position_map.value (),
+        .channel_format = ir_metadata.channel_format.value (),
+        .position_map = ir_metadata.position_map.value (),
     };
 
+    auto path_attribute = ir_metadata.path_attribute;
+
     IrData ir_data;
-    CreateTargetIR (absolute_ir_path, ir_format_data, target_format, ir_data);
+    CreateTargetIR (path_attribute, ir_format_data, target_format, ir_data);
 
     std::lock_guard lock {current_graph_state_mutex_};
 
@@ -47,7 +45,7 @@ void IrController::LoadIr (const std::filesystem::path & absolute_ir_path,
     current_graph_state_.base_ir_buffer = IrGraphProcessor::BoxedBuffer {ir_data.buffer};
     current_graph_state_.sample_rate = ir_data.sample_rate;
     current_graph_state_.bit_depth = ir_data.bit_depth;
-    current_graph_state_.base_ir = absolute_ir_path;
+    current_graph_state_.base_ir = path_attribute;
 
     PerformRender ();
 }

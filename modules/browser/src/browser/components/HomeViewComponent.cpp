@@ -11,7 +11,7 @@ HomeViewComponent::HomeViewComponent (lager::store<BrowserAction, BrowserModel> 
                                       lager::context<Action> & context)
     : context_ (context)
     , browser_context_ (browser_store)
-    , ir_reader_ (model [&Model::ir_repository_model][&IrRepositoryModel::ir_path])
+    , ir_reader_ (model [&Model::ir_repository_model][&IrRepositoryModel::current_ir_metadata])
     , ir_repository_reader_ (model [&Model::ir_repository_model])
     , user_irs_reader_ (model [&Model::ir_repository_model][&IrRepositoryModel::user_irs])
 {
@@ -38,9 +38,8 @@ void HomeViewComponent::UpdateIrList ()
             auto zone_user_card = std::make_unique<UserZoneCard> (user_ir, ir_reader_);
             zone_user_card->OnLoad = [&, display_name]
             {
-                context_.dispatch (LoadIrAction {.search_paths = current_paths_,
-                                                 .ir_path = *display_name,
-                                                 .target_format = TargetFormat::kStereo});
+                context_.dispatch (
+                    LoadIrAction {.ir_metadata = user_ir, .target_format = TargetFormat::kStereo});
             };
 
             zone_user_card->OnView = [&] { browser_context_.dispatch (LoadZoneAction {}); };
@@ -58,15 +57,15 @@ void HomeViewComponent::AddPath ()
     auto directory_flags =
         juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectDirectories;
 
-    directory_picker_->launchAsync (
-        directory_flags,
-        [&] (const juce::FileChooser & chooser)
-        {
-            auto path_name = chooser.getResult ().getFullPathName ().toStdString ();
-            current_paths_ =
-                current_paths_.push_back (chooser.getResult ().getFullPathName ().toStdString ());
-            context_.dispatch (RefreshUserIrsAction {.search_paths = current_paths_});
-        });
+    directory_picker_->launchAsync (directory_flags,
+                                    [&] (const juce::FileChooser & chooser)
+                                    {
+                                        auto path_name =
+                                            chooser.getResult ().getFullPathName ().toStdString ();
+                                        current_paths_ = current_paths_.push_back (
+                                            chooser.getResult ().getFullPathName ().toStdString ());
+                                        context_.dispatch (RefreshUserIrsAction {});
+                                    });
 }
 
 void HomeViewComponent::resized ()

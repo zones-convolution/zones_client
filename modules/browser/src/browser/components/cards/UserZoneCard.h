@@ -14,7 +14,7 @@ class UserZoneCard : public juce::Component
 {
 public:
     UserZoneCard (const IrMetadata & ir_metadata,
-                  const lager::reader<std::optional<std::filesystem::path>> & reader);
+                  const lager::reader<std::optional<IrMetadata>> & ir_reader);
     void resized () override;
 
     std::function<void ()> OnLoad;
@@ -22,7 +22,7 @@ public:
 
 private:
     IrMetadata ir_metadata_;
-    lager::reader<std::optional<std::filesystem::path>> ir_reader_;
+    lager::reader<std::optional<IrMetadata>> ir_reader_;
 
     juce::Label ir_title_;
     IconButton load_ {"Load Zone", BoxIcons::kBxPlay};

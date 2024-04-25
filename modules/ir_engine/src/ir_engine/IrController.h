@@ -15,7 +15,7 @@ public:
     void parameterChanged (const juce::String & parameter_id, float new_value) override;
     void timerCallback () override;
 
-    void LoadIr (const std::filesystem::path & absolute_ir_path, TargetFormat target_format);
+    void LoadIr (const IrMetadata & ir_metadata, TargetFormat target_format);
 
 private:
     void UpdateParametersFromTree ();

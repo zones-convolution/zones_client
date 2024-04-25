@@ -3,9 +3,9 @@
 #include "look_and_feel/LookAndFeel.h"
 
 UserZoneCard::UserZoneCard (const IrMetadata & ir_metadata,
-                            const lager::reader<std::optional<std::filesystem::path>> & reader)
+                            const lager::reader<std::optional<IrMetadata>> & ir_reader)
     : ir_metadata_ (ir_metadata)
-    , ir_reader_ (reader)
+    , ir_reader_ (ir_reader)
 {
     addAndMakeVisible (panel_);
 
@@ -29,13 +29,8 @@ UserZoneCard::UserZoneCard (const IrMetadata & ir_metadata,
     addAndMakeVisible (view_);
 
     lager::watch (ir_reader_,
-                  [&, ir_metadata] (const auto & path)
-                  {
-                      if (path.has_value ())
-                          load_.setEnabled (path->stem () != *ir_metadata.name);
-                      else
-                          load_.setEnabled (true);
-                  });
+                  [&] (const auto & current_ir_metadata)
+                  { load_.setEnabled (current_ir_metadata != ir_metadata_); });
 }
 
 void UserZoneCard::resized ()

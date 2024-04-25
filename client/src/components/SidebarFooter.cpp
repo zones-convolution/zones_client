@@ -5,7 +5,7 @@
 const PanelComponent::ColourPair SidebarFooter::kIrPanelGradient = {juce::Colours::darkmagenta,
                                                                     juce::Colours::darkorange};
 
-SidebarFooter::SidebarFooter (const lager::reader<std::optional<std::filesystem::path>> & ir_reader,
+SidebarFooter::SidebarFooter (const CurrentIrReader & ir_reader,
                               AudioGraphMetering & input_graph_metering,
                               AudioGraphMetering & output_graph_metering)
     : ir_reader_ (ir_reader)
@@ -53,6 +53,8 @@ void SidebarFooter::resized ()
 void SidebarFooter::UpdateIrLabel ()
 {
     static const auto kNoIrLabelText = "No Ir Loaded!";
-    auto ir_label_text = ir_reader_->has_value () ? ir_reader_->value ().string () : kNoIrLabelText;
+    auto & current_ir_metadata = *ir_reader_;
+    auto ir_label_text =
+        current_ir_metadata.has_value () ? *current_ir_metadata->name : kNoIrLabelText;
     ir_label_.setText (ir_label_text, juce::dontSendNotification);
 }

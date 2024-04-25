@@ -12,7 +12,6 @@
 
 struct RefreshUserIrsAction
 {
-    immer::flex_vector<std::filesystem::path> search_paths;
 };
 
 struct RefreshUserIrsResultAction
@@ -22,14 +21,13 @@ struct RefreshUserIrsResultAction
 
 struct LoadIrAction
 {
-    immer::flex_vector<std::filesystem::path> search_paths;
-    std::filesystem::path ir_path;
+    IrMetadata ir_metadata;
     TargetFormat target_format;
 };
 
 struct LoadIrSuccessAction
 {
-    std::filesystem::path ir_path;
+    IrMetadata ir_metadata;
 };
 
 struct LoadIrFailureAction

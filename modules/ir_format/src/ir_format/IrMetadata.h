@@ -13,15 +13,24 @@ public:
     std::optional<std::string> name;
     std::optional<std::string> description;
 
-    static juce::DynamicObject ToDynamic (const IrMetadata & ir_metadata);
-    static IrMetadata FromDynamic (const juce::DynamicObject & ir_metadata_dynamic);
-    static std::string ChannelFormatToString (ChannelFormat channel_format);
+    /**
+     * Runtime added absolute path to directory where specific IR is stored.
+     */
+    std::filesystem::path path_attribute;
 
     bool operator== (const IrMetadata & rhs) const
     {
-        return std::tie (channel_format, position_map, name, description) ==
-               std::tie (rhs.channel_format, rhs.position_map, rhs.name, rhs.description);
+        return std::tie (channel_format, position_map, name, description, path_attribute) ==
+               std::tie (rhs.channel_format,
+                         rhs.position_map,
+                         rhs.name,
+                         rhs.description,
+                         rhs.path_attribute);
     }
+
+    static juce::DynamicObject ToDynamic (const IrMetadata & ir_metadata);
+    static IrMetadata FromDynamic (const juce::DynamicObject & ir_metadata_dynamic);
+    static std::string ChannelFormatToString (ChannelFormat channel_format);
 
 private:
     static juce::var PositionMapToVar (const PositionMap & position_map);

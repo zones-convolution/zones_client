@@ -12,10 +12,10 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (
     , model_ (processor_container.store_)
     , context_ (processor_container.store_)
     , editor_ (processor_container.parameter_tree_, processor_container.thread_pool_)
-    , sidebar_footer_ (
-          processor_container.store_ [&Model::ir_repository_model][&IrRepositoryModel::ir_path],
-          processor_container.input_graph_metering_,
-          processor_container.output_graph_metering_)
+    , sidebar_footer_ (processor_container.store_ [&Model::ir_repository_model]
+                                                  [&IrRepositoryModel::current_ir_metadata],
+                       processor_container.input_graph_metering_,
+                       processor_container.output_graph_metering_)
     , ir_engine_ (processor_container.ir_engine_)
 
 {

@@ -11,14 +11,14 @@
 class SidebarFooter : public juce::Component
 {
 public:
-    SidebarFooter (const lager::reader<std::optional<std::filesystem::path>> & ir_reader,
+    SidebarFooter (const CurrentIrReader & ir_reader,
                    AudioGraphMetering & input_graph_metering,
                    AudioGraphMetering & output_graph_metering);
 
     void resized () override;
 
 private:
-    lager::reader<std::optional<std::filesystem::path>> ir_reader_;
+    CurrentIrReader ir_reader_;
 
     static const PanelComponent::ColourPair kIrPanelGradient;
     juce::Label ir_label_;

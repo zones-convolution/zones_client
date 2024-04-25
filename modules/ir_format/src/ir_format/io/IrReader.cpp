@@ -17,36 +17,11 @@ static juce::DynamicObject ReadJsonFileToDynamic (const juce::File & json_file)
 
 IrMetadata IrReader::ReadIrMetadata (const std::filesystem::path & absolute_ir_path)
 {
-    auto ir_filename = absolute_ir_path.stem ();
-    auto absolute_metadata_path =
-        absolute_ir_path / IrDataFormat::GetMetadataFileNameForIdentifier (ir_filename);
-    juce::File metadata_file (absolute_metadata_path.string ());
+    juce::File metadata_file (absolute_ir_path.string ());
     if (! metadata_file.existsAsFile ())
         throw NoMetadataFileException {};
     return IrMetadata::FromDynamic (ReadJsonFileToDynamic (metadata_file));
 }
-
-// kept for browser component
-// IrReader::ProjectData IrReader::GetIrsInPath (const std::filesystem::path & load_path)
-//{
-//    auto project_directory = juce::File (load_path.string ());
-//    auto project_files = project_directory.findChildFiles (
-//        juce::File::TypesOfFileToFind::findFiles |
-//        juce::File::TypesOfFileToFind::ignoreHiddenFiles, false,
-//        "*.json",
-//        juce::File::FollowSymlinks::no);
-//
-//    ProjectData project_data;
-//    for (const auto & file : project_files)
-//    {
-//        std::filesystem::path file_path = file.getFullPathName ().toStdString ();
-//        auto ir_identifier = file_path.stem ();
-//        project_data = project_data.push_back (
-//            std::make_pair (ir_identifier, ReadIrMetadata (load_path, ir_identifier)));
-//    }
-//
-//    return project_data;
-//}
 
 void IrReader::ReadAudioFileToIrData (const std::filesystem::path & audio_path, IrData & ir_data)
 {
