@@ -29,7 +29,8 @@ void UserPathComponent::resized ()
     layout.performLayout (getLocalBounds ().toFloat ().reduced (LookAndFeel::kPadding));
 }
 
-PreferencesComponent::PreferencesComponent ()
+PreferencesComponent::PreferencesComponent (lager::context<Action> & context)
+    : context_ (context)
 {
     addAndMakeVisible (preferences_label_);
     addAndMakeVisible (top_divider_);
@@ -49,18 +50,24 @@ void PreferencesComponent::AddPath ()
     auto directory_flags =
         juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectDirectories;
 
-    directory_picker_->launchAsync (directory_flags,
-                                    [&] (const juce::FileChooser & chooser)
-                                    {
-                                        auto path = chooser.getResult ();
-                                        if (path.exists ())
-                                        {
-                                            preferences_.user_paths.emplace_back (
-                                                path.getFullPathName ().toStdString ());
-                                            preferences_.Save ();
-                                            UpdatePreferences ();
-                                        }
-                                    });
+    directory_picker_->launchAsync (
+        directory_flags,
+        [&] (const juce::FileChooser & chooser)
+        {
+            auto path = chooser.getResult ();
+            if (path.exists ())
+            {
+                auto & user_paths = preferences_.user_paths;
+                user_paths.emplace_back (path.getFullPathName ().toStdString ());
+
+                std::sort (user_paths.begin (), user_paths.end ());
+                user_paths.erase (std::unique (user_paths.begin (), user_paths.end ()),
+                                  user_paths.end ());
+
+                preferences_.Save ();
+                UpdatePreferences ();
+            }
+        });
 }
 
 void PreferencesComponent::UpdatePreferences ()
@@ -88,6 +95,7 @@ void PreferencesComponent::UpdatePreferences ()
         user_path_components_.push_back (std::move (user_path_component));
     }
 
+    context_.dispatch (RefreshUserIrsAction {});
     resized ();
 }
 

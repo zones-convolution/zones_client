@@ -5,9 +5,11 @@
 #include "look_and_feel/components/DividerComponent.h"
 #include "look_and_feel/components/IconButton.h"
 #include "look_and_feel/components/IconTextButton.h"
+#include "model/Action.h"
 
 #include <filesystem>
 #include <juce_gui_basics/juce_gui_basics.h>
+#include <lager/context.hpp>
 #include <vector>
 
 class UserPathComponent : public juce::Component
@@ -30,7 +32,7 @@ private:
 class PreferencesComponent : public juce::Component
 {
 public:
-    PreferencesComponent ();
+    PreferencesComponent (lager::context<Action> & context);
     ~PreferencesComponent () override = default;
 
     void resized () override;
@@ -40,6 +42,8 @@ private:
 
     void AddPath ();
     void UpdatePreferences ();
+
+    lager::context<Action> context_;
 
     Preferences preferences_;
     juce::Label preferences_label_ {"Preferences", "Preferences"};

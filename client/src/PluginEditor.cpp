@@ -12,6 +12,7 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (
     , model_ (processor_container.store_)
     , context_ (processor_container.store_)
     , editor_ (processor_container.parameter_tree_, processor_container.thread_pool_)
+    , preferences_component_ (context_)
     , sidebar_footer_ (processor_container.store_ [&Model::ir_repository_model]
                                                   [&IrRepositoryModel::current_ir_metadata],
                        processor_container.input_graph_metering_,
