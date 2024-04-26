@@ -19,6 +19,10 @@ zones_add_module(
         src/browser/components/layout/BannerGrid.cpp
         src/browser/components/cards/UserZoneCard.h
         src/browser/components/cards/UserZoneCard.cpp
+        src/browser/import/ImportComponent.h
+        src/browser/import/ImportComponent.cpp
+        src/browser/import/ImportController.h
+        src/browser/import/ImportController.cpp
         DEPS
         juce::juce_core
         juce::juce_gui_basics
@@ -26,4 +30,5 @@ zones_add_module(
         immer
         look_and_feel
         ir_repository
-        model)
+        model
+        preferences)

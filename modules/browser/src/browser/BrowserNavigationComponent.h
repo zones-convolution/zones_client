@@ -6,6 +6,7 @@
 #include "components/HomeViewComponent.h"
 #include "components/Top10ViewComponent.h"
 #include "components/ZoneViewComponent.h"
+#include "import/ImportComponent.h"
 #include "look_and_feel/BoxIcons.h"
 #include "look_and_feel/components/IconButton.h"
 #include "look_and_feel/components/PanelComponent.h"
@@ -44,4 +45,6 @@ private:
     IconButton push_home_ {"Push Home", BoxIcons::kBxHome};
     IconButton push_zone_ {"Push Zone", BoxIcons::kBxAlarm};
     IconButton push_top_10_ {"Push Top 10", BoxIcons::kBxAnchor};
+
+    ImportComponent import_component_;
 };

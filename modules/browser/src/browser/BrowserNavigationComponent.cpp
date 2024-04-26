@@ -26,6 +26,8 @@ BrowserNavigationComponent::BrowserNavigationComponent (
 
     lager::watch (browser_reader_, [&] (auto && model) { UpdateView (model); });
     UpdateView (browser_reader_.get ());
+
+    addAndMakeVisible (import_component_);
 }
 
 void BrowserNavigationComponent::resized ()
@@ -40,12 +42,14 @@ void BrowserNavigationComponent::resized ()
 
     juce::FlexBox layout;
     layout.flexDirection = juce::FlexBox::Direction::column;
-
-    layout.items.add (juce::FlexItem {history_panel_}.withHeight (40.f));
-    layout.items.add (LookAndFeel::kFlexSpacer);
-    layout.items.add (juce::FlexItem (content_panel_).withFlex (1.f));
-    layout.items.add (LookAndFeel::kFlexSpacer);
-    layout.items.add (juce::FlexItem (nav_layout).withHeight (20.0f));
+    //
+    //    layout.items.add (juce::FlexItem {history_panel_}.withHeight (40.f));
+    //    layout.items.add (LookAndFeel::kFlexSpacer);
+    //    layout.items.add (juce::FlexItem (content_panel_).withFlex (1.f));
+    //    layout.items.add (LookAndFeel::kFlexSpacer);
+    //    layout.items.add (juce::FlexItem (nav_layout).withHeight (20.0f));
+    //    layout.items.add (LookAndFeel::kFlexSpacer);
+    layout.items.add (juce::FlexItem (import_component_).withFlex (2.f));
 
     layout.performLayout (getLocalBounds ().toFloat ());
 }
