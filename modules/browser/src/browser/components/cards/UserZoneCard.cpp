@@ -3,9 +3,13 @@
 #include "look_and_feel/LookAndFeel.h"
 
 UserZoneCard::UserZoneCard (const IrMetadata & ir_metadata,
-                            const lager::reader<std::optional<IrMetadata>> & ir_reader)
+                            const lager::reader<Model> & model,
+                            lager::context<Action> & context,
+                            lager::context<BrowserAction> & browser_context)
     : ir_metadata_ (ir_metadata)
-    , ir_reader_ (ir_reader)
+    , context_ (context)
+    , ir_reader_ (model [&Model::ir_repository_model][&IrRepositoryModel::current_ir_metadata])
+    , browser_context_ (browser_context)
 {
     addAndMakeVisible (panel_);
 
@@ -16,21 +20,19 @@ UserZoneCard::UserZoneCard (const IrMetadata & ir_metadata,
 
     load_.onClick = [&]
     {
-        if (OnLoad)
-            OnLoad ();
+        context_.dispatch (
+            LoadIrAction {.ir_metadata = ir_metadata_, .target_format = TargetFormat::kStereo});
     };
     addAndMakeVisible (load_);
 
     view_.onClick = [&]
-    {
-        if (OnView)
-            OnView ();
-    };
+    { browser_context_.dispatch (LoadZoneAction {.ir_metadata = ir_metadata_}); };
     addAndMakeVisible (view_);
 
     lager::watch (ir_reader_,
                   [&] (const auto & current_ir_metadata)
                   { load_.setEnabled (current_ir_metadata != ir_metadata_); });
+    load_.setEnabled (*ir_reader_ != ir_metadata_);
 }
 
 void UserZoneCard::resized ()

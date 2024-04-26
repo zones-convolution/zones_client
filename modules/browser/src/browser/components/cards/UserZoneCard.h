@@ -1,5 +1,6 @@
 #pragma once
 
+#include "browser/BrowserAction.h"
 #include "look_and_feel/BoxIcons.h"
 #include "look_and_feel/components/IconButton.h"
 #include "look_and_feel/components/PanelComponent.h"
@@ -14,15 +15,16 @@ class UserZoneCard : public juce::Component
 {
 public:
     UserZoneCard (const IrMetadata & ir_metadata,
-                  const lager::reader<std::optional<IrMetadata>> & ir_reader);
+                  const lager::reader<Model> & model,
+                  lager::context<Action> & context,
+                  lager::context<BrowserAction> & browser_context);
     void resized () override;
-
-    std::function<void ()> OnLoad;
-    std::function<void ()> OnView;
 
 private:
     IrMetadata ir_metadata_;
-    lager::reader<std::optional<IrMetadata>> ir_reader_;
+    lager::context<Action> context_;
+    CurrentIrReader ir_reader_;
+    lager::context<BrowserAction> browser_context_;
 
     juce::Label ir_title_;
     IconButton load_ {"Load Zone", BoxIcons::kBxPlay};

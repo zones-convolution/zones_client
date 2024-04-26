@@ -12,7 +12,12 @@ static juce::DynamicObject ReadJsonFileToDynamic (const juce::File & json_file)
 {
     auto metadata_string = json_file.loadFileAsString ();
     auto metadata_var = juce::JSON::parse (metadata_string);
-    return *metadata_var.getDynamicObject ();
+    auto dynamic_object = metadata_var.getDynamicObject ();
+    
+    if (dynamic_object != nullptr)
+        return *dynamic_object;
+    else
+        return juce::DynamicObject {};
 }
 
 IrMetadata IrReader::ReadIrMetadata (const std::filesystem::path & absolute_ir_path)

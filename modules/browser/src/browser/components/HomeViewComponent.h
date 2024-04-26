@@ -24,12 +24,14 @@ public:
 private:
     void UpdateIrList ();
 
+    lager::reader<Model> model_;
     lager::context<Action> context_;
+
     lager::context<BrowserAction> browser_context_;
 
     lager::reader<IrRepositoryModel> ir_repository_reader_;
-    lager::reader<std::optional<IrMetadata>> ir_reader_;
-    lager::reader<immer::flex_vector<IrMetadata>> user_irs_reader_;
+    CurrentIrReader ir_reader_;
+    UserIrsReader user_irs_reader_;
 
     std::vector<std::unique_ptr<juce::Component>> cards_;
     BannerGrid card_banner_grid_ {cards_};

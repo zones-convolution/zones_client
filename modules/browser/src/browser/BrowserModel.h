@@ -1,5 +1,7 @@
 #pragma once
 
+#include "ir_format/IrMetadata.h"
+
 #include <immer/flex_vector.hpp>
 #include <juce_core/juce_core.h>
 #include <variant>
@@ -10,6 +12,7 @@ struct HomeView
 
 struct ZoneView
 {
+    IrMetadata ir_metadata;
 };
 
 struct Top10View

@@ -4,9 +4,10 @@ static std::string GetTitleForView (const BrowserView & browser_view)
 {
     return std::visit (
         lager::visitor {
-            [&] (const HomeView &) { return "Browse"; },
-            [&] (const ZoneView &) { return "Zone"; },
-            [&] (const Top10View &) { return "Top 10"; },
+            [&] (const HomeView &) -> std::string { return "Browse"; },
+            [&] (const ZoneView & zone_view) -> std::string
+            { return zone_view.ir_metadata.name ? *zone_view.ir_metadata.name : "Zone"; },
+            [&] (const Top10View &) -> std::string { return "Top 10"; },
         },
         browser_view);
 }

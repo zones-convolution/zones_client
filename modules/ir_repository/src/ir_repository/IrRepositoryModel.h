@@ -22,4 +22,5 @@ struct IrRepositoryModel
     IrLoadingState ir_loading_state;
 };
 
+using UserIrsReader = lager::reader<immer::flex_vector<IrMetadata>>;
 using CurrentIrReader = lager::reader<std::optional<IrMetadata>>;
