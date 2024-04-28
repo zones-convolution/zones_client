@@ -1,11 +1,9 @@
 #include "IrWriter.h"
 
-void IrWriter::WriteIrMetadata (const std::filesystem::path & write_path,
-                                const std::string & ir_identifier,
+void IrWriter::WriteIrMetadata (const std::filesystem::path & absolute_file_path,
                                 const IrMetadata & ir_metadata)
 {
-    auto file_path = write_path / IrDataFormat::GetMetadataFileNameForIdentifier (ir_identifier);
-    auto write_file = juce::File (file_path.string ());
+    auto write_file = juce::File (absolute_file_path.string ());
     if (! write_file.getParentDirectory ().exists ())
         throw DirectoryDoesNotExistException {};
 

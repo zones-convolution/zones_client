@@ -61,6 +61,8 @@ public:
 
     [[nodiscard]] std::string GetIrName () const;
     [[nodiscard]] std::string GetIrDescription () const;
+    [[nodiscard]] std::string GetUserPath () const;
+    [[nodiscard]] ChannelFormat GetChannelFormat () const;
 
     std::function<void ()> OnSubmit;
     SpeakerPositionComponent speaker_position_component_;
@@ -80,4 +82,6 @@ private:
     DividerComponent middle_divider_;
 
     IconTextButton import_ir_button_ {"Import Ir", BoxIcons::kBxImport};
+
+    static const std::map<std::string, ChannelFormat> kMicrophonePickerOptions;
 };

@@ -9,8 +9,7 @@
 class IrWriter
 {
 public:
-    virtual void WriteIrMetadata (const std::filesystem::path & write_path,
-                                  const std::string & ir_identifier,
+    virtual void WriteIrMetadata (const std::filesystem::path & absolute_file_path,
                                   const IrMetadata & ir_metadata);
     virtual void WriteIrData (const std::filesystem::path & write_path,
                               const std::string & ir_identifier,

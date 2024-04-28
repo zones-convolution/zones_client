@@ -5,6 +5,11 @@
 
 const juce::String SpeakerPositionComponent::kChoosePickerDialogTitle = "Pick Audio File";
 
+const std::map<std::string, ChannelFormat> ImportComponent::kMicrophonePickerOptions = {
+    {"Mono", ChannelFormat::kMono},
+    {"Stereo", ChannelFormat::kStereo},
+    {"FOA", ChannelFormat::kFoa}};
+
 SpeakerPositionComponent::SpeakerPositionComponent ()
 {
     addAndMakeVisible (centre_label_);
@@ -168,7 +173,10 @@ ImportComponent::ImportComponent ()
     user_path_picker_.setSelectedItemIndex (0);
     addAndMakeVisible (user_path_picker_);
 
-    microphone_array_picker_.addItemList ({"Mono", "Stereo", "FOA"}, 1);
+    juce::StringArray microphone_picker_options;
+    for (auto & kvp : kMicrophonePickerOptions)
+        microphone_picker_options.add (kvp.first);
+    microphone_array_picker_.addItemList (microphone_picker_options, 1);
     microphone_array_picker_.setSelectedItemIndex (0);
 
     addAndMakeVisible (microphone_array_picker_);
@@ -241,4 +249,18 @@ std::string ImportComponent::GetIrName () const
 std::string ImportComponent::GetIrDescription () const
 {
     return description_input_.getText ().toStdString ();
+}
+
+std::string ImportComponent::GetUserPath () const
+{
+    return user_path_picker_.getText ().toStdString ();
+}
+ChannelFormat ImportComponent::GetChannelFormat () const
+{
+    auto channel_format_string = microphone_array_picker_.getText ().toStdString ();
+    if (kMicrophonePickerOptions.contains (channel_format_string))
+        return kMicrophonePickerOptions.at (channel_format_string);
+
+    jassertfalse;
+    return ChannelFormat::kMono;
 }

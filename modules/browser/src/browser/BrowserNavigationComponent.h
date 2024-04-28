@@ -2,6 +2,7 @@
 
 #include "BrowserAction.h"
 #include "BrowserModel.h"
+#include "browser/import/ImportController.h"
 #include "components/BrowserHistoryComponent.h"
 #include "components/HomeViewComponent.h"
 #include "components/Top10ViewComponent.h"
@@ -47,4 +48,5 @@ private:
     IconButton push_top_10_ {"Push Top 10", BoxIcons::kBxAnchor};
 
     ImportComponent import_component_;
+    ImportController import_controller_ {import_component_};
 };
