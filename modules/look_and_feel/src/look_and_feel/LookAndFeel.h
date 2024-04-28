@@ -7,6 +7,14 @@ class LookAndFeel : public juce::LookAndFeel_V4
 public:
     LookAndFeel ();
 
+    enum ColourIds
+    {
+        kPanel,
+        kPrimary,
+        kSecondary,
+        kDivider
+    };
+
     static constexpr float kGap = 4.f;
     static constexpr float kHalfGap = 0.5f * kGap;
     static constexpr float kDoubleGap = 2.f * kGap;
@@ -56,13 +64,10 @@ public:
 
     static juce::Rectangle<float> GetLabelBounds (juce::Label & label);
 
-    enum ColourIds
-    {
-        kPanel,
-        kPrimary,
-        kSecondary,
-        kDivider
-    };
+    static void DrawBoxIcon (juce::Graphics & graphics,
+                             const juce::String & icon,
+                             const juce::Rectangle<int> & bounds);
+
     void drawBubble (juce::Graphics & graphics,
                      juce::BubbleComponent & component,
                      const juce::Point<float> & tip,
@@ -109,7 +114,12 @@ public:
     juce::PopupMenu::Options getOptionsForComboBoxPopupMenu (juce::ComboBox & box,
                                                              juce::Label & label) override;
 
-    static void DrawBoxIcon (juce::Graphics & graphics,
-                             const juce::String & icon,
-                             const juce::Rectangle<int> & bounds);
+    void fillTextEditorBackground (juce::Graphics & graphics,
+                                   int width,
+                                   int height,
+                                   juce::TextEditor & editor) override;
+    void drawTextEditorOutline (juce::Graphics & graphics,
+                                int width,
+                                int height,
+                                juce::TextEditor & editor) override;
 };

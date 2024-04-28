@@ -27,8 +27,15 @@ LookAndFeel::LookAndFeel ()
     setColour (juce::PopupMenu::backgroundColourId, juce::Colours::transparentWhite);
 
     setColour (juce::TextButton::buttonColourId, findColour (ColourIds::kPanel));
-    setColour (juce::Slider::trackColourId, findColour (ColourIds::kPrimary));
 
+    setColour (juce::TextEditor::backgroundColourId,
+               findColour (ColourIds::kPanel).brighter (0.1f));
+    setColour (juce::TextEditor::focusedOutlineColourId,
+               findColour (ColourIds::kPanel).brighter (0.4f));
+
+    setColour (juce::CaretComponent::caretColourId, findColour (ColourIds::kPrimary));
+
+    setColour (juce::Slider::trackColourId, findColour (ColourIds::kPrimary));
     setColour (juce::ScrollBar::thumbColourId, findColour (ColourIds::kPrimary));
 
     auto default_font = juce::Font ("Helvetica Neue", 20.f, juce::Font::FontStyleFlags::plain);
@@ -298,4 +305,36 @@ void LookAndFeel::DrawBoxIcon (juce::Graphics & graphics,
     graphics.setFont (kBoxIconsFont);
     graphics.setFont (juce::jmin (bounds.getHeight (), bounds.getWidth ()));
     graphics.drawFittedText (icon, bounds, juce::Justification::centred, 1);
+}
+
+void LookAndFeel::fillTextEditorBackground (juce::Graphics & graphics,
+                                            int width,
+                                            int height,
+                                            juce::TextEditor & editor)
+{
+    graphics.setColour (editor.findColour (juce::TextEditor::backgroundColourId));
+    graphics.fillRoundedRectangle (
+        juce::Rectangle<float> (0.f, 0.f, static_cast<float> (width), static_cast<float> (height)),
+        LookAndFeel::kRounding);
+}
+
+void LookAndFeel::drawTextEditorOutline (juce::Graphics & graphics,
+                                         int width,
+                                         int height,
+                                         juce::TextEditor & editor)
+{
+    if (editor.isEnabled ())
+    {
+        auto bounds =
+            juce::Rectangle<float> {
+                0.f, 0.f, static_cast<float> (width), static_cast<float> (height)}
+                .reduced (LookAndFeel::kDividerThickness / 2.f);
+
+        if (editor.hasKeyboardFocus (true) && ! editor.isReadOnly ())
+        {
+            graphics.setColour (editor.findColour (juce::TextEditor::focusedOutlineColourId));
+            graphics.drawRoundedRectangle (
+                bounds, LookAndFeel::kRounding, LookAndFeel::kDividerThickness);
+        }
+    }
 }
