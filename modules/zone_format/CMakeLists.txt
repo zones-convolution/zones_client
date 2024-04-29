@@ -4,7 +4,9 @@ zones_add_module(
         SOURCES
         src/zone_format/ZoneMetadata.h
         src/zone_format/ZoneMetadata.cpp
+        src/zone_format/JsonUtility.h
         DEPS
+        ir_format
         nlohmann_json::nlohmann_json
 )
 
