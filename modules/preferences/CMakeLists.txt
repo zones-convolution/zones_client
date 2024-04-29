@@ -12,4 +12,5 @@ zones_add_module(
         lager
         juce::juce_core
         juce::juce_gui_basics
+        nlohmann_json::nlohmann_json
 )

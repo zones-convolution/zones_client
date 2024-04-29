@@ -6,7 +6,7 @@
 
 struct Preferences
 {
-    bool Save ();
+    void Save ();
     void Load ();
 
     static juce::File GetZonesDataDirectory ();
