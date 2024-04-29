@@ -14,6 +14,11 @@ zones_add_test(
         MODULE
         zone_format
         SOURCES
-
+        test/ZoneMetadataTests.cpp
         DEPS
-        zone_format)
+        zone_format
+        juce::juce_core)
+
+target_compile_definitions(
+        zone_format
+        PUBLIC "TEST_DATA_DIRECTORY=\"${CMAKE_CURRENT_SOURCE_DIR}/test_data/\"")
