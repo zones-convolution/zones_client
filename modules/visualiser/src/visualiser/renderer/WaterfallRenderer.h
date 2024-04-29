@@ -54,6 +54,7 @@ private:
 
     glm::mat4 CreateTextureTransform () const;
     glm::mat4 CreateVertexTransform ();
+    [[nodiscard]] float GetContextAspectRatio () const;
 
     DraggableOrientation & draggable_orientation_;
     float rot_x_smooth_ = 0.f;

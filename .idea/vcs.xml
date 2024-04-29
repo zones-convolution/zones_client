@@ -11,7 +11,6 @@
     <mapping directory="$PROJECT_DIR$/lib/immer/tools/sinusoidal-sphinx-theme" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/lager" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/lager/tools/sinusoidal-sphinx-theme" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/lib/melatonin_audio_sparklines" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/melatonin_test_helpers" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/stretch" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/tinycolormap" vcs="Git" />

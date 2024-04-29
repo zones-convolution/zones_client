@@ -153,6 +153,18 @@ glm::mat4 WaterfallRenderer::CreateTextureTransform () const
                            glm::vec3 (offset_x, offset_y, 0));
 }
 
+float WaterfallRenderer::GetContextAspectRatio () const
+{
+    auto component = open_gl_context_.getTargetComponent ();
+    if (component != nullptr)
+    {
+        auto bounds = component->getLocalBounds ().toFloat ();
+        return bounds.getWidth () / bounds.getHeight ();
+    }
+
+    return 0.f;
+}
+
 glm::mat4 WaterfallRenderer::CreateVertexTransform ()
 {
     rot_x_smooth_ =
@@ -173,7 +185,7 @@ glm::mat4 WaterfallRenderer::CreateVertexTransform ()
     auto view = glm::lookAt (
         glm::vec3 (0.f, 2.f, 1.f), glm::vec3 (0.0, 0.0, 0.0), glm::vec3 (0.0, 0.0, 1.0));
 
-    auto projection = glm::perspective (45.f, 1920.f / 1080.f, .1f, 10.f);
+    auto projection = glm::perspective (45.f, GetContextAspectRatio (), .1f, 10.f);
 
     auto vertex_scale =
         glm::scale (glm::mat4 (1.0f), glm::vec3 (1.0, WaterfallGraph::kVertexBufferRatio, 1.0));
