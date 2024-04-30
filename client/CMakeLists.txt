@@ -4,8 +4,8 @@ set(LINK_JUCE juce::juce_gui_extra juce::juce_audio_devices
         juce::juce_audio_utils)
 
 set(LINK_COMMON
-        ir_repository
-        ir_format
+        zone_repository
+        format
         ir_engine
         look_and_feel
         audio_engine

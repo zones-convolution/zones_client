@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ir_format/IrData.h"
+#include "format/IrData.h"
 
 #include <choc/containers/choc_SingleReaderSingleWriterFIFO.h>
 #include <juce_audio_basics/juce_audio_basics.h>

@@ -14,19 +14,19 @@
 class UserZoneCard : public juce::Component
 {
 public:
-    UserZoneCard (const IrMetadata & ir_metadata,
+    UserZoneCard (const ZoneMetadata & zone_metadata,
                   const lager::reader<Model> & model,
                   lager::context<Action> & context,
                   lager::context<BrowserAction> & browser_context);
     void resized () override;
 
 private:
-    IrMetadata ir_metadata_;
+    ZoneMetadata zone_metadata_;
     lager::context<Action> context_;
     CurrentIrReader ir_reader_;
     lager::context<BrowserAction> browser_context_;
 
-    juce::Label ir_title_;
+    juce::Label zone_title_;
     IconButton load_ {"Load Zone", BoxIcons::kBxPlay};
     IconButton view_ {"View Zone", BoxIcons::kBxSushi};
 

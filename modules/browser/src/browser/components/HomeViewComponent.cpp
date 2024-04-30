@@ -9,31 +9,26 @@ HomeViewComponent::HomeViewComponent (lager::store<BrowserAction, BrowserModel> 
     : model_ (model)
     , context_ (context)
     , browser_context_ (browser_store)
-    , ir_repository_reader_ (model [&Model::ir_repository_model])
-    , ir_reader_ (model [&Model::ir_repository_model][&IrRepositoryModel::current_ir_metadata])
-    , user_irs_reader_ (model [&Model::ir_repository_model][&IrRepositoryModel::user_irs])
+    , zones_repository_reader_ (model [&Model::zone_repository_model])
+    , ir_reader_ (model [&Model::zone_repository_model][&ZoneRepositoryModel::current_ir])
+    , user_zones_reader_ (model [&Model::zone_repository_model][&ZoneRepositoryModel::user_zones])
 {
     addAndMakeVisible (card_banner_grid_);
     addAndMakeVisible (top_divider_);
     addAndMakeVisible (top_label_);
 
-    lager::watch (user_irs_reader_, [&] (const auto &) { UpdateIrList (); });
-    UpdateIrList ();
+    lager::watch (user_zones_reader_, [&] (const auto &) { UpdateZoneList (); });
+    UpdateZoneList ();
 }
 
-void HomeViewComponent::UpdateIrList ()
+void HomeViewComponent::UpdateZoneList ()
 {
-    auto user_irs = user_irs_reader_.get ();
     cards_.clear ();
 
-    for (auto & user_ir : user_irs)
-    {
-        auto display_name = user_ir.name;
-        auto channel_format = user_ir.channel_format;
-        if (channel_format.has_value () && display_name.has_value ())
-            cards_.push_back (
-                std::make_unique<UserZoneCard> (user_ir, model_, context_, browser_context_));
-    }
+    auto user_zones = user_zones_reader_.get ();
+    for (auto & user_zone : user_zones)
+        cards_.push_back (
+            std::make_unique<UserZoneCard> (user_zone, model_, context_, browser_context_));
 
     card_banner_grid_.Update ();
 }

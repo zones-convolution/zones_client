@@ -1,8 +1,8 @@
 #pragma once
 
-#include "ir_repository/IrRepositoryModel.h"
+#include "zone_repository/ZoneRepositoryModel.h"
 
 struct Model
 {
-    IrRepositoryModel ir_repository_model;
+    ZoneRepositoryModel zone_repository_model;
 };

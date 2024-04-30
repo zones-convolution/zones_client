@@ -27,8 +27,8 @@ zones_add_module(
         src/ir_engine/IrController.cpp
         DEPS
         model
-        ir_repository
-        ir_format
+        zone_repository
+        format
         audio_engine
         lager
         immer

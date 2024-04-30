@@ -95,7 +95,7 @@ void PreferencesComponent::UpdatePreferences ()
         user_path_components_.push_back (std::move (user_path_component));
     }
 
-    context_.dispatch (RefreshUserIrsAction {});
+    context_.dispatch (RefreshUserZonesAction {});
     resized ();
 }
 

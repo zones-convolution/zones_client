@@ -1,9 +1,7 @@
 #pragma once
 
 #include "ImportComponent.h"
-#include "ir_format/IrData.h"
-#include "ir_format/IrMetadata.h"
-#include "ir_format/io/IrWriter.h"
+#include "format/ZoneMetadata.h"
 #include "juce_gui_basics/juce_gui_basics.h"
 
 class ImportController

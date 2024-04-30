@@ -12,8 +12,8 @@ zones_add_module(
         src/audio_engine/AudioGraphMetering.cpp
         DEPS
         model
-        ir_repository
-        ir_format
+        zone_repository
+        format
         choc
         zones_convolver
         juce::juce_core

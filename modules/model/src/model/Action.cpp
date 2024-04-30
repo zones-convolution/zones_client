@@ -3,11 +3,11 @@
 Result Update (Model model, Action action)
 {
     return std::visit (
-        lager::visitor {[&] (const IrRepositoryAction & ir_repository_action) -> Result
+        lager::visitor {[&] (const ZoneRepositoryAction & zone_repository_action) -> Result
                         {
-                            auto [updated_model, effect] = UpdateIrRepository (
-                                model.ir_repository_model, ir_repository_action);
-                            model.ir_repository_model = updated_model;
+                            auto [updated_model, effect] = UpdateZoneRepository (
+                                model.zone_repository_model, zone_repository_action);
+                            model.zone_repository_model = updated_model;
                             return {model, effect};
                         }},
         action);

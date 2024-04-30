@@ -55,6 +55,6 @@ void SidebarFooter::UpdateIrLabel ()
     static const auto kNoIrLabelText = "No Ir Loaded!";
     auto & current_ir_metadata = *ir_reader_;
     auto ir_label_text =
-        current_ir_metadata.has_value () ? *current_ir_metadata->name : kNoIrLabelText;
+        current_ir_metadata.has_value () ? *current_ir_metadata->ir.title : kNoIrLabelText;
     ir_label_.setText (ir_label_text, juce::dontSendNotification);
 }

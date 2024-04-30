@@ -1,9 +1,9 @@
 #pragma once
 
 #include "audio_engine/AudioGraphMetering.h"
-#include "ir_repository/IrRepositoryModel.h"
 #include "look_and_feel/components/PanelComponent.h"
 #include "metering/MeterComponent.h"
+#include "zone_repository/ZoneRepositoryModel.h"
 
 #include <juce_gui_basics/juce_gui_basics.h>
 #include <lager/reader.hpp>

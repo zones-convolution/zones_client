@@ -48,7 +48,7 @@ BrowserResult UpdateBrowser (BrowserModel model, BrowserAction action)
             [&] (const LoadZoneAction & load_zone_action) -> BrowserResult
             {
                 auto view_id =
-                    LoadView (model, ZoneView {.ir_metadata = load_zone_action.ir_metadata});
+                    LoadView (model, ZoneView {.zone_metadata = load_zone_action.zone_metadata});
                 return {model, lager::noop};
             },
             [&] (const LoadTop10Action & load_top_10_action) -> BrowserResult

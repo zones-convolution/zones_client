@@ -22,16 +22,16 @@ public:
     void resized () override;
 
 private:
-    void UpdateIrList ();
+    void UpdateZoneList ();
 
     lager::reader<Model> model_;
     lager::context<Action> context_;
 
     lager::context<BrowserAction> browser_context_;
 
-    lager::reader<IrRepositoryModel> ir_repository_reader_;
+    lager::reader<ZoneRepositoryModel> zones_repository_reader_;
     CurrentIrReader ir_reader_;
-    UserIrsReader user_irs_reader_;
+    UserZonesReader user_zones_reader_;
 
     std::vector<std::unique_ptr<juce::Component>> cards_;
     BannerGrid card_banner_grid_ {cards_};

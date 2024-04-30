@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ir_format/IrData.h"
+#include "format/IrData.h"
 #include "look_and_feel/BoxIcons.h"
 #include "look_and_feel/components/DividerComponent.h"
 #include "look_and_feel/components/IconTextButton.h"

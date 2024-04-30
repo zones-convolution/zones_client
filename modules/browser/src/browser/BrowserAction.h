@@ -12,7 +12,7 @@ struct LoadHomeAction
 
 struct LoadZoneAction
 {
-    IrMetadata ir_metadata;
+    ZoneMetadata zone_metadata;
 };
 
 struct LoadTop10Action

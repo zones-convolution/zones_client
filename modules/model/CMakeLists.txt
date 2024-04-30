@@ -11,5 +11,5 @@ zones_add_module(
         juce::juce_core
         lager
         immer
-        ir_repository
+        zone_repository
 )

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ir_format/IrData.h"
+#include "format/IrData.h"
 
 #include <immer/box.hpp>
 #include <juce_dsp/juce_dsp.h>

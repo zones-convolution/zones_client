@@ -1,34 +1,39 @@
 #include "ImportController.h"
 
+#include "format/io/IrWriter.h"
+
 ImportController::ImportController (ImportComponent & import_component)
     : import_component_ (import_component)
 {
     import_component.OnSubmit = [&]
     {
-        auto destination_path = std::filesystem::path (import_component_.GetUserPath ());
-
-        auto ir_name = import_component_.GetIrName ();
-        auto safe_ir_name =
-            std::filesystem::path (juce::File::createLegalFileName (ir_name).toStdString ());
-
-        auto ir_directory_path = destination_path / safe_ir_name;
-        juce::File ir_directory {ir_directory_path.string ()};
-
-        ir_directory.createDirectory ();
-
-        IrMetadata ir_metadata;
-
-        ir_metadata.name = import_component_.GetIrName ();
-        ir_metadata.description = import_component_.GetIrDescription ();
-        ir_metadata.channel_format = import_component_.GetChannelFormat ();
-        ir_metadata.position_map = PerformCopyPositionMap (
-            import_component_.speaker_position_component_.GetPositionMap (), ir_directory_path);
-
-        IrWriter ir_writer;
-
-        auto absolute_metadata_path =
-            ir_directory_path / IrDataFormat::GetMetadataFileNameForIdentifier (safe_ir_name);
-        ir_writer.WriteIrMetadata (absolute_metadata_path, ir_metadata);
+        //        auto destination_path = std::filesystem::path (import_component_.GetUserPath ());
+        //
+        //        auto ir_name = import_component_.GetIrName ();
+        //        auto safe_ir_name =
+        //            std::filesystem::path (juce::File::createLegalFileName (ir_name).toStdString
+        //            ());
+        //
+        //        auto ir_directory_path = destination_path / safe_ir_name;
+        //        juce::File ir_directory {ir_directory_path.string ()};
+        //
+        //        ir_directory.createDirectory ();
+        //
+        //        IrMetadata ir_metadata;
+        //
+        //        ir_metadata.name = import_component_.GetIrName ();
+        //        ir_metadata.description = import_component_.GetIrDescription ();
+        //        ir_metadata.channel_format = import_component_.GetChannelFormat ();
+        //        ir_metadata.position_map = PerformCopyPositionMap (
+        //            import_component_.speaker_position_component_.GetPositionMap (),
+        //            ir_directory_path);
+        //
+        //        IrWriter ir_writer;
+        //
+        //        auto absolute_metadata_path =
+        //            ir_directory_path / IrDataFormat::GetMetadataFileNameForIdentifier
+        //            (safe_ir_name);
+        //        ir_writer.WriteIrMetadata (absolute_metadata_path, ir_metadata);
     };
 }
 

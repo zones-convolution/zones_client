@@ -29,6 +29,6 @@ zones_add_module(
         lager
         immer
         look_and_feel
-        ir_repository
+        zone_repository
         model
         preferences)

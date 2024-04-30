@@ -1,0 +1,42 @@
+zones_add_module(
+        MODULE
+        format
+        SOURCES
+        src/format/IrFormatter.h
+        src/format/IrFormatter.cpp
+        src/format/formatter/MonoFormatter.h
+        src/format/formatter/MonoFormatter.cpp
+        src/format/formatter/StereoFormatter.h
+        src/format/formatter/StereoFormatter.cpp
+        src/format/formatter/FoaFormatter.h
+        src/format/formatter/FoaFormatter.cpp
+        src/format/io/IrReader.h
+        src/format/io/IrReader.cpp
+        src/format/io/IrWriter.h
+        src/format/io/IrWriter.cpp
+        src/format/IrData.h
+        src/format/IrData.cpp
+        src/format/JsonUtility.h
+        src/format/ZoneMetadata.cpp
+        src/format/ZoneMetadata.h
+        DEPS
+        juce::juce_audio_basics
+        juce::juce_audio_formats
+        nlohmann_json::nlohmann_json
+        immer)
+
+zones_add_test(
+        MODULE
+        format
+        SOURCES
+        test/IrMetadataTests.cpp
+        test/formatter/FormatterTests.cpp
+        test/io/IrReaderTests.cpp
+        test/io/IrWriterTests.cpp
+        test/ZoneMetadataTests.cpp
+        DEPS
+        format)
+
+target_compile_definitions(
+        format_test
+        PUBLIC "TEST_DATA_DIRECTORY=\"${CMAKE_CURRENT_SOURCE_DIR}/test_data/\"")
