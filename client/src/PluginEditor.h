@@ -46,13 +46,13 @@ private:
                                           WithJuceEventLoop {processor_container_.thread_pool_},
                                           lager::with_reducer (UpdateBrowser));
 
-    lager::store<TabsAction, TabsModel> store_ = lager::make_store<TabsAction> (
+    lager::store<TabsAction, TabsModel> tabs_store_ = lager::make_store<TabsAction> (
         TabsModel {},
         WithJuceEventLoop {processor_container_.thread_pool_},
         lager::with_deps (std::reference_wrapper<TabsControllerDelegate> (tabs_controller_)),
         lager::with_reducer (UpdateTabs));
 
-    BrowserNavigationComponent browser_ {browser_store_, model_, context_};
+    BrowserNavigationComponent browser_ {browser_store_, model_, context_, tabs_store_};
 
     ImportComponent import_component_;
     PanelComponent import_panel_ {import_component_};
@@ -66,7 +66,7 @@ private:
     SidebarHeader sidebar_header_;
     PanelComponent sidebar_header_panel_ {sidebar_header_};
 
-    SidebarContent sidebar_content_ {store_};
+    SidebarContent sidebar_content_ {tabs_store_};
     PanelComponent sidebar_content_panel_ {sidebar_content_};
 
     SidebarFooter sidebar_footer_;

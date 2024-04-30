@@ -22,5 +22,8 @@ private:
 
     ImportZoneComponent import_zone_;
 
-    IconTextButton import_ir_button_ {"Import Ir", BoxIcons::kBxImport};
+    IconTextButton add_ir_button_ {"Add Ir", BoxIcons::kBxPlusCircle};
+    std::vector<std::unique_ptr<ImportIrComponent>> import_irs_;
+
+    IconTextButton import_zone_button_ {"Import Zone", BoxIcons::kBxImport};
 };

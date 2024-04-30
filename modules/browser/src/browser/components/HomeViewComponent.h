@@ -3,7 +3,10 @@
 #include "browser/BrowserAction.h"
 #include "browser/BrowserModel.h"
 #include "layout/BannerGrid.h"
+#include "layout/tabs/TabsAction.h"
+#include "look_and_feel/BoxIcons.h"
 #include "look_and_feel/components/DividerComponent.h"
+#include "look_and_feel/components/IconTextButton.h"
 #include "model/Action.h"
 #include "model/Model.h"
 
@@ -17,7 +20,8 @@ class HomeViewComponent : public juce::Component
 public:
     HomeViewComponent (lager::store<BrowserAction, BrowserModel> & browser_store,
                        const lager::reader<Model> & model,
-                       lager::context<Action> & context);
+                       lager::context<Action> & context,
+                       lager::context<TabsAction> & tabs_context);
     void Update (const HomeView & home_view);
     void resized () override;
 
@@ -28,6 +32,7 @@ private:
     lager::context<Action> context_;
 
     lager::context<BrowserAction> browser_context_;
+    lager::context<TabsAction> tabs_context_;
 
     lager::reader<ZoneRepositoryModel> zones_repository_reader_;
     CurrentIrReader ir_reader_;
@@ -37,4 +42,6 @@ private:
     BannerGrid card_banner_grid_ {cards_};
     DividerComponent top_divider_;
     juce::Label top_label_ {"User IRs", "User IRs"};
+
+    IconTextButton import_zone_button_ {"Import Zone", BoxIcons::kBxImport};
 };

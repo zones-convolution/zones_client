@@ -35,4 +35,5 @@ zones_add_module(
         look_and_feel
         zone_repository
         model
-        preferences)
+        preferences
+        layout)

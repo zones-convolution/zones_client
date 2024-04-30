@@ -1,0 +1,16 @@
+//
+// Created by Micah Strange on 30/04/2024.
+//
+
+#ifndef ZONES_MODULES_MODEL_SRC_MODEL_EDITORACTION_H_
+#define ZONES_MODULES_MODEL_SRC_MODEL_EDITORACTION_H_
+
+
+
+class EditorAction {
+
+};
+
+
+
+#endif //ZONES_MODULES_MODEL_SRC_MODEL_EDITORACTION_H_

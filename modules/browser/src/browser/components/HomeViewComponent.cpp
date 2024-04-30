@@ -5,10 +5,12 @@
 
 HomeViewComponent::HomeViewComponent (lager::store<BrowserAction, BrowserModel> & browser_store,
                                       const lager::reader<Model> & model,
-                                      lager::context<Action> & context)
+                                      lager::context<Action> & context,
+                                      lager::context<TabsAction> & tabs_context)
     : model_ (model)
     , context_ (context)
     , browser_context_ (browser_store)
+    , tabs_context_ (tabs_context)
     , zones_repository_reader_ (model [&Model::zone_repository_model])
     , ir_reader_ (model [&Model::zone_repository_model][&ZoneRepositoryModel::current_ir])
     , user_zones_reader_ (model [&Model::zone_repository_model][&ZoneRepositoryModel::user_zones])
@@ -16,6 +18,10 @@ HomeViewComponent::HomeViewComponent (lager::store<BrowserAction, BrowserModel> 
     addAndMakeVisible (card_banner_grid_);
     addAndMakeVisible (top_divider_);
     addAndMakeVisible (top_label_);
+    addAndMakeVisible (import_zone_button_);
+
+    import_zone_button_.onClick = [&]
+    { tabs_context_.dispatch (LoadTabAction {.tab_name = "import"}); };
 
     lager::watch (user_zones_reader_, [&] (const auto &) { UpdateZoneList (); });
     UpdateZoneList ();
@@ -43,6 +49,8 @@ void HomeViewComponent::resized ()
     layout.items.add (LookAndFeel::HorizontalDividerFlexItem (top_divider_));
     layout.items.add (LookAndFeel::kDoubleFlexSpacer);
     layout.items.add (juce::FlexItem (card_banner_grid_).withHeight (180.0f));
+    layout.items.add (LookAndFeel::kFlexSpacer);
+    layout.items.add (LookAndFeel::ButtonFlexItem (import_zone_button_));
 
     layout.performLayout (getLocalBounds ().toFloat ());
 }

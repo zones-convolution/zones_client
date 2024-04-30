@@ -2,20 +2,6 @@
 
 #include "look_and_feel/LookAndFeel.h"
 
-ImportComponent::ImportComponent ()
-{
-    addAndMakeVisible (import_title_);
-    addAndMakeVisible (top_divider_);
-    addAndMakeVisible (import_zone_);
-
-    import_ir_button_.onClick = [&]
-    {
-        if (OnSubmit)
-            OnSubmit ();
-    };
-    addAndMakeVisible (import_ir_button_);
-}
-
 class LayoutHelper
 {
 public:
@@ -66,6 +52,28 @@ private:
     juce::FlexBox & layout_;
 };
 
+ImportComponent::ImportComponent ()
+{
+    addAndMakeVisible (import_title_);
+    addAndMakeVisible (top_divider_);
+
+    import_zone_button_.onClick = [&]
+    {
+        if (OnSubmit)
+            OnSubmit ();
+    };
+    addAndMakeVisible (import_zone_);
+
+    add_ir_button_.onClick = [&]
+    {
+        import_irs_.emplace_back (std::make_unique<ImportIrComponent> ());
+        addAndMakeVisible (*import_irs_.back ());
+        resized ();
+    };
+    addAndMakeVisible (add_ir_button_);
+    addAndMakeVisible (import_zone_button_);
+}
+
 void ImportComponent::resized ()
 {
     juce::FlexBox flex;
@@ -75,9 +83,12 @@ void ImportComponent::resized ()
 
     layout.AddLabel (import_title_);
     layout.AddHorizontalDivider (top_divider_);
-    layout.AddFlex (import_zone_, false);
+    layout.AddFlex (import_zone_);
 
-    layout.AddButton (import_ir_button_, false);
+    for (auto & import_ir : import_irs_)
+        layout.AddFlex (*import_ir);
 
+    layout.AddButton (add_ir_button_);
+    layout.AddButton (import_zone_button_, false);
     flex.performLayout (getLocalBounds ());
 }

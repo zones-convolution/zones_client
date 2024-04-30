@@ -5,11 +5,12 @@
 BrowserNavigationComponent::BrowserNavigationComponent (
     lager::store<BrowserAction, BrowserModel> & browser_store,
     const lager::reader<Model> & model,
-    lager::context<Action> & context)
+    lager::context<Action> & context,
+    lager::context<TabsAction> & tabs_context)
     : browser_reader_ (browser_store)
     , browser_context_ (browser_store)
     , history_component_ (browser_store)
-    , home_view_component_ (browser_store, model, context)
+    , home_view_component_ (browser_store, model, context, tabs_context)
 {
     addAndMakeVisible (history_panel_);
     addAndMakeVisible (content_panel_);
@@ -26,8 +27,6 @@ BrowserNavigationComponent::BrowserNavigationComponent (
 
     lager::watch (browser_reader_, [&] (auto && model) { UpdateView (model); });
     UpdateView (browser_reader_.get ());
-
-    addAndMakeVisible (import_component_);
 }
 
 void BrowserNavigationComponent::resized ()
@@ -43,13 +42,12 @@ void BrowserNavigationComponent::resized ()
     juce::FlexBox layout;
     layout.flexDirection = juce::FlexBox::Direction::column;
 
-    //    layout.items.add (juce::FlexItem {history_panel_}.withHeight (40.f));
-    //    layout.items.add (LookAndFeel::kFlexSpacer);
-    //    layout.items.add (juce::FlexItem (content_panel_).withFlex (1.f));
-    //    layout.items.add (LookAndFeel::kFlexSpacer);
-    //    layout.items.add (juce::FlexItem (nav_layout).withHeight (20.0f));
-    //    layout.items.add (LookAndFeel::kFlexSpacer);
-    layout.items.add (juce::FlexItem (import_component_).withFlex (2.f));
+    layout.items.add (juce::FlexItem {history_panel_}.withHeight (40.f));
+    layout.items.add (LookAndFeel::kFlexSpacer);
+    layout.items.add (juce::FlexItem (content_panel_).withFlex (1.f));
+    layout.items.add (LookAndFeel::kFlexSpacer);
+    layout.items.add (juce::FlexItem (nav_layout).withHeight (20.0f));
+    layout.items.add (LookAndFeel::kFlexSpacer);
 
     layout.performLayout (getLocalBounds ().toFloat ());
 }

@@ -2,12 +2,11 @@
 
 #include "BrowserAction.h"
 #include "BrowserModel.h"
-#include "browser/import/ImportController.h"
 #include "components/BrowserHistoryComponent.h"
 #include "components/HomeViewComponent.h"
 #include "components/Top10ViewComponent.h"
 #include "components/ZoneViewComponent.h"
-#include "import/ImportComponent.h"
+#include "layout/tabs/TabsAction.h"
 #include "look_and_feel/BoxIcons.h"
 #include "look_and_feel/components/IconButton.h"
 #include "look_and_feel/components/PanelComponent.h"
@@ -24,7 +23,8 @@ class BrowserNavigationComponent : public juce::Component
 public:
     explicit BrowserNavigationComponent (lager::store<BrowserAction, BrowserModel> & browser_store,
                                          const lager::reader<Model> & model,
-                                         lager::context<Action> & context);
+                                         lager::context<Action> & context,
+                                         lager::context<TabsAction> & tabs_context);
     ~BrowserNavigationComponent () override = default;
 
     void resized () override;
@@ -46,7 +46,4 @@ private:
     IconButton push_home_ {"Push Home", BoxIcons::kBxHome};
     IconButton push_zone_ {"Push Zone", BoxIcons::kBxAlarm};
     IconButton push_top_10_ {"Push Top 10", BoxIcons::kBxAnchor};
-
-    ImportComponent import_component_;
-    ImportController import_controller_ {import_component_};
 };
