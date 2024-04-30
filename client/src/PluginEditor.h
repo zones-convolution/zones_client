@@ -3,6 +3,7 @@
 #include "PluginProcessor.h"
 #include "ProcessorContainer.h"
 #include "browser/BrowserNavigationComponent.h"
+#include "browser/import/ImportComponent.h"
 #include "components/SidebarContent.h"
 #include "components/SidebarFooter.h"
 #include "components/SidebarHeader.h"
@@ -45,19 +46,22 @@ private:
                                           WithJuceEventLoop {processor_container_.thread_pool_},
                                           lager::with_reducer (UpdateBrowser));
 
+    lager::store<TabsAction, TabsModel> store_ = lager::make_store<TabsAction> (
+        TabsModel {},
+        WithJuceEventLoop {processor_container_.thread_pool_},
+        lager::with_deps (std::reference_wrapper<TabsControllerDelegate> (tabs_controller_)),
+        lager::with_reducer (UpdateTabs));
+
     BrowserNavigationComponent browser_ {browser_store_, model_, context_};
+
+    ImportComponent import_component_;
+    PanelComponent import_panel_ {import_component_};
 
     PreferencesComponent preferences_component_;
     PanelComponent settings_panel_ {preferences_component_};
 
     TabsComponent tabs_component_;
     TabsController tabs_controller_ {tabs_component_};
-
-    lager::store<TabsAction, TabsModel> store_ = lager::make_store<TabsAction> (
-        TabsModel {},
-        WithJuceEventLoop {processor_container_.thread_pool_},
-        lager::with_deps (std::reference_wrapper<TabsControllerDelegate> (tabs_controller_)),
-        lager::with_reducer (UpdateTabs));
 
     SidebarHeader sidebar_header_;
     PanelComponent sidebar_header_panel_ {sidebar_header_};
