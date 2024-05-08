@@ -16,6 +16,9 @@ public:
 
     std::function<void ()> OnSubmit;
 
+    ImportZoneComponent import_zone_;
+    std::vector<std::unique_ptr<ImportIrComponent>> import_irs_;
+
 private:
     void SetupContentView ();
     void LayoutContent ();
@@ -26,10 +29,7 @@ private:
     juce::Label import_title_ {"Import Zone", "Import Zone"};
     DividerComponent top_divider_;
 
-    ImportZoneComponent import_zone_;
-
     IconTextButton add_ir_button_ {"Add Ir", BoxIcons::kBxPlusCircle};
-    std::vector<std::unique_ptr<ImportIrComponent>> import_irs_;
 
     juce::Component content_;
     juce::Viewport viewport_;

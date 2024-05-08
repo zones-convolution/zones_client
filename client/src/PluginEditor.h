@@ -4,6 +4,7 @@
 #include "ProcessorContainer.h"
 #include "browser/BrowserNavigationComponent.h"
 #include "browser/import/ImportComponent.h"
+#include "browser/import/ImportController.h"
 #include "components/SidebarContent.h"
 #include "components/SidebarFooter.h"
 #include "components/SidebarHeader.h"
@@ -55,6 +56,8 @@ private:
     BrowserNavigationComponent browser_ {browser_store_, model_, context_, tabs_store_};
 
     ImportComponent import_component_;
+    ImportController import_controller_ {import_component_};
+
     PanelComponent import_panel_ {import_component_};
 
     PreferencesComponent preferences_component_;

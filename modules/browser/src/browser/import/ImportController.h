@@ -12,6 +12,7 @@ public:
 private:
     [[nodiscard]] static PositionMap
     PerformCopyPositionMap (const PositionMap & position_map,
+                            const std::filesystem::path & zone_directory,
                             const std::filesystem::path & ir_directory_path);
 
     ImportComponent & import_component_;

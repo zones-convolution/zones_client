@@ -1,0 +1,30 @@
+{
+    "cover_image_id": null,
+    "description": "my zone descrption",
+    "images": [],
+    "irs": [
+        {
+            "channel_format": "mono",
+            "description": "ir 1 desc",
+            "position_map": {
+                "centre": "centre.wav",
+                "left": null,
+                "right": null
+            },
+            "relative_path": "",
+            "title": "ir 1 name"
+        },
+        {
+            "channel_format": "stereo",
+            "description": "my ir 2",
+            "position_map": {
+                "centre": null,
+                "left": "left.wav",
+                "right": "right.wav"
+            },
+            "relative_path": "",
+            "title": "my ir 2"
+        }
+    ],
+    "title": "my zone title"
+}

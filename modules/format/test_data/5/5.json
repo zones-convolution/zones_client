@@ -1,0 +1,19 @@
+{
+    "cover_image_id": null,
+    "description": "5",
+    "images": [],
+    "irs": [
+        {
+            "channel_format": "mono",
+            "description": "6",
+            "position_map": {
+                "centre": "impulse_responses/6/centre.wav",
+                "left": null,
+                "right": null
+            },
+            "relative_path": "",
+            "title": "6"
+        }
+    ],
+    "title": "5"
+}
