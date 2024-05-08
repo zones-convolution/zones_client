@@ -17,6 +17,11 @@ public:
     std::function<void ()> OnSubmit;
 
 private:
+    void SetupContentView ();
+    void LayoutContent ();
+
+    [[nodiscard]] int GetRequiredContentHeight () const;
+
     juce::Label import_title_ {"Import Zone", "Import Zone"};
     DividerComponent top_divider_;
 
@@ -24,6 +29,9 @@ private:
 
     IconTextButton add_ir_button_ {"Add Ir", BoxIcons::kBxPlusCircle};
     std::vector<std::unique_ptr<ImportIrComponent>> import_irs_;
+
+    juce::Component content_;
+    juce::Viewport viewport_;
 
     IconTextButton import_zone_button_ {"Import Zone", BoxIcons::kBxImport};
 };

@@ -29,6 +29,7 @@ public:
 
     void UpdateVisiblePositions (DisplayType display_type);
     [[nodiscard]] const PositionMap & GetPositionMap () const;
+    [[nodiscard]] int GetRequiredContentHeight () const;
 
 private:
     static const juce::String kChoosePickerDialogTitle;
@@ -62,6 +63,8 @@ public:
     [[nodiscard]] std::string GetTitle () const;
     [[nodiscard]] std::string GetDescription () const;
     [[nodiscard]] ChannelFormat GetChannelFormat () const;
+
+    [[nodiscard]] int GetRequiredContentHeight () const;
 
     SpeakerPositionComponent speaker_position_component_;
 

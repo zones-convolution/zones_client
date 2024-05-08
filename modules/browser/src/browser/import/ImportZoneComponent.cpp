@@ -24,6 +24,11 @@ ImportZoneComponent::ImportZoneComponent ()
     addAndMakeVisible (user_path_picker_);
 }
 
+int ImportZoneComponent::GetRequiredContentHeight () const
+{
+    return static_cast<int> ((LookAndFeel::kButtonHeight * 6) + (LookAndFeel::kGap * 2));
+}
+
 void ImportZoneComponent::resized ()
 {
     juce::FlexBox layout;
@@ -35,9 +40,8 @@ void ImportZoneComponent::resized ()
         juce::FlexItem (description_input_).withHeight (LookAndFeel::kButtonHeight * 4));
     layout.items.add (LookAndFeel::kFlexSpacer);
     layout.items.add (juce::FlexItem (user_path_picker_).withHeight (LookAndFeel::kButtonHeight));
-    layout.items.add (LookAndFeel::kFlexSpacer);
 
-    layout.performLayout (getLocalBounds ().toFloat ());
+    layout.performLayout (getLocalBounds ());
 }
 
 std::string ImportZoneComponent::GetDescription () const

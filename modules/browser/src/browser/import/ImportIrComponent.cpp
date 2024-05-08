@@ -76,6 +76,11 @@ static juce::FlexBox CreateSpeakerPositionLayout (juce::Label & label,
     return layout;
 }
 
+int SpeakerPositionComponent::GetRequiredContentHeight () const
+{
+    return static_cast<int> ((LookAndFeel::kButtonHeight * 3) + (LookAndFeel::kGap * 2));
+}
+
 void SpeakerPositionComponent::resized ()
 {
     auto centre_layout =
@@ -187,6 +192,13 @@ ImportIrComponent::ImportIrComponent ()
     addAndMakeVisible (speaker_position_component_);
 }
 
+int ImportIrComponent::GetRequiredContentHeight () const
+{
+    return static_cast<int> (
+        (LookAndFeel::kButtonHeight * 6) + 20.0f + LookAndFeel::kDividerThickness +
+        speaker_position_component_.GetRequiredContentHeight () + (LookAndFeel::kGap * 4));
+}
+
 void ImportIrComponent::resized ()
 {
     juce::FlexBox toolbar_layout;
@@ -208,7 +220,8 @@ void ImportIrComponent::resized ()
     layout.items.add (LookAndFeel::LabelFlexItem (speaker_positions_title_));
     layout.items.add (LookAndFeel::HorizontalDividerFlexItem (middle_divider_));
     layout.items.add (LookAndFeel::kFlexSpacer);
-    layout.items.add (juce::FlexItem (speaker_position_component_).withFlex (1.f));
+    layout.items.add (juce::FlexItem (speaker_position_component_)
+                          .withHeight (speaker_position_component_.GetRequiredContentHeight ()));
 
     layout.performLayout (getLocalBounds ().toFloat ());
 }

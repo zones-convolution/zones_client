@@ -62,16 +62,62 @@ ImportComponent::ImportComponent ()
         if (OnSubmit)
             OnSubmit ();
     };
-    addAndMakeVisible (import_zone_);
+    addAndMakeVisible (import_zone_button_);
+
+    SetupContentView ();
+
+    addAndMakeVisible (viewport_);
+    viewport_.setViewedComponent (&content_, false);
+}
+
+void ImportComponent::SetupContentView ()
+{
+    content_.addAndMakeVisible (import_zone_);
 
     add_ir_button_.onClick = [&]
     {
         import_irs_.emplace_back (std::make_unique<ImportIrComponent> ());
-        addAndMakeVisible (*import_irs_.back ());
+        content_.addAndMakeVisible (*import_irs_.back ());
         resized ();
     };
-    addAndMakeVisible (add_ir_button_);
-    addAndMakeVisible (import_zone_button_);
+
+    content_.addAndMakeVisible (add_ir_button_);
+}
+
+int ImportComponent::GetRequiredContentHeight () const
+{
+    int import_ir_height = 0;
+    for (auto & import_ir : import_irs_)
+        import_ir_height += import_ir->GetRequiredContentHeight ();
+
+    return import_zone_.GetRequiredContentHeight () +
+           static_cast<int> (LookAndFeel::kButtonHeight) + import_ir_height +
+           (2 * static_cast<int> (LookAndFeel::kGap));
+}
+
+void ImportComponent::LayoutContent ()
+{
+    auto viewport_visible_width = viewport_.getMaximumVisibleWidth ();
+    auto content_bounds = getLocalBounds ()
+                              .withWidth (viewport_visible_width)
+                              .withHeight (GetRequiredContentHeight ());
+    if (viewport_.canScrollVertically ())
+        content_bounds.removeFromRight (LookAndFeel::kPadding);
+
+    content_.setBounds (content_bounds);
+
+    juce::FlexBox flex;
+    LayoutHelper layout {flex};
+
+    layout.UseColumn ();
+
+    layout.AddFlex (import_zone_);
+    for (auto & import_ir : import_irs_)
+        flex.items.add (
+            juce::FlexItem (*import_ir).withHeight (import_ir->GetRequiredContentHeight ()));
+    layout.AddButton (add_ir_button_);
+
+    flex.performLayout (content_bounds);
 }
 
 void ImportComponent::resized ()
@@ -83,12 +129,13 @@ void ImportComponent::resized ()
 
     layout.AddLabel (import_title_);
     layout.AddHorizontalDivider (top_divider_);
-    layout.AddFlex (import_zone_);
-
-    for (auto & import_ir : import_irs_)
-        layout.AddFlex (*import_ir);
-
-    layout.AddButton (add_ir_button_);
+    layout.AddFlex (viewport_);
     layout.AddButton (import_zone_button_, false);
+
     flex.performLayout (getLocalBounds ());
+
+    auto viewport_visible_width = viewport_.getMaximumVisibleWidth ();
+    LayoutContent ();
+    if (viewport_.getViewWidth () != viewport_visible_width)
+        LayoutContent ();
 }

@@ -6,11 +6,13 @@ class ImportZoneComponent : public juce::Component
 {
 public:
     ImportZoneComponent ();
-    void resized () override;
 
     [[nodiscard]] std::string GetTitle () const;
     [[nodiscard]] std::string GetDescription () const;
     [[nodiscard]] std::string GetUserPath () const;
+
+    [[nodiscard]] int GetRequiredContentHeight () const;
+    void resized () override;
 
 private:
     juce::TextEditor title_input_;
