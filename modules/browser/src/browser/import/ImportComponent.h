@@ -19,6 +19,7 @@ public:
 private:
     void SetupContentView ();
     void LayoutContent ();
+    void UpdateImportIrs ();
 
     [[nodiscard]] int GetRequiredContentHeight () const;
 

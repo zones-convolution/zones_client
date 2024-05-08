@@ -156,6 +156,15 @@ const PositionMap & SpeakerPositionComponent::GetPositionMap () const
 
 ImportIrComponent::ImportIrComponent ()
 {
+    addAndMakeVisible (import_ir_title_);
+    remove_ir_button_.onClick = [&]
+    {
+        if (OnRemoveIr)
+            OnRemoveIr ();
+    };
+    addAndMakeVisible (remove_ir_button_);
+    addAndMakeVisible (top_divider_);
+
     auto placeholder_colour = juce::Colours::grey.withAlpha (0.6f);
     title_input_.setTextToShowWhenEmpty ("Ir Name", placeholder_colour);
     title_input_.setMultiLine (false, false);
@@ -195,12 +204,19 @@ ImportIrComponent::ImportIrComponent ()
 int ImportIrComponent::GetRequiredContentHeight () const
 {
     return static_cast<int> (
-        (LookAndFeel::kButtonHeight * 6) + 20.0f + LookAndFeel::kDividerThickness +
-        speaker_position_component_.GetRequiredContentHeight () + (LookAndFeel::kGap * 4));
+        (LookAndFeel::kButtonHeight * 7) + 20.0f + (LookAndFeel::kDividerThickness * 2) +
+        speaker_position_component_.GetRequiredContentHeight () + (LookAndFeel::kGap * 7));
 }
 
 void ImportIrComponent::resized ()
 {
+    juce::FlexBox title_layout;
+    title_layout.flexDirection = juce::FlexBox::Direction::row;
+    title_layout.justifyContent = juce::FlexBox::JustifyContent::spaceBetween;
+    title_layout.alignItems = juce::FlexBox::AlignItems::center;
+    title_layout.items.add (LookAndFeel::LabelFlexItem (import_ir_title_));
+    title_layout.items.add (LookAndFeel::ButtonFlexItem (remove_ir_button_).withWidth (120.0f));
+
     juce::FlexBox toolbar_layout;
     toolbar_layout.flexDirection = juce::FlexBox::Direction::row;
     toolbar_layout.items.add (juce::FlexItem (microphone_array_picker_).withFlex (1.0f));
@@ -210,13 +226,18 @@ void ImportIrComponent::resized ()
     juce::FlexBox layout;
     layout.flexDirection = juce::FlexBox::Direction::column;
 
+    layout.items.add (juce::FlexItem (title_layout).withHeight (LookAndFeel::kButtonHeight));
+    layout.items.add (LookAndFeel::kFlexSpacer);
+    layout.items.add (LookAndFeel::HorizontalDividerFlexItem (top_divider_));
+    layout.items.add (LookAndFeel::kFlexSpacer);
+
     layout.items.add (juce::FlexItem (title_input_).withHeight (LookAndFeel::kButtonHeight));
     layout.items.add (LookAndFeel::kFlexSpacer);
     layout.items.add (
         juce::FlexItem (description_input_).withHeight (LookAndFeel::kButtonHeight * 4));
     layout.items.add (LookAndFeel::kFlexSpacer);
     layout.items.add (juce::FlexItem (toolbar_layout).withHeight (LookAndFeel::kButtonHeight));
-
+    layout.items.add (LookAndFeel::kFlexSpacer);
     layout.items.add (LookAndFeel::LabelFlexItem (speaker_positions_title_));
     layout.items.add (LookAndFeel::HorizontalDividerFlexItem (middle_divider_));
     layout.items.add (LookAndFeel::kFlexSpacer);

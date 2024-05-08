@@ -68,7 +68,13 @@ public:
 
     SpeakerPositionComponent speaker_position_component_;
 
+    std::function<void ()> OnRemoveIr;
+
 private:
+    juce::Label import_ir_title_ {"Import IR", "Import IR"};
+    IconTextButton remove_ir_button_ {"Remove IR", BoxIcons::kBxTrash};
+    DividerComponent top_divider_;
+
     juce::TextEditor title_input_;
     juce::TextEditor description_input_;
 

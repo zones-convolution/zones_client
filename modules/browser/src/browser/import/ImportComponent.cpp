@@ -70,6 +70,17 @@ ImportComponent::ImportComponent ()
     viewport_.setViewedComponent (&content_, false);
 }
 
+void ImportComponent::UpdateImportIrs ()
+{
+    for (auto i = 0; i < import_irs_.size (); ++i)
+        import_irs_ [i]->OnRemoveIr = [&, i]
+        {
+            import_irs_.erase (import_irs_.begin () + i);
+            UpdateImportIrs ();
+        };
+    resized ();
+}
+
 void ImportComponent::SetupContentView ()
 {
     content_.addAndMakeVisible (import_zone_);
@@ -78,7 +89,7 @@ void ImportComponent::SetupContentView ()
     {
         import_irs_.emplace_back (std::make_unique<ImportIrComponent> ());
         content_.addAndMakeVisible (*import_irs_.back ());
-        resized ();
+        UpdateImportIrs ();
     };
 
     content_.addAndMakeVisible (add_ir_button_);
@@ -134,8 +145,10 @@ void ImportComponent::resized ()
 
     flex.performLayout (getLocalBounds ());
 
+    auto view_position = viewport_.getViewPosition ();
     auto viewport_visible_width = viewport_.getMaximumVisibleWidth ();
     LayoutContent ();
     if (viewport_.getViewWidth () != viewport_visible_width)
         LayoutContent ();
+    viewport_.setViewPosition (view_position);
 }
