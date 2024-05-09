@@ -29,14 +29,16 @@ ImportController::ImportController (ImportComponent & import_component)
             auto ir_title = import_ir->GetTitle ();
             auto safe_ir_title =
                 std::filesystem::path (juce::File::createLegalFileName (ir_title).toStdString ());
+            auto relative_path = "impulse_responses" / safe_ir_title;
 
             ir_metadata.title = ir_title;
             ir_metadata.description = import_ir->GetDescription ();
             ir_metadata.channel_format = import_ir->GetChannelFormat ();
+            ir_metadata.relative_path = relative_path;
             ir_metadata.position_map =
                 PerformCopyPositionMap (import_ir->speaker_position_component_.GetPositionMap (),
                                         zone_directory_path,
-                                        "impulse_responses" / safe_ir_title);
+                                        relative_path);
 
             zone_metadata.irs.push_back (ir_metadata);
         }
@@ -79,9 +81,9 @@ PositionMap ImportController::PerformCopyPositionMap (const PositionMap & positi
     };
 
     PositionMap translated_map;
-    translated_map.centre = copy_position (position_map.centre, ir_path / "centre");
-    translated_map.left = copy_position (position_map.left, ir_path / "left");
-    translated_map.right = copy_position (position_map.right, ir_path / "right");
+    translated_map.centre = copy_position (position_map.centre, "centre");
+    translated_map.left = copy_position (position_map.left, "left");
+    translated_map.right = copy_position (position_map.right, "right");
 
     return translated_map;
 }

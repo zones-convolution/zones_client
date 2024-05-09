@@ -1,8 +1,0 @@
-{
-  "name": "basic_mono_ir",
-  "description": "basic_mono_ir",
-  "channel_format": "mono | stereo | foa | 7.1 .... etc",
-  "position_map": {
-    "c": "c.wav"
-  }
-}

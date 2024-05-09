@@ -1,8 +1,0 @@
-{
-  "name": "Mono",
-  "description": "valid_description",
-  "channel_format": "mono",
-  "position_map": {
-    "centre": "c"
-  }
-}
