@@ -18,10 +18,13 @@ HomeViewComponent::HomeViewComponent (lager::store<BrowserAction, BrowserModel> 
     addAndMakeVisible (card_banner_grid_);
     addAndMakeVisible (top_divider_);
     addAndMakeVisible (top_label_);
-    addAndMakeVisible (import_zone_button_);
 
     import_zone_button_.onClick = [&]
     { tabs_context_.dispatch (LoadTabAction {.tab_name = "import"}); };
+    addAndMakeVisible (import_zone_button_);
+
+    load_from_disk_button_.onClick = [&] { LoadFromDisk (); };
+    addAndMakeVisible (load_from_disk_button_);
 
     lager::watch (user_zones_reader_, [&] (const auto &) { UpdateZoneList (); });
     UpdateZoneList ();
@@ -39,6 +42,59 @@ void HomeViewComponent::UpdateZoneList ()
     card_banner_grid_.Update ();
 }
 
+void HomeViewComponent::LoadFromDisk ()
+{
+    directory_picker_ = std::make_unique<juce::FileChooser> ("Load IR from disk");
+    auto directory_flags =
+        juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectFiles;
+
+    directory_picker_->launchAsync (
+        directory_flags,
+        [&] (const juce::FileChooser & chooser)
+        {
+            auto path = chooser.getResult ();
+            if (path.exists ())
+            {
+                IrSelection ir_selection;
+                auto & ir_metadata = ir_selection.ir;
+
+                auto file_path = std::filesystem::path {path.getFullPathName ().toStdString ()};
+                auto ir_filename = file_path.filename ();
+
+                ir_metadata.title = ir_filename.stem ();
+                ir_metadata.description = "Impulse response loaded from disk";
+                ir_metadata.relative_path = file_path;
+                ir_metadata.position_map = PositionMap {.centre = ""};
+
+                ir_metadata.channel_format = GetChannelFormatFromFile (path);
+                ir_selection.target_format = TargetFormat::kStereo;
+
+                context_.dispatch (LoadIrAction {ir_selection});
+            }
+        });
+}
+
+ChannelFormat HomeViewComponent::GetChannelFormatFromFile (juce::File & path)
+{
+    juce::AudioFormatManager audio_format_manager;
+    audio_format_manager.registerBasicFormats ();
+
+    std::unique_ptr<juce::AudioFormatReader> reader (audio_format_manager.createReaderFor (path));
+
+    auto num_channels = reader->numChannels;
+
+    switch (num_channels)
+    {
+        case 2:
+            return ChannelFormat::kStereo;
+        case 4:
+            return ChannelFormat::kFoa;
+
+        default:
+            return ChannelFormat::kMono;
+    }
+}
+
 void HomeViewComponent::resized ()
 {
     juce::FlexBox layout;
@@ -51,6 +107,8 @@ void HomeViewComponent::resized ()
     layout.items.add (juce::FlexItem (card_banner_grid_).withHeight (180.0f));
     layout.items.add (LookAndFeel::kFlexSpacer);
     layout.items.add (LookAndFeel::ButtonFlexItem (import_zone_button_));
+    layout.items.add (LookAndFeel::kFlexSpacer);
+    layout.items.add (LookAndFeel::ButtonFlexItem (load_from_disk_button_));
 
     layout.performLayout (getLocalBounds ().toFloat ());
 }
