@@ -2,6 +2,7 @@
 #include "../BrowserModel.h"
 #include "browser/BrowserAction.h"
 #include "browser/BrowserModel.h"
+#include "format/LoadFromDiskController.h"
 #include "juce_audio_formats/juce_audio_formats.h"
 #include "layout/BannerGrid.h"
 #include "layout/tabs/TabsAction.h"
@@ -28,8 +29,6 @@ public:
 
 private:
     void UpdateZoneList ();
-    void LoadFromDisk ();
-    ChannelFormat GetChannelFormatFromFile (juce::File & path);
 
     lager::reader<Model> model_;
     lager::context<Action> context_;
@@ -48,6 +47,6 @@ private:
 
     IconTextButton import_zone_button_ {"Import Zone", BoxIcons::kBxImport};
 
-    std::unique_ptr<juce::FileChooser> directory_picker_;
+    LoadFromDiskController load_from_disk_controller_;
     IconTextButton load_from_disk_button_ {"Load From Disk", BoxIcons::kBxFolder};
 };
