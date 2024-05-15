@@ -1,6 +1,6 @@
 #include "IrData.h"
 
-#include "formatter/StereoFormatter.h"
+#include "IrFormatter.h"
 
 const std::string IrDataFormat::kMetadataExtension = ".json";
 
@@ -14,8 +14,12 @@ bool IrFormatData::SupportsTarget (TargetFormat target_format) const
 {
     switch (channel_format)
     {
+        case ChannelFormat::kMono:
+            return MonoFormatter::SupportsTarget (*this, target_format);
         case ChannelFormat::kStereo:
             return StereoFormatter::SupportsTarget (*this, target_format);
+        case ChannelFormat::kFoa:
+            return FoaFormatter::SupportsTarget (*this, target_format);
         default:
             return false;
     }
@@ -58,6 +62,20 @@ std::string GetStringForTargetFormat (const TargetFormat & target_format)
         case TargetFormat::kFoa:
             return "FOA";
     }
+}
+
+std::optional<TargetFormat> GetTargetFormatForString (const std::string & string)
+{
+    if (string == "Mono")
+        return TargetFormat::kMono;
+    else if (string == "Stereo")
+        return TargetFormat::kStereo;
+    else if (string == "True Stereo")
+        return TargetFormat::kTrueStereo;
+    else if (string == "FOA")
+        return TargetFormat::kFoa;
+    else
+        return std::nullopt;
 }
 
 void CopyIrDataMeta (IrData & to, const IrData & from)

@@ -18,6 +18,7 @@ bool IsTargetSupported (const juce::AudioChannelSet & channel_set, TargetFormat 
 std::vector<TargetFormat> GetTargetFormatsForChannelSet (const juce::AudioChannelSet & channel_set);
 
 std::string GetStringForTargetFormat (const TargetFormat & target_format);
+std::optional<TargetFormat> GetTargetFormatForString (const std::string & string);
 
 struct IrSelection
 {

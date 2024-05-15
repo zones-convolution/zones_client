@@ -40,7 +40,7 @@ HomeViewComponent::HomeViewComponent (lager::store<BrowserAction, BrowserModel> 
 
 void HomeViewComponent::UpdateTargetFormatList ()
 {
-    auto target_formats = model_->zone_repository_model.valid_target_formats;
+    auto target_formats = valid_target_formats_reader_.get ();
     std::string text {};
     for (auto & target_format : target_formats)
         text += GetStringForTargetFormat (target_format) + " ";
