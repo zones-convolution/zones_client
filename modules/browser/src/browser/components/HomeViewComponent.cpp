@@ -14,7 +14,7 @@ HomeViewComponent::HomeViewComponent (lager::store<BrowserAction, BrowserModel> 
     , zones_repository_reader_ (model [&Model::zone_repository_model])
     , ir_reader_ (model [&Model::zone_repository_model][&ZoneRepositoryModel::current_ir])
     , user_zones_reader_ (model [&Model::zone_repository_model][&ZoneRepositoryModel::user_zones])
-    , load_from_disk_controller_ (context)
+    , load_from_disk_controller_ (context, model)
 {
     addAndMakeVisible (card_banner_grid_);
     addAndMakeVisible (top_divider_);

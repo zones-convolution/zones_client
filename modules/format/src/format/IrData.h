@@ -19,6 +19,7 @@ std::vector<TargetFormat> GetTargetFormatsForChannelSet (const juce::AudioChanne
 
 std::string GetStringForTargetFormat (const TargetFormat & target_format);
 std::optional<TargetFormat> GetTargetFormatForString (const std::string & string);
+int GetNumChannels (TargetFormat target_format);
 
 struct IrSelection
 {

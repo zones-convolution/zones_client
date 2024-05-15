@@ -78,6 +78,22 @@ std::optional<TargetFormat> GetTargetFormatForString (const std::string & string
         return std::nullopt;
 }
 
+int GetNumChannels (TargetFormat target_format)
+{
+    switch (target_format)
+    {
+        case TargetFormat::kMono:
+            return 1;
+        case TargetFormat::kStereo:
+            return 2;
+        case TargetFormat::kFoa:
+            return 4;
+
+        default:
+            return 0;
+    }
+}
+
 void CopyIrDataMeta (IrData & to, const IrData & from)
 {
     to.bit_depth = from.bit_depth;

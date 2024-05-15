@@ -1,7 +1,10 @@
 #include "LoadFromDiskController.h"
 
-LoadFromDiskController::LoadFromDiskController (lager::context<Action> & context)
+LoadFromDiskController::LoadFromDiskController (lager::context<Action> & context,
+                                                const lager::reader<Model> & model)
     : context_ (context)
+    , valid_target_formats_reader_ (
+          model [&Model::zone_repository_model][&ZoneRepositoryModel::valid_target_formats])
 {
 }
 
@@ -24,28 +27,29 @@ void LoadFromDiskController::Load ()
                 auto file_path = std::filesystem::path {path.getFullPathName ().toStdString ()};
                 auto ir_filename = file_path.filename ();
 
+                juce::AudioFormatManager audio_format_manager;
+                audio_format_manager.registerBasicFormats ();
+
+                std::unique_ptr<juce::AudioFormatReader> reader (
+                    audio_format_manager.createReaderFor (path));
+
+                auto num_channels = reader->numChannels;
+
                 ir_metadata.title = ir_filename.stem ();
                 ir_metadata.description = "Impulse response loaded from disk";
                 ir_metadata.relative_path = file_path;
                 ir_metadata.position_map = PositionMap {.centre = ""};
 
-                ir_metadata.channel_format = GetChannelFormatFromFile (path);
-                ir_selection.target_format = TargetFormat::kStereo;
+                ir_metadata.channel_format = GetChannelFormat (num_channels);
+                ir_selection.target_format = GetValidTargetFormat (num_channels);
 
                 context_.dispatch (LoadIrAction {ir_selection});
             }
         });
 }
 
-ChannelFormat LoadFromDiskController::GetChannelFormatFromFile (juce::File & path)
+ChannelFormat LoadFromDiskController::GetChannelFormat (int num_channels)
 {
-    juce::AudioFormatManager audio_format_manager;
-    audio_format_manager.registerBasicFormats ();
-
-    std::unique_ptr<juce::AudioFormatReader> reader (audio_format_manager.createReaderFor (path));
-
-    auto num_channels = reader->numChannels;
-
     switch (num_channels)
     {
         case 2:
@@ -55,5 +59,16 @@ ChannelFormat LoadFromDiskController::GetChannelFormatFromFile (juce::File & pat
 
         default:
             return ChannelFormat::kMono;
+    }
+}
+
+TargetFormat LoadFromDiskController::GetValidTargetFormat (int num_channels)
+{
+    auto valid_target_formats = valid_target_formats_reader_.get ();
+
+    for (auto & target_format : valid_target_formats)
+    {
+        if (num_channels = GetNumChannels (target_format))
+            return target_format;
     }
 }
