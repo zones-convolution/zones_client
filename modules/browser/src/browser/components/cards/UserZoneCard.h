@@ -21,6 +21,8 @@ public:
     void resized () override;
 
 private:
+    std::optional<IrSelection> GetValidIrSelection ();
+
     ZoneMetadata zone_metadata_;
     lager::context<Action> context_;
     CurrentIrReader ir_reader_;
@@ -33,4 +35,6 @@ private:
     PanelComponent panel_ {
         PanelComponent::ColourPair {juce::Colours::darkmagenta, juce::Colours::darkorange},
         false};
+
+    ValidTargetFormatsReader valid_target_formats_reader_;
 };
