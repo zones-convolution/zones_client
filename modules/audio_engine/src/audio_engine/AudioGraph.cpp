@@ -17,8 +17,9 @@ void AudioGraph::prepare (const juce::dsp::ProcessSpec & spec)
     input_graph_metering_.Prepare (spec.numChannels);
     output_graph_metering_.Prepare (spec.numChannels);
 
-    convolution_engine_.Clear (); // This will need more checks but is used for now to stop some
-                                  // potential crashes??
+    convolution_engine_.reset ();
+    // This will need more checks but is used for now to stop some
+    // potential crashes?? would clear be better?
 }
 
 void AudioGraph::process (const juce::dsp::ProcessContextReplacing<float> & replacing)
