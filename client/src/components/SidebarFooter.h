@@ -32,9 +32,13 @@ public:
     void resized () override;
 
 private:
+    void ConfigureMeter ();
+
     static const PanelComponent::ColourPair kZonePanelGradient;
     ZoneLabel zone_label_;
     PanelComponent zone_label_panel_;
 
+    AudioGraphMetering & input_graph_metering_;
+    AudioGraphMetering & output_graph_metering_;
     MeterComponent meter_component_;
 };

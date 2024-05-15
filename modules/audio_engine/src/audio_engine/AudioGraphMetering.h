@@ -11,6 +11,7 @@ public:
     void Prepare (size_t num_channels);
     float GetChannelPeak (size_t channel_index);
     bool GetChannelClipping (size_t channel_index);
+    int GetNumChannels ();
 
 private:
     struct ChannelMetering

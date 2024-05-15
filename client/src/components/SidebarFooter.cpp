@@ -56,31 +56,15 @@ void ZoneLabel::UpdateLabels ()
 SidebarFooter::SidebarFooter (const CurrentIrReader & ir_reader,
                               AudioGraphMetering & input_graph_metering,
                               AudioGraphMetering & output_graph_metering)
-    : zone_label_ (ir_reader)
+    : input_graph_metering_ (input_graph_metering)
+    , output_graph_metering_ (output_graph_metering)
+    , zone_label_ (ir_reader)
     , zone_label_panel_ (zone_label_, kZonePanelGradient)
 {
     addAndMakeVisible (zone_label_panel_);
     addAndMakeVisible (meter_component_);
 
-    auto create_meter_delegate = [] (AudioGraphMetering & graph_metering, int channel_index)
-    {
-        return MeterComponent::ChannelMeterDelegate {
-            .get_peak = [&, channel_index] ()
-            { return graph_metering.GetChannelPeak (channel_index); },
-            .is_clipping = [&, channel_index] ()
-            { return graph_metering.GetChannelClipping (channel_index); },
-            .reset_clipping = [&, channel_index] ()
-            { graph_metering.ResetClipping (channel_index); }};
-    };
-
-    meter_component_.SetConfiguration ({{
-                                            create_meter_delegate (input_graph_metering, 0),
-                                            create_meter_delegate (input_graph_metering, 1),
-                                        },
-                                        {
-                                            create_meter_delegate (output_graph_metering, 0),
-                                            create_meter_delegate (output_graph_metering, 1),
-                                        }});
+    ConfigureMeter ();
 }
 
 void SidebarFooter::resized ()
@@ -93,4 +77,35 @@ void SidebarFooter::resized ()
     layout.items.add (juce::FlexItem (meter_component_).withFlex (2.f));
 
     layout.performLayout (getLocalBounds ().toFloat ());
+}
+
+void SidebarFooter::ConfigureMeter ()
+{
+    auto create_meter_delegate = [] (AudioGraphMetering & graph_metering, int channel_index)
+    {
+        return MeterComponent::ChannelMeterDelegate {
+            .get_peak = [&, channel_index] ()
+            { return graph_metering.GetChannelPeak (channel_index); },
+            .is_clipping = [&, channel_index] ()
+            { return graph_metering.GetChannelClipping (channel_index); },
+            .reset_clipping = [&, channel_index] ()
+            { graph_metering.ResetClipping (channel_index); }};
+    };
+    // potentially need std::move here?
+
+    immer::flex_vector<MeterComponent::ChannelMeterDelegate> input_configuration;
+    for (auto i = 0; i < input_graph_metering_.GetNumChannels (); ++i)
+    {
+        input_configuration =
+            input_configuration.push_back (create_meter_delegate (input_graph_metering_, i));
+    };
+
+    immer::flex_vector<MeterComponent::ChannelMeterDelegate> output_configuration;
+    for (auto i = 0; i < output_graph_metering_.GetNumChannels (); ++i)
+    {
+        output_configuration =
+            output_configuration.push_back (create_meter_delegate (input_graph_metering_, i));
+    };
+
+    meter_component_.SetConfiguration ({input_configuration, output_configuration});
 }
