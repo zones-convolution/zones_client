@@ -8,6 +8,11 @@ ZoneRepositoryResult UpdateZoneRepository (ZoneRepositoryModel model,
 {
     return std::visit (
         lager::visitor {
+            [&] (const RefreshValidTargetFormatsAction & action) -> ZoneRepositoryResult
+            {
+                model.valid_target_formats = action.target_formats;
+                return {model, lager::noop};
+            },
             [&] (const RefreshUserZonesAction & action) -> ZoneRepositoryResult
             {
                 model.user_zones_loading = true;

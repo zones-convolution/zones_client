@@ -13,6 +13,25 @@ ProcessorContainer::ProcessorContainer (juce::AudioProcessor & audio_processor)
     store_.dispatch (RefreshUserZonesAction {});
 }
 
+void ProcessorContainer::Prepare (double sampleRate,
+                                  int samplesPerBlock,
+                                  juce::AudioProcessor::BusesLayout layout)
+{
+    graph_.prepare (
+        juce::dsp::ProcessSpec {sampleRate,
+                                static_cast<juce::uint32> (samplesPerBlock),
+                                static_cast<juce::uint32> (layout.getMainOutputChannels ())});
+
+    auto output_channel_set = layout.getMainOutputChannelSet ();
+    auto state = ir_controller_.GetCurrentGraphState ();
+    if (! IsTargetSupported (output_channel_set, state.target_format))
+        convolution_engine_.Clear ();
+
+    // set outputchannelset for ui
+    store_.dispatch (RefreshValidTargetFormatsAction {
+        .target_formats = GetTargetFormatsForChannelSet (output_channel_set)});
+}
+
 void ProcessorContainer::RegisterIrEngineListeners ()
 {
     auto & ir_engine_listeners = ir_engine_.GetListeners ();

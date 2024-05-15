@@ -63,10 +63,7 @@ void AudioPluginAudioProcessor::changeProgramName (int index, const juce::String
 
 void AudioPluginAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
-    processor_container_.graph_.prepare (
-        juce::dsp::ProcessSpec {sampleRate,
-                                static_cast<juce::uint32> (samplesPerBlock),
-                                static_cast<juce::uint32> (getTotalNumOutputChannels ())});
+    processor_container_.Prepare (sampleRate, samplesPerBlock, getBusesLayout ());
 }
 
 void AudioPluginAudioProcessor::releaseResources ()

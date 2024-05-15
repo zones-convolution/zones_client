@@ -15,6 +15,10 @@ enum class TargetFormat
 
 bool IsTargetSupported (const juce::AudioChannelSet & channel_set, TargetFormat target_format);
 
+std::vector<TargetFormat> GetTargetFormatsForChannelSet (const juce::AudioChannelSet & channel_set);
+
+std::string GetStringForTargetFormat (const TargetFormat & target_format);
+
 struct IrSelection
 {
     ZoneMetadata zone;

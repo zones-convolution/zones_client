@@ -15,6 +15,8 @@ HomeViewComponent::HomeViewComponent (lager::store<BrowserAction, BrowserModel> 
     , ir_reader_ (model [&Model::zone_repository_model][&ZoneRepositoryModel::current_ir])
     , user_zones_reader_ (model [&Model::zone_repository_model][&ZoneRepositoryModel::user_zones])
     , load_from_disk_controller_ (context)
+    , valid_target_formats_reader_ (
+          model [&Model::zone_repository_model][&ZoneRepositoryModel::valid_target_formats])
 {
     addAndMakeVisible (card_banner_grid_);
     addAndMakeVisible (top_divider_);
@@ -27,8 +29,22 @@ HomeViewComponent::HomeViewComponent (lager::store<BrowserAction, BrowserModel> 
     load_from_disk_button_.onClick = [&] { load_from_disk_controller_.Load (); };
     addAndMakeVisible (load_from_disk_button_);
 
+    addAndMakeVisible (valid_target_formats_label_);
+
     lager::watch (user_zones_reader_, [&] (const auto &) { UpdateZoneList (); });
     UpdateZoneList ();
+
+    lager::watch (valid_target_formats_reader_, [&] (const auto &) { UpdateTargetFormatList (); });
+    UpdateTargetFormatList ();
+}
+
+void HomeViewComponent::UpdateTargetFormatList ()
+{
+    auto target_formats = model_->zone_repository_model.valid_target_formats;
+    std::string text {};
+    for (auto & target_format : target_formats)
+        text += GetStringForTargetFormat (target_format) + " ";
+    valid_target_formats_label_.setText (text, juce::dontSendNotification);
 }
 
 void HomeViewComponent::UpdateZoneList ()
@@ -57,6 +73,9 @@ void HomeViewComponent::resized ()
     layout.items.add (LookAndFeel::ButtonFlexItem (import_zone_button_));
     layout.items.add (LookAndFeel::kFlexSpacer);
     layout.items.add (LookAndFeel::ButtonFlexItem (load_from_disk_button_));
+
+    layout.items.add (LookAndFeel::kFlexSpacer);
+    layout.items.add (LookAndFeel::LabelFlexItem (valid_target_formats_label_));
 
     layout.performLayout (getLocalBounds ().toFloat ());
 }

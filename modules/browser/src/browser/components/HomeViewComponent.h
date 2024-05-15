@@ -29,6 +29,7 @@ public:
 
 private:
     void UpdateZoneList ();
+    void UpdateTargetFormatList ();
 
     lager::reader<Model> model_;
     lager::context<Action> context_;
@@ -49,4 +50,7 @@ private:
 
     LoadFromDiskController load_from_disk_controller_;
     IconTextButton load_from_disk_button_ {"Load From Disk", BoxIcons::kBxFolder};
+
+    juce::Label valid_target_formats_label_;
+    ValidTargetFormatsReader valid_target_formats_reader_;
 };

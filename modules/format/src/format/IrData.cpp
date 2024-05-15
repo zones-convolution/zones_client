@@ -35,6 +35,31 @@ bool IsTargetSupported (const juce::AudioChannelSet & channel_set, TargetFormat 
     }
 }
 
+std::vector<TargetFormat> GetTargetFormatsForChannelSet (const juce::AudioChannelSet & channel_set)
+{
+    if (channel_set == juce::AudioChannelSet::mono ())
+        return {TargetFormat::kMono};
+    if (channel_set == juce::AudioChannelSet::stereo ())
+        return {TargetFormat::kStereo, TargetFormat::kTrueStereo};
+    if (channel_set == juce::AudioChannelSet::ambisonic (1))
+        return {TargetFormat::kFoa};
+}
+
+std::string GetStringForTargetFormat (const TargetFormat & target_format)
+{
+    switch (target_format)
+    {
+        case TargetFormat::kMono:
+            return "Mono";
+        case TargetFormat::kStereo:
+            return "Stereo";
+        case TargetFormat::kTrueStereo:
+            return "True Stereo";
+        case TargetFormat::kFoa:
+            return "FOA";
+    }
+}
+
 void CopyIrDataMeta (IrData & to, const IrData & from)
 {
     to.bit_depth = from.bit_depth;

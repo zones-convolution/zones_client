@@ -19,6 +19,7 @@ class ProcessorContainer
 {
 public:
     explicit ProcessorContainer (juce::AudioProcessor & audio_processor);
+    void Prepare (double sampleRate, int samplesPerBlock, juce::AudioProcessor::BusesLayout layout);
 
     AudioGraphMetering input_graph_metering_;
     AudioGraphMetering output_graph_metering_;
