@@ -47,6 +47,10 @@ std::vector<TargetFormat> GetTargetFormatsForChannelSet (const juce::AudioChanne
         return {TargetFormat::kStereo, TargetFormat::kTrueStereo};
     if (channel_set == juce::AudioChannelSet::ambisonic (1))
         return {TargetFormat::kFoa};
+    if (channel_set == juce::AudioChannelSet::quadraphonic ())
+        return {TargetFormat::kFoa};
+
+    return {};
 }
 
 std::string GetStringForTargetFormat (const TargetFormat & target_format)
