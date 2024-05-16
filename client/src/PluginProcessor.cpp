@@ -75,16 +75,14 @@ bool AudioPluginAudioProcessor::isBusesLayoutSupported (const BusesLayout & layo
 {
     auto main_output_channel_set = layouts.getMainOutputChannelSet ();
 
-    //    if (main_output_channel_set != juce::AudioChannelSet::mono () &&
-    //        main_output_channel_set != juce::AudioChannelSet::stereo () &&
-    //        main_output_channel_set != juce::AudioChannelSet::ambisonic (1) &&
-    //        main_output_channel_set != juce::AudioChannelSet::quadraphonic () &&
-    //        main_output_channel_set != juce::AudioChannelSet::create5point1 ())
-    //
-    //        return false;
-    //
-    //    if (main_output_channel_set != layouts.getMainInputChannelSet ())
-    //        return false;
+    if (main_output_channel_set != juce::AudioChannelSet::mono () &&
+        main_output_channel_set != juce::AudioChannelSet::stereo () &&
+        main_output_channel_set != juce::AudioChannelSet::ambisonic (1) &&
+        main_output_channel_set != juce::AudioChannelSet::quadraphonic ())
+        return false;
+
+    if (main_output_channel_set != layouts.getMainInputChannelSet ())
+        return false;
 
     return true;
 }
