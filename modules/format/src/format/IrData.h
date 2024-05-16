@@ -10,7 +10,8 @@ enum class TargetFormat
     kMono,
     kStereo,
     kTrueStereo,
-    kFoa
+    kFoa,
+    kQuadraphonic
 };
 
 bool IsTargetSupported (const juce::AudioChannelSet & channel_set, TargetFormat target_format);

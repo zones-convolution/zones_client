@@ -10,6 +10,8 @@ zones_add_module(
         src/format/formatter/StereoFormatter.cpp
         src/format/formatter/FoaFormatter.h
         src/format/formatter/FoaFormatter.cpp
+        src/format/formatter/QuadraphonicFormatter.h
+        src/format/formatter/QuadraphonicFormatter.cpp
         src/format/io/IrReader.h
         src/format/io/IrReader.cpp
         src/format/io/IrWriter.h

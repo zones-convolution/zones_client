@@ -69,6 +69,10 @@ TargetFormat LoadFromDiskController::GetValidTargetFormat (int num_channels)
     for (auto & target_format : valid_target_formats)
     {
         if (num_channels = GetNumChannels (target_format))
+        {
+            if (target_format == TargetFormat::kQuadraphonic)
+                continue;
             return target_format;
+        }
     }
 }

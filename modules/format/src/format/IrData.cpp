@@ -20,6 +20,8 @@ bool IrFormatData::SupportsTarget (TargetFormat target_format) const
             return StereoFormatter::SupportsTarget (*this, target_format);
         case ChannelFormat::kFoa:
             return FoaFormatter::SupportsTarget (*this, target_format);
+        case ChannelFormat::kQuadraphonic:
+            return QuadraphonicFormatter::SupportsTarget (*this, target_format);
         default:
             return false;
     }
@@ -35,7 +37,13 @@ bool IsTargetSupported (const juce::AudioChannelSet & channel_set, TargetFormat 
         case TargetFormat::kTrueStereo:
             return channel_set == juce::AudioChannelSet::stereo ();
         case TargetFormat::kFoa:
-            return channel_set == juce::AudioChannelSet::ambisonic (1);
+            return (channel_set == juce::AudioChannelSet::ambisonic (1) ||
+                    channel_set == juce::AudioChannelSet::quadraphonic ());
+        case TargetFormat::kQuadraphonic:
+            return channel_set == juce::AudioChannelSet::quadraphonic ();
+
+        default:
+            return false;
     }
 }
 
@@ -48,7 +56,7 @@ std::vector<TargetFormat> GetTargetFormatsForChannelSet (const juce::AudioChanne
     if (channel_set == juce::AudioChannelSet::ambisonic (1))
         return {TargetFormat::kFoa};
     if (channel_set == juce::AudioChannelSet::quadraphonic ())
-        return {TargetFormat::kFoa};
+        return {TargetFormat::kQuadraphonic, TargetFormat::kFoa};
 
     return {};
 }
@@ -65,6 +73,8 @@ std::string GetStringForTargetFormat (const TargetFormat & target_format)
             return "True Stereo";
         case TargetFormat::kFoa:
             return "FOA";
+        case TargetFormat::kQuadraphonic:
+            return "Quadraphonic";
     }
 }
 
@@ -78,6 +88,8 @@ std::optional<TargetFormat> GetTargetFormatForString (const std::string & string
         return TargetFormat::kTrueStereo;
     else if (string == "FOA")
         return TargetFormat::kFoa;
+    else if (string == "Quadraphonic")
+        return TargetFormat::kQuadraphonic;
     else
         return std::nullopt;
 }
@@ -91,6 +103,7 @@ int GetNumChannels (TargetFormat target_format)
         case TargetFormat::kStereo:
             return 2;
         case TargetFormat::kFoa:
+        case TargetFormat::kQuadraphonic:
             return 4;
 
         default:

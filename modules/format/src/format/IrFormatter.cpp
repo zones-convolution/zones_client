@@ -15,6 +15,8 @@ void CreateTargetIR (const std::filesystem::path & load_path,
             break;
         case ChannelFormat::kFoa:
             FoaFormatter::Format (load_path, ir_format_data, target_format, ir_data);
+        case ChannelFormat::kQuadraphonic:
+            QuadraphonicFormatter::Format (load_path, ir_format_data, target_format, ir_data);
             break;
     }
 }
