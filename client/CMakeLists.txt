@@ -44,9 +44,9 @@ set(SOURCES
 juce_add_plugin(
         ${BINARY}
         PLUGIN_MANUFACTURER_CODE
-        Zone
+        Zone1
         PLUGIN_CODE
-        Zone
+        Zone1
         FORMATS
         AU
         VST3
@@ -60,7 +60,7 @@ juce_add_plugin(
         BUNDLE_ID
         com.zones.zones
         VERSION
-        0.0.1)
+        0.0.2)
 
 target_sources(${BINARY} PRIVATE ${SOURCES})
 
