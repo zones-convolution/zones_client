@@ -28,6 +28,7 @@ AudioEngine::CreateConvolverSpecForState (const IrGraphState & ir_graph_state)
             return zones::Convolver::ConvolverSpec {.input_routing = {0, 0, 1, 1},
                                                     .output_routing = {0, 1, 0, 1}};
         case TargetFormat::kFoa:
+        case TargetFormat::kQuadraphonic:
             return zones::Convolver::ConvolverSpec {.input_routing = {0, 1, 2, 3},
                                                     .output_routing = {0, 1, 2, 3}};
     }
