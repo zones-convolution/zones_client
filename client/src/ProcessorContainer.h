@@ -25,19 +25,16 @@ public:
     AudioGraphMetering input_graph_metering_;
     AudioGraphMetering output_graph_metering_;
 
-    CommandQueue::VisitorQueue command_queue_ {};
-    NotificationQueue::VisitorQueue notification_queue_ {};
-
-    AudioGraph graph_ {input_graph_metering_,
-                       output_graph_metering_,
-                       convolution_engine_,
-                       notification_queue_};
+    juce::AudioProcessorValueTreeState parameter_tree_;
+    AudioGraph graph_;
     AudioEngine audio_engine_;
+
+    CommandQueue::VisitorQueue command_queue_ {graph_};
+    NotificationQueue::VisitorQueue notification_queue_ {audio_engine_};
 
     juce::ThreadPool thread_pool_;
     IrEngine ir_engine_ {thread_pool_};
 
-    juce::AudioProcessorValueTreeState parameter_tree_;
     IrController ir_controller_ {ir_engine_, parameter_tree_};
 
     zones::ConvolutionEngine convolution_engine_ {thread_pool_};

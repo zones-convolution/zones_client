@@ -22,7 +22,7 @@ struct CommandQueue
     {
     };
 
-    using Commands = std::variant<UpdateParameters, PlayCommand, StopCommand>;
+    using Commands = std::variant<UpdateParameters>;
     struct Visitor
     {
         virtual void operator() (const UpdateParameters & update_parameters) = 0;
