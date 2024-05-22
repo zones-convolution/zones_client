@@ -2,6 +2,7 @@
 
 #include "AudioGraphMetering.h"
 #include "CommandQueue.h"
+#include "NotificationQueue.h"
 #include "zones_convolver/zones_convolver.h"
 
 #include <juce_dsp/juce_dsp.h>
@@ -13,7 +14,8 @@ class AudioGraph
 public:
     explicit AudioGraph (AudioGraphMetering & input_graph_metering,
                          AudioGraphMetering & output_graph_metering,
-                         zones::ConvolutionEngine & convolution_engine);
+                         zones::ConvolutionEngine & convolution_engine,
+                         NotificationQueue::VisitorQueue & notification_queue);
     ~AudioGraph () override = default;
     void prepare (const juce::dsp::ProcessSpec & spec) override;
     void process (const juce::dsp::ProcessContextReplacing<float> & replacing) override;
@@ -22,6 +24,7 @@ public:
     void operator() (const CommandQueue::UpdateParameters & update_parameters) override;
 
 private:
+    NotificationQueue::VisitorQueue & notification_queue_;
     AudioGraphMetering & input_graph_metering_;
     AudioGraphMetering & output_graph_metering_;
 

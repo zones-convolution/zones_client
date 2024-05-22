@@ -12,7 +12,17 @@ struct CommandQueue
         float output_gain;
     };
 
-    using Commands = std::variant<UpdateParameters>;
+    struct PlayCommand
+    {
+        int file;
+        bool looping;
+    };
+
+    struct StopCommand
+    {
+    };
+
+    using Commands = std::variant<UpdateParameters, PlayCommand, StopCommand>;
     struct Visitor
     {
         virtual void operator() (const UpdateParameters & update_parameters) = 0;

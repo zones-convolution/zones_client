@@ -2,8 +2,10 @@
 
 AudioGraph::AudioGraph (AudioGraphMetering & input_graph_metering,
                         AudioGraphMetering & output_graph_metering,
-                        zones::ConvolutionEngine & convolution_engine)
-    : input_graph_metering_ (input_graph_metering)
+                        zones::ConvolutionEngine & convolution_engine,
+                        NotificationQueue::VisitorQueue & notification_queue)
+    : notification_queue_ (notification_queue)
+    , input_graph_metering_ (input_graph_metering)
     , output_graph_metering_ (output_graph_metering)
     , convolution_engine_ (convolution_engine)
 {

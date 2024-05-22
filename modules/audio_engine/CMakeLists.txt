@@ -8,8 +8,13 @@ zones_add_module(
         src/audio_engine/AudioGraph.cpp
         src/audio_engine/VisitorQueue.h
         src/audio_engine/CommandQueue.h
+        src/audio_engine/NotificationQueue.h
         src/audio_engine/AudioGraphMetering.h
         src/audio_engine/AudioGraphMetering.cpp
+        src/audio_engine/player/PlayerController.h
+        src/audio_engine/player/PlayerController.cpp
+        src/audio_engine/player/PlayerProcessor.h
+        src/audio_engine/player/PlayerProcessor.cpp
         DEPS
         model
         zone_repository
@@ -19,6 +24,8 @@ zones_add_module(
         juce::juce_core
         juce::juce_dsp
         juce::juce_audio_basics)
+
+embed_resources(audio_engine resources/snare.mp3)
 
 zones_add_test(MODULE audio_engine SOURCES
         test/VisitorQueueTests.cpp
