@@ -1,4 +1,7 @@
+#include "audio_engine/player/PlayerController.h"
+#include "look_and_feel/BoxIcons.h"
 #include "look_and_feel/components/DividerComponent.h"
+#include "look_and_feel/components/IconButton.h"
 #include "model/ParameterTree.h"
 
 #include <juce_audio_processors/juce_audio_processors.h>
@@ -7,14 +10,24 @@
 class IOComponent : public juce::Component
 {
 public:
-    explicit IOComponent (juce::AudioProcessorValueTreeState & parameter_tree);
+    explicit IOComponent (juce::AudioProcessorValueTreeState & parameter_tree,
+                          PlayerController & player_controller);
     void resized () override;
 
 private:
     static const std::string kIOPanelKey;
 
+    void SetPlayerState ();
+
+    PlayerController & player_controller_;
+
     juce::Label io_label_;
     DividerComponent top_divider_;
+
+    std::string text_;
+    bool is_play_button = true;
+    IconButton play_pause_button_ {"Play Pause", BoxIcons::kBxPlay};
+    juce::Label player_state_;
 
     juce::Label dry_wet_label_;
     juce::Slider dry_wet_mix_slider_ {juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag,

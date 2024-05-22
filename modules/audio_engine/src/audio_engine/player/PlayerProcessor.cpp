@@ -32,5 +32,5 @@ void PlayerProcessor::reset ()
 void PlayerProcessor::SetPlayerState (NotificationQueue::PlayerStateNotification new_player_state)
 {
     player_state_ = new_player_state;
-    notification_queue_.PushCommand (player_state_);
+    notification_queue_.PushCommand (NotificationQueue::PlayerStateNotification {player_state_});
 }

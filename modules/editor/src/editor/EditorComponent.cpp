@@ -1,8 +1,9 @@
 #include "EditorComponent.h"
 
 EditorComponent::EditorComponent (juce::AudioProcessorValueTreeState & parameter_tree,
-                                  juce::ThreadPool & thread_pool)
-    : io_component_ (parameter_tree)
+                                  juce::ThreadPool & thread_pool,
+                                  PlayerController & player_controller)
+    : io_component_ (parameter_tree, player_controller)
     , waterfall_component_ (thread_pool)
     , ir_engine_component_ (parameter_tree)
 {

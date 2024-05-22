@@ -28,13 +28,13 @@ public:
         return player_state_;
     }
 
-    std::function<void (const PlayerState & player_state)> OnPlayerStateUpdated;
+    std::function<void ()> OnPlayerStateUpdated;
 
     void
     ReceivedPlayerStateNotification (const NotificationQueue::PlayerStateNotification & new_state)
     {
         player_state_ = new_state;
-        OnPlayerStateUpdated (player_state_);
+        OnPlayerStateUpdated ();
     }
 
 private:

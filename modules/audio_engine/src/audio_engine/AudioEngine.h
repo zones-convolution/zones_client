@@ -27,6 +27,8 @@ public:
     void operator() (
         const NotificationQueue::PlayerStateNotification & player_state_notification) override;
 
+    PlayerController player_controller_;
+
 private:
     [[nodiscard]] static zones::Convolver::ConvolverSpec
     CreateConvolverSpecForState (const IrGraphState & ir_graph_state);
@@ -35,6 +37,4 @@ private:
     CommandQueue::VisitorQueue & command_queue_;
     juce::AudioProcessorValueTreeState & parameter_tree_;
     zones::ConvolutionEngine & convolution_engine_;
-
-    PlayerController player_controller_;
 };

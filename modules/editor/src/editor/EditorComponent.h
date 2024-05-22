@@ -15,7 +15,8 @@ class EditorComponent
 {
 public:
     explicit EditorComponent (juce::AudioProcessorValueTreeState & parameter_tree,
-                              juce::ThreadPool & thread_pool);
+                              juce::ThreadPool & thread_pool,
+                              PlayerController & player_controller);
     void resized () override;
 
     void RenderFinished (IrGraphState state, IrGraphProcessor::BoxedBuffer render_result) override;
