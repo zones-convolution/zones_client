@@ -8,6 +8,7 @@ AudioEngine::AudioEngine (CommandQueue::VisitorQueue & command_queue,
     , command_queue_ (command_queue)
     , parameter_tree_ (parameter_tree)
     , convolution_engine_ (convolution_engine)
+    , player_controller_ (command_queue)
 {
     parameter_tree.addParameterListener (ParameterTree::kDryWetMixParameterId, this);
     parameter_tree.addParameterListener (ParameterTree::kOutputGainParameterId, this);
@@ -64,4 +65,5 @@ void AudioEngine::parameterChanged (const juce::String & parameterID, float newV
 void AudioEngine::operator() (
     const NotificationQueue::PlayerStateNotification & player_state_notification)
 {
+    player_controller_.ReceivedPlayerStateNotification (player_state_notification);
 }

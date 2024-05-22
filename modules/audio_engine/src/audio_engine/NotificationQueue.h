@@ -10,7 +10,7 @@ struct NotificationQueue
     struct PlayerStateNotification
     {
         int file;
-        int mode;
+        bool looping;
         bool is_playing;
     };
 

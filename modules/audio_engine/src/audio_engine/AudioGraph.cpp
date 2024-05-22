@@ -5,6 +5,7 @@ AudioGraph::AudioGraph (AudioGraphMetering & input_graph_metering,
                         zones::ConvolutionEngine & convolution_engine,
                         NotificationQueue::VisitorQueue & notification_queue)
     : notification_queue_ (notification_queue)
+    , player_processor_ (notification_queue)
     , input_graph_metering_ (input_graph_metering)
     , output_graph_metering_ (output_graph_metering)
     , convolution_engine_ (convolution_engine)
@@ -19,6 +20,7 @@ void AudioGraph::prepare (const juce::dsp::ProcessSpec & spec)
     input_graph_metering_.Prepare (spec.numChannels);
     output_graph_metering_.Prepare (spec.numChannels);
 
+    player_processor_.prepare (spec);
     convolution_engine_.reset ();
     // This will need more checks but is used for now to stop some
     // potential crashes?? would clear be better?
@@ -28,6 +30,8 @@ void AudioGraph::process (const juce::dsp::ProcessContextReplacing<float> & repl
 {
     auto input_block = replacing.getInputBlock ();
     auto output_block = replacing.getOutputBlock ();
+
+    player_processor_.process (replacing);
 
     output_block.multiplyBy (input_gain_);
     input_graph_metering_.UpdateChannelPeak (input_block);
@@ -52,4 +56,16 @@ void AudioGraph::operator() (const CommandQueue::UpdateParameters & update_param
     dry_wet_mixer_.setWetMixProportion (update_parameters.dry_wet_mix);
     input_gain_ = update_parameters.input_gain;
     output_gain_ = update_parameters.output_gain;
+}
+
+void AudioGraph::operator() (const CommandQueue::PlayCommand & play_command)
+{
+    player_processor_.SetPlayerState (NotificationQueue::PlayerStateNotification {
+        .file = play_command.file, .looping = play_command.looping, .is_playing = true});
+}
+
+void AudioGraph::operator() (const CommandQueue::StopCommand & stop_command)
+{
+    player_processor_.SetPlayerState (NotificationQueue::PlayerStateNotification {
+        .file = 0, .looping = false, .is_playing = false});
 }

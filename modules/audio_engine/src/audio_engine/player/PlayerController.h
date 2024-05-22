@@ -8,16 +8,19 @@ class PlayerController
 public:
     using PlayerState = NotificationQueue::PlayerStateNotification;
 
-    PlayerController (CommandQueue & command_queue);
-
-    void Play (int file, int mode)
+    PlayerController (CommandQueue::VisitorQueue & command_queue)
+        : command_queue_ (command_queue)
     {
-        //        command_queue_.PushCommand (PlayCommand {});
+    }
+
+    void Play (int file, bool looping)
+    {
+        command_queue_.PushCommand (CommandQueue::PlayCommand {.file = file, .looping = looping});
     }
 
     void Stop ()
     {
-        //        command_queue_.Queue ();
+        command_queue_.PushCommand (CommandQueue::StopCommand {});
     }
 
     [[nodiscard]] PlayerState GetPlayerState () const
@@ -35,6 +38,6 @@ public:
     }
 
 private:
-    CommandQueue & command_queue_;
+    CommandQueue::VisitorQueue & command_queue_;
     PlayerState player_state_;
 };

@@ -3,6 +3,7 @@
 #include "AudioGraphMetering.h"
 #include "CommandQueue.h"
 #include "NotificationQueue.h"
+#include "player/PlayerProcessor.h"
 #include "zones_convolver/zones_convolver.h"
 
 #include <juce_dsp/juce_dsp.h>
@@ -22,12 +23,15 @@ public:
     void reset () override;
 
     void operator() (const CommandQueue::UpdateParameters & update_parameters) override;
+    void operator() (const CommandQueue::PlayCommand & play_command) override;
+    void operator() (const CommandQueue::StopCommand & stop_command) override;
 
 private:
     NotificationQueue::VisitorQueue & notification_queue_;
     AudioGraphMetering & input_graph_metering_;
     AudioGraphMetering & output_graph_metering_;
 
+    PlayerProcessor player_processor_;
     juce::dsp::DryWetMixer<float> dry_wet_mixer_;
     zones::ConvolutionEngine & convolution_engine_;
 

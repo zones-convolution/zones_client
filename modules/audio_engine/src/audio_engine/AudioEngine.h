@@ -6,6 +6,7 @@
 #include "ir_engine/IrEngine.h"
 #include "model/Model.h"
 #include "model/ParameterTree.h"
+#include "player/PlayerController.h"
 #include "zones_convolver/zones_convolver.h"
 
 #include <juce_audio_processors/juce_audio_processors.h>
@@ -34,4 +35,6 @@ private:
     CommandQueue::VisitorQueue & command_queue_;
     juce::AudioProcessorValueTreeState & parameter_tree_;
     zones::ConvolutionEngine & convolution_engine_;
+
+    PlayerController player_controller_;
 };
