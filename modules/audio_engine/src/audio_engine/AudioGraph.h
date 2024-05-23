@@ -25,6 +25,7 @@ public:
     void operator() (const CommandQueue::UpdateParameters & update_parameters) override;
     void operator() (const CommandQueue::PlayCommand & play_command) override;
     void operator() (const CommandQueue::StopCommand & stop_command) override;
+    void operator() (const CommandQueue::LoopCommand & loop_command) override;
 
 private:
     NotificationQueue::VisitorQueue & notification_queue_;

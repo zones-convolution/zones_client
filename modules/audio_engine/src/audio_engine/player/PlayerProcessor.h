@@ -16,6 +16,11 @@ public:
     void SetPlayerState (NotificationQueue::PlayerStateNotification new_player_state);
 
 private:
+    juce::AudioBuffer<float> temp_buffer_;
+    juce::AudioFormatManager audio_format_manager_;
+    juce::AudioFormatReader * reader_;
+
+    int read_head_;
     NotificationQueue::VisitorQueue & notification_queue_;
     PlayerState player_state_;
 };

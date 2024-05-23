@@ -19,16 +19,31 @@ IOComponent::IOComponent (juce::AudioProcessorValueTreeState & parameter_tree,
 {
     player_controller.OnPlayerStateUpdated = [this] { SetPlayerState (); };
 
+    play_pause_button_.setToggleable (true);
     play_pause_button_.onClick = [this]
     {
-        if (is_play_button)
-            player_controller_.Play (1, false);
+        if (! play_pause_button_.getToggleState ())
+            player_controller_.Play (1, loop_button_.getToggleState ());
         else
         {
             player_controller_.Stop ();
         }
     };
     addAndMakeVisible (play_pause_button_);
+
+    loop_button_.setToggleable (true);
+    loop_button_.setToggleState (false, juce::dontSendNotification);
+    loop_button_.onClick = [this]
+    {
+        if (loop_button_.getToggleState ())
+            player_controller_.SetLoop (true);
+        else
+        {
+            player_controller_.SetLoop (false);
+        }
+    };
+
+    addAndMakeVisible (loop_button_);
     player_state_.setText ("State", juce::dontSendNotification);
     SetPlayerState ();
     addAndMakeVisible (player_state_);
@@ -61,7 +76,7 @@ IOComponent::IOComponent (juce::AudioProcessorValueTreeState & parameter_tree,
 
 void IOComponent::resized ()
 {
-    // player_state_.setText (text_, juce::dontSendNotification);
+    player_state_.setText (text_, juce::dontSendNotification);
 
     auto dry_wet_layout = LookAndFeel::SliderLabelLayout (dry_wet_mix_slider_, dry_wet_label_);
     auto input_gain_layout = LookAndFeel::SliderLabelLayout (input_gain_slider_, input_gain_label_);
@@ -72,6 +87,7 @@ void IOComponent::resized ()
     parameter_layout.flexDirection = juce::FlexBox::Direction::row;
 
     parameter_layout.items.add (LookAndFeel::ButtonFlexItem (play_pause_button_).withWidth (40.f));
+    parameter_layout.items.add (LookAndFeel::ButtonFlexItem (loop_button_).withWidth (40.f));
     parameter_layout.items.add (LookAndFeel::LabelFlexItem (player_state_));
 
     parameter_layout.items.add (juce::FlexItem (dry_wet_layout).withFlex (1.f));
@@ -93,13 +109,14 @@ void IOComponent::resized ()
 void IOComponent::SetPlayerState ()
 {
     auto new_state = player_controller_.GetPlayerState ();
-    text_ = {};
-    text_ += new_state.is_playing ? "playing" : "paused";
-    text_ += " ";
-    text_ += new_state.looping ? "looping" : "one shot";
-    text_ += " ";
-
-    is_play_button = ! new_state.is_playing;
-    // player_state_.setText (text, juce::dontSendNotification);
-    resized ();
+    //    text_ = {};
+    //    text_ += new_state.is_playing.value () ? "playing" : "paused";
+    //    text_ += " ";
+    //    text_ += new_state.looping.value () ? "looping" : "one shot";
+    //    text_ += " ";
+    //    if (new_state.is_playing.has_value ())
+    //        play_pause_button_.setToggleState (new_state.is_playing.value (),
+    //                                           juce::dontSendNotification);
+    // player_state_.setText (text_, juce::dontSendNotification);
+    //  resized ();
 }

@@ -23,6 +23,11 @@ public:
         command_queue_.PushCommand (CommandQueue::StopCommand {});
     }
 
+    void SetLoop (bool looping)
+    {
+        command_queue_.PushCommand (CommandQueue::LoopCommand {.loop = looping});
+    }
+
     [[nodiscard]] PlayerState GetPlayerState () const
     {
         return player_state_;

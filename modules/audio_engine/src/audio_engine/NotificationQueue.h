@@ -9,9 +9,9 @@ struct NotificationQueue
 {
     struct PlayerStateNotification
     {
-        int file;
-        bool looping;
-        bool is_playing;
+        std::optional<int> file;
+        std::optional<bool> looping;
+        std::optional<bool> is_playing;
     };
 
     using Notifications = std::variant<PlayerStateNotification>;

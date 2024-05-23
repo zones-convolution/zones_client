@@ -27,6 +27,7 @@ private:
     std::string text_;
     bool is_play_button = true;
     IconButton play_pause_button_ {"Play Pause", BoxIcons::kBxPlay};
+    juce::ToggleButton loop_button_;
     juce::Label player_state_;
 
     juce::Label dry_wet_label_;
