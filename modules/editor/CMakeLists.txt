@@ -10,6 +10,8 @@ zones_add_module(
         src/editor/IrEngineComponent.cpp
         src/editor/PlayerComponent.h
         src/editor/PlayerComponent.cpp
+        src/editor/EQComponent.h
+        src/editor/EQComponent.cpp
         DEPS
         juce::juce_core
         juce::juce_gui_basics

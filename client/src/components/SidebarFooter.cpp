@@ -104,7 +104,7 @@ void SidebarFooter::ConfigureMeter ()
     for (auto i = 0; i < output_graph_metering_.GetNumChannels (); ++i)
     {
         output_configuration =
-            output_configuration.push_back (create_meter_delegate (input_graph_metering_, i));
+            output_configuration.push_back (create_meter_delegate (output_graph_metering_, i));
     };
 
     meter_component_.SetConfiguration ({input_configuration, output_configuration});

@@ -16,12 +16,14 @@ IOComponent::IOComponent (juce::AudioProcessorValueTreeState & parameter_tree,
                                ParameterTree::kOutputGainParameterId,
                                output_gain_slider_)
     , player_component_ (player_controller)
+    , eq_component_ (parameter_tree)
 {
     io_label_.setText (juce::translate (kIOPanelKey), juce::dontSendNotification);
     addAndMakeVisible (io_label_);
     addAndMakeVisible (top_divider_);
 
     addAndMakeVisible (player_panel_);
+    addAndMakeVisible (eq_panel_);
 
     dry_wet_label_.setText (juce::translate (ParameterTree::kDryWetMixParameterId),
                             juce::dontSendNotification);
@@ -55,7 +57,7 @@ void IOComponent::resized ()
     juce::FlexBox top_layout;
     top_layout.flexDirection = juce::FlexBox::Direction::row;
     top_layout.items.add (juce::FlexItem (player_panel_).withFlex (1.f));
-    top_layout.items.add (juce::FlexItem ({}).withFlex (1.f));
+    top_layout.items.add (juce::FlexItem (eq_panel_).withFlex (1.f));
 
     juce::FlexBox parameter_layout;
     parameter_layout.flexDirection = juce::FlexBox::Direction::row;

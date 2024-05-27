@@ -1,3 +1,4 @@
+#include "EQComponent.h"
 #include "PlayerComponent.h"
 #include "audio_engine/player/PlayerController.h"
 #include "look_and_feel/BoxIcons.h"
@@ -6,7 +7,6 @@
 #include "look_and_feel/components/PanelComponent.h"
 #include "model/ParameterTree.h"
 
-#include <juce_audio_processors/juce_audio_processors.h>
 #include <juce_gui_basics/juce_gui_basics.h>
 
 class IOComponent : public juce::Component
@@ -26,6 +26,9 @@ private:
 
     PlayerComponent player_component_;
     PanelComponent player_panel_ {player_component_};
+
+    EQComponent eq_component_;
+    PanelComponent eq_panel_ {eq_component_};
 
     juce::Label dry_wet_label_;
     juce::Slider dry_wet_mix_slider_ {juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag,

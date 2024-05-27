@@ -2,6 +2,7 @@
 
 #include "AudioGraphMetering.h"
 #include "CommandQueue.h"
+#include "EQProcessor.h"
 #include "NotificationQueue.h"
 #include "player/PlayerProcessor.h"
 #include "zones_convolver/zones_convolver.h"
@@ -37,6 +38,7 @@ private:
     PlayerProcessor player_processor_;
     juce::dsp::DryWetMixer<float> dry_wet_mixer_;
     zones::ConvolutionEngine & convolution_engine_;
+    EQProcessor eq_processor_;
 
     float input_gain_ = 1.f;
     float output_gain_ = 1.f;

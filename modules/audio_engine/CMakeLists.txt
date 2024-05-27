@@ -17,6 +17,8 @@ zones_add_module(
         src/audio_engine/player/PlayerProcessor.cpp
         src/audio_engine/player/PlayerState.h
         src/audio_engine/player/PlayerState.cpp
+        src/audio_engine/EQProcessor.h
+        src/audio_engine/EQProcessor.cpp
         DEPS
         model
         zone_repository

@@ -11,6 +11,8 @@ struct CommandQueue
         float dry_wet_mix;
         float input_gain;
         float output_gain;
+        float bass;
+        float treble;
     };
 
     struct PlayCommand

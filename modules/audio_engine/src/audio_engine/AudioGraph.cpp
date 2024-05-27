@@ -21,6 +21,7 @@ void AudioGraph::prepare (const juce::dsp::ProcessSpec & spec)
     output_graph_metering_.Prepare (spec.numChannels);
 
     player_processor_.prepare (spec);
+    eq_processor_.prepare (spec);
     convolution_engine_.reset ();
     // This will need more checks but is used for now to stop some
     // potential crashes?? would clear be better?
@@ -41,15 +42,18 @@ void AudioGraph::process (const juce::dsp::ProcessContextReplacing<float> & repl
 
     convolution_engine_.process (replacing);
 
+    eq_processor_.process (replacing.getOutputBlock ());
+
     dry_wet_mixer_.mixWetSamples (replacing.getOutputBlock ());
     output_block.multiplyBy (output_gain_);
-    output_graph_metering_.UpdateChannelPeak (input_block);
+    output_graph_metering_.UpdateChannelPeak (output_block);
 }
 
 void AudioGraph::reset ()
 {
     dry_wet_mixer_.reset ();
     convolution_engine_.reset ();
+    eq_processor_.reset ();
 }
 
 void AudioGraph::operator() (const CommandQueue::UpdateParameters & update_parameters)
@@ -57,6 +61,8 @@ void AudioGraph::operator() (const CommandQueue::UpdateParameters & update_param
     dry_wet_mixer_.setWetMixProportion (update_parameters.dry_wet_mix);
     input_gain_ = update_parameters.input_gain;
     output_gain_ = update_parameters.output_gain;
+
+    eq_processor_.UpdateFilters (update_parameters.bass, update_parameters.treble);
 }
 
 void AudioGraph::operator() (const CommandQueue::PlayCommand & play_command)
