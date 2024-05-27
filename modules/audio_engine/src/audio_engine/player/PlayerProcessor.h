@@ -26,4 +26,6 @@ private:
     int read_head_;
     NotificationQueue::VisitorQueue & notification_queue_;
     Player::PlayerState player_state_;
+
+    juce::LinearSmoothedValue<float> smoothed_gain_;
 };

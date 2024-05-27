@@ -71,7 +71,7 @@ void IOComponent::resized ()
     layout.items.add (LookAndFeel::kFlexSpacer);
     layout.items.add (LookAndFeel::HorizontalDividerFlexItem (top_divider_));
     layout.items.add (LookAndFeel::kFlexSpacer);
-    layout.items.add (juce::FlexItem (top_layout).withFlex (1.f));
+    layout.items.add (juce::FlexItem (top_layout).withFlex (1.5f));
     layout.items.add (LookAndFeel::kFlexSpacer);
     layout.items.add (juce::FlexItem (parameter_layout).withFlex (1.f));
 

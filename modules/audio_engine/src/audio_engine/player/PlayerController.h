@@ -13,9 +13,10 @@ public:
     {
     }
 
-    void Play (Player::Resources file, bool looping)
+    void Play (Player::Resources file, bool looping, float gain)
     {
-        command_queue_.PushCommand (CommandQueue::PlayCommand {.file = file, .looping = looping});
+        command_queue_.PushCommand (
+            CommandQueue::PlayCommand {.file = file, .looping = looping, .gain = gain});
     }
 
     void Stop ()

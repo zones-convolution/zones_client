@@ -26,7 +26,8 @@ PlayerComponent::PlayerComponent (PlayerController & player_controller)
         {
             auto file = file_chooser_.getSelectedItemIndex ();
             player_controller_.Play (static_cast<Player::Resources> (file),
-                                     loop_button_.getToggleState ());
+                                     loop_button_.getToggleState (),
+                                     player_gain_slider_.getValue ());
         }
         else
         {
@@ -72,16 +73,15 @@ void PlayerComponent::resized ()
 
     juce::FlexBox button_layout;
     button_layout.flexDirection = juce::FlexBox::Direction::row;
-    // button_layout.justifyContent = juce::FlexBox::JustifyContent::spaceAround;
     button_layout.items.add (LookAndFeel::ButtonFlexItem (play_pause_button_).withFlex (1.f));
     button_layout.items.add (LookAndFeel::kFlexSpacer);
     button_layout.items.add (LookAndFeel::ButtonFlexItem (loop_button_).withFlex (1.f));
 
     juce::FlexBox left_layout;
     left_layout.flexDirection = juce::FlexBox::Direction::column;
+    left_layout.justifyContent = juce::FlexBox::JustifyContent::spaceAround;
     left_layout.items.add (juce::FlexItem (file_chooser_).withHeight (LookAndFeel::kButtonHeight));
-    left_layout.items.add (LookAndFeel::kFlexSpacer);
-    left_layout.items.add (juce::FlexItem (button_layout).withFlex (1.f));
+    left_layout.items.add (juce::FlexItem (button_layout).withHeight (LookAndFeel::kButtonHeight));
 
     juce::FlexBox parameter_layout;
     parameter_layout.flexDirection = juce::FlexBox::Direction::row;
