@@ -25,9 +25,7 @@ private:
     DividerComponent top_divider_;
 
     PlayerComponent player_component_;
-    PanelComponent player_panel_ {
-        player_component_,
-        PanelComponent::ColourPair {juce::Colours::darkblue, juce::Colours::darkblue}};
+    PanelComponent player_panel_ {player_component_};
 
     juce::Label dry_wet_label_;
     juce::Slider dry_wet_mix_slider_ {juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag,

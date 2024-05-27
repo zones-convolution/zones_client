@@ -36,19 +36,22 @@ PlayerComponent::PlayerComponent (PlayerController & player_controller)
 
     loop_button_.setToggleable (true);
     loop_button_.setToggleState (false, juce::dontSendNotification);
+    loop_button_.setClickingTogglesState (false);
+    // loop_button_.onStateChange = [this] { loop_button_.set };
     loop_button_.onClick = [this]
-    {
-        if (loop_button_.getToggleState ())
-            player_controller_.SetLoop (true);
-        else
-        {
-            player_controller_.SetLoop (false);
-        }
-    };
+    { player_controller_.SetLoop (! loop_button_.getToggleState ()); };
     addAndMakeVisible (loop_button_);
 
-    player_controller_.OnPlayerStateUpdated = [this] { SetPlayerState (); };
-    SetPlayerState ();
+    setSynchroniseToVBlank (true);
+}
+
+void PlayerComponent::paint (juce::Graphics & g)
+{
+    g.fillAll (getLookAndFeel ().findColour (LookAndFeel::ColourIds::kPanel));
+
+    //    auto channels_bounds = GetChannelBounds ().expanded (kMargin);
+    //    g.setColour (getLookAndFeel ().findColour (juce::ResizableWindow::backgroundColourId));
+    //    g.fillRect (channels_bounds);
 }
 
 void PlayerComponent::resized ()
@@ -59,9 +62,11 @@ void PlayerComponent::resized ()
 
     juce::FlexBox button_layout;
     button_layout.flexDirection = juce::FlexBox::Direction::row;
-    button_layout.items.add (LookAndFeel::ButtonFlexItem (play_pause_button_).withFlex (1.f));
-    button_layout.items.add (LookAndFeel::kFlexSpacer);
-    button_layout.items.add (LookAndFeel::ButtonFlexItem (loop_button_).withFlex (1.f));
+    button_layout.justifyContent = juce::FlexBox::JustifyContent::spaceAround;
+    button_layout.items.add (
+        LookAndFeel::ButtonFlexItem (play_pause_button_).withWidth (LookAndFeel::kButtonHeight));
+    button_layout.items.add (
+        LookAndFeel::ButtonFlexItem (loop_button_).withWidth (LookAndFeel::kButtonHeight));
 
     layout.items.add (LookAndFeel::LabelFlexItem (player_label_));
     layout.items.add (LookAndFeel::kFlexSpacer);
@@ -74,17 +79,12 @@ void PlayerComponent::resized ()
     layout.performLayout (getLocalBounds ().toFloat ());
 }
 
-void PlayerComponent::SetPlayerState ()
+void PlayerComponent::update ()
 {
     auto new_state = player_controller_.GetPlayerState ();
-    //    text_ = {};
-    //    text_ += new_state.is_playing.value () ? "playing" : "paused";
-    //    text_ += " ";
-    //    text_ += new_state.looping.value () ? "looping" : "one shot";
-    //    text_ += " ";
-    //    if (new_state.is_playing.has_value ())
-    //        play_pause_button_.setToggleState (new_state.is_playing.value (),
-    //                                           juce::dontSendNotification);
-    // player_state_.setText (text_, juce::dontSendNotification);
-    //  resized ();
+
+    play_pause_button_.setToggleState (new_state.is_playing, juce::dontSendNotification);
+    play_pause_button_.SetIcon (new_state.is_playing ? BoxIcons::kBxPause : BoxIcons::kBxPlay);
+
+    loop_button_.setToggleState (new_state.is_looping, juce::dontSendNotification);
 }

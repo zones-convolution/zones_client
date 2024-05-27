@@ -38,12 +38,11 @@ public:
         return player_state_;
     }
 
-    std::function<void ()> OnPlayerStateUpdated;
+    // std::function<void ()> OnPlayerStateUpdated;
 
     void ReceivedPlayerStateNotification (const Player::PlayerState & new_state)
     {
         player_state_ = new_state;
-        OnPlayerStateUpdated ();
     }
 
 private:

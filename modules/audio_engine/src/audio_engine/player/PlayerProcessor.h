@@ -13,6 +13,7 @@ public:
     void prepare (const juce::dsp::ProcessSpec & spec) override;
     void process (const juce::dsp::ProcessContextReplacing<float> & replacing) override;
     void reset () override;
+    void Clear ();
 
     void SetPlayerState (Player::PlayerStateOptional new_player_state);
 

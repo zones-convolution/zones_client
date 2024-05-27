@@ -36,7 +36,6 @@ PlayerProcessor::PlayerProcessor (NotificationQueue::VisitorQueue & notification
 void PlayerProcessor::prepare (const juce::dsp::ProcessSpec & spec)
 {
     temp_buffer_.setSize (spec.numChannels, spec.maximumBlockSize);
-    reset ();
 }
 void PlayerProcessor::process (const juce::dsp::ProcessContextReplacing<float> & replacing)
 {
@@ -80,9 +79,13 @@ void PlayerProcessor::process (const juce::dsp::ProcessContextReplacing<float> &
 void PlayerProcessor::reset ()
 {
     player_state_.file = Player::Resources::kSnare;
-    player_state_.is_playing = false;
     player_state_.is_looping = false;
+    player_state_.is_playing = false;
+    Clear ();
+}
 
+void PlayerProcessor::Clear ()
+{
     read_head_ = 0;
 }
 
@@ -92,7 +95,7 @@ void PlayerProcessor::SetPlayerState (Player::PlayerStateOptional new_player_sta
     {
         player_state_.is_playing = new_player_state.is_playing.value ();
         if (! new_player_state.is_playing.value ())
-            reset ();
+            Clear ();
     }
 
     if (new_player_state.is_looping.has_value ())
