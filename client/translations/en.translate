@@ -3,6 +3,7 @@ countries: en
 
 # PARAMETERS
 "io_panel" = "IO"
+"player_panel" = "Test Player"
 "dry_wet_mix_parameter" = "Dry/Wet"
 "input_gain_parameter" = "Input"
 "output_gain_parameter" = "Output"

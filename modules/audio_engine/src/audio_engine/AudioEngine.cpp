@@ -62,8 +62,7 @@ void AudioEngine::parameterChanged (const juce::String & parameterID, float newV
             output_gain_parameter->convertFrom0to1 (output_gain_parameter->getValue ())});
 }
 
-void AudioEngine::operator() (
-    const NotificationQueue::PlayerStateNotification & player_state_notification)
+void AudioEngine::operator() (const Player::PlayerState & player_state_notification)
 {
     player_controller_.ReceivedPlayerStateNotification (player_state_notification);
 }

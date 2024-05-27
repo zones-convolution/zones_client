@@ -15,6 +15,8 @@ zones_add_module(
         src/audio_engine/player/PlayerController.cpp
         src/audio_engine/player/PlayerProcessor.h
         src/audio_engine/player/PlayerProcessor.cpp
+        src/audio_engine/player/PlayerState.h
+        src/audio_engine/player/PlayerState.cpp
         DEPS
         model
         zone_repository
@@ -25,7 +27,7 @@ zones_add_module(
         juce::juce_dsp
         juce::juce_audio_basics)
 
-embed_resources(audio_engine resources/snare.mp3)
+embed_resources(audio_engine resources/snare.mp3 resources/numbers.mp3)
 
 zones_add_test(MODULE audio_engine SOURCES
         test/VisitorQueueTests.cpp

@@ -1,19 +1,19 @@
 #pragma once
 
 #include "../CommandQueue.h"
-#include "../NotificationQueue.h"
+#include "PlayerState.h"
 
 class PlayerController
 {
 public:
-    using PlayerState = NotificationQueue::PlayerStateNotification;
+    // using PlayerState = NotificationQueue::PlayerStateNotification;
 
     PlayerController (CommandQueue::VisitorQueue & command_queue)
         : command_queue_ (command_queue)
     {
     }
 
-    void Play (int file, bool looping)
+    void Play (Player::Resources file, bool looping)
     {
         command_queue_.PushCommand (CommandQueue::PlayCommand {.file = file, .looping = looping});
     }
@@ -28,15 +28,19 @@ public:
         command_queue_.PushCommand (CommandQueue::LoopCommand {.loop = looping});
     }
 
-    [[nodiscard]] PlayerState GetPlayerState () const
+    void SetFile (Player::Resources file)
+    {
+        command_queue_.PushCommand (CommandQueue::FileCommand {.file = file});
+    }
+
+    [[nodiscard]] Player::PlayerState GetPlayerState () const
     {
         return player_state_;
     }
 
     std::function<void ()> OnPlayerStateUpdated;
 
-    void
-    ReceivedPlayerStateNotification (const NotificationQueue::PlayerStateNotification & new_state)
+    void ReceivedPlayerStateNotification (const Player::PlayerState & new_state)
     {
         player_state_ = new_state;
         OnPlayerStateUpdated ();
@@ -44,5 +48,5 @@ public:
 
 private:
     CommandQueue::VisitorQueue & command_queue_;
-    PlayerState player_state_;
+    Player::PlayerState player_state_;
 };

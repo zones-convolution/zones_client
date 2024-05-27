@@ -1,5 +1,6 @@
 #pragma once
 #include "VisitorQueue.h"
+#include "player/PlayerState.h"
 
 #include <variant>
 
@@ -14,7 +15,7 @@ struct CommandQueue
 
     struct PlayCommand
     {
-        int file;
+        Player::Resources file;
         bool looping;
     };
 
@@ -28,13 +29,20 @@ struct CommandQueue
         bool loop;
     };
 
-    using Commands = std::variant<UpdateParameters, PlayCommand, StopCommand, LoopCommand>;
+    struct FileCommand
+    {
+        Player::Resources file;
+    };
+
+    using Commands =
+        std::variant<UpdateParameters, PlayCommand, StopCommand, LoopCommand, FileCommand>;
     struct Visitor
     {
         virtual void operator() (const UpdateParameters & update_parameters) = 0;
         virtual void operator() (const PlayCommand & play_command) = 0;
         virtual void operator() (const StopCommand & stop_command) = 0;
         virtual void operator() (const LoopCommand & loop_command) = 0;
+        virtual void operator() (const FileCommand & file_command) = 0;
     };
 
     using VisitorQueue = VisitorQueue<Commands, Visitor>;

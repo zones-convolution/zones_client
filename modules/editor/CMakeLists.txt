@@ -8,6 +8,8 @@ zones_add_module(
         src/editor/IOComponent.cpp
         src/editor/IrEngineComponent.h
         src/editor/IrEngineComponent.cpp
+        src/editor/PlayerComponent.h
+        src/editor/PlayerComponent.cpp
         DEPS
         juce::juce_core
         juce::juce_gui_basics

@@ -24,8 +24,7 @@ public:
     void RenderFinished (IrGraphState state, IrGraphProcessor::BoxedBuffer render_result) override;
     ~AudioEngine () override = default;
     void parameterChanged (const juce::String & parameterID, float newValue) override;
-    void operator() (
-        const NotificationQueue::PlayerStateNotification & player_state_notification) override;
+    void operator() (const Player::PlayerState & player_state_notification) override;
 
     PlayerController player_controller_;
 

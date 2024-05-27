@@ -1,7 +1,9 @@
+#include "PlayerComponent.h"
 #include "audio_engine/player/PlayerController.h"
 #include "look_and_feel/BoxIcons.h"
 #include "look_and_feel/components/DividerComponent.h"
 #include "look_and_feel/components/IconButton.h"
+#include "look_and_feel/components/PanelComponent.h"
 #include "model/ParameterTree.h"
 
 #include <juce_audio_processors/juce_audio_processors.h>
@@ -19,16 +21,13 @@ private:
 
     void SetPlayerState ();
 
-    PlayerController & player_controller_;
-
     juce::Label io_label_;
     DividerComponent top_divider_;
 
-    std::string text_;
-    bool is_play_button = true;
-    IconButton play_pause_button_ {"Play Pause", BoxIcons::kBxPlay};
-    juce::ToggleButton loop_button_;
-    juce::Label player_state_;
+    PlayerComponent player_component_;
+    PanelComponent player_panel_ {
+        player_component_,
+        PanelComponent::ColourPair {juce::Colours::darkblue, juce::Colours::darkblue}};
 
     juce::Label dry_wet_label_;
     juce::Slider dry_wet_mix_slider_ {juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag,

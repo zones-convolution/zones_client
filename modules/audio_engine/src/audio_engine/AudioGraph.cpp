@@ -60,18 +60,21 @@ void AudioGraph::operator() (const CommandQueue::UpdateParameters & update_param
 
 void AudioGraph::operator() (const CommandQueue::PlayCommand & play_command)
 {
-    player_processor_.SetPlayerState (NotificationQueue::PlayerStateNotification {
-        .file = play_command.file, .looping = play_command.looping, .is_playing = true});
+    player_processor_.SetPlayerState (
+        {.file = play_command.file, .is_looping = play_command.looping, .is_playing = true});
 }
 
 void AudioGraph::operator() (const CommandQueue::StopCommand & stop_command)
 {
-    player_processor_.SetPlayerState (
-        NotificationQueue::PlayerStateNotification {.is_playing = false});
+    player_processor_.SetPlayerState ({.is_playing = false});
 }
 
 void AudioGraph::operator() (const CommandQueue::LoopCommand & loop_command)
 {
-    player_processor_.SetPlayerState (
-        NotificationQueue::PlayerStateNotification {.looping = loop_command.loop});
+    player_processor_.SetPlayerState ({.is_looping = loop_command.loop});
+}
+
+void AudioGraph::operator() (const CommandQueue::FileCommand & file_command)
+{
+    player_processor_.SetPlayerState ({.file = file_command.file});
 }
