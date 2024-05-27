@@ -17,6 +17,7 @@ public:
 
 private:
     static const std::string kPlayerPanelKey;
+    static const std::string kPlayerGainKey;
 
     PlayerController & player_controller_;
 
@@ -25,5 +26,9 @@ private:
     juce::ComboBox file_chooser_;
     IconButton play_pause_button_ {"Play Pause", BoxIcons::kBxPlay};
     IconButton loop_button_ {"Loop", BoxIcons::kBxRecycle};
+
+    juce::Label player_gain_label_;
+    juce::Slider player_gain_slider_ {juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag,
+                                      juce::Slider::TextEntryBoxPosition::NoTextBox};
     // juce::ToggleButton loop_button_;
 };

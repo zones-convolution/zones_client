@@ -1,6 +1,7 @@
 #include "PlayerComponent.h"
 
 const std::string PlayerComponent::kPlayerPanelKey = "player_panel";
+const std::string PlayerComponent::kPlayerGainKey = "player_gain";
 
 PlayerComponent::PlayerComponent (PlayerController & player_controller)
     : player_controller_ (player_controller)
@@ -42,6 +43,16 @@ PlayerComponent::PlayerComponent (PlayerController & player_controller)
     { player_controller_.SetLoop (! loop_button_.getToggleState ()); };
     addAndMakeVisible (loop_button_);
 
+    player_gain_label_.setText (juce::translate (kPlayerGainKey), juce::dontSendNotification);
+    player_gain_label_.setJustificationType (juce::Justification::centred);
+    player_gain_slider_.setPopupDisplayEnabled (true, true, getTopLevelComponent ());
+    player_gain_slider_.setRange (0.f, 2.f, 0.01f);
+    player_gain_slider_.setValue (1.f);
+    player_gain_slider_.onValueChange = [this]
+    { player_controller_.SetGain (player_gain_slider_.getValue ()); };
+    addAndMakeVisible (player_gain_slider_);
+    addAndMakeVisible (player_gain_label_);
+
     setSynchroniseToVBlank (true);
 }
 
@@ -56,25 +67,35 @@ void PlayerComponent::paint (juce::Graphics & g)
 
 void PlayerComponent::resized ()
 {
-    juce::FlexBox layout;
-    layout.flexDirection = juce::FlexBox::Direction::column;
-    //  layout.alignItems = juce::FlexBox::AlignItems::center;
+    auto player_gain_layout =
+        LookAndFeel::SliderLabelLayout (player_gain_slider_, player_gain_label_);
 
     juce::FlexBox button_layout;
     button_layout.flexDirection = juce::FlexBox::Direction::row;
-    button_layout.justifyContent = juce::FlexBox::JustifyContent::spaceAround;
-    button_layout.items.add (
-        LookAndFeel::ButtonFlexItem (play_pause_button_).withWidth (LookAndFeel::kButtonHeight));
-    button_layout.items.add (
-        LookAndFeel::ButtonFlexItem (loop_button_).withWidth (LookAndFeel::kButtonHeight));
+    // button_layout.justifyContent = juce::FlexBox::JustifyContent::spaceAround;
+    button_layout.items.add (LookAndFeel::ButtonFlexItem (play_pause_button_).withFlex (1.f));
+    button_layout.items.add (LookAndFeel::kFlexSpacer);
+    button_layout.items.add (LookAndFeel::ButtonFlexItem (loop_button_).withFlex (1.f));
 
+    juce::FlexBox left_layout;
+    left_layout.flexDirection = juce::FlexBox::Direction::column;
+    left_layout.items.add (juce::FlexItem (file_chooser_).withHeight (LookAndFeel::kButtonHeight));
+    left_layout.items.add (LookAndFeel::kFlexSpacer);
+    left_layout.items.add (juce::FlexItem (button_layout).withFlex (1.f));
+
+    juce::FlexBox parameter_layout;
+    parameter_layout.flexDirection = juce::FlexBox::Direction::row;
+    parameter_layout.items.add (juce::FlexItem (left_layout).withFlex (1.f));
+    parameter_layout.items.add (LookAndFeel::kFlexSpacer);
+    parameter_layout.items.add (juce::FlexItem (player_gain_layout).withFlex (1.f));
+
+    juce::FlexBox layout;
+    layout.flexDirection = juce::FlexBox::Direction::column;
     layout.items.add (LookAndFeel::LabelFlexItem (player_label_));
     layout.items.add (LookAndFeel::kFlexSpacer);
     layout.items.add (LookAndFeel::HorizontalDividerFlexItem (top_divider_));
     layout.items.add (LookAndFeel::kFlexSpacer);
-    layout.items.add (juce::FlexItem (file_chooser_).withFlex (1.0f));
-    layout.items.add (LookAndFeel::kFlexSpacer);
-    layout.items.add (juce::FlexItem (button_layout).withHeight (LookAndFeel::kButtonHeight));
+    layout.items.add (juce::FlexItem (parameter_layout).withFlex (1.f));
 
     layout.performLayout (getLocalBounds ().toFloat ());
 }

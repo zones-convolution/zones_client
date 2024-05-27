@@ -52,6 +52,11 @@ void IOComponent::resized ()
     auto output_gain_layout =
         LookAndFeel::SliderLabelLayout (output_gain_slider_, output_gain_label_);
 
+    juce::FlexBox top_layout;
+    top_layout.flexDirection = juce::FlexBox::Direction::row;
+    top_layout.items.add (juce::FlexItem (player_panel_).withFlex (1.f));
+    top_layout.items.add (juce::FlexItem ({}).withFlex (1.f));
+
     juce::FlexBox parameter_layout;
     parameter_layout.flexDirection = juce::FlexBox::Direction::row;
 
@@ -66,7 +71,7 @@ void IOComponent::resized ()
     layout.items.add (LookAndFeel::kFlexSpacer);
     layout.items.add (LookAndFeel::HorizontalDividerFlexItem (top_divider_));
     layout.items.add (LookAndFeel::kFlexSpacer);
-    layout.items.add (juce::FlexItem (player_panel_).withFlex (1.f));
+    layout.items.add (juce::FlexItem (top_layout).withFlex (1.f));
     layout.items.add (LookAndFeel::kFlexSpacer);
     layout.items.add (juce::FlexItem (parameter_layout).withFlex (1.f));
 

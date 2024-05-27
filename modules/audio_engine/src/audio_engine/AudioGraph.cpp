@@ -31,9 +31,10 @@ void AudioGraph::process (const juce::dsp::ProcessContextReplacing<float> & repl
     auto input_block = replacing.getInputBlock ();
     auto output_block = replacing.getOutputBlock ();
 
+    output_block.multiplyBy (input_gain_);
+
     player_processor_.process (replacing);
 
-    output_block.multiplyBy (input_gain_);
     input_graph_metering_.UpdateChannelPeak (input_block);
 
     dry_wet_mixer_.pushDrySamples (replacing.getInputBlock ());
@@ -77,4 +78,9 @@ void AudioGraph::operator() (const CommandQueue::LoopCommand & loop_command)
 void AudioGraph::operator() (const CommandQueue::FileCommand & file_command)
 {
     player_processor_.SetPlayerState ({.file = file_command.file});
+}
+
+void AudioGraph::operator() (const CommandQueue::GainCommand & gain_command)
+{
+    player_processor_.SetPlayerState ({.gain = gain_command.gain});
 }

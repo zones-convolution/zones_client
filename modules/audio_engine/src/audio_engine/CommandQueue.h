@@ -17,6 +17,7 @@ struct CommandQueue
     {
         Player::Resources file;
         bool looping;
+        float gain;
     };
 
     struct StopCommand
@@ -34,8 +35,13 @@ struct CommandQueue
         Player::Resources file;
     };
 
-    using Commands =
-        std::variant<UpdateParameters, PlayCommand, StopCommand, LoopCommand, FileCommand>;
+    struct GainCommand
+    {
+        float gain;
+    };
+
+    using Commands = std::
+        variant<UpdateParameters, PlayCommand, StopCommand, LoopCommand, FileCommand, GainCommand>;
     struct Visitor
     {
         virtual void operator() (const UpdateParameters & update_parameters) = 0;
@@ -43,6 +49,7 @@ struct CommandQueue
         virtual void operator() (const StopCommand & stop_command) = 0;
         virtual void operator() (const LoopCommand & loop_command) = 0;
         virtual void operator() (const FileCommand & file_command) = 0;
+        virtual void operator() (const GainCommand & gain_command) = 0;
     };
 
     using VisitorQueue = VisitorQueue<Commands, Visitor>;

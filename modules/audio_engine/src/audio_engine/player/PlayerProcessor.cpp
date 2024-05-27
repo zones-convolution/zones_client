@@ -68,19 +68,20 @@ void PlayerProcessor::process (const juce::dsp::ProcessContextReplacing<float> &
             if (! player_state_.is_looping)
             {
                 SetPlayerState ({.is_playing = false});
-                output_block.copyFrom (temp_buffer_);
+                output_block.copyFrom (temp_buffer_).multiplyBy (player_state_.gain);
                 return;
             }
         }
     }
 
-    output_block.copyFrom (temp_buffer_);
+    output_block.copyFrom (temp_buffer_).multiplyBy (player_state_.gain);
 }
 void PlayerProcessor::reset ()
 {
     player_state_.file = Player::Resources::kSnare;
     player_state_.is_looping = false;
     player_state_.is_playing = false;
+    player_state_.gain = 1.f;
     Clear ();
 }
 
@@ -105,6 +106,12 @@ void PlayerProcessor::SetPlayerState (Player::PlayerStateOptional new_player_sta
     {
         player_state_.file = new_player_state.file.value ();
         read_head_ = 0;
+    }
+
+    if (new_player_state.gain.has_value ())
+    {
+        auto gain = std::clamp (new_player_state.gain.value (), 0.f, 2.f);
+        player_state_.gain = gain;
     }
 
     notification_queue_.PushCommand (player_state_);

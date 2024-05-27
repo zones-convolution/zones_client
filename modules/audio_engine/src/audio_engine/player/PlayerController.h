@@ -33,6 +33,11 @@ public:
         command_queue_.PushCommand (CommandQueue::FileCommand {.file = file});
     }
 
+    void SetGain (float gain)
+    {
+        command_queue_.PushCommand (CommandQueue::GainCommand {.gain = gain});
+    }
+
     [[nodiscard]] Player::PlayerState GetPlayerState () const
     {
         return player_state_;
