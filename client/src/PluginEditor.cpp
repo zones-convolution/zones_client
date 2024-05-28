@@ -13,7 +13,7 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (
     , context_ (processor_container.store_)
     , editor_ (processor_container.parameter_tree_,
                processor_container.thread_pool_,
-               processor_container.audio_engine_.player_controller_)
+               processor_container.player_controller_)
     , preferences_component_ (context_)
     , sidebar_footer_ (processor_container.store_ [&Model::zone_repository_model]
                                                   [&ZoneRepositoryModel::current_ir],

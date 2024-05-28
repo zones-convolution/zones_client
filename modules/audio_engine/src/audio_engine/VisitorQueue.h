@@ -14,17 +14,17 @@ class VisitorQueue
     static_assert (lager::is_variant<Commands>::value, "Commands must be a variant type");
 
 public:
-    explicit VisitorQueue (Visitor & visitor)
-        : visitor_ (visitor)
+    explicit VisitorQueue ()
     {
         command_queue_.reset (kMaxQueueSize);
     }
 
     void Service ()
     {
+        jassert (visitor_ != nullptr);
         Commands command;
         while (command_queue_.pop (command))
-            std::visit (visitor_, command);
+            std::visit (*visitor_, command);
     }
 
     bool PushCommand (const Commands & command)
@@ -40,6 +40,6 @@ public:
 private:
     static constexpr int kMaxQueueSize = 400;
 
-    Visitor & visitor_;
+    Visitor * visitor_ = nullptr;
     choc::fifo::SingleReaderSingleWriterFIFO<Commands> command_queue_;
 };

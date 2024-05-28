@@ -7,15 +7,15 @@
 
 #include <juce_gui_basics/juce_gui_basics.h>
 
-class PlayerComponent : public juce::AnimatedAppComponent
+class PlayerComponent : public juce::Component
 {
 public:
-    PlayerComponent (PlayerController & player_controller);
+    explicit PlayerComponent (PlayerController & player_controller);
     void resized () override;
-    void update () override;
-    void paint (juce::Graphics & g) override;
 
 private:
+    void Update ();
+
     static const std::string kPlayerPanelKey;
     static const std::string kPlayerGainKey;
 

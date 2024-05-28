@@ -3,7 +3,12 @@
 #include "../CommandQueue.h"
 #include "PlayerState.h"
 
-class PlayerController
+struct PlayerControllerNotificationDelegate
+{
+    virtual void ReceivedPlayerStateNotification (const Player::PlayerState & new_state) = 0;
+};
+
+class PlayerController : public PlayerControllerNotificationDelegate
 {
 public:
     // using PlayerState = NotificationQueue::PlayerStateNotification;
@@ -44,11 +49,12 @@ public:
         return player_state_;
     }
 
-    // std::function<void ()> OnPlayerStateUpdated;
+    std::function<void ()> OnPlayerStateUpdated;
 
-    void ReceivedPlayerStateNotification (const Player::PlayerState & new_state)
+    void ReceivedPlayerStateNotification (const Player::PlayerState & new_state) override
     {
         player_state_ = new_state;
+        OnPlayerStateUpdated ();
     }
 
 private:

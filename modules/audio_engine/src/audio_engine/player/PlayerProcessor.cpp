@@ -30,7 +30,7 @@ PlayerProcessor::PlayerProcessor (NotificationQueue::VisitorQueue & notification
     reader_sizes_.push_back (readers_ [0]->lengthInSamples);
     reader_sizes_.push_back (readers_ [1]->lengthInSamples);
     // problem with push command in constructor...
-    // SetPlayerState ({});
+    SetPlayerState ({});
 }
 
 void PlayerProcessor::prepare (const juce::dsp::ProcessSpec & spec)
@@ -57,6 +57,8 @@ void PlayerProcessor::process (const juce::dsp::ProcessContextReplacing<float> &
         auto num_samples_to_collect =
             std::min (remaining_samples, total_num_samples_to_collect - num_samples_collected);
 
+        //        auto output_data = reinterpret_cast<float * const *>
+        //        (output_block.getChannelPointer (0));
         readers_ [reader_index]->read (
             &temp_buffer_, num_samples_collected, num_samples_to_collect, read_head_, true, true);
 

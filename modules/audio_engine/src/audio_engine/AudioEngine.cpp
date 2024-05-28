@@ -1,20 +1,25 @@
 #include "AudioEngine.h"
 
 AudioEngine::AudioEngine (CommandQueue::VisitorQueue & command_queue,
+                          NotificationQueue::VisitorQueue & notification_queue,
                           juce::AudioProcessorValueTreeState & parameter_tree,
                           zones::ConvolutionEngine & convolution_engine,
+                          PlayerController & player_controller,
                           const juce::AudioProcessor & processor)
-    : processor_ (processor)
+    : player_controller_ (player_controller)
+    , processor_ (processor)
     , command_queue_ (command_queue)
+    , notification_queue_ (notification_queue)
     , parameter_tree_ (parameter_tree)
     , convolution_engine_ (convolution_engine)
-    , player_controller_ (command_queue)
 {
     parameter_tree.addParameterListener (ParameterTree::kDryWetMixParameterId, this);
     parameter_tree.addParameterListener (ParameterTree::kOutputGainParameterId, this);
     parameter_tree.addParameterListener (ParameterTree::kInputGainParameterId, this);
     parameter_tree.addParameterListener (ParameterTree::kBassParameterId, this);
     parameter_tree.addParameterListener (ParameterTree::kTrebleParameterId, this);
+
+    startTimer (kServiceIntervalMs);
 }
 
 zones::Convolver::ConvolverSpec
@@ -71,4 +76,9 @@ void AudioEngine::parameterChanged (const juce::String & parameterID, float newV
 void AudioEngine::operator() (const Player::PlayerState & player_state_notification)
 {
     player_controller_.ReceivedPlayerStateNotification (player_state_notification);
+}
+
+void AudioEngine::timerCallback ()
+{
+    notification_queue_.Service ();
 }

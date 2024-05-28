@@ -15,25 +15,32 @@ class AudioEngine
     : public IrEngine::Listener
     , public juce::AudioProcessorValueTreeState::Listener
     , public NotificationQueue::Visitor
+    , public juce::Timer
 {
 public:
     explicit AudioEngine (CommandQueue::VisitorQueue & command_queue,
+                          NotificationQueue::VisitorQueue & notification_queue,
                           juce::AudioProcessorValueTreeState & parameter_tree,
                           zones::ConvolutionEngine & convolution_engine,
+                          PlayerController & player_controller,
                           const juce::AudioProcessor & processor);
     void RenderFinished (IrGraphState state, IrGraphProcessor::BoxedBuffer render_result) override;
     ~AudioEngine () override = default;
     void parameterChanged (const juce::String & parameterID, float newValue) override;
     void operator() (const Player::PlayerState & player_state_notification) override;
-
-    PlayerController player_controller_;
+    void timerCallback () override;
 
 private:
+    static constexpr auto kServiceIntervalMs = 100;
+
+    PlayerController & player_controller_;
+
     [[nodiscard]] static zones::Convolver::ConvolverSpec
     CreateConvolverSpecForState (const IrGraphState & ir_graph_state);
 
     const juce::AudioProcessor & processor_;
     CommandQueue::VisitorQueue & command_queue_;
+    NotificationQueue::VisitorQueue & notification_queue_;
     juce::AudioProcessorValueTreeState & parameter_tree_;
     zones::ConvolutionEngine & convolution_engine_;
 };

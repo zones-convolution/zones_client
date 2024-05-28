@@ -6,6 +6,8 @@ const std::string PlayerComponent::kPlayerGainKey = "player_gain";
 PlayerComponent::PlayerComponent (PlayerController & player_controller)
     : player_controller_ (player_controller)
 {
+    player_controller.OnPlayerStateUpdated = [&] { Update (); };
+
     auto state = player_controller.GetPlayerState ();
 
     player_label_.setText (juce::translate (kPlayerPanelKey), juce::dontSendNotification);
@@ -56,17 +58,6 @@ PlayerComponent::PlayerComponent (PlayerController & player_controller)
     { player_controller_.SetGain (player_gain_slider_.getValue ()); };
     addAndMakeVisible (player_gain_slider_);
     addAndMakeVisible (player_gain_label_);
-
-    setSynchroniseToVBlank (true);
-}
-
-void PlayerComponent::paint (juce::Graphics & g)
-{
-    g.fillAll (getLookAndFeel ().findColour (LookAndFeel::ColourIds::kPanel));
-
-    //    auto channels_bounds = GetChannelBounds ().expanded (kMargin);
-    //    g.setColour (getLookAndFeel ().findColour (juce::ResizableWindow::backgroundColourId));
-    //    g.fillRect (channels_bounds);
 }
 
 void PlayerComponent::resized ()
@@ -103,7 +94,7 @@ void PlayerComponent::resized ()
     layout.performLayout (getLocalBounds ().toFloat ());
 }
 
-void PlayerComponent::update ()
+void PlayerComponent::Update ()
 {
     auto new_state = player_controller_.GetPlayerState ();
 

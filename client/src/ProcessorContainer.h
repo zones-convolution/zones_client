@@ -26,11 +26,14 @@ public:
     AudioGraphMetering output_graph_metering_;
 
     juce::AudioProcessorValueTreeState parameter_tree_;
+
+    CommandQueue::VisitorQueue command_queue_;
+    NotificationQueue::VisitorQueue notification_queue_;
+
+    PlayerController player_controller_ {command_queue_};
+
     AudioGraph graph_;
     AudioEngine audio_engine_;
-
-    CommandQueue::VisitorQueue command_queue_ {graph_};
-    NotificationQueue::VisitorQueue notification_queue_ {audio_engine_};
 
     juce::ThreadPool thread_pool_;
     IrEngine ir_engine_ {thread_pool_};

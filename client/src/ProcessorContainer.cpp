@@ -12,11 +12,16 @@ ProcessorContainer::ProcessorContainer (juce::AudioProcessor & audio_processor)
                        nullptr,
                        ParameterTree::kParameterTreeIdentifier,
                        ParameterTree::CreateParameterLayout ())
-    , audio_engine_ (command_queue_, parameter_tree_, convolution_engine_, audio_processor)
+    , audio_engine_ (command_queue_,
+                     notification_queue_,
+                     parameter_tree_,
+                     convolution_engine_,
+                     player_controller_,
+                     audio_processor)
 
 {
-    // command_queue_.SetVisitor (&graph_);
-    // notification_queue_.SetVisitor (&audio_engine_);
+    command_queue_.SetVisitor (&graph_);
+    notification_queue_.SetVisitor (&audio_engine_);
 
     RegisterIrEngineListeners ();
     store_.dispatch (RefreshUserZonesAction {});
