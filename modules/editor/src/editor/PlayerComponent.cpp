@@ -6,12 +6,14 @@ const std::string PlayerComponent::kPlayerGainKey = "player_gain";
 PlayerComponent::PlayerComponent (PlayerController & player_controller)
     : player_controller_ (player_controller)
 {
+    auto state = player_controller.GetPlayerState ();
+
     player_label_.setText (juce::translate (kPlayerPanelKey), juce::dontSendNotification);
     addAndMakeVisible (player_label_);
     addAndMakeVisible (top_divider_);
 
     file_chooser_.addItemList ({"snare", "numbers"}, 1);
-    file_chooser_.setSelectedItemIndex (0, juce::dontSendNotification);
+    file_chooser_.setSelectedItemIndex (state.file, juce::dontSendNotification);
     file_chooser_.onChange = [this]
     {
         player_controller_.SetFile (
@@ -48,7 +50,8 @@ PlayerComponent::PlayerComponent (PlayerController & player_controller)
     player_gain_label_.setJustificationType (juce::Justification::centred);
     player_gain_slider_.setPopupDisplayEnabled (true, true, getTopLevelComponent ());
     player_gain_slider_.setRange (0.f, 2.f, 0.01f);
-    player_gain_slider_.setValue (1.f);
+    auto gain = (! state.is_playing && state.gain == 0) ? 1.f : state.gain;
+    player_gain_slider_.setValue (gain);
     player_gain_slider_.onValueChange = [this]
     { player_controller_.SetGain (player_gain_slider_.getValue ()); };
     addAndMakeVisible (player_gain_slider_);
@@ -108,4 +111,6 @@ void PlayerComponent::update ()
     play_pause_button_.SetIcon (new_state.is_playing ? BoxIcons::kBxPause : BoxIcons::kBxPlay);
 
     loop_button_.setToggleState (new_state.is_looping, juce::dontSendNotification);
+
+    player_gain_slider_.setValue (new_state.gain, juce::dontSendNotification);
 }

@@ -36,7 +36,7 @@ PlayerProcessor::PlayerProcessor (NotificationQueue::VisitorQueue & notification
 void PlayerProcessor::prepare (const juce::dsp::ProcessSpec & spec)
 {
     temp_buffer_.setSize (spec.numChannels, spec.maximumBlockSize);
-    smoothed_gain_.reset (spec.sampleRate, 0.1f);
+    smoothed_gain_.reset (spec.sampleRate, 0.05f);
     smoothed_gain_.setCurrentAndTargetValue (0.f);
 }
 void PlayerProcessor::process (const juce::dsp::ProcessContextReplacing<float> & replacing)
