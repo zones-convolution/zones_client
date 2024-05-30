@@ -8,11 +8,6 @@ extern "C" const unsigned resources_snare_mp3_size;
 extern "C" const char resources_numbers_mp3 [];
 extern "C" const unsigned resources_numbers_mp3_size;
 
-// static const juce::MemoryInputStream snare_stream {&resources_snare_mp3,
-// resources_snare_mp3_size, false
-//}
-//;
-
 PlayerProcessor::PlayerProcessor (NotificationQueue::VisitorQueue & notification_queue)
     : notification_queue_ (notification_queue)
 {
@@ -27,15 +22,13 @@ PlayerProcessor::PlayerProcessor (NotificationQueue::VisitorQueue & notification
         audio_format_manager_.createReaderFor (std::make_unique<juce::MemoryInputStream> (
             &resources_numbers_mp3, resources_numbers_mp3_size, false)));
 
-    reader_sizes_.push_back (readers_ [0]->lengthInSamples);
-    reader_sizes_.push_back (readers_ [1]->lengthInSamples);
-    // problem with push command in constructor...
-    SetPlayerState ({});
+    notification_queue_.PushCommand (player_state_);
 }
 
 void PlayerProcessor::prepare (const juce::dsp::ProcessSpec & spec)
 {
-    temp_buffer_.setSize (spec.numChannels, spec.maximumBlockSize);
+    temp_buffer_.setSize (static_cast<int> (spec.numChannels),
+                          static_cast<int> (spec.maximumBlockSize));
     smoothed_gain_.reset (spec.sampleRate, 0.05f);
     smoothed_gain_.setCurrentAndTargetValue (0.f);
 }
@@ -44,11 +37,11 @@ void PlayerProcessor::process (const juce::dsp::ProcessContextReplacing<float> &
     if (! player_state_.is_playing)
         return;
 
-    int reader_index = player_state_.file;
-
+    auto reader_index = static_cast<unsigned long> (player_state_.file);
+    auto reader = readers_ [reader_index];
     auto output_block = replacing.getOutputBlock ();
     auto total_num_samples_to_collect = static_cast<int> (output_block.getNumSamples ());
-    auto total_num_input_samples = reader_sizes_ [reader_index];
+    auto total_num_input_samples = static_cast<int> (reader->lengthInSamples);
     auto num_samples_collected = 0;
 
     while (num_samples_collected < total_num_samples_to_collect)
@@ -57,9 +50,7 @@ void PlayerProcessor::process (const juce::dsp::ProcessContextReplacing<float> &
         auto num_samples_to_collect =
             std::min (remaining_samples, total_num_samples_to_collect - num_samples_collected);
 
-        //        auto output_data = reinterpret_cast<float * const *>
-        //        (output_block.getChannelPointer (0));
-        readers_ [reader_index]->read (
+        reader->read (
             &temp_buffer_, num_samples_collected, num_samples_to_collect, read_head_, true, true);
 
         num_samples_collected += num_samples_to_collect;
@@ -81,10 +72,11 @@ void PlayerProcessor::process (const juce::dsp::ProcessContextReplacing<float> &
 
     output_block.copyFrom (temp_buffer_).multiplyBy (smoothed_gain_);
 
-    if (smoothed_gain_.getCurrentValue () == 0.f)
+    if (is_stopping_ && smoothed_gain_.getCurrentValue () == 0.f)
     {
         read_head_ = 0;
         player_state_.is_playing = false;
+        is_stopping_ = false;
         notification_queue_.PushCommand (player_state_);
     }
 }
@@ -101,6 +93,7 @@ void PlayerProcessor::reset ()
 void PlayerProcessor::Clear ()
 {
     smoothed_gain_.setTargetValue (0.f);
+    is_stopping_ = false;
     read_head_ = 0;
 }
 
@@ -114,6 +107,7 @@ void PlayerProcessor::SetPlayerState (Player::PlayerStateOptional new_player_sta
         auto new_file = new_player_state.file.value ();
         if (player_state_.file != new_file && player_state_.is_playing)
         {
+            is_stopping_ = true;
             smoothed_gain_.setTargetValue (0.f);
         }
         else
@@ -134,11 +128,14 @@ void PlayerProcessor::SetPlayerState (Player::PlayerStateOptional new_player_sta
         auto new_playing_state = new_player_state.is_playing.value ();
         if (! new_playing_state)
         {
+            is_stopping_ = true;
             smoothed_gain_.setTargetValue (0.f);
-            notification_queue_.PushCommand (player_state_);
-            return;
         }
-        player_state_.is_playing = new_playing_state;
+        else
+        {
+            is_stopping_ = false;
+            player_state_.is_playing = new_playing_state;
+        }
     }
 
     notification_queue_.PushCommand (player_state_);

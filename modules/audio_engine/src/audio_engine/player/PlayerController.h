@@ -11,8 +11,6 @@ struct PlayerControllerNotificationDelegate
 class PlayerController : public PlayerControllerNotificationDelegate
 {
 public:
-    // using PlayerState = NotificationQueue::PlayerStateNotification;
-
     PlayerController (CommandQueue::VisitorQueue & command_queue)
         : command_queue_ (command_queue)
     {

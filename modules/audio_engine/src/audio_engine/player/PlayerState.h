@@ -19,10 +19,10 @@ struct PlayerStateOptional
 
 struct PlayerState
 {
-    Resources file;
-    bool is_looping;
-    bool is_playing;
-    float gain;
+    Resources file = Resources::kSnare;
+    bool is_looping = false;
+    bool is_playing = false;
+    float gain = 1.f;
 };
 
 };
