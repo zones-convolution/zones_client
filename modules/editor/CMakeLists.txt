@@ -12,6 +12,8 @@ zones_add_module(
         src/editor/PlayerComponent.cpp
         src/editor/EQComponent.h
         src/editor/EQComponent.cpp
+        src/editor/RTComponent.h
+        src/editor/RTComponent.cpp
         DEPS
         juce::juce_core
         juce::juce_gui_basics

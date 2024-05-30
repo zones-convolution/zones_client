@@ -1,7 +1,7 @@
 #pragma once
 
-#include "IOComponent.h"
 #include "IrEngineComponent.h"
+#include "RTComponent.h"
 #include "ir_engine/IrEngine.h"
 #include "look_and_feel/components/PanelComponent.h"
 #include "visualiser/component/WaterfallComponent.h"
@@ -22,8 +22,8 @@ public:
     void RenderFinished (IrGraphState state, IrGraphProcessor::BoxedBuffer render_result) override;
 
 private:
-    IOComponent io_component_;
-    PanelComponent io_panel_ {io_component_};
+    RTComponent rt_component_;
+    PanelComponent rt_panel_ {rt_component_};
 
     WaterfallComponent waterfall_component_;
     PanelComponent visualiser_panel_ {waterfall_component_};

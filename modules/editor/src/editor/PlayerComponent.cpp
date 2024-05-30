@@ -43,7 +43,6 @@ PlayerComponent::PlayerComponent (PlayerController & player_controller)
     loop_button_.setToggleable (true);
     loop_button_.setToggleState (false, juce::dontSendNotification);
     loop_button_.setClickingTogglesState (false);
-    // loop_button_.onStateChange = [this] { loop_button_.set };
     loop_button_.onClick = [this]
     { player_controller_.SetLoop (! loop_button_.getToggleState ()); };
     addAndMakeVisible (loop_button_);

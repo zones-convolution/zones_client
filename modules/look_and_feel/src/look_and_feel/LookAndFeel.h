@@ -20,7 +20,7 @@ public:
     static constexpr float kDoubleGap = 2.f * kGap;
 
     static constexpr float kPadding = 8.f;
-    static constexpr float kRounding = 4.f;
+    static constexpr float kRounding = 0.f;
 
     static constexpr float kComboBoxCornerRounding = kRounding;
     static constexpr float kPopupMenuCornerRounding = kRounding;

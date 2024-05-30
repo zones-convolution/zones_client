@@ -30,5 +30,4 @@ private:
     juce::Label player_gain_label_;
     juce::Slider player_gain_slider_ {juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag,
                                       juce::Slider::TextEntryBoxPosition::NoTextBox};
-    // juce::ToggleButton loop_button_;
 };

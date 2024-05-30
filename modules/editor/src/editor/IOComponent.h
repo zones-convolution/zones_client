@@ -12,23 +12,14 @@
 class IOComponent : public juce::Component
 {
 public:
-    explicit IOComponent (juce::AudioProcessorValueTreeState & parameter_tree,
-                          PlayerController & player_controller);
+    explicit IOComponent (juce::AudioProcessorValueTreeState & parameter_tree);
     void resized () override;
 
 private:
     static const std::string kIOPanelKey;
 
-    void SetPlayerState ();
-
     juce::Label io_label_;
     DividerComponent top_divider_;
-
-    PlayerComponent player_component_;
-    PanelComponent player_panel_ {player_component_};
-
-    EQComponent eq_component_;
-    PanelComponent eq_panel_ {eq_component_};
 
     juce::Label dry_wet_label_;
     juce::Slider dry_wet_mix_slider_ {juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag,
