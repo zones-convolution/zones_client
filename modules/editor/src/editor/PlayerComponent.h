@@ -11,6 +11,7 @@ class PlayerComponent : public juce::Component
 {
 public:
     explicit PlayerComponent (PlayerController & player_controller);
+    ~PlayerComponent ();
     void resized () override;
 
 private:

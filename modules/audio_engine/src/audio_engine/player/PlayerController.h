@@ -52,7 +52,8 @@ public:
     void ReceivedPlayerStateNotification (const Player::PlayerState & new_state) override
     {
         player_state_ = new_state;
-        OnPlayerStateUpdated ();
+        if (OnPlayerStateUpdated)
+            OnPlayerStateUpdated ();
     }
 
 private:

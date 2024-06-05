@@ -18,7 +18,7 @@ public:
 private:
     juce::AudioBuffer<float> temp_buffer_;
     juce::AudioFormatManager audio_format_manager_;
-    std::vector<juce::AudioFormatReader *> readers_;
+    std::vector<std::shared_ptr<juce::AudioFormatReader>> readers_;
 
     int read_head_;
     NotificationQueue::VisitorQueue & notification_queue_;

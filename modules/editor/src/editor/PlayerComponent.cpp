@@ -104,3 +104,8 @@ void PlayerComponent::Update ()
 
     loop_button_.setToggleState (new_state.is_looping, juce::dontSendNotification);
 }
+
+PlayerComponent::~PlayerComponent ()
+{
+    player_controller_.OnPlayerStateUpdated = nullptr;
+}

@@ -14,13 +14,25 @@ PlayerProcessor::PlayerProcessor (NotificationQueue::VisitorQueue & notification
     reset ();
     audio_format_manager_.registerBasicFormats ();
 
-    readers_.push_back (
+    std::shared_ptr<juce::AudioFormatReader> snare_reader {
         audio_format_manager_.createReaderFor (std::make_unique<juce::MemoryInputStream> (
-            &resources_snare_mp3, resources_snare_mp3_size, false)));
+            &resources_snare_mp3, resources_snare_mp3_size, false))};
 
-    readers_.push_back (
+    readers_.push_back (snare_reader);
+
+    std::shared_ptr<juce::AudioFormatReader> numbers_reader {
         audio_format_manager_.createReaderFor (std::make_unique<juce::MemoryInputStream> (
-            &resources_numbers_mp3, resources_numbers_mp3_size, false)));
+            &resources_numbers_mp3, resources_numbers_mp3_size, false))};
+
+    readers_.push_back (numbers_reader);
+
+    //    readers_.push_back (
+    //        audio_format_manager_.createReaderFor (std::make_unique<juce::MemoryInputStream> (
+    //            &resources_snare_mp3, resources_snare_mp3_size, false)));
+    //
+    //    readers_.push_back (
+    //        audio_format_manager_.createReaderFor (std::make_unique<juce::MemoryInputStream> (
+    //            &resources_numbers_mp3, resources_numbers_mp3_size, false)));
 
     notification_queue_.PushCommand (player_state_);
 }
@@ -38,7 +50,7 @@ void PlayerProcessor::process (const juce::dsp::ProcessContextReplacing<float> &
         return;
 
     auto reader_index = static_cast<unsigned long> (player_state_.file);
-    auto reader = readers_ [reader_index];
+    auto & reader = readers_ [reader_index];
     auto output_block = replacing.getOutputBlock ();
     auto total_num_samples_to_collect = static_cast<int> (output_block.getNumSamples ());
     auto total_num_input_samples = static_cast<int> (reader->lengthInSamples);
