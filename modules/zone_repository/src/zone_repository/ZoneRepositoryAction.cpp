@@ -25,7 +25,17 @@ ZoneRepositoryResult UpdateZoneRepository (ZoneRepositoryModel model,
                 model.user_zones = action.user_zones;
                 model.user_zones_loading = false;
 
-                return {model, lager::noop};
+                return {model,
+                        [model, action] (auto && context)
+                        {
+                            auto zone = model.user_zones [0];
+                            auto ir_selection = zone.irs [0];
+
+                            context.dispatch (LoadIrAction {
+                                .ir_selection = {.zone = zone,
+                                                 .ir = ir_selection,
+                                                 .target_format = TargetFormat::kStereo}});
+                        }};
             },
             [&] (const LoadIrAction & load_ir_action) -> ZoneRepositoryResult
             {
