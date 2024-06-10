@@ -12,9 +12,7 @@ set(LINK_COMMON
         look_and_feel
         audio_engine
         model
-        layout
         browser
-        editor
         zones_convolver
         preferences)
 

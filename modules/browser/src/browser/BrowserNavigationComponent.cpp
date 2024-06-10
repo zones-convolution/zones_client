@@ -5,12 +5,11 @@
 BrowserNavigationComponent::BrowserNavigationComponent (
     lager::store<BrowserAction, BrowserModel> & browser_store,
     const lager::reader<Model> & model,
-    lager::context<Action> & context,
-    lager::context<TabsAction> & tabs_context)
+    lager::context<Action> & context)
     : browser_reader_ (browser_store)
     , browser_context_ (browser_store)
     , history_component_ (browser_store)
-    , home_view_component_ (browser_store, model, context, tabs_context)
+    , home_view_component_ (browser_store, model, context)
     , zone_view_component_ (context, model)
 {
     addAndMakeVisible (history_panel_);

@@ -5,12 +5,10 @@
 
 HomeViewComponent::HomeViewComponent (lager::store<BrowserAction, BrowserModel> & browser_store,
                                       const lager::reader<Model> & model,
-                                      lager::context<Action> & context,
-                                      lager::context<TabsAction> & tabs_context)
+                                      lager::context<Action> & context)
     : model_ (model)
     , context_ (context)
     , browser_context_ (browser_store)
-    , tabs_context_ (tabs_context)
     , zones_repository_reader_ (model [&Model::zone_repository_model])
     , ir_reader_ (model [&Model::zone_repository_model][&ZoneRepositoryModel::current_ir])
     , user_zones_reader_ (model [&Model::zone_repository_model][&ZoneRepositoryModel::user_zones])
@@ -20,8 +18,6 @@ HomeViewComponent::HomeViewComponent (lager::store<BrowserAction, BrowserModel> 
     addAndMakeVisible (top_divider_);
     addAndMakeVisible (top_label_);
 
-    import_zone_button_.onClick = [&]
-    { tabs_context_.dispatch (LoadTabAction {.tab_name = "import"}); };
     addAndMakeVisible (import_zone_button_);
 
     load_from_disk_button_.onClick = [&] { load_from_disk_controller_.Load (); };

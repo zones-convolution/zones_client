@@ -1,9 +1,7 @@
 #include "ImportController.h"
 
-ImportController::ImportController (ImportComponent & import_component,
-                                    lager::context<TabsAction> tabs_context)
+ImportController::ImportController (ImportComponent & import_component)
     : import_component_ (import_component)
-    , tabs_context_ (tabs_context)
 {
     import_component.OnSubmit = [&]
     {
@@ -47,8 +45,6 @@ ImportController::ImportController (ImportComponent & import_component,
 
         WriteZoneMetadata (zone_directory_path / safe_zone_title.replace_extension (".json"),
                            zone_metadata);
-
-        tabs_context_.dispatch (LoadTabAction {.tab_name = "browser"});
     };
 }
 

@@ -6,7 +6,6 @@
 #include "components/HomeViewComponent.h"
 #include "components/Top10ViewComponent.h"
 #include "components/ZoneViewComponent.h"
-#include "layout/tabs/TabsAction.h"
 #include "look_and_feel/BoxIcons.h"
 #include "look_and_feel/components/IconButton.h"
 #include "look_and_feel/components/PanelComponent.h"
@@ -23,8 +22,7 @@ class BrowserNavigationComponent : public juce::Component
 public:
     explicit BrowserNavigationComponent (lager::store<BrowserAction, BrowserModel> & browser_store,
                                          const lager::reader<Model> & model,
-                                         lager::context<Action> & context,
-                                         lager::context<TabsAction> & tabs_context);
+                                         lager::context<Action> & context);
     ~BrowserNavigationComponent () override = default;
 
     void resized () override;

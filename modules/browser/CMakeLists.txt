@@ -36,5 +36,4 @@ zones_add_module(
         zone_repository
         model
         preferences
-        layout
         format)
