@@ -27,7 +27,7 @@ set(SOURCES
         src/ProcessorContainer.cpp
         src/WithJuceEventLoop.h)
 
-set(DEV_LOCALHOST ON)
+option(DEV_LOCALHOST OFF)
 set(ASSETS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/ui/dist/)
 
 juce_add_plugin(
