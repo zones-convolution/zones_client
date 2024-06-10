@@ -5,9 +5,6 @@
 #include "browser/BrowserNavigationComponent.h"
 #include "browser/import/ImportComponent.h"
 #include "browser/import/ImportController.h"
-#include "components/SidebarContent.h"
-#include "components/SidebarFooter.h"
-#include "components/SidebarHeader.h"
 #include "editor/EditorComponent.h"
 #include "layout/sidebar/SidebarComponent.h"
 #include "layout/tabs/TabsAction.h"
@@ -42,42 +39,47 @@ private:
 
     EditorComponent editor_;
 
-    lager::store<BrowserAction, BrowserModel> browser_store_ =
-        lager::make_store<BrowserAction> (BrowserModel {},
-                                          WithJuceEventLoop {processor_container_.thread_pool_},
-                                          lager::with_reducer (UpdateBrowser));
+    //    lager::store<BrowserAction, BrowserModel> browser_store_ =
+    //        lager::make_store<BrowserAction> (BrowserModel {},
+    //                                          WithJuceEventLoop
+    //                                          {processor_container_.thread_pool_},
+    //                                          lager::with_reducer (UpdateBrowser));
+    //
+    //    lager::store<TabsAction, TabsModel> tabs_store_ = lager::make_store<TabsAction> (
+    //        TabsModel {},
+    //        WithJuceEventLoop {processor_container_.thread_pool_},
+    //        lager::with_deps (std::reference_wrapper<TabsControllerDelegate> (tabs_controller_)),
+    //        lager::with_reducer (UpdateTabs));
 
-    lager::store<TabsAction, TabsModel> tabs_store_ = lager::make_store<TabsAction> (
-        TabsModel {},
-        WithJuceEventLoop {processor_container_.thread_pool_},
-        lager::with_deps (std::reference_wrapper<TabsControllerDelegate> (tabs_controller_)),
-        lager::with_reducer (UpdateTabs));
+    // Most complex needs thinking...
+    //    BrowserNavigationComponent browser_ {browser_store_, model_, context_, tabs_store_};
 
-    BrowserNavigationComponent browser_ {browser_store_, model_, context_, tabs_store_};
+    //    Probably keep controller, send object from web
+    //    ImportComponent import_component_;
+    //    ImportController import_controller_ {import_component_, tabs_store_};
+    //    PanelComponent import_panel_ {import_component_};
 
-    ImportComponent import_component_;
-    ImportController import_controller_ {import_component_, tabs_store_};
+    //    Interact with preferences
+    //    PreferencesComponent preferences_component_;
+    //    PanelComponent settings_panel_ {preferences_component_};
 
-    PanelComponent import_panel_ {import_component_};
+    // Nothing related to state
+    //    TabsComponent tabs_component_;
+    //    TabsController tabs_controller_ {tabs_component_};
 
-    PreferencesComponent preferences_component_;
-    PanelComponent settings_panel_ {preferences_component_};
-
-    TabsComponent tabs_component_;
-    TabsController tabs_controller_ {tabs_component_};
-
-    SidebarHeader sidebar_header_;
-    PanelComponent sidebar_header_panel_ {sidebar_header_};
-
-    SidebarContent sidebar_content_ {tabs_store_};
-    PanelComponent sidebar_content_panel_ {sidebar_content_};
-
-    SidebarFooter sidebar_footer_;
-    PanelComponent sidebar_footer_panel_ {sidebar_footer_};
-
-    SidebarComponent sidebar_component_ {sidebar_header_panel_,
-                                         sidebar_content_panel_,
-                                         sidebar_footer_panel_};
+    //    Metering  + Context for current IR
+    //    SidebarHeader sidebar_header_;
+    //    PanelComponent sidebar_header_panel_ {sidebar_header_};
+    //
+    //    SidebarContent sidebar_content_ {tabs_store_};
+    //    PanelComponent sidebar_content_panel_ {sidebar_content_};
+    //
+    //    SidebarFooter sidebar_footer_;
+    //    PanelComponent sidebar_footer_panel_ {sidebar_footer_};
+    //
+    //    SidebarComponent sidebar_component_ {sidebar_header_panel_,
+    //                                         sidebar_content_panel_,
+    //                                         sidebar_footer_panel_};
 
     IrEngine & ir_engine_;
 

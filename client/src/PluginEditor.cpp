@@ -14,11 +14,6 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (
     , editor_ (processor_container.parameter_tree_,
                processor_container.thread_pool_,
                processor_container.player_controller_)
-    , preferences_component_ (context_)
-    , sidebar_footer_ (processor_container.store_ [&Model::zone_repository_model]
-                                                  [&ZoneRepositoryModel::current_ir],
-                       processor_container.input_graph_metering_,
-                       processor_container.output_graph_metering_)
     , ir_engine_ (processor_container.ir_engine_)
 
 {
@@ -29,16 +24,6 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (
                      static_cast<int> (kWindowMaxWidth * kPreferredAspectRatio));
 
     setSize (1280, 600);
-
-    tabs_controller_.AddTab ("browser", browser_);
-    tabs_controller_.AddTab ("editor", editor_);
-    tabs_controller_.AddTab ("settings", settings_panel_);
-    tabs_controller_.AddTab ("import", import_panel_);
-
-    addAndMakeVisible (tabs_component_);
-    addAndMakeVisible (sidebar_component_);
-
-    tabs_store_.dispatch (LoadTabAction {.tab_name = "editor"});
 
     auto & ir_engine_listeners = ir_engine_.GetListeners ();
     ir_engine_listeners.add (&editor_);
@@ -54,10 +39,6 @@ void AudioPluginAudioProcessorEditor::resized ()
 {
     juce::FlexBox layout;
     layout.flexDirection = juce::FlexBox::Direction::row;
-
-    layout.items.add (juce::FlexItem (sidebar_component_).withWidth (250.f));
-    layout.items.add (LookAndFeel::kFlexSpacer);
-    layout.items.add (juce::FlexItem (tabs_component_).withFlex (1.f));
 
     layout.performLayout (getLocalBounds ().toFloat ().reduced (LookAndFeel::kPadding));
 }
