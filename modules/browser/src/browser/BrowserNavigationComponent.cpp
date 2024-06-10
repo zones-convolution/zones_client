@@ -11,7 +11,7 @@ BrowserNavigationComponent::BrowserNavigationComponent (
     , browser_context_ (browser_store)
     , history_component_ (browser_store)
     , home_view_component_ (browser_store, model, context, tabs_context)
-    , zone_view_component_ (context)
+    , zone_view_component_ (context, model)
 {
     addAndMakeVisible (history_panel_);
     addAndMakeVisible (content_panel_);

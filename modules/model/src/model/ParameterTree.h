@@ -14,6 +14,9 @@ public:
     static const juce::String kInputGainParameterId;
     static const juce::String kOutputGainParameterId;
 
+    static const juce::String kBassParameterId;
+    static const juce::String kTrebleParameterId;
+
     static const juce::String kReverbTimeParameterId;
     static const juce::String kRoomSizeParameterId;
     static const juce::String kResamplerParameterId;

@@ -75,3 +75,8 @@ void IrController::PerformRender ()
 {
     ir_engine_.RenderState (current_graph_state_);
 }
+
+IrGraphState IrController::GetCurrentGraphState ()
+{
+    return current_graph_state_;
+}

@@ -7,7 +7,8 @@ const juce::String SpeakerPositionComponent::kChoosePickerDialogTitle = "Pick Au
 const std::map<std::string, ChannelFormat> ImportIrComponent::kMicrophonePickerOptions = {
     {"Mono", ChannelFormat::kMono},
     {"Stereo", ChannelFormat::kStereo},
-    {"FOA", ChannelFormat::kFoa}};
+    {"FOA", ChannelFormat::kFoa},
+    {"Quadraphonic", ChannelFormat::kQuadraphonic}};
 
 SpeakerPositionComponent::SpeakerPositionComponent ()
 {

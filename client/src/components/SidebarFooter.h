@@ -8,6 +8,20 @@
 #include <juce_gui_basics/juce_gui_basics.h>
 #include <lager/reader.hpp>
 
+class ZoneLabel : public juce::Component
+{
+public:
+    ZoneLabel (const CurrentIrReader & ir_reader);
+    void resized () override;
+
+private:
+    void UpdateLabels ();
+    CurrentIrReader ir_reader_;
+    juce::Label ir_label_;
+    juce::Label zone_label_;
+    juce::Label target_format_label_;
+};
+
 class SidebarFooter : public juce::Component
 {
 public:
@@ -18,13 +32,13 @@ public:
     void resized () override;
 
 private:
-    CurrentIrReader ir_reader_;
+    void ConfigureMeter ();
 
-    static const PanelComponent::ColourPair kIrPanelGradient;
-    juce::Label ir_label_;
-    PanelComponent ir_label_panel_;
+    static const PanelComponent::ColourPair kZonePanelGradient;
+    ZoneLabel zone_label_;
+    PanelComponent zone_label_panel_;
 
+    AudioGraphMetering & input_graph_metering_;
+    AudioGraphMetering & output_graph_metering_;
     MeterComponent meter_component_;
-
-    void UpdateIrLabel ();
 };

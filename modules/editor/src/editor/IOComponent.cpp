@@ -1,5 +1,7 @@
 #include "IOComponent.h"
 
+#include "look_and_feel/LookAndFeel.h"
+
 const std::string IOComponent::kIOPanelKey = "io_panel";
 
 IOComponent::IOComponent (juce::AudioProcessorValueTreeState & parameter_tree)
@@ -12,6 +14,7 @@ IOComponent::IOComponent (juce::AudioProcessorValueTreeState & parameter_tree)
     , output_gain_attachment_ (parameter_tree,
                                ParameterTree::kOutputGainParameterId,
                                output_gain_slider_)
+
 {
     io_label_.setText (juce::translate (kIOPanelKey), juce::dontSendNotification);
     addAndMakeVisible (io_label_);

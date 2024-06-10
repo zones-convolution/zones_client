@@ -10,10 +10,17 @@ enum class TargetFormat
     kMono,
     kStereo,
     kTrueStereo,
-    kFoa
+    kFoa,
+    kQuadraphonic
 };
 
 bool IsTargetSupported (const juce::AudioChannelSet & channel_set, TargetFormat target_format);
+
+std::vector<TargetFormat> GetTargetFormatsForChannelSet (const juce::AudioChannelSet & channel_set);
+
+std::string GetStringForTargetFormat (const TargetFormat & target_format);
+std::optional<TargetFormat> GetTargetFormatForString (const std::string & string);
+int GetNumChannels (TargetFormat target_format);
 
 struct IrSelection
 {

@@ -15,6 +15,7 @@ public:
     void timerCallback () override;
 
     void LoadIr (const IrSelection & ir_selection);
+    IrGraphState GetCurrentGraphState ();
 
 private:
     void UpdateParametersFromTree ();

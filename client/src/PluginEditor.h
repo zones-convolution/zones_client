@@ -56,7 +56,7 @@ private:
     BrowserNavigationComponent browser_ {browser_store_, model_, context_, tabs_store_};
 
     ImportComponent import_component_;
-    ImportController import_controller_ {import_component_};
+    ImportController import_controller_ {import_component_, tabs_store_};
 
     PanelComponent import_panel_ {import_component_};
 

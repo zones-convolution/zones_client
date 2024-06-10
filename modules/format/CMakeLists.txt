@@ -10,6 +10,8 @@ zones_add_module(
         src/format/formatter/StereoFormatter.cpp
         src/format/formatter/FoaFormatter.h
         src/format/formatter/FoaFormatter.cpp
+        src/format/formatter/QuadraphonicFormatter.h
+        src/format/formatter/QuadraphonicFormatter.cpp
         src/format/io/IrReader.h
         src/format/io/IrReader.cpp
         src/format/io/IrWriter.h
@@ -19,11 +21,15 @@ zones_add_module(
         src/format/JsonUtility.h
         src/format/ZoneMetadata.cpp
         src/format/ZoneMetadata.h
+        src/format/LoadFromDiskController.cpp
+        src/format/LoadFromDiskController.h
         DEPS
         juce::juce_audio_basics
         juce::juce_audio_formats
         nlohmann_json::nlohmann_json
-        immer)
+        immer
+        lager
+        model)
 
 zones_add_test(
         MODULE

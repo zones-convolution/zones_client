@@ -60,7 +60,7 @@ juce_add_plugin(
         BUNDLE_ID
         com.zones.zones
         VERSION
-        0.0.1)
+        0.0.2)
 
 target_sources(${BINARY} PRIVATE ${SOURCES})
 

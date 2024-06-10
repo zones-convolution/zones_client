@@ -1,12 +1,13 @@
 #include "EditorComponent.h"
 
 EditorComponent::EditorComponent (juce::AudioProcessorValueTreeState & parameter_tree,
-                                  juce::ThreadPool & thread_pool)
-    : io_component_ (parameter_tree)
+                                  juce::ThreadPool & thread_pool,
+                                  PlayerController & player_controller)
+    : rt_component_ (parameter_tree, player_controller)
     , waterfall_component_ (thread_pool)
     , ir_engine_component_ (parameter_tree)
 {
-    addAndMakeVisible (io_panel_);
+    addAndMakeVisible (rt_panel_);
     addAndMakeVisible (visualiser_panel_);
     addAndMakeVisible (ir_engine_panel_);
 }
@@ -18,7 +19,7 @@ void EditorComponent::resized ()
 
     right_layout.items.add (juce::FlexItem (visualiser_panel_).withFlex (1.f));
     right_layout.items.add (LookAndFeel::kFlexSpacer);
-    right_layout.items.add (juce::FlexItem (io_panel_).withFlex (1.f));
+    right_layout.items.add (juce::FlexItem (rt_panel_).withFlex (1.f));
 
     juce::FlexBox layout;
     layout.flexDirection = juce::FlexBox::Direction::row;

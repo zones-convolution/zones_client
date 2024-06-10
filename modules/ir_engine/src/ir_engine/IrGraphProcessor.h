@@ -47,6 +47,11 @@ struct IrGraphState
         return state.param_3;
     }
 
+    static int CacheTargetFormat (const IrGraphState & state)
+    {
+        return static_cast<int> (state.target_format);
+    }
+
     static const std::string & CacheBaseIr (const IrGraphState & state)
     {
         return state.base_ir;

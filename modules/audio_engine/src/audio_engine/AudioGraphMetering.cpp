@@ -41,3 +41,8 @@ bool AudioGraphMetering::GetChannelClipping (size_t channel_index)
 {
     return channels_ [channel_index % channels_.size ()]->is_clipping;
 }
+
+int AudioGraphMetering::GetNumChannels ()
+{
+    return channels_.size ();
+}

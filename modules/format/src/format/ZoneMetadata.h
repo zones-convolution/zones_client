@@ -10,6 +10,7 @@ enum class ChannelFormat
     kMono,
     kStereo,
     kFoa,
+    kQuadraphonic
 };
 
 struct PositionMap

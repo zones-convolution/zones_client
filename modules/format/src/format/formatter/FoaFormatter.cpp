@@ -42,6 +42,8 @@ void FoaFormatter::Format (const std::filesystem::path & load_path,
                 ir_block.copyFrom (
                     juce::dsp::AudioBlock<float> {centre_position.buffer}.getSingleChannelBlock (
                         0));
+
+                CopyIrDataMeta (ir_data, centre_position);
             }
 
             // throw error
@@ -56,7 +58,7 @@ void FoaFormatter::Format (const std::filesystem::path & load_path,
             }
 
             // throw error
-            
+
             break;
     }
 }

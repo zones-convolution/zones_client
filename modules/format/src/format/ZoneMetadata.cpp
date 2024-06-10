@@ -8,11 +8,10 @@
 using json = nlohmann::json;
 
 NLOHMANN_JSON_SERIALIZE_ENUM (ChannelFormat,
-                              {
-                                  {ChannelFormat::kMono, "mono"},
-                                  {ChannelFormat::kStereo, "stereo"},
-                                  {ChannelFormat::kFoa, "foa"},
-                              })
+                              {{ChannelFormat::kMono, "mono"},
+                               {ChannelFormat::kStereo, "stereo"},
+                               {ChannelFormat::kFoa, "foa"},
+                               {ChannelFormat::kQuadraphonic, "quadraphonic"}})
 
 static void from_json (const json & data, PositionMap & position_map)
 {

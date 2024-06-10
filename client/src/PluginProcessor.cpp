@@ -63,10 +63,7 @@ void AudioPluginAudioProcessor::changeProgramName (int index, const juce::String
 
 void AudioPluginAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
-    processor_container_.graph_.prepare (
-        juce::dsp::ProcessSpec {sampleRate,
-                                static_cast<juce::uint32> (samplesPerBlock),
-                                static_cast<juce::uint32> (getTotalNumOutputChannels ())});
+    processor_container_.Prepare (sampleRate, samplesPerBlock, getBusesLayout ());
 }
 
 void AudioPluginAudioProcessor::releaseResources ()
@@ -80,7 +77,8 @@ bool AudioPluginAudioProcessor::isBusesLayoutSupported (const BusesLayout & layo
 
     if (main_output_channel_set != juce::AudioChannelSet::mono () &&
         main_output_channel_set != juce::AudioChannelSet::stereo () &&
-        main_output_channel_set != juce::AudioChannelSet::ambisonic (1))
+        main_output_channel_set != juce::AudioChannelSet::ambisonic (1) &&
+        main_output_channel_set != juce::AudioChannelSet::quadraphonic ())
         return false;
 
     if (main_output_channel_set != layouts.getMainInputChannelSet ())

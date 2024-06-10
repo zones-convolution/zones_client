@@ -1,4 +1,8 @@
 #include "IrData.h"
+#include "formatter/FoaFormatter.h"
+#include "formatter/MonoFormatter.h"
+#include "formatter/QuadraphonicFormatter.h"
+#include "formatter/StereoFormatter.h"
 
 #include <filesystem>
 #include <juce_audio_basics/juce_audio_basics.h>

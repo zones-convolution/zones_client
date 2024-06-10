@@ -11,6 +11,11 @@
 #include <lager/effect.hpp>
 #include <variant>
 
+struct RefreshValidTargetFormatsAction
+{
+    std::vector<TargetFormat> target_formats;
+};
+
 struct RefreshUserZonesAction
 {
 };
@@ -34,7 +39,8 @@ struct LoadIrFailureAction
 {
 };
 
-using ZoneRepositoryAction = std::variant<RefreshUserZonesAction,
+using ZoneRepositoryAction = std::variant<RefreshValidTargetFormatsAction,
+                                          RefreshUserZonesAction,
                                           RefreshUserZonesResultAction,
                                           LoadIrAction,
                                           LoadIrSuccessAction,

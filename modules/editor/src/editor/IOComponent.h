@@ -1,7 +1,12 @@
+#include "EQComponent.h"
+#include "PlayerComponent.h"
+#include "audio_engine/player/PlayerController.h"
+#include "look_and_feel/BoxIcons.h"
 #include "look_and_feel/components/DividerComponent.h"
+#include "look_and_feel/components/IconButton.h"
+#include "look_and_feel/components/PanelComponent.h"
 #include "model/ParameterTree.h"
 
-#include <juce_audio_processors/juce_audio_processors.h>
 #include <juce_gui_basics/juce_gui_basics.h>
 
 class IOComponent : public juce::Component

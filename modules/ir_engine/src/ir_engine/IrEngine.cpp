@@ -55,10 +55,12 @@ juce::ListenerList<IrEngine::Listener> & IrEngine::GetListeners ()
 
 IrGraph IrEngine::CreateGraphForState (const IrGraphState & ir_graph_state) const
 {
-    auto ir_graph = IrGraph ().WithProcessor ({IrGraph::CachePolicy ()
-                                                   .WithPolicyIdentifier ("base_ir_processor")
-                                                   .WithCachedHandle (&IrGraphState::CacheBaseIr),
-                                               base_ir_processor_});
+    auto ir_graph =
+        IrGraph ().WithProcessor ({IrGraph::CachePolicy ()
+                                       .WithPolicyIdentifier ("base_ir_processor")
+                                       .WithCachedHandle (&IrGraphState::CacheBaseIr)
+                                       .WithCachedHandle (&IrGraphState::CacheTargetFormat),
+                                   base_ir_processor_});
     switch (ir_graph_state.target_format)
     {
         case TargetFormat::kTrueStereo:
