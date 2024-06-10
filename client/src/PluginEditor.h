@@ -32,8 +32,12 @@ private:
     AudioPluginAudioProcessor & processor_;
     ProcessorContainer & processor_container_;
 
+    juce::WebSliderRelay wet_dry_mix_relay_ {web_browser_component_,
+                                             ParameterTree::kDryWetMixParameterId};
+
     juce::File asset_directory_;
-    SinglePageBrowser web_browser_component_ {
+
+    const juce::WebBrowserComponent::Options kBaseWebOptions =
         juce::WebBrowserComponent::Options {}
             .withBackend (juce::WebBrowserComponent::Options::Backend::webview2)
             .withWinWebView2Options (
@@ -42,7 +46,11 @@ private:
                         juce::File::SpecialLocationType::tempDirectory)))
             .withNativeIntegrationEnabled ()
             .withResourceProvider ([this] (const auto & url) { return GetResource (url); },
-                                   juce::URL {kLocalDevServerAddress}.getOrigin ())};
+                                   juce::URL {kLocalDevServerAddress}.getOrigin ());
+
+    SinglePageBrowser web_browser_component_;
+
+    juce::WebSliderParameterAttachment wet_dry_mix_attachment_;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioPluginAudioProcessorEditor)
 };

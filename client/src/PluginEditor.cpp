@@ -83,6 +83,10 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (
     : AudioProcessorEditor (&processor)
     , processor_ (processor)
     , processor_container_ (processor_container)
+    , web_browser_component_ (kBaseWebOptions.withOptionsFrom (wet_dry_mix_relay_))
+    , wet_dry_mix_attachment_ (
+          *processor_container_.parameter_tree_.getParameter (ParameterTree::kDryWetMixParameterId),
+          wet_dry_mix_relay_)
 
 {
     setResizable (true, true);
