@@ -27,7 +27,7 @@ set(SOURCES
         src/ProcessorContainer.cpp
         src/WithJuceEventLoop.h)
 
-option(DEV_LOCALHOST "Run against localhost for static assets" OFF)
+set(DEV_LOCALHOST ON)
 set(ASSETS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/ui/dist/)
 
 juce_add_plugin(
@@ -44,7 +44,7 @@ juce_add_plugin(
 
 target_compile_definitions(${BINARY}
         PRIVATE
-        DEV_LOCALHOST=${DEV_LOCALHOST}
+        "DEV_LOCALHOST=$<BOOL:${DEV_LOCALHOST}>"
         JUCE_WEB_BROWSER=1
         JUCE_USE_WIN_WEBVIEW2_WITH_STATIC_LINKING=1)
 

@@ -94,11 +94,11 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (
 
     asset_directory_ = GetAssetsDirectory ();
 
-    // #if DEV_LOCALHOST
-    //    web_browser_component_.goToURL (kLocalDevServerAddress);
-    // #else
+#if DEV_LOCALHOST
+    web_browser_component_.goToURL (kLocalDevServerAddress);
+#else
     web_browser_component_.goToURL (juce::WebBrowserComponent::getResourceProviderRoot ());
-    // #endif
+#endif
 
     addAndMakeVisible (web_browser_component_);
 }
