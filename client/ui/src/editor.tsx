@@ -2,6 +2,7 @@ import { FC, ReactNode } from "react";
 
 import { Knob } from "@/components/knob";
 import { useControlParameterIndexUpdater } from "@/hooks/use_control_parameter_index_updater";
+import { Parameters } from "@/lib/parameters";
 
 const Panel: FC<{ children: ReactNode }> = ({ children }) => (
   <div className="flex flex-col flex-1 gap-8 bg-card p-4 rounded-md justify-center">
@@ -22,9 +23,9 @@ const IOPanel = () => {
     <Panel>
       <PanelHeading>IO</PanelHeading>
       <PanelContent>
-        <Knob identifier="input_parameter" />
-        <Knob identifier="dry_wet_mix_parameter" />
-        <Knob identifier="output_parameter" />
+        <Knob identifier={Parameters.Input} />
+        <Knob identifier={Parameters.DryWetMix} />
+        <Knob identifier={Parameters.Output} />
       </PanelContent>
     </Panel>
   );
@@ -35,8 +36,8 @@ const EQPanel = () => {
     <Panel>
       <PanelHeading>EQ</PanelHeading>
       <PanelContent>
-        <Knob identifier="bass_parameter" />
-        <Knob identifier="treble_parameter" />
+        <Knob identifier={Parameters.Bass} />
+        <Knob identifier={Parameters.Treble} />
       </PanelContent>
     </Panel>
   );
@@ -47,9 +48,9 @@ const MainPanel = () => {
     <Panel>
       <PanelHeading>MAIN</PanelHeading>
       <PanelContent>
-        <Knob identifier="reverb_time_parameter" />
-        <Knob identifier="resample_parameter" />
-        <Knob identifier="room_size_parameter" />
+        <Knob identifier={Parameters.ReverbTime} />
+        <Knob identifier={Parameters.Resample} />
+        <Knob identifier={Parameters.RoomSize} />
       </PanelContent>
     </Panel>
   );
