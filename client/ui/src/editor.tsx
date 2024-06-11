@@ -1,61 +1,39 @@
-import { FC, useEffect, useState } from "react";
+import { FC } from "react";
 
 import { Slider } from "@/components/ui/slider";
 
-import { juce } from "@/lib/juce";
-
-const controlParameterIndexAnnotation = "controlparameterindex";
+import { KnobPercentage } from "@/components/knob_percentage";
+import {
+  useControlParameterIndexUpdater,
+  controlParameterIndexAnnotation,
+} from "@/hooks/use_control_parameter_index_updater";
+import { useSlider } from "@/hooks/use_slider";
 
 const JuceSlider: FC<{
   identifier: string;
   title: string;
 }> = ({ identifier, title }) => {
-  const sliderState = juce.getSliderState(identifier);
-  const [value, setValue] = useState(sliderState.getNormalisedValue());
-  const [properties, setProperties] = useState(sliderState.properties);
-
-  useEffect(() => {
-    const propertiesListenerId = sliderState.propertiesChangedEvent.addListener(
-      () => setProperties(sliderState.properties),
-    );
-
-    const valueListenerId = sliderState.valueChangedEvent.addListener(() => {
-      setValue(sliderState.getNormalisedValue());
-    });
-
-    return function cleanup() {
-      sliderState.valueChangedEvent.removeListener(valueListenerId);
-      sliderState.propertiesChangedEvent.removeListener(propertiesListenerId);
-    };
-  }, []);
-
-  const handleChange = (newValue: any) => {
-    sliderState.setNormalisedValue(newValue);
-    setValue(newValue);
-  };
-
-  const mouseDown = () => {
-    sliderState.sliderDragStarted();
-  };
-
-  const changeCommitted = (newValue: any) => {
-    sliderState.setNormalisedValue(newValue);
-    sliderState.sliderDragEnded();
-  };
+  const {
+    properties,
+    value,
+    handleChange,
+    changeCommitted,
+    mouseDown,
+    getScaledValue,
+  } = useSlider(identifier);
 
   return (
     <div
       {...{
-        [controlParameterIndexAnnotation]:
-          sliderState.properties.parameterIndex,
+        [controlParameterIndexAnnotation]: properties.parameterIndex,
       }}
     >
       <h2 className="mt-1">
-        {properties.name}: {sliderState.getScaledValue()} {properties.label}
+        {properties.name}: {getScaledValue()} {properties.label}
       </h2>
       <Slider
         aria-label={title}
-        value={[value]}
+        value={value}
         onValueChange={(v) => handleChange(v)}
         min={0}
         max={1}
@@ -68,9 +46,14 @@ const JuceSlider: FC<{
 };
 
 const Editor = () => {
+  useControlParameterIndexUpdater();
+
   return (
-    <div className="p-4">
-      <JuceSlider identifier="dry_wet_mix_parameter" title="Wet/Dry" />
+    <div className="flex flex-row justify-around p-4 bg-card">
+      {/*<JuceSlider identifier="dry_wet_mix_parameter" title="Wet/Dry" />*/}
+      <KnobPercentage label="Input" />
+      <KnobPercentage label="Output" />
+      <KnobPercentage label="Wet/Dry" />
     </div>
   );
 };
