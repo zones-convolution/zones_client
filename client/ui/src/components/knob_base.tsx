@@ -1,6 +1,5 @@
 import { mapFrom01Linear, mapTo01Linear } from "@dsp-ts/math";
-import { arc, DefaultArcObject, symbol, symbolTriangle } from "d3";
-import { ComponentProps, FC, useId, useState } from "react";
+import { ComponentProps, useId } from "react";
 import {
   KnobHeadless,
   KnobHeadlessLabel,
@@ -23,15 +22,19 @@ type KnobBaseProps = Pick<
   | "mapTo01"
   | "mapFrom01"
 > & {
+  readonly onRawValueCommit: (valueRaw: number) => void;
+  readonly onMouseDown: () => void;
+  readonly valueRaw: number;
+  readonly setValueRaw: (valueRaw: number) => void;
   readonly label: string;
-  readonly valueDefault: number;
   readonly stepFn: (valueRaw: number) => number;
   readonly stepLargerFn: (valueRaw: number) => number;
 };
 
 const KnobBase = ({
   label,
-  valueDefault,
+  valueRaw,
+  setValueRaw,
   valueMin,
   valueMax,
   valueRawRoundFn,
@@ -41,10 +44,12 @@ const KnobBase = ({
   stepLargerFn,
   mapTo01 = mapTo01Linear,
   mapFrom01 = mapFrom01Linear,
+  onMouseDown,
+  onRawValueCommit,
 }: KnobBaseProps) => {
   const knobId = useId();
   const labelId = useId();
-  const [valueRaw, setValueRaw] = useState<number>(valueDefault);
+
   const value01 = mapTo01(valueRaw, valueMin, valueMax);
   const step = stepFn(valueRaw);
   const stepLarger = stepLargerFn(valueRaw);
@@ -83,6 +88,10 @@ const KnobBase = ({
         mapTo01={mapTo01}
         mapFrom01={mapFrom01}
         onValueRawChange={setValueRaw}
+        onMouseDown={onMouseDown}
+        onMouseUp={() => {
+          onRawValueCommit(valueRaw);
+        }}
         {...keyboardControlHandlers}
       >
         <KnobBaseThumb value01={value01} />

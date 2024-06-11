@@ -14,18 +14,22 @@ interface ISliderProperties {
 }
 
 interface IUseSlider {
-  changeCommitted: (value: number[]) => void;
+  changeCommitted: (value: number) => void;
   mouseDown: () => void;
-  handleChange: (value: number[]) => void;
-  value: number[];
+  handleChange: (value: number) => void;
+  valueNormalised: number;
+  valueScaled: number;
+  toNormalised: (scaled: number) => number;
   properties: ISliderProperties;
-  getScaledValue: () => number;
 }
 
 const useSlider = (identifier: string): IUseSlider => {
   const sliderState = juce.getSliderState(identifier);
+  const [valueNormalised, setValueNormalised] = useState(
+    sliderState.getNormalisedValue(),
+  );
+  const valueScaled = sliderState.normalisedToScaledValue(valueNormalised);
 
-  const [value, setValue] = useState(sliderState.getNormalisedValue());
   const [properties, setProperties] = useState(sliderState.properties);
 
   useEffect(() => {
@@ -34,7 +38,7 @@ const useSlider = (identifier: string): IUseSlider => {
     );
 
     const valueListenerId = sliderState.valueChangedEvent.addListener(() => {
-      setValue(sliderState.getNormalisedValue());
+      setValueNormalised(sliderState.getNormalisedValue());
     });
 
     return function cleanup() {
@@ -43,31 +47,35 @@ const useSlider = (identifier: string): IUseSlider => {
     };
   }, []);
 
-  const handleChange = (newValue: number[]) => {
-    sliderState.setNormalisedValue(newValue[0]);
-    setValue(newValue[0]);
+  const handleChange = (newValue: number) => {
+    sliderState.setNormalisedValue(newValue);
+    setValueNormalised(newValue);
   };
 
   const mouseDown = () => {
     sliderState.sliderDragStarted();
   };
 
-  const changeCommitted = (newValue: number[]) => {
-    sliderState.setNormalisedValue(newValue[0]);
+  const changeCommitted = (newValue: number) => {
+    sliderState.setNormalisedValue(newValue);
     sliderState.sliderDragEnded();
   };
 
-  const getScaledValue = (): number => {
-    return sliderState.getScaledValue();
+  const toNormalised = (scaledValue: number) => {
+    return Math.pow(
+      (scaledValue - properties.start) / (properties.end - properties.start),
+      properties.skew,
+    );
   };
 
   return {
-    value: [value],
+    valueNormalised: valueNormalised,
+    valueScaled: valueScaled,
     properties: properties,
     handleChange: handleChange,
     mouseDown: mouseDown,
     changeCommitted: changeCommitted,
-    getScaledValue: getScaledValue,
+    toNormalised: toNormalised,
   };
 };
 
