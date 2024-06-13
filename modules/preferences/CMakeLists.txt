@@ -4,8 +4,8 @@ zones_add_module(
         SOURCES
         src/preferences/Preferences.h
         src/preferences/Preferences.cpp
-        src/preferences/PreferencesComponent.h
-        src/preferences/PreferencesComponent.cpp
+        src/preferences/PreferencesController.h
+        src/preferences/PreferencesController.cpp
         DEPS
         look_and_feel
         model

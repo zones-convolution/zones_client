@@ -26,6 +26,8 @@ set(SOURCES
         src/WithJuceEventLoop.h
         src/relays/PlayerRelay.h
         src/relays/PlayerRelay.cpp
+        src/relays/PreferencesRelay.h
+        src/relays/PreferencesRelay.cpp
 )
 
 option(DEV_LOCALHOST OFF)

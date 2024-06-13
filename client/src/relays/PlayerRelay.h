@@ -9,7 +9,7 @@ class PlayerRelay : public OptionsBuilder<juce::WebBrowserComponent::Options>
 public:
     PlayerRelay (juce::WebBrowserComponent & web_browser_component,
                  PlayerController & player_controller);
-    ~PlayerRelay ();
+    ~PlayerRelay () override;
 
     juce::WebBrowserComponent::Options
     buildOptions (const juce::WebBrowserComponent::Options & initialOptions) override;

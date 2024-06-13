@@ -2,6 +2,7 @@
 
 #include <filesystem>
 #include <juce_core/juce_core.h>
+#include <nlohmann/json.hpp>
 #include <vector>
 
 struct Preferences
@@ -14,3 +15,13 @@ struct Preferences
 
     std::vector<std::filesystem::path> user_paths;
 };
+
+static void from_json (const nlohmann::json & data, Preferences & preferences)
+{
+    data.at ("user_paths").get_to (preferences.user_paths);
+}
+
+static void to_json (nlohmann::json & data, const Preferences & preferences)
+{
+    data = nlohmann::json {{"user_paths", preferences.user_paths}};
+}

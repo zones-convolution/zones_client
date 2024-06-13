@@ -1,7 +1,6 @@
 #include "Preferences.h"
 
 #include <fstream>
-#include <nlohmann/json.hpp>
 
 using json = nlohmann::json;
 
@@ -15,16 +14,6 @@ juce::File Preferences::GetZonesDataDirectory ()
 juce::File Preferences::GetPreferencesFile ()
 {
     return GetZonesDataDirectory ().getChildFile ("preferences.json");
-}
-
-static void from_json (const json & data, Preferences & preferences)
-{
-    data.at ("user_paths").get_to (preferences.user_paths);
-}
-
-static void to_json (json & data, const Preferences & preferences)
-{
-    data = json {{"user_paths", preferences.user_paths}};
 }
 
 void Preferences::Save ()
