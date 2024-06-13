@@ -14,7 +14,8 @@ set(LINK_COMMON
         model
         browser
         zones_convolver
-        preferences)
+        preferences
+        FlatbuffersTarget)
 
 set(SOURCES
         src/PluginProcessor.h
@@ -23,10 +24,21 @@ set(SOURCES
         src/PluginEditor.cpp
         src/ProcessorContainer.h
         src/ProcessorContainer.cpp
-        src/WithJuceEventLoop.h)
+        src/WithJuceEventLoop.h
+        src/relays/PlayerRelay.h
+        src/relays/PlayerRelay.cpp
+)
 
 option(DEV_LOCALHOST OFF)
 set(ASSETS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/ui/dist/)
+
+set(FB_SCHEMA "${CMAKE_CURRENT_SOURCE_DIR}/schemas/zones.fbs")
+build_flatbuffers("${FB_SCHEMA}" "" fbschemas "" "${CMAKE_CURRENT_SOURCE_DIR}/generated" "" "")
+add_library(FlatbuffersTarget INTERFACE)
+target_include_directories(FlatbuffersTarget INTERFACE ${FLATBUFFERS_INCLUDE_DIR})
+add_dependencies(FlatbuffersTarget fbschemas)
+
+file(WRITE ui/.env.flatc FLATC_EXECUTABLE=${FLATBUFFERS_FLATC_EXECUTABLE})
 
 juce_add_plugin(
         ${BINARY}

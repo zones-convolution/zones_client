@@ -30,7 +30,7 @@ const Knob: FC<{ identifier: string }> = ({ identifier }) => {
     changeCommitted(toNormalised(valueRaw));
   };
 
-  const valueRawRoundFn = (value: number) => value.toFixed(2);
+  const valueRawRoundFn = (value: number) => value;
 
   const valueRawDisplayFn = (valueRaw: number): string =>
     `${valueRawRoundFn(valueRaw)}${properties.label}`;

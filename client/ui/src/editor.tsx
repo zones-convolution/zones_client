@@ -1,7 +1,11 @@
+import { Play, Pause } from "lucide-react";
 import { FC, ReactNode } from "react";
+
+import { Button } from "@/components/ui/button";
 
 import { Knob } from "@/components/knob";
 import { useControlParameterIndexUpdater } from "@/hooks/use_control_parameter_index_updater";
+import { usePlayer } from "@/hooks/use_player";
 import { Parameters } from "@/lib/parameters";
 
 const Panel: FC<{ children: ReactNode }> = ({ children }) => (
@@ -57,13 +61,33 @@ const MainPanel = () => {
 };
 
 const ListenPanel = () => {
+  const { togglePlaying, toggleLooping, playerState } = usePlayer();
+
+  const { playing } = playerState;
+
   return (
     <Panel>
       <PanelHeading>LISTEN</PanelHeading>
       <PanelContent>
-        <Knob identifier="reverb_time_parameter" />
-        <Knob identifier="resample_parameter" />
-        <Knob identifier="room_size_parameter" />
+        <Button
+          onClick={async () => {
+            await togglePlaying();
+          }}
+        >
+          Toggle Play
+          {playing ? (
+            <Pause className="w-4 h-4" />
+          ) : (
+            <Play className="w-4 h-4" />
+          )}
+        </Button>
+        <Button
+          onClick={async () => {
+            await toggleLooping();
+          }}
+        >
+          Toggle Loop
+        </Button>
       </PanelContent>
     </Panel>
   );

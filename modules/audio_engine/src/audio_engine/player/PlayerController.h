@@ -16,11 +16,16 @@ public:
     {
     }
 
-    void Play (Player::Resources file, bool looping, float gain)
+    void Play (Player::PlayerState state)
     {
-        command_queue_.PushCommand (
-            CommandQueue::PlayCommand {.file = file, .looping = looping, .gain = gain});
+        command_queue_.PushCommand (CommandQueue::PlayCommand {
+            .file = state.file, .looping = state.is_looping, .gain = state.gain});
     }
+    //    void Play (Player::Resources file, bool looping, float gain)
+    //    {
+    //        command_queue_.PushCommand (
+    //            CommandQueue::PlayCommand {.file = file, .looping = looping, .gain = gain});
+    //    }
 
     void Stop ()
     {

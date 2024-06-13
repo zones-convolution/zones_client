@@ -2,6 +2,7 @@
 
 #include "PluginProcessor.h"
 #include "ProcessorContainer.h"
+#include "relays/PlayerRelay.h"
 
 #include <juce_gui_extra/juce_gui_extra.h>
 #include <lager/event_loop/manual.hpp>
@@ -34,6 +35,7 @@ private:
 
     juce::WebSliderRelay wet_dry_mix_relay_ {web_browser_component_,
                                              ParameterTree::kDryWetMixParameterId};
+    PlayerRelay player_relay_;
 
     juce::File asset_directory_;
 
