@@ -7,13 +7,9 @@ import {
   removeNativeEventListener,
 } from "@/lib/juce";
 
-const Preferences = z
-  .object({
-    user_paths: z.array(z.string()),
-  })
-  .transform((preferences) => ({
-    userPaths: preferences.user_paths,
-  }));
+const Preferences = z.object({
+  userPaths: z.array(z.string()),
+});
 
 type Preferences = z.infer<typeof Preferences>;
 

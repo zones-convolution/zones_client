@@ -28,6 +28,9 @@ ZoneRepositoryResult UpdateZoneRepository (ZoneRepositoryModel model,
                 return {model,
                         [model, action] (auto && context)
                         {
+                            if (model.user_zones.empty ())
+                                return;
+
                             auto zone = model.user_zones [0];
                             auto ir_selection = zone.irs [0];
 

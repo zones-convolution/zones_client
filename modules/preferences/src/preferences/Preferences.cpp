@@ -30,5 +30,13 @@ void Preferences::Load ()
 {
     auto preferences_file = GetPreferencesFile ();
     std::ifstream stream (preferences_file.getFullPathName ().toStdString ());
-    json::parse (stream).get_to (*this);
+
+    try
+    {
+        json::parse (stream).get_to (*this);
+    }
+    catch (...)
+    {
+        Save ();
+    }
 }
