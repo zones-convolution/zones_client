@@ -9,6 +9,7 @@ class PreferencesRelay : public OptionsBuilder<juce::WebBrowserComponent::Option
 public:
     PreferencesRelay (juce::WebBrowserComponent & web_browser_component,
                       PreferencesController & preferences_controller);
+    ~PreferencesRelay () override;
 
     juce::WebBrowserComponent::Options
     buildOptions (const juce::WebBrowserComponent::Options & initialOptions) override;

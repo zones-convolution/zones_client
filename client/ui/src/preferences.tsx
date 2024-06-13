@@ -17,7 +17,7 @@ const Preferences = () => {
       </div>
       {preferences.userPaths.map((path) => {
         return (
-          <div className="flex flex-row justify-between">
+          <div className="flex flex-row justify-between items-center">
             {path}
             <div className="flex flex-row gap-2">
               <Button

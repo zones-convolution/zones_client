@@ -17,6 +17,11 @@ PreferencesRelay::PreferencesRelay (juce::WebBrowserComponent & web_browser_comp
     };
 }
 
+PreferencesRelay::~PreferencesRelay ()
+{
+    preferences_controller_.OnPreferencesUpdated = nullptr;
+}
+
 juce::WebBrowserComponent::Options
 PreferencesRelay::buildOptions (const juce::WebBrowserComponent::Options & initialOptions)
 {
