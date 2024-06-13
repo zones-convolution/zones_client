@@ -5,9 +5,9 @@ AudioGraph::AudioGraph (AudioGraphMetering & input_graph_metering,
                         zones::ConvolutionEngine & convolution_engine,
                         NotificationQueue::VisitorQueue & notification_queue)
     : notification_queue_ (notification_queue)
-    , player_processor_ (notification_queue)
     , input_graph_metering_ (input_graph_metering)
     , output_graph_metering_ (output_graph_metering)
+    , player_processor_ (notification_queue)
     , convolution_engine_ (convolution_engine)
 {
     dry_wet_mixer_.setWetMixProportion (0.5f);
@@ -65,32 +65,7 @@ void AudioGraph::operator() (const CommandQueue::UpdateParameters & update_param
     eq_processor_.UpdateFilters (update_parameters.bass, update_parameters.treble);
 }
 
-void AudioGraph::operator() (const CommandQueue::PlayCommand & play_command)
+void AudioGraph::operator() (const CommandQueue::SetPlayerStateCommand & set_player_state_command)
 {
-    player_processor_.SetPlayerState ({
-        .file = play_command.file,
-        .is_looping = play_command.looping,
-        .is_playing = true,
-        .gain = play_command.gain,
-    });
-}
-
-void AudioGraph::operator() (const CommandQueue::StopCommand & stop_command)
-{
-    player_processor_.SetPlayerState ({.is_playing = false});
-}
-
-void AudioGraph::operator() (const CommandQueue::LoopCommand & loop_command)
-{
-    player_processor_.SetPlayerState ({.is_looping = loop_command.loop});
-}
-
-void AudioGraph::operator() (const CommandQueue::FileCommand & file_command)
-{
-    player_processor_.SetPlayerState ({.file = file_command.file});
-}
-
-void AudioGraph::operator() (const CommandQueue::GainCommand & gain_command)
-{
-    player_processor_.SetPlayerState ({.gain = gain_command.gain});
+    player_processor_.SetPlayerState ({set_player_state_command.state});
 }

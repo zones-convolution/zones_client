@@ -13,7 +13,7 @@ public:
     void reset () override;
     void Clear ();
 
-    void SetPlayerState (Player::PlayerStateOptional new_player_state);
+    void SetPlayerState (const Player::PlayerState & new_player_state);
 
 private:
     juce::AudioBuffer<float> temp_buffer_;

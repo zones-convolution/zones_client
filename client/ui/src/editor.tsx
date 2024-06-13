@@ -1,4 +1,4 @@
-import { Play, Pause } from "lucide-react";
+import { Play, Pause, Repeat } from "lucide-react";
 import { FC, ReactNode } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -63,7 +63,7 @@ const MainPanel = () => {
 const ListenPanel = () => {
   const { togglePlaying, toggleLooping, playerState } = usePlayer();
 
-  const { playing } = playerState;
+  const { playing, looping } = playerState;
 
   return (
     <Panel>
@@ -74,7 +74,6 @@ const ListenPanel = () => {
             await togglePlaying();
           }}
         >
-          Toggle Play
           {playing ? (
             <Pause className="w-4 h-4" />
           ) : (
@@ -85,8 +84,9 @@ const ListenPanel = () => {
           onClick={async () => {
             await toggleLooping();
           }}
+          variant={looping ? "default" : "ghost"}
         >
-          Toggle Loop
+          <Repeat className="w-4 h-4" />
         </Button>
       </PanelContent>
     </Panel>

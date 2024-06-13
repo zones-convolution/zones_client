@@ -1,52 +1,42 @@
-import * as flatbuffers from "flatbuffers";
 import { useEffect, useState } from "react";
+import { z } from "zod";
 
-import { PlayerResource, PlayerState } from "@/lib/generated/zones";
 import {
   addNativeEventListener,
   juce,
   removeNativeEventListener,
 } from "@/lib/juce";
 
-interface IPlayerState {
-  looping: boolean;
-  playing: boolean;
-  resource: PlayerResource;
-}
+const PlayerResource = z.enum(["snare", "numbers"]);
+type PlayerResource = z.infer<typeof PlayerResource>;
+
+const PlayerState = z.object({
+  looping: z.boolean(),
+  playing: z.boolean(),
+  resource: PlayerResource,
+});
+type PlayerState = z.infer<typeof PlayerState>;
 
 interface IUsePlayer {
-  playerState: IPlayerState;
+  playerState: PlayerState;
   togglePlaying: () => Promise<void>;
   toggleLooping: () => Promise<void>;
   selectResource: (resource: PlayerResource) => Promise<void>;
 }
 
 const playerUpdateNative = juce.getNativeFunction("player_update_native");
-const getPlayerStateNative = juce.getNativeFunction("get_player_state");
+const getPlayerStateNative = juce.getNativeFunction("get_player_state_native");
 const onPlayerUpdateNative = "on_player_update_native";
 
 const usePlayer = (): IUsePlayer => {
-  const [playerState, setPlayerState] = useState<IPlayerState>({
+  const [playerState, setPlayerState] = useState<PlayerState>({
     playing: false,
     looping: false,
-    resource: PlayerResource.Snare,
+    resource: "snare",
   });
 
-  const playerUpdate = async (playerState: IPlayerState) => {
-    try {
-      let builder = new flatbuffers.Builder(1);
-      let state = PlayerState.createPlayerState(
-        builder,
-        playerState.playing,
-        playerState.looping,
-        playerState.resource,
-      );
-      builder.finish(state);
-      let buf = builder.asUint8Array();
-      await playerUpdateNative({ data: buf });
-    } catch (err) {
-      console.error("OHH NOOOO flatbuffer :CCC @!!");
-    }
+  const playerUpdate = async (playerState: PlayerState) => {
+    await playerUpdateNative(JSON.stringify(playerState));
   };
 
   const togglePlaying = async () => {
@@ -57,6 +47,7 @@ const usePlayer = (): IUsePlayer => {
   };
 
   const toggleLooping = async () => {
+    setPlayerState({ ...playerState, looping: !playerState.looping });
     await playerUpdate({
       ...playerState,
       looping: !playerState.looping,
@@ -71,24 +62,20 @@ const usePlayer = (): IUsePlayer => {
     return await getPlayerStateNative();
   };
 
+  const handleReceivePlayerState = (data: any) => {
+    try {
+      setPlayerState(PlayerState.parse(JSON.parse(data)));
+    } catch (err) {
+      console.error("Failed to parse PlayerState!", err);
+    }
+  };
+
   useEffect(() => {
-    getPlayerState().then((s) => {
-      console.log("UPDATED");
-      console.log(s);
-    });
+    getPlayerState().then(handleReceivePlayerState);
 
     let registrationId = addNativeEventListener(
       onPlayerUpdateNative,
-      (data: any) => {
-        let buf = new flatbuffers.ByteBuffer(data);
-        let playerStateObj = PlayerState.getRootAsPlayerState(buf).unpack();
-
-        setPlayerState({
-          playing: playerStateObj.playing,
-          looping: playerStateObj.looping,
-          resource: playerStateObj.resource,
-        });
-      },
+      handleReceivePlayerState,
     );
 
     return () => {

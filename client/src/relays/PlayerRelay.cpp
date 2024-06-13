@@ -1,12 +1,50 @@
 #include "PlayerRelay.h"
 
-using namespace Zones;
+#include <fstream>
+#include <nlohmann/json.hpp>
+
+using json = nlohmann::json;
+
+namespace Player
+{
+NLOHMANN_JSON_SERIALIZE_ENUM (Player::Resource,
+                              {{Player::Resource::kSnare, "snare"},
+                               {Player::Resource::kNumbers, "numbers"}})
+
+static void from_json (const json & data, PlayerState & player_state)
+{
+    data.at ("resource").get_to (player_state.resource);
+    data.at ("looping").get_to (player_state.looping);
+    data.at ("playing").get_to (player_state.playing);
+}
+
+static void to_json (json & data, const PlayerState & player_state)
+{
+    data = json {
+        {"resource", player_state.resource},
+        {"looping", player_state.looping},
+        {"playing", player_state.playing},
+    };
+}
+}
 
 PlayerRelay::PlayerRelay (juce::WebBrowserComponent & web_browser_component,
                           PlayerController & player_controller)
     : web_browser_component_ (web_browser_component)
     , player_controller_ (player_controller)
 {
+    player_controller_.OnPlayerStateUpdated = [&]
+    {
+        auto state = player_controller_.GetPlayerState ();
+        json data = state;
+        web_browser_component_.emitEventIfBrowserIsVisible ("on_player_update_native",
+                                                            {data.dump ()});
+    };
+}
+
+PlayerRelay::~PlayerRelay ()
+{
+    player_controller_.OnPlayerStateUpdated = nullptr;
 }
 
 juce::WebBrowserComponent::Options
@@ -17,27 +55,15 @@ PlayerRelay::buildOptions (const juce::WebBrowserComponent::Options & initialOpt
                              [this] (auto & var, auto complete)
                              {
                                  Player::PlayerState state;
-                                 player_controller_.Play (state);
+                                 json::parse (var [0].toString ().toStdString ()).get_to (state);
+                                 player_controller_.SetPlayerState (state);
                                  complete ({});
                              })
-        .withNativeFunction ("get_player_state",
+        .withNativeFunction ("get_player_state_native",
                              [this] (auto & var, auto complete)
                              {
                                  auto state = player_controller_.GetPlayerState ();
-
-                                 flatbuffers::FlatBufferBuilder builder (1024);
-
-                                 PlayerStateBuilder player_state_builder (builder);
-                                 player_state_builder.add_looping (state.is_looping);
-                                 player_state_builder.add_playing (state.is_playing);
-                                 player_state_builder.add_resource (
-                                     PlayerResource {static_cast<int> (state.file)});
-
-                                 auto player_state_offset = player_state_builder.Finish ();
-                                 builder.Finish (player_state_offset);
-
-                                 uint8_t * buf = builder.GetBufferPointer ();
-                                 auto size = builder.GetSize ();
-                                 complete ({buf, size});
+                                 json data = state;
+                                 complete ({data.dump ()});
                              });
 }
