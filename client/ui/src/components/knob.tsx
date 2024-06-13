@@ -33,7 +33,7 @@ const Knob: FC<{ identifier: string }> = ({ identifier }) => {
   const valueRawRoundFn = (value: number) => value;
 
   const valueRawDisplayFn = (valueRaw: number): string =>
-    `${valueRawRoundFn(valueRaw)}${properties.label}`;
+    `${valueRaw.toFixed(2)}${properties.label}`;
 
   return (
     <KnobBase

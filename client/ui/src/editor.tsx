@@ -2,6 +2,13 @@ import { Play, Pause, Repeat } from "lucide-react";
 import { FC, ReactNode } from "react";
 
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 import { Knob } from "@/components/knob";
 import { useControlParameterIndexUpdater } from "@/hooks/use_control_parameter_index_updater";
@@ -61,33 +68,45 @@ const MainPanel = () => {
 };
 
 const ListenPanel = () => {
-  const { togglePlaying, toggleLooping, playerState } = usePlayer();
+  const { togglePlaying, toggleLooping, playerState, selectResource } =
+    usePlayer();
 
-  const { playing, looping } = playerState;
+  const { playing, looping, resource } = playerState;
 
   return (
     <Panel>
       <PanelHeading>LISTEN</PanelHeading>
       <PanelContent>
-        <Button
-          onClick={async () => {
-            await togglePlaying();
-          }}
-        >
-          {playing ? (
-            <Pause className="w-4 h-4" />
-          ) : (
-            <Play className="w-4 h-4" />
-          )}
-        </Button>
-        <Button
-          onClick={async () => {
-            await toggleLooping();
-          }}
-          variant={looping ? "default" : "ghost"}
-        >
-          <Repeat className="w-4 h-4" />
-        </Button>
+        <div className="flex gap-1">
+          <Button
+            onClick={async () => {
+              await togglePlaying();
+            }}
+          >
+            {playing ? (
+              <Pause className="w-4 h-4" />
+            ) : (
+              <Play className="w-4 h-4" />
+            )}
+          </Button>
+          <Button
+            onClick={async () => {
+              await toggleLooping();
+            }}
+            variant={looping ? "default" : "ghost"}
+          >
+            <Repeat className="w-4 h-4" />
+          </Button>
+          <Select value={resource} onValueChange={selectResource}>
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="snare">Snare</SelectItem>
+              <SelectItem value="numbers">Numbers</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </PanelContent>
     </Panel>
   );

@@ -8,7 +8,7 @@ import {
 } from "@/lib/juce";
 
 const PlayerResource = z.enum(["snare", "numbers"]);
-type PlayerResource = z.infer<typeof PlayerResource>;
+export type PlayerResource = z.infer<typeof PlayerResource>;
 
 const PlayerState = z.object({
   looping: z.boolean(),
