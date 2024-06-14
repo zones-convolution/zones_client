@@ -71,7 +71,7 @@ const KnobBase = ({
         "outline-none focus-within:outline-1 focus-within:outline-offset-4 focus-within:outline-muted",
       )}
     >
-      <KnobHeadlessLabel id={labelId} className="text-primary font-bold">
+      <KnobHeadlessLabel id={labelId} className="text-primary">
         {label}
       </KnobHeadlessLabel>
       <KnobHeadless

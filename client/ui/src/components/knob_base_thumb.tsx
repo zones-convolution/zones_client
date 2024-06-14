@@ -28,7 +28,7 @@ const KnobBaseThumb: FC<{ value01: number }> = ({ value01 }) => {
   })!;
 
   return (
-    <svg className="w-16" viewBox="-100 -100 200 240">
+    <svg className="w-12" viewBox="-100 -100 200 240">
       <path
         className="stroke-0 fill-primary"
         d={midpoint_indicator()!}

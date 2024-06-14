@@ -1,6 +1,7 @@
 import { PlusCircle, Trash, FolderOpen } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 
 import { usePreferences } from "@/hooks/use_preferences";
 
@@ -8,13 +9,14 @@ const Preferences = () => {
   const { preferences, addPath, revealPath, removePath } = usePreferences();
 
   return (
-    <div className="flex flex-col bg-card m-0.5 p-4 gap-2">
+    <div className="flex flex-col bg-card p-4 gap-4 h-full">
       <div className="flex flex-row">
         <Button onClick={addPath}>
           Add User Path
           <PlusCircle className="w-4 h-4 ml-2" />
         </Button>
       </div>
+      <Separator />
       {preferences.userPaths.map((path) => {
         return (
           <div className="flex flex-row justify-between items-center">

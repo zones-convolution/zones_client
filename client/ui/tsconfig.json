@@ -18,6 +18,9 @@
     "jsx": "react-jsx",
     "moduleDetection": "force",
     "allowJs": true,
+    "types": [
+      "vite-plugin-glsl/ext"
+    ],
     /* Linting */
     "strict": true,
     "noUnusedLocals": false,

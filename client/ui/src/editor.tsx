@@ -10,13 +10,15 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+import { CategoryCard } from "@/browser";
 import { Knob } from "@/components/knob";
+import { Visualiser } from "@/components/visualiser/visualiser";
 import { useControlParameterIndexUpdater } from "@/hooks/use_control_parameter_index_updater";
 import { usePlayer } from "@/hooks/use_player";
 import { Parameters } from "@/lib/parameters";
 
 const Panel: FC<{ children: ReactNode }> = ({ children }) => (
-  <div className="flex flex-col flex-1 gap-8 bg-card p-4 rounded-md justify-center">
+  <div className="flex flex-col flex-1 gap-4 bg-card p-4 rounded-md w-full">
     {children}
   </div>
 );
@@ -130,13 +132,17 @@ const Editor = () => {
     <div className="flex flex-col gap-0.5 h-full">
       <div className="flex flex-row gap-0.5 h-full">
         <MainPanel />
-        <div className="bg-amber-200 flex-grow" />
+        <CategoryCard
+          category="Canyon"
+          imageUrl="https://picsum.photos/600"
+          rt60={12.6}
+        />
       </div>
       <div className="flex flex-row gap-0.5 h-full">
         <TimePanel />
-        <div className="bg-amber-200 flex-grow" />
+        <Visualiser />
       </div>
-      <div className="flex flex-row gap-0.5 h-[1000px]">
+      <div className="flex gap-0.5 h-[600px]">
         <IOPanel />
         <EQPanel />
         <ListenPanel />

@@ -66,6 +66,15 @@ static auto StreamToVector (juce::InputStream & stream)
 std::optional<juce::WebBrowserComponent::Resource>
 AudioPluginAudioProcessorEditor::GetResource (const juce::String & url)
 {
+    if (url == "/data.txt")
+    {
+        juce::WebBrowserComponent::Resource resource;
+        static constexpr char testData [] = "testdata";
+        juce::MemoryInputStream stream {testData, juce::numElementsInArray (testData) - 1, false};
+        return juce::WebBrowserComponent::Resource {StreamToVector (stream),
+                                                    juce::String {"text/html"}};
+    }
+
     auto rel_path = "." + (url == "/" ? "/index.html" : url);
     auto asset_file = asset_directory_.getChildFile (rel_path);
 

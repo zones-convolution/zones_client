@@ -3,13 +3,13 @@ import { FC } from "react";
 
 import { Button } from "@/components/ui/button";
 
-const CategoryCard: FC<{
+export const CategoryCard: FC<{
   category: string;
   imageUrl: string;
   rt60: number;
 }> = ({ category, imageUrl, rt60 }) => {
   return (
-    <div className="w-full h-full relative flex items-end">
+    <div className="flex-1 h-full w-full relative flex items-end">
       <img
         className="absolute object-cover object-center w-full h-full max-h-full rounded-lg"
         src={imageUrl}
@@ -29,49 +29,49 @@ const Categories = () => {
       <div>
         <CategoryCard
           category="CATHEDRALS"
-          imageUrl="https://source.unsplash.com/X48hkTT1qQc"
+          imageUrl="https://picsum.photos/600"
           rt60={1.2}
         />
       </div>
       <div>
         <CategoryCard
           category="STADIUMS"
-          imageUrl="https://source.unsplash.com/70YxSTWa2Zw"
+          imageUrl="https://picsum.photos/601"
           rt60={1.2}
         />
       </div>
       <div>
         <CategoryCard
           category="TUNNELS"
-          imageUrl="https://source.unsplash.com/13MzGKuJYSw"
+          imageUrl="https://picsum.photos/602"
           rt60={1.2}
         />
       </div>
       <div className="col-span-1 row-span-2">
         <CategoryCard
           category="CANYONS"
-          imageUrl="https://source.unsplash.com/WeYamle9fDM"
+          imageUrl="https://picsum.photos/603"
           rt60={1.2}
         />
       </div>
       <div>
         <CategoryCard
           category="TRAINS"
-          imageUrl="https://source.unsplash.com/pfkzBUh4KyA"
+          imageUrl="https://picsum.photos/604"
           rt60={1.2}
         />
       </div>
       <div>
         <CategoryCard
           category="FORESTS"
-          imageUrl="https://source.unsplash.com/ESkw2ayO2As"
+          imageUrl="https://picsum.photos/605"
           rt60={1.2}
         />
       </div>
       <div className="col-span-2">
         <CategoryCard
           category="CAVES"
-          imageUrl="https://source.unsplash.com/FZgheUfh4fA"
+          imageUrl="https://picsum.photos/606"
           rt60={1.2}
         />
       </div>
@@ -111,61 +111,61 @@ const UserIRs = () => {
   return (
     <div className="flex flex-col w-full bg-card p-2 gap-4">
       User IRs
-      <div className="h-60 overflow-x-auto relative">
+      <div className="h-40 overflow-x-auto relative">
         <div className="absolute flex gap-0.5 h-full">
           <div className="w-80">
             <ZoneCard
               category="FORESTS"
-              imageUrl="https://source.unsplash.com/ESkw2ayO2As"
+              imageUrl="https://picsum.photos/607"
               rt60={1.2}
             />
           </div>
           <div className="w-80">
             <ZoneCard
               category="FORESTS"
-              imageUrl="https://source.unsplash.com/ESkw2ayO2As"
+              imageUrl="https://picsum.photos/608"
               rt60={1.2}
             />
           </div>
           <div className="w-80">
             <ZoneCard
               category="FORESTS"
-              imageUrl="https://source.unsplash.com/ESkw2ayO2As"
+              imageUrl="https://picsum.photos/609"
               rt60={1.2}
             />
           </div>
           <div className="w-80">
             <ZoneCard
               category="FORESTS"
-              imageUrl="https://source.unsplash.com/ESkw2ayO2As"
+              imageUrl="https://picsum.photos/610"
               rt60={1.2}
             />
           </div>
           <div className="w-80">
             <ZoneCard
               category="FORESTS"
-              imageUrl="https://source.unsplash.com/ESkw2ayO2As"
+              imageUrl="https://picsum.photos/611"
               rt60={1.2}
             />
           </div>
           <div className="w-80">
             <ZoneCard
               category="FORESTS"
-              imageUrl="https://source.unsplash.com/ESkw2ayO2As"
+              imageUrl="https://picsum.photos/612"
               rt60={1.2}
             />
           </div>
           <div className="w-80">
             <ZoneCard
               category="FORESTS"
-              imageUrl="https://source.unsplash.com/ESkw2ayO2As"
+              imageUrl="https://picsum.photos/613"
               rt60={1.2}
             />
           </div>
           <div className="w-80">
             <ZoneCard
               category="FORESTS"
-              imageUrl="https://source.unsplash.com/ESkw2ayO2As"
+              imageUrl="https://picsum.photos/614"
               rt60={1.2}
             />
           </div>
