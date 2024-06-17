@@ -1,7 +1,10 @@
 import { ChevronLeft, ChevronRight, Eye, Play } from "lucide-react";
 import { FC } from "react";
+import { Link } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
+
+import { useUserZones } from "@/hooks/use_user_zones";
 
 export const CategoryCard: FC<{
   category: string;
@@ -108,67 +111,24 @@ const ZoneCard: FC<{
 };
 
 const UserIRs = () => {
+  const { userZones } = useUserZones();
+
   return (
     <div className="flex flex-col w-full bg-card p-2 gap-4">
       User IRs
       <div className="h-40 overflow-x-auto relative">
         <div className="absolute flex gap-0.5 h-full">
-          <div className="w-80">
-            <ZoneCard
-              category="FORESTS"
-              imageUrl="https://picsum.photos/607"
-              rt60={1.2}
-            />
-          </div>
-          <div className="w-80">
-            <ZoneCard
-              category="FORESTS"
-              imageUrl="https://picsum.photos/608"
-              rt60={1.2}
-            />
-          </div>
-          <div className="w-80">
-            <ZoneCard
-              category="FORESTS"
-              imageUrl="https://picsum.photos/609"
-              rt60={1.2}
-            />
-          </div>
-          <div className="w-80">
-            <ZoneCard
-              category="FORESTS"
-              imageUrl="https://picsum.photos/610"
-              rt60={1.2}
-            />
-          </div>
-          <div className="w-80">
-            <ZoneCard
-              category="FORESTS"
-              imageUrl="https://picsum.photos/611"
-              rt60={1.2}
-            />
-          </div>
-          <div className="w-80">
-            <ZoneCard
-              category="FORESTS"
-              imageUrl="https://picsum.photos/612"
-              rt60={1.2}
-            />
-          </div>
-          <div className="w-80">
-            <ZoneCard
-              category="FORESTS"
-              imageUrl="https://picsum.photos/613"
-              rt60={1.2}
-            />
-          </div>
-          <div className="w-80">
-            <ZoneCard
-              category="FORESTS"
-              imageUrl="https://picsum.photos/614"
-              rt60={1.2}
-            />
-          </div>
+          {userZones.map((userZone, index) => {
+            return (
+              <div className="w-80" key={index}>
+                <ZoneCard
+                  category={userZone.title}
+                  imageUrl="https://picsum.photos/607"
+                  rt60={1.2}
+                />
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>
@@ -186,6 +146,9 @@ const Browser = () => {
           <ChevronRight className="w-4 h-4" />
         </Button>
         Browser
+        <Button asChild className="ml-auto">
+          <Link to="/create">Create Zone</Link>
+        </Button>
       </div>
       <Categories />
       <UserIRs />

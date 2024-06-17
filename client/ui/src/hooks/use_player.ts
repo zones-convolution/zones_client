@@ -83,18 +83,6 @@ const usePlayer = (): IUsePlayer => {
     };
   }, []);
 
-  useEffect(() => {
-    fetch(juce.getBackendResourceAddress("userzones.json"))
-      .then((res) => {
-        res.json().then((data) => {
-          console.log(data);
-        });
-      })
-      .catch((err) => {
-        console.error(err);
-      });
-  }, []);
-
   return {
     playerState: playerState,
     togglePlaying: togglePlaying,

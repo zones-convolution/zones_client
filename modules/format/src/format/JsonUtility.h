@@ -2,33 +2,19 @@
 
 #include <nlohmann/json.hpp>
 
-namespace nlohmann
+template <class J, class T>
+void OptionalToJson (J & j, const char * name, const std::optional<T> & value)
 {
-template <typename T>
-struct adl_serializer<std::optional<T>>
-{
-    static void to_json (json & j, const std::optional<T> & opt)
-    {
-        if (opt == std::nullopt)
-        {
-            j = nullptr;
-        }
-        else
-        {
-            j = *opt;
-        }
-    }
+    if (value)
+        j [name] = *value;
+}
 
-    static void from_json (const json & j, std::optional<T> & opt)
-    {
-        if (j.is_null ())
-        {
-            opt = std::nullopt;
-        }
-        else
-        {
-            opt = j.template get<T> ();
-        }
-    }
-};
+template <class J, class T>
+void OptionalFromJson (const J & j, const char * name, std::optional<T> & value)
+{
+    const auto it = j.find (name);
+    if (it != j.end ())
+        value = it->template get<T> ();
+    else
+        value = std::nullopt;
 }

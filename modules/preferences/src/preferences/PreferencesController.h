@@ -9,21 +9,14 @@
 class PreferencesController
 {
 public:
-    explicit PreferencesController (lager::context<Action> context);
+    PreferencesController () = default;
 
-    void AddUserPath ();
-    void RemoveUserPath (const std::filesystem::path & user_path);
+    void AddUserPath (std::function<void (Preferences)> add_path_callback);
+    [[nodiscard]] Preferences RemoveUserPath (const std::filesystem::path & user_path) const;
     void RevealUserPath (const std::filesystem::path & user_path);
-
-    [[nodiscard]] const Preferences & GetPreferences () const;
-    std::function<void ()> OnPreferencesUpdated;
+    [[nodiscard]] Preferences GetPreferences () const;
 
 private:
     static const juce::String kPathPickerDialogTitle;
-
-    void UpdatePreferences ();
-
-    lager::context<Action> context_;
     std::unique_ptr<juce::FileChooser> directory_picker_;
-    Preferences preferences_;
 };

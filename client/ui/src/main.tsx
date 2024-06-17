@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 import { createMemoryRouter, RouterProvider } from "react-router-dom";
 
 import Browser from "@/browser";
+import CreateZone from "@/create_zone";
 import Editor from "@/editor";
 import ErrorPage from "@/error_page";
 import Preferences from "@/preferences";
@@ -27,10 +28,13 @@ const router = createMemoryRouter([
         path: "/preferences",
         element: <Preferences />,
       },
+      {
+        path: "/create",
+        element: <CreateZone />,
+      },
     ],
   },
 ]);
-
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <RouterProvider router={router} />

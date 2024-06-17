@@ -1,7 +1,5 @@
 #include "PluginEditor.h"
 
-#include "format/ZoneMetadataJson.h"
-
 const juce::String AudioPluginAudioProcessorEditor::kLocalDevServerAddress =
     "http://localhost:5173/";
 
@@ -68,47 +66,6 @@ static auto StreamToVector (juce::InputStream & stream)
 std::optional<juce::WebBrowserComponent::Resource>
 AudioPluginAudioProcessorEditor::GetResource (const juce::String & url)
 {
-    if (url == "/userzones.json")
-    {
-        Preferences preferences;
-        preferences.Load ();
-
-        std::vector<ZoneMetadata> user_zones;
-
-        for (auto & search_path : preferences.user_paths)
-        {
-            auto search_directory = juce::File (search_path.string ());
-            auto zone_paths =
-                search_directory.findChildFiles (juce::File::TypesOfFileToFind::findFiles,
-                                                 true,
-                                                 "*.json",
-                                                 juce::File::FollowSymlinks::no);
-
-            for (const auto & zone_path : zone_paths)
-            {
-                try
-                {
-                    std::filesystem::path absolute_zone_path =
-                        zone_path.getFullPathName ().toStdString ();
-                    ZoneMetadata zone_metadata;
-                    ReadZoneMetadata (absolute_zone_path, zone_metadata);
-                    zone_metadata.path_attribute = absolute_zone_path.remove_filename ();
-                    user_zones.push_back (zone_metadata);
-                }
-                catch (...)
-                {
-                }
-            }
-        }
-
-        json data = user_zones;
-        auto res = data.dump ();
-        juce::WebBrowserComponent::Resource resource;
-        juce::MemoryInputStream stream {res.data (), res.size (), false};
-        return juce::WebBrowserComponent::Resource {StreamToVector (stream),
-                                                    juce::String {"text/json"}};
-    }
-
     auto rel_path = "." + (url == "/" ? "/index.html" : url);
     auto asset_file = asset_directory_.getChildFile (rel_path);
 
@@ -128,9 +85,11 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (
     , processor_container_ (processor_container)
     , player_relay_ (web_browser_component_, processor_container.player_controller_)
     , preferences_relay_ (web_browser_component_, preferences_controller_)
+    , user_zones_relay_ (web_browser_component_)
     , web_browser_component_ (kBaseWebOptions.withOptionsFrom (wet_dry_mix_relay_)
                                   .withOptionsFrom (player_relay_)
-                                  .withOptionsFrom (preferences_relay_))
+                                  .withOptionsFrom (preferences_relay_)
+                                  .withOptionsFrom (user_zones_relay_))
     , wet_dry_mix_attachment_ (
           *processor_container_.parameter_tree_.getParameter (ParameterTree::kDryWetMixParameterId),
           wet_dry_mix_relay_)

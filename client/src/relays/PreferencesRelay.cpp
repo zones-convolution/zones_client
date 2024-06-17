@@ -8,18 +8,6 @@ PreferencesRelay::PreferencesRelay (juce::WebBrowserComponent & web_browser_comp
     : web_browser_component_ (web_browser_component)
     , preferences_controller_ (preferences_controller)
 {
-    preferences_controller.OnPreferencesUpdated = [&]
-    {
-        const auto & preferences = preferences_controller_.GetPreferences ();
-        json data = preferences;
-        web_browser_component_.emitEventIfBrowserIsVisible ("on_preferences_updated_native",
-                                                            {data.dump ()});
-    };
-}
-
-PreferencesRelay::~PreferencesRelay ()
-{
-    preferences_controller_.OnPreferencesUpdated = nullptr;
 }
 
 juce::WebBrowserComponent::Options
@@ -29,15 +17,19 @@ PreferencesRelay::buildOptions (const juce::WebBrowserComponent::Options & initi
         .withNativeFunction ("add_user_path_native",
                              [&] (auto & var, auto complete)
                              {
-                                 preferences_controller_.AddUserPath ();
-                                 complete ({});
+                                 preferences_controller_.AddUserPath (
+                                     [complete] (Preferences result)
+                                     {
+                                         json data = result;
+                                         complete ({data.dump ()});
+                                     });
                              })
         .withNativeFunction ("remove_user_path_native",
                              [&] (auto & var, auto complete)
                              {
                                  auto user_path = var [0].toString ().toStdString ();
-                                 preferences_controller_.RemoveUserPath (user_path);
-                                 complete ({});
+                                 json data = preferences_controller_.RemoveUserPath (user_path);
+                                 complete ({data.dump ()});
                              })
         .withNativeFunction ("reveal_user_path_native",
                              [&] (auto & var, auto complete)

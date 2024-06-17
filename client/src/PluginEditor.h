@@ -5,6 +5,7 @@
 #include "preferences/PreferencesController.h"
 #include "relays/PlayerRelay.h"
 #include "relays/PreferencesRelay.h"
+#include "relays/UserZonesRelay.h"
 
 #include <juce_gui_extra/juce_gui_extra.h>
 #include <lager/event_loop/manual.hpp>
@@ -34,12 +35,13 @@ private:
 
     AudioPluginAudioProcessor & processor_;
     ProcessorContainer & processor_container_;
-    PreferencesController preferences_controller_ {processor_container_.store_};
+    PreferencesController preferences_controller_ {};
 
     juce::WebSliderRelay wet_dry_mix_relay_ {web_browser_component_,
                                              ParameterTree::kDryWetMixParameterId};
     PlayerRelay player_relay_;
     PreferencesRelay preferences_relay_;
+    UserZonesRelay user_zones_relay_;
 
     juce::File asset_directory_;
     const juce::WebBrowserComponent::Options kBaseWebOptions =
