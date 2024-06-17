@@ -23,6 +23,7 @@ zones_add_module(
         src/format/ZoneMetadata.h
         src/format/LoadFromDiskController.cpp
         src/format/LoadFromDiskController.h
+        src/format/ZoneMetadataJson.h
         DEPS
         juce::juce_audio_basics
         juce::juce_audio_formats

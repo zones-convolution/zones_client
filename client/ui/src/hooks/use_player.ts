@@ -84,9 +84,9 @@ const usePlayer = (): IUsePlayer => {
   }, []);
 
   useEffect(() => {
-    fetch(juce.getBackendResourceAddress("data.txt"))
+    fetch(juce.getBackendResourceAddress("userzones.json"))
       .then((res) => {
-        res.text().then((data) => {
+        res.json().then((data) => {
           console.log(data);
         });
       })

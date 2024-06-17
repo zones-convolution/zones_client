@@ -1,5 +1,7 @@
 #include "PluginEditor.h"
 
+#include "format/ZoneMetadataJson.h"
+
 const juce::String AudioPluginAudioProcessorEditor::kLocalDevServerAddress =
     "http://localhost:5173/";
 
@@ -66,13 +68,45 @@ static auto StreamToVector (juce::InputStream & stream)
 std::optional<juce::WebBrowserComponent::Resource>
 AudioPluginAudioProcessorEditor::GetResource (const juce::String & url)
 {
-    if (url == "/data.txt")
+    if (url == "/userzones.json")
     {
+        Preferences preferences;
+        preferences.Load ();
+
+        std::vector<ZoneMetadata> user_zones;
+
+        for (auto & search_path : preferences.user_paths)
+        {
+            auto search_directory = juce::File (search_path.string ());
+            auto zone_paths =
+                search_directory.findChildFiles (juce::File::TypesOfFileToFind::findFiles,
+                                                 true,
+                                                 "*.json",
+                                                 juce::File::FollowSymlinks::no);
+
+            for (const auto & zone_path : zone_paths)
+            {
+                try
+                {
+                    std::filesystem::path absolute_zone_path =
+                        zone_path.getFullPathName ().toStdString ();
+                    ZoneMetadata zone_metadata;
+                    ReadZoneMetadata (absolute_zone_path, zone_metadata);
+                    zone_metadata.path_attribute = absolute_zone_path.remove_filename ();
+                    user_zones.push_back (zone_metadata);
+                }
+                catch (...)
+                {
+                }
+            }
+        }
+
+        json data = user_zones;
+        auto res = data.dump ();
         juce::WebBrowserComponent::Resource resource;
-        static constexpr char testData [] = "testdata";
-        juce::MemoryInputStream stream {testData, juce::numElementsInArray (testData) - 1, false};
+        juce::MemoryInputStream stream {res.data (), res.size (), false};
         return juce::WebBrowserComponent::Resource {StreamToVector (stream),
-                                                    juce::String {"text/html"}};
+                                                    juce::String {"text/json"}};
     }
 
     auto rel_path = "." + (url == "/" ? "/index.html" : url);
