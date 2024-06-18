@@ -18,3 +18,70 @@ void UserZonesController::GetIrPath (
                                            path.getFullPathName ().toStdString ());
                                });
 }
+
+void UserZonesController::Import (ImportMetadata import_metadata)
+{
+    auto & metadata = import_metadata.metadata;
+    auto destination_path = std::filesystem::path (import_metadata.path);
+
+    auto zone_title = metadata.title;
+    auto safe_zone_title =
+        std::filesystem::path (juce::File::createLegalFileName (zone_title).toStdString ());
+
+    auto zone_directory_path = destination_path / safe_zone_title;
+    juce::File zone_directory {zone_directory_path.string ()};
+    zone_directory.createDirectory ();
+
+    for (auto & import_ir : import_metadata.metadata.irs)
+    {
+        auto safe_ir_title = std::filesystem::path (
+            juce::File::createLegalFileName (import_ir.title.value ()).toStdString ());
+        auto relative_path = "impulse_responses" / safe_ir_title;
+        import_ir.position_map = PerformCopyPositionMap (
+            import_ir.position_map.value (), zone_directory_path, relative_path);
+        import_ir.relative_path = relative_path;
+    }
+
+    WriteZoneMetadata (zone_directory_path / safe_zone_title.replace_extension (".json"), metadata);
+}
+
+PositionMap
+UserZonesController::PerformCopyPositionMap (const PositionMap & position_map,
+                                             const std::filesystem::path & zone_directory,
+                                             const std::filesystem::path & ir_path)
+{
+    auto ir_directory_path = zone_directory / ir_path;
+    juce::File ir_directory {ir_directory_path.string ()};
+    ir_directory.createDirectory ();
+
+    auto copy_position =
+        [&] (std::optional<std::string> position,
+             const std::string & destination_file_name) -> std::optional<std::string>
+    {
+        if (position.has_value ())
+        {
+            juce::File file_to_copy {*position};
+            if (file_to_copy.existsAsFile ())
+            {
+                auto extension = file_to_copy.getFileExtension ();
+
+                auto destination_file_stem = destination_file_name + extension.toStdString ();
+                auto destination_file_path = ir_directory_path / destination_file_stem;
+
+                auto destination_file = juce::File (destination_file_path.string ());
+                file_to_copy.copyFileTo (destination_file);
+
+                return destination_file_stem;
+            }
+        }
+
+        return std::nullopt;
+    };
+
+    PositionMap translated_map;
+    translated_map.centre = copy_position (position_map.centre, "centre");
+    translated_map.left = copy_position (position_map.left, "left");
+    translated_map.right = copy_position (position_map.right, "right");
+
+    return translated_map;
+}

@@ -38,11 +38,11 @@ static void from_json (const json & data, IrMetadata & ir_metadata)
 
 static void to_json (json & data, const IrMetadata & ir_metadata)
 {
+    data = json {{"relativePath", ir_metadata.relative_path}};
     OptionalToJson (data, "channelFormat", ir_metadata.channel_format);
     OptionalToJson (data, "positionMap", ir_metadata.position_map);
     OptionalToJson (data, "title", ir_metadata.title);
     OptionalToJson (data, "description", ir_metadata.description);
-    data = json {{"relativePath", ir_metadata.relative_path}};
 }
 
 static void from_json (const json & data, ImageMetadata & image_metadata)
@@ -67,9 +67,10 @@ static void from_json (const json & data, ZoneMetadata & zone_metadata)
 
 static void to_json (json & data, const ZoneMetadata & zone_metadata)
 {
-    OptionalToJson (data, "description", zone_metadata.description);
-    OptionalToJson (data, "coverImageId", zone_metadata.cover_image_id);
     data = json {{"title", zone_metadata.title},
                  {"images", zone_metadata.images},
                  {"irs", zone_metadata.irs}};
+
+    OptionalToJson (data, "description", zone_metadata.description);
+    OptionalToJson (data, "coverImageId", zone_metadata.cover_image_id);
 }

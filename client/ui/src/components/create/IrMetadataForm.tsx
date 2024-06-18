@@ -36,7 +36,7 @@ const SpeakerPositionPicker: FC<{
     <div className="flex flex-row items-center">
       {position}
       <span className="ml-2 font-thin">{path}</span>
-      <Button className="ml-auto" onClick={onChoose}>
+      <Button className="ml-auto" onClick={onChoose} type="button">
         Choose <Folder className="w-4 h-4 ml-2" />
       </Button>
     </div>
@@ -194,7 +194,12 @@ const IrMetadataForm: FC<{
 
       {speakerPositionsPicker}
 
-      <Button className="w-full" variant="destructive" onClick={remove}>
+      <Button
+        className="w-full"
+        variant="destructive"
+        onClick={remove}
+        type="button"
+      >
         Remove Ir <MinusCircle className="w-4 h-4 ml-2" />
       </Button>
     </div>

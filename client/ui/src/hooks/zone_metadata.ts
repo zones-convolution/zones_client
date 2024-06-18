@@ -32,7 +32,7 @@ const ZoneMetadata = z.object({
   description: z.string().optional(),
   images: z.array(ImageMetadata),
   coverImageId: z.string().optional(),
-  irs: z.array(IrMetadata).optional(),
+  irs: z.array(IrMetadata),
 });
 
 type ZoneMetadata = z.infer<typeof ZoneMetadata>;

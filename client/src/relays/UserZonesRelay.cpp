@@ -53,10 +53,15 @@ UserZonesRelay::buildOptions (const juce::WebBrowserComponent::Options & initial
                                  json data = LoadUserZones ();
                                  complete ({data.dump ()});
                              })
-        .withNativeFunction ("add_user_zone_native",
-                             [&] (auto & var, auto complete) {
-
-                             })
+        .withNativeFunction (
+            "import_zone_native",
+            [&] (auto & var, auto complete)
+            {
+                ImportMetadata import_metadata;
+                json::parse (var [0].toString ().toStdString ()).get_to (import_metadata);
+                user_zones_controller_.Import (import_metadata);
+                complete ({});
+            })
         .withNativeFunction ("remove_user_zone_native", [&] (auto & var, auto complete) {})
         .withNativeFunction ("choose_ir_path_native",
                              [&] (auto & var, auto complete) {

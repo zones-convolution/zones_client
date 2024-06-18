@@ -23,6 +23,7 @@ const IrForm = () => {
         />
       ))}
       <Button
+        type="button"
         className="w-full"
         variant="secondary"
         onClick={() => append({ relativePath: "", channelFormat: "stereo" })}

@@ -28,8 +28,7 @@ const ZoneMetadataForm = () => {
   const { control, setValue } = useFormContext<CreateZoneSchema>();
   const { preferences } = usePreferences();
   useEffect(() => {
-    if (preferences.userPaths[0])
-      setValue("userPath", preferences.userPaths[0]);
+    if (preferences.userPaths[0]) setValue("path", preferences.userPaths[0]);
   }, [preferences]);
 
   const noUserPaths = preferences.userPaths.length == 0;
@@ -64,7 +63,7 @@ const ZoneMetadataForm = () => {
       />
       <FormField
         control={control}
-        name="userPath"
+        name="path"
         render={({ field }) => (
           <FormItem>
             <FormLabel>User Path</FormLabel>
@@ -91,7 +90,7 @@ const ZoneMetadataForm = () => {
                   </Select>
                 )}
 
-                <Button asChild>
+                <Button asChild type="button">
                   <Link to="/preferences">
                     Preferences
                     <Settings className="w-4 h-4 ml-2" />
