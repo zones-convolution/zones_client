@@ -30,6 +30,8 @@ set(SOURCES
         src/relays/PreferencesRelay.cpp
         src/relays/UserZonesRelay.h
         src/relays/UserZonesRelay.cpp
+        src/controllers/UserZonesController.h
+        src/controllers/UserZonesController.cpp
 )
 
 option(DEV_LOCALHOST OFF)

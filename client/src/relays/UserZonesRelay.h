@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../controllers/UserZonesController.h"
 #include "format/ZoneMetadata.h"
 
 #include <juce_gui_extra/juce_gui_extra.h>
@@ -16,4 +17,5 @@ public:
 private:
     std::vector<ZoneMetadata> LoadUserZones () const;
     juce::WebBrowserComponent & web_browser_component_;
+    UserZonesController user_zones_controller_;
 };

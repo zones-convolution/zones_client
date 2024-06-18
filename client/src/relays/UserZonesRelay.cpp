@@ -57,5 +57,10 @@ UserZonesRelay::buildOptions (const juce::WebBrowserComponent::Options & initial
                              [&] (auto & var, auto complete) {
 
                              })
-        .withNativeFunction ("remove_user_zone_native", [&] (auto & var, auto complete) {});
+        .withNativeFunction ("remove_user_zone_native", [&] (auto & var, auto complete) {})
+        .withNativeFunction ("choose_ir_path_native",
+                             [&] (auto & var, auto complete) {
+                                 user_zones_controller_.GetIrPath ([complete] (const auto & path)
+                                                                   { complete ({path}); });
+                             });
 }
