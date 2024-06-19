@@ -66,7 +66,14 @@ struct ZoneMetadata
     /**
      * Runtime added absolute path to directory where specific IR is stored.
      */
-    std::filesystem::path path_attribute;
+    std::optional<std::filesystem::path> path_attribute;
+
+    [[nodiscard]] ZoneMetadata WithNullRuntimeAttributes () const
+    {
+        auto metadata = *this;
+        metadata.path_attribute = std::nullopt;
+        return metadata;
+    }
 
     bool operator== (const ZoneMetadata & rhs) const
     {

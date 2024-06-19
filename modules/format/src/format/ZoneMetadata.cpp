@@ -14,7 +14,7 @@ void ReadZoneMetadata (const std::filesystem::path & absolute_file_path,
 void WriteZoneMetadata (const std::filesystem::path & absolute_file_path,
                         const ZoneMetadata & zone_metadata)
 {
-    json data = zone_metadata;
+    json data = zone_metadata.WithNullRuntimeAttributes ();
     std::ofstream stream (absolute_file_path);
     stream << std::setw (4) << data << std::endl;
 }

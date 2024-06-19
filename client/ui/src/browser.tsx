@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
+import { LoadProvider, useLoadContext } from "@/context/LoadContext";
 import { useUserZones } from "@/hooks/use_user_zones";
 
 export const CategoryCard: FC<{
@@ -87,7 +88,9 @@ const ZoneCard: FC<{
   category: string;
   imageUrl: string;
   rt60: number;
-}> = ({ category, imageUrl, rt60 }) => {
+  onLoad?: () => void;
+  onView?: () => void;
+}> = ({ category, imageUrl, rt60, onLoad, onView }) => {
   return (
     <div className="w-full h-full relative flex justify-between items-end">
       <img
@@ -100,10 +103,10 @@ const ZoneCard: FC<{
         <em className="text-xs font-thin ml-1">{rt60}s</em>
       </div>
       <div className="flex gap-2 p-2 w-fit h-fit rounded-md">
-        <Button variant="blur">
+        <Button variant="blur" onClick={onLoad}>
           <Play className="w-4 h-4" />
         </Button>
-        <Button variant="blur">
+        <Button variant="blur" onClick={onView}>
           <Eye className="w-4 h-4" />
         </Button>
       </div>
@@ -113,6 +116,7 @@ const ZoneCard: FC<{
 
 const UserIRs = () => {
   const { userZones } = useUserZones();
+  const { load } = useLoadContext();
 
   return (
     <div className="flex flex-col w-full bg-card p-2 gap-4">
@@ -126,6 +130,13 @@ const UserIRs = () => {
                   category={userZone.title}
                   imageUrl="https://picsum.photos/607"
                   rt60={1.2}
+                  onLoad={async () => {
+                    await load({
+                      zone: userZone,
+                      ir: userZone.irs[0]!,
+                      targetFormat: "stereo",
+                    });
+                  }}
                 />
               </div>
             );
@@ -138,22 +149,24 @@ const UserIRs = () => {
 
 const Browser = () => {
   return (
-    <div className="flex flex-col gap-0.5 h-full">
-      <div className="flex w-full bg-card p-2 items-center">
-        <Button variant="ghost">
-          <ChevronLeft className="w-4 h-4" />
-        </Button>
-        <Button variant="ghost" className="mr-4">
-          <ChevronRight className="w-4 h-4" />
-        </Button>
-        Browser
-        <Button asChild className="ml-auto">
-          <Link to="/create">Create Zone</Link>
-        </Button>
+    <LoadProvider>
+      <div className="flex flex-col gap-0.5 h-full">
+        <div className="flex w-full bg-card p-2 items-center">
+          <Button variant="ghost">
+            <ChevronLeft className="w-4 h-4" />
+          </Button>
+          <Button variant="ghost" className="mr-4">
+            <ChevronRight className="w-4 h-4" />
+          </Button>
+          Browser
+          <Button asChild className="ml-auto">
+            <Link to="/create">Create Zone</Link>
+          </Button>
+        </div>
+        <Categories />
+        <UserIRs />
       </div>
-      <Categories />
-      <UserIRs />
-    </div>
+    </LoadProvider>
   );
 };
 

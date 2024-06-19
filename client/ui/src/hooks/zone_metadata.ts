@@ -1,6 +1,13 @@
 import { z } from "zod";
 
 const ChannelFormat = z.enum(["mono", "stereo", "foa", "quadraphonic"]);
+const TargetFormat = z.enum([
+  "mono",
+  "stereo",
+  "trueStereo",
+  "foa",
+  "quadraphonic",
+]);
 
 const PositionMap = z.object({
   centre: z.string().optional(),
@@ -33,8 +40,24 @@ const ZoneMetadata = z.object({
   images: z.array(ImageMetadata),
   coverImageId: z.string().optional(),
   irs: z.array(IrMetadata),
+  pathAttribute: z.string().optional(),
 });
 
 type ZoneMetadata = z.infer<typeof ZoneMetadata>;
 
-export { ZoneMetadata, ImageMetadata, IrMetadata, PositionMap, ChannelFormat };
+const IrSelection = z.object({
+  zone: ZoneMetadata,
+  ir: IrMetadata,
+  targetFormat: TargetFormat,
+});
+
+type IrSelection = z.infer<typeof IrSelection>;
+
+export {
+  ZoneMetadata,
+  ImageMetadata,
+  IrMetadata,
+  PositionMap,
+  ChannelFormat,
+  IrSelection,
+};

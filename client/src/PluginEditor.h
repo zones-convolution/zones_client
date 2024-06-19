@@ -3,6 +3,7 @@
 #include "PluginProcessor.h"
 #include "ProcessorContainer.h"
 #include "preferences/PreferencesController.h"
+#include "relays/LoadRelay.h"
 #include "relays/PlayerRelay.h"
 #include "relays/PreferencesRelay.h"
 #include "relays/UserZonesRelay.h"
@@ -40,6 +41,7 @@ private:
     PlayerRelay player_relay_;
     PreferencesRelay preferences_relay_;
     UserZonesRelay user_zones_relay_;
+    LoadRelay load_relay_;
 
     juce::File asset_directory_;
     const juce::WebBrowserComponent::Options kBaseWebOptions =

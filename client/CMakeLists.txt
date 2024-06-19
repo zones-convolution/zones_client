@@ -28,6 +28,8 @@ set(SOURCES
         src/relays/PreferencesRelay.cpp
         src/relays/UserZonesRelay.h
         src/relays/UserZonesRelay.cpp
+        src/relays/LoadRelay.h
+        src/relays/LoadRelay.cpp
         src/controllers/UserZonesController.h
         src/controllers/UserZonesController.cpp
         src/controllers/LoadController.h

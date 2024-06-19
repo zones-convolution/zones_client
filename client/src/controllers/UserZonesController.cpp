@@ -41,7 +41,6 @@ void UserZonesController::Import (ImportMetadata import_metadata)
             import_ir.position_map.value (), zone_directory_path, relative_path);
         import_ir.relative_path = relative_path;
     }
-
     WriteZoneMetadata (zone_directory_path / safe_zone_title.replace_extension (".json"), metadata);
 }
 

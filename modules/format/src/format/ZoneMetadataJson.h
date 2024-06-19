@@ -1,5 +1,6 @@
 #pragma once
 
+#include "IrData.h"
 #include "JsonUtility.h"
 #include "ZoneMetadata.h"
 
@@ -12,6 +13,13 @@ NLOHMANN_JSON_SERIALIZE_ENUM (ChannelFormat,
                                {ChannelFormat::kStereo, "stereo"},
                                {ChannelFormat::kFoa, "foa"},
                                {ChannelFormat::kQuadraphonic, "quadraphonic"}})
+
+NLOHMANN_JSON_SERIALIZE_ENUM (TargetFormat,
+                              {{TargetFormat::kMono, "mono"},
+                               {TargetFormat::kStereo, "stereo"},
+                               {TargetFormat::kTrueStereo, "trueStereo"},
+                               {TargetFormat::kFoa, "foa"},
+                               {TargetFormat::kQuadraphonic, "quadraphonic"}})
 
 static void from_json (const json & data, PositionMap & position_map)
 {
@@ -63,6 +71,7 @@ static void from_json (const json & data, ZoneMetadata & zone_metadata)
     data.at ("images").get_to (zone_metadata.images);
     OptionalFromJson (data, "coverImageId", zone_metadata.cover_image_id);
     data.at ("irs").get_to (zone_metadata.irs);
+    OptionalFromJson (data, "pathAttribute", zone_metadata.path_attribute);
 }
 
 static void to_json (json & data, const ZoneMetadata & zone_metadata)
@@ -73,4 +82,19 @@ static void to_json (json & data, const ZoneMetadata & zone_metadata)
 
     OptionalToJson (data, "description", zone_metadata.description);
     OptionalToJson (data, "coverImageId", zone_metadata.cover_image_id);
+    OptionalToJson (data, "pathAttribute", zone_metadata.path_attribute);
+}
+
+static void from_json (const json & data, IrSelection & ir_selection)
+{
+    data.at ("zone").get_to (ir_selection.zone);
+    data.at ("ir").get_to (ir_selection.ir);
+    data.at ("targetFormat").get_to (ir_selection.target_format);
+}
+
+static void to_json (json & data, const IrSelection & ir_selection)
+{
+    data = json {{"zone", ir_selection.zone},
+                 {"ir", ir_selection.ir},
+                 {"targetFormat", ir_selection.target_format}};
 }
