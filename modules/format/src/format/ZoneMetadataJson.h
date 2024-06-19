@@ -98,3 +98,14 @@ static void to_json (json & data, const IrSelection & ir_selection)
                  {"ir", ir_selection.ir},
                  {"targetFormat", ir_selection.target_format}};
 }
+
+static void from_json (const json & data, std::optional<IrSelection> & ir_selection)
+{
+    OptionalFromJson (data, "irSelection", ir_selection);
+}
+
+static void to_json (json & data, const std::optional<IrSelection> & ir_selection)
+{
+    data = json ({});
+    OptionalToJson (data, "irSelection", ir_selection);
+}

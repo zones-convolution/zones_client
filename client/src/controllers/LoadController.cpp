@@ -8,22 +8,25 @@ LoadController::LoadController (juce::ThreadPool & thread_pool, IrController & i
 {
 }
 
-void LoadController::Load (const IrSelection & ir_selection)
+void LoadController::Load (const IrSelection & ir_selection,
+                           const std::function<void (bool)> & callback)
 {
-    loading_state_ = IrLoadingState::kLoading;
+    SetLoadingIr (ir_selection);
 
     thread_pool_.addJob (
-        [&, ir_selection]
+        [&, ir_selection, callback]
         {
             try
             {
                 ir_controller_.LoadIr (ir_selection);
-                loading_state_ = IrLoadingState::kSuccess;
+                callback (true);
             }
             catch (...)
             {
-                loading_state_ = IrLoadingState::kFailure;
+                callback (false);
             }
+
+            SetLoadingIr (std::nullopt);
         });
 }
 
@@ -93,8 +96,22 @@ void LoadController::LoadFromDisk ()
                         ir_metadata.channel_format = GetChannelFormat (num_channels);
                         ir_selection.target_format =
                             GetValidTargetFormat (num_channels, valid_target_formats_);
-                        Load (ir_selection);
+                        Load (ir_selection, [] (bool result) {});
                     });
             }
         });
+}
+
+const std::optional<IrSelection> & LoadController::GetLoadingIr ()
+{
+    std::lock_guard guard {loading_ir_mutex_};
+    return loading_ir_;
+}
+
+void LoadController::SetLoadingIr (const std::optional<IrSelection> & ir_selection)
+{
+    loading_ir_mutex_.lock ();
+    loading_ir_ = ir_selection;
+    loading_ir_mutex_.unlock ();
+    OnLoadingIrUpdated ();
 }

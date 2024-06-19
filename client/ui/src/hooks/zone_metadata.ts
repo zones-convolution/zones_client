@@ -53,6 +53,12 @@ const IrSelection = z.object({
 
 type IrSelection = z.infer<typeof IrSelection>;
 
+const IrSelectionOptional = z.object({
+  irSelection: IrSelection.optional(),
+});
+
+type IrSelectionOptional = z.infer<typeof IrSelectionOptional>;
+
 export {
   ZoneMetadata,
   ImageMetadata,
@@ -60,4 +66,5 @@ export {
   PositionMap,
   ChannelFormat,
   IrSelection,
+  IrSelectionOptional,
 };
