@@ -6,7 +6,6 @@ set(LINK_JUCE
         juce::juce_audio_utils)
 
 set(LINK_COMMON
-        zone_repository
         format
         ir_engine
         look_and_feel
@@ -31,6 +30,8 @@ set(SOURCES
         src/relays/UserZonesRelay.cpp
         src/controllers/UserZonesController.h
         src/controllers/UserZonesController.cpp
+        src/controllers/LoadController.h
+        src/controllers/LoadController.cpp
 )
 
 option(DEV_LOCALHOST OFF)

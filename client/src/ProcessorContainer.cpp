@@ -39,9 +39,6 @@ void ProcessorContainer::Prepare (double sampleRate,
     auto state = ir_controller_.GetCurrentGraphState ();
     if (! IsTargetSupported (output_channel_set, state.target_format))
         convolution_engine_.Clear ();
-
-    store_.dispatch (RefreshValidTargetFormatsAction {
-        .target_formats = GetTargetFormatsForChannelSet (output_channel_set)});
 }
 
 void ProcessorContainer::RegisterIrEngineListeners ()

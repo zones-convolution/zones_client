@@ -9,7 +9,6 @@ zones_add_module(
         DEPS
         juce::juce_core
         juce::juce_events
-        lager
         cpr::cpr)
 
 zones_add_test(MODULE api SOURCES test/TestDeviceApi.cpp test/TestOidcApi.cpp DEPS api)

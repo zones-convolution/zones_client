@@ -5,13 +5,25 @@
 #include <choc/containers/choc_SingleReaderSingleWriterFIFO.h>
 #include <juce_audio_basics/juce_audio_basics.h>
 #include <juce_core/juce_core.h>
-#include <lager/util.hpp>
 #include <variant>
+
+template <typename T>
+struct is_variant : std::false_type
+{
+};
+
+template <typename... Args>
+struct is_variant<std::variant<Args...>> : std::true_type
+{
+};
+
+template <typename T>
+inline constexpr bool is_variant_v = is_variant<T>::value;
 
 template <typename Commands, typename Visitor>
 class VisitorQueue
 {
-    static_assert (lager::is_variant<Commands>::value, "Commands must be a variant type");
+    static_assert (is_variant_v<Commands>, "Commands must be a variant type");
 
 public:
     explicit VisitorQueue ()

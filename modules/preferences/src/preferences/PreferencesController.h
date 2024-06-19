@@ -1,10 +1,8 @@
 #pragma once
 
 #include "Preferences.h"
-#include "model/Action.h"
 
 #include <juce_gui_basics/juce_gui_basics.h>
-#include <lager/context.hpp>
 
 class PreferencesController
 {

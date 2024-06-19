@@ -9,7 +9,6 @@ zones_add_module(
         DEPS
         look_and_feel
         model
-        lager
         juce::juce_core
         juce::juce_gui_basics
         nlohmann_json::nlohmann_json

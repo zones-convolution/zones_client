@@ -8,13 +8,9 @@
 #include "audio_engine/VisitorQueue.h"
 #include "ir_engine/IrController.h"
 #include "ir_engine/IrEngine.h"
-#include "model/Action.h"
-#include "model/Model.h"
 #include "zones_convolver/zones_convolver.h"
 
 #include <juce_audio_processors/juce_audio_processors.h>
-#include <lager/event_loop/manual.hpp>
-#include <lager/store.hpp>
 
 class ProcessorContainer
 {
@@ -41,12 +37,6 @@ public:
     IrController ir_controller_ {ir_engine_, parameter_tree_};
 
     zones::ConvolutionEngine convolution_engine_ {thread_pool_};
-
-    lager::store<Action, Model, Deps> store_ =
-        lager::make_store<Action> (Model {},
-                                   WithJuceEventLoop {thread_pool_},
-                                   lager::with_reducer (Update),
-                                   lager::with_deps (std::ref (ir_controller_)));
 
 private:
     void RegisterIrEngineListeners ();

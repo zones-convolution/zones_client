@@ -4,12 +4,6 @@ zones_add_module(
         SOURCES
         src/model/ParameterTree.h
         src/model/ParameterTree.cpp
-        src/model/Model.h
-        src/model/Action.h
-        src/model/Action.cpp
         DEPS
         juce::juce_core
-        lager
-        immer
-        zone_repository
 )

@@ -8,8 +8,6 @@
 #include "relays/UserZonesRelay.h"
 
 #include <juce_gui_extra/juce_gui_extra.h>
-#include <lager/event_loop/manual.hpp>
-#include <lager/store.hpp>
 
 class AudioPluginAudioProcessorEditor : public juce::AudioProcessorEditor
 {

@@ -21,9 +21,9 @@ zones_add_module(
         src/audio_engine/EQProcessor.cpp
         DEPS
         model
-        zone_repository
         format
         choc
+        ir_engine
         zones_convolver
         juce::juce_core
         juce::juce_dsp

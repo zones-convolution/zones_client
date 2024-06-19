@@ -27,10 +27,8 @@ zones_add_module(
         src/ir_engine/IrController.cpp
         DEPS
         model
-        zone_repository
         format
         audio_engine
-        lager
         immer
         stretch
         juce::juce_core
