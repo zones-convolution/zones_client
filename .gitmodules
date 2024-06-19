@@ -4,9 +4,6 @@
 [submodule "lib/immer"]
 	path = lib/immer
 	url = git@github.com:arximboldi/immer.git
-[submodule "lib/zug"]
-	path = lib/zug
-	url = git@github.com:arximboldi/zug.git
 [submodule "vcpkg"]
 	path = vcpkg
 	url = https://github.com/Microsoft/vcpkg.git

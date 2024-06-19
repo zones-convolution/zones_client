@@ -3,9 +3,6 @@ add_subdirectory(JUCE)
 add_library(immer INTERFACE)
 target_include_directories(immer SYSTEM INTERFACE immer)
 
-add_library(zug INTERFACE)
-target_include_directories(zug SYSTEM INTERFACE zug)
-
 add_library(choc INTERFACE)
 target_include_directories(choc SYSTEM INTERFACE choc)
 

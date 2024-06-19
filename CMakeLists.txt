@@ -15,7 +15,6 @@ include(cmake/zones_module_common.cmake)
 include(cmake/embed_resources.cmake)
 
 find_package(Catch2 3 REQUIRED)
-find_package(Boost 1.82.0)
 find_package(cpr REQUIRED)
 find_package(nlohmann_json 3.2.0 REQUIRED)
 

@@ -3,15 +3,9 @@
   "version-string" : "1.0.0",
   "builtin-baseline" : "223b8d5695bd0615e1eeba393c64770f6faf20e7",
   "dependencies" : [ {
-    "name" : "boost-hana",
-    "version>=" : "1.82.0#2"
-  }, {
     "name" : "catch2",
     "version>=" : "3.3.2",
     "$comment" : "    # this is heuristically generated, and may not be correct\n\n    find_package(Catch2 CONFIG REQUIRED)\n\n    target_link_libraries(main PRIVATE Catch2::Catch2 Catch2::Catch2WithMain)\n"
-  }, {
-    "name" : "boost-intrusive",
-    "version>=" : "1.82.0#2"
   }, {
     "name" : "cpr",
     "version>=" : "1.10.2+3"
