@@ -7,8 +7,6 @@ zones_add_module(
         src/zone_repository/ZoneRepositoryAction.cpp
         src/zone_repository/effect/LoadIrEffect.h
         src/zone_repository/effect/LoadIrEffect.cpp
-        src/zone_repository/effect/RefreshUserZonesEffect.h
-        src/zone_repository/effect/RefreshUserZonesEffect.cpp
         DEPS
         juce::juce_audio_basics
         juce::juce_audio_formats

@@ -16,15 +16,6 @@ struct RefreshValidTargetFormatsAction
     std::vector<TargetFormat> target_formats;
 };
 
-struct RefreshUserZonesAction
-{
-};
-
-struct RefreshUserZonesResultAction
-{
-    immer::flex_vector<ZoneMetadata> user_zones;
-};
-
 struct LoadIrAction
 {
     IrSelection ir_selection;
@@ -40,8 +31,6 @@ struct LoadIrFailureAction
 };
 
 using ZoneRepositoryAction = std::variant<RefreshValidTargetFormatsAction,
-                                          RefreshUserZonesAction,
-                                          RefreshUserZonesResultAction,
                                           LoadIrAction,
                                           LoadIrSuccessAction,
                                           LoadIrFailureAction>;

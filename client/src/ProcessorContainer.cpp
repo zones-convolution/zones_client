@@ -24,7 +24,6 @@ ProcessorContainer::ProcessorContainer (juce::AudioProcessor & audio_processor)
     notification_queue_.SetVisitor (&audio_engine_);
 
     RegisterIrEngineListeners ();
-    store_.dispatch (RefreshUserZonesAction {});
 }
 
 void ProcessorContainer::Prepare (double sampleRate,

@@ -12,7 +12,6 @@ set(LINK_COMMON
         look_and_feel
         audio_engine
         model
-        browser
         zones_convolver
         preferences)
 

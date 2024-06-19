@@ -1,7 +1,6 @@
 #include "ZoneRepositoryAction.h"
 
 #include "effect/LoadIrEffect.h"
-#include "effect/RefreshUserZonesEffect.h"
 
 ZoneRepositoryResult UpdateZoneRepository (ZoneRepositoryModel model,
                                            ZoneRepositoryAction zone_repository_action)
@@ -12,33 +11,6 @@ ZoneRepositoryResult UpdateZoneRepository (ZoneRepositoryModel model,
             {
                 model.valid_target_formats = action.target_formats;
                 return {model, lager::noop};
-            },
-            [&] (const RefreshUserZonesAction & action) -> ZoneRepositoryResult
-            {
-                model.user_zones_loading = true;
-                return {model, [model, action] (auto && context) {
-                            RefreshUserZonesEffect (action, context);
-                        }};
-            },
-            [&] (const RefreshUserZonesResultAction & action) -> ZoneRepositoryResult
-            {
-                model.user_zones = action.user_zones;
-                model.user_zones_loading = false;
-
-                return {model,
-                        [model, action] (auto && context)
-                        {
-                            if (model.user_zones.empty ())
-                                return;
-
-                            auto zone = model.user_zones [0];
-                            auto ir_selection = zone.irs [0];
-
-                            context.dispatch (LoadIrAction {
-                                .ir_selection = {.zone = zone,
-                                                 .ir = ir_selection,
-                                                 .target_format = TargetFormat::kStereo}});
-                        }};
             },
             [&] (const LoadIrAction & load_ir_action) -> ZoneRepositoryResult
             {

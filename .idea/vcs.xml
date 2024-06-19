@@ -4,6 +4,7 @@
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/JUCE" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/choc/choc" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/lib/glm" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/immer" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/immer/extra/python/lib/pybind11" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/immer/extra/python/lib/pybind11/tools/clang" vcs="Git" />
@@ -13,6 +14,7 @@
     <mapping directory="$PROJECT_DIR$/lib/melatonin_audio_sparklines" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/melatonin_test_helpers" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/stretch" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/lib/tinycolormap" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/zones_convolver" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/zug" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/zug/tools/sinusoidal-sphinx-theme" vcs="Git" />
