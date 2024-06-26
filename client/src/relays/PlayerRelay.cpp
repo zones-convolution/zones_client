@@ -37,6 +37,8 @@ PlayerRelay::PlayerRelay (juce::WebBrowserComponent & web_browser_component,
     {
         auto state = player_controller_.GetPlayerState ();
         json data = state;
+
+        JUCE_ASSERT_MESSAGE_THREAD;
         web_browser_component_.emitEventIfBrowserIsVisible ("on_player_update_native",
                                                             {data.dump ()});
     };
@@ -57,6 +59,8 @@ PlayerRelay::buildOptions (const juce::WebBrowserComponent::Options & initialOpt
                                  Player::PlayerState state;
                                  json::parse (var [0].toString ().toStdString ()).get_to (state);
                                  player_controller_.SetPlayerState (state);
+
+                                 JUCE_ASSERT_MESSAGE_THREAD;
                                  complete ({});
                              })
         .withNativeFunction ("get_player_state_native",
@@ -64,6 +68,8 @@ PlayerRelay::buildOptions (const juce::WebBrowserComponent::Options & initialOpt
                              {
                                  auto state = player_controller_.GetPlayerState ();
                                  json data = state;
+
+                                 JUCE_ASSERT_MESSAGE_THREAD;
                                  complete ({data.dump ()});
                              });
 }

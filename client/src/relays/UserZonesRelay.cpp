@@ -51,6 +51,8 @@ UserZonesRelay::buildOptions (const juce::WebBrowserComponent::Options & initial
                              [&] (auto & var, auto complete)
                              {
                                  json data = LoadUserZones ();
+
+                                 JUCE_ASSERT_MESSAGE_THREAD;
                                  complete ({data.dump ()});
                              })
         .withNativeFunction (
@@ -60,12 +62,19 @@ UserZonesRelay::buildOptions (const juce::WebBrowserComponent::Options & initial
                 ImportMetadata import_metadata;
                 json::parse (var [0].toString ().toStdString ()).get_to (import_metadata);
                 user_zones_controller_.Import (import_metadata);
+
+                JUCE_ASSERT_MESSAGE_THREAD;
                 complete ({});
             })
         .withNativeFunction ("remove_user_zone_native", [&] (auto & var, auto complete) {})
         .withNativeFunction ("choose_ir_path_native",
-                             [&] (auto & var, auto complete) {
-                                 user_zones_controller_.GetIrPath ([complete] (const auto & path)
-                                                                   { complete ({path}); });
+                             [&] (auto & var, auto complete)
+                             {
+                                 user_zones_controller_.GetIrPath (
+                                     [complete] (const auto & path)
+                                     {
+                                         JUCE_ASSERT_MESSAGE_THREAD;
+                                         complete ({path});
+                                     });
                              });
 }

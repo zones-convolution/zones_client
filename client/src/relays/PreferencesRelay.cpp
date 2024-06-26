@@ -21,6 +21,8 @@ PreferencesRelay::buildOptions (const juce::WebBrowserComponent::Options & initi
                                      [complete] (Preferences result)
                                      {
                                          json data = result;
+
+                                         JUCE_ASSERT_MESSAGE_THREAD;
                                          complete ({data.dump ()});
                                      });
                              })
@@ -29,6 +31,8 @@ PreferencesRelay::buildOptions (const juce::WebBrowserComponent::Options & initi
                              {
                                  auto user_path = var [0].toString ().toStdString ();
                                  json data = preferences_controller_.RemoveUserPath (user_path);
+
+                                 JUCE_ASSERT_MESSAGE_THREAD;
                                  complete ({data.dump ()});
                              })
         .withNativeFunction ("reveal_user_path_native",
@@ -36,6 +40,8 @@ PreferencesRelay::buildOptions (const juce::WebBrowserComponent::Options & initi
                              {
                                  auto user_path = var [0].toString ().toStdString ();
                                  preferences_controller_.RevealUserPath (user_path);
+
+                                 JUCE_ASSERT_MESSAGE_THREAD;
                                  complete ({});
                              })
         .withNativeFunction ("get_preferences_native",
@@ -44,6 +50,8 @@ PreferencesRelay::buildOptions (const juce::WebBrowserComponent::Options & initi
                                  const auto & preferences =
                                      preferences_controller_.GetPreferences ();
                                  json data = preferences;
+
+                                 JUCE_ASSERT_MESSAGE_THREAD;
                                  complete ({data.dump ()});
                              });
 }

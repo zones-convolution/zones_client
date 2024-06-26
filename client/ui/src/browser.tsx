@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight, Eye, Play } from "lucide-react";
+import { ChevronLeft, ChevronRight, Eye, Loader, Play } from "lucide-react";
 import { FC } from "react";
 import { Link } from "react-router-dom";
 
@@ -89,7 +89,8 @@ const ZoneCard: FC<{
   rt60: number;
   onLoad?: () => void;
   onView?: () => void;
-}> = ({ category, imageUrl, rt60, onLoad, onView }) => {
+  loading: boolean;
+}> = ({ category, imageUrl, rt60, onLoad, onView, loading }) => {
   return (
     <div className="w-full h-full relative flex justify-between items-end">
       <img
@@ -102,8 +103,12 @@ const ZoneCard: FC<{
         <em className="text-xs font-thin ml-1">{rt60}s</em>
       </div>
       <div className="flex gap-2 p-2 w-fit h-fit rounded-md">
-        <Button variant="blur" onClick={onLoad}>
-          <Play className="w-4 h-4" />
+        <Button variant="blur" onClick={onLoad} disabled={loading}>
+          {loading ? (
+            <Loader className="w-4 h-4 animate-spin" />
+          ) : (
+            <Play className="w-4 h-4" />
+          )}
         </Button>
         <Button variant="blur" onClick={onView}>
           <Eye className="w-4 h-4" />
@@ -115,7 +120,7 @@ const ZoneCard: FC<{
 
 const UserIRs = () => {
   const { userZones } = useUserZones();
-  const { load } = useLoadContext();
+  const { load, loadingIr } = useLoadContext();
 
   return (
     <div className="flex flex-col w-full bg-card p-2 gap-4">
@@ -123,12 +128,17 @@ const UserIRs = () => {
       <div className="h-40 overflow-x-auto relative">
         <div className="absolute flex gap-0.5 h-full">
           {userZones.map((userZone, index) => {
+            let isLoadingZone = false;
+            if (loadingIr)
+              isLoadingZone = loadingIr.zone.title === userZone.title;
+
             return (
               <div className="w-80" key={index}>
                 <ZoneCard
                   category={userZone.title}
                   imageUrl="https://picsum.photos/607"
                   rt60={1.2}
+                  loading={isLoadingZone}
                   onLoad={async () => {
                     await load({
                       zone: userZone,

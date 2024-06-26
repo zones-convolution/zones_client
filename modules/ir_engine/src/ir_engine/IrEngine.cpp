@@ -2,11 +2,6 @@
 
 #include <juce_events/juce_events.h>
 
-IrEngine::IrEngine (juce::ThreadPool & thread_pool)
-    : thread_pool_ (thread_pool)
-{
-}
-
 void IrEngine::RenderState (const IrGraphState & state)
 {
     ++jobs_since_last_clean_;

@@ -3,15 +3,15 @@
 #include "model/ParameterTree.h"
 
 ProcessorContainer::ProcessorContainer (juce::AudioProcessor & audio_processor)
-    : graph_ (input_graph_metering_,
-              output_graph_metering_,
-              convolution_engine_,
-              notification_queue_)
-
-    , parameter_tree_ (audio_processor,
+    : parameter_tree_ (audio_processor,
                        nullptr,
                        ParameterTree::kParameterTreeIdentifier,
                        ParameterTree::CreateParameterLayout ())
+
+    , graph_ (input_graph_metering_,
+              output_graph_metering_,
+              convolution_engine_,
+              notification_queue_)
     , audio_engine_ (command_queue_,
                      notification_queue_,
                      parameter_tree_,

@@ -16,16 +16,18 @@ void LoadController::Load (const IrSelection & ir_selection,
     thread_pool_.addJob (
         [&, ir_selection, callback]
         {
+            auto load_result = false;
+
             try
             {
                 ir_controller_.LoadIr (ir_selection);
-                callback (true);
+                load_result = true;
             }
             catch (...)
             {
-                callback (false);
             }
 
+            callback (load_result);
             SetLoadingIr (std::nullopt);
         });
 }
