@@ -9,16 +9,16 @@ LoadRelay::LoadRelay (juce::WebBrowserComponent & web_browser_component,
 {
     load_controller_.OnLoadingIrUpdated = [&]
     {
-        //        juce::MessageManager::callAsync (
-        //            [&]
-        //            {
-        auto loading_ir = load_controller_.GetLoadingIr ();
-        json data = loading_ir;
+        juce::MessageManager::callAsync (
+            [&]
+            {
+                auto loading_ir = load_controller_.GetLoadingIr ();
+                json data = loading_ir;
 
-        JUCE_ASSERT_MESSAGE_THREAD;
-        web_browser_component_.emitEventIfBrowserIsVisible ("on_loading_ir_updated_native",
-                                                            {data.dump ()});
-        //            });
+                JUCE_ASSERT_MESSAGE_THREAD;
+                web_browser_component_.emitEventIfBrowserIsVisible ("on_loading_ir_updated_native",
+                                                                    {data.dump ()});
+            });
     };
 }
 

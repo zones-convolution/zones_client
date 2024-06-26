@@ -73,6 +73,11 @@ IrGraph IrEngine::CreateGraphForState (const IrGraphState & ir_graph_state) cons
     }
 }
 
+IrEngine::IrEngine (juce::ThreadPool & thread_pool)
+    : thread_pool_ (thread_pool)
+{
+}
+
 IrEngine::Job::Job (const IrGraph & ir_graph,
                     const IrGraphState & state,
                     ProcessResultPool & result_pool,

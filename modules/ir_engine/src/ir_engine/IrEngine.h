@@ -16,7 +16,7 @@ public:
                                      IrGraphProcessor::BoxedBuffer render_result) = 0;
     };
 
-    IrEngine () = default;
+    IrEngine (juce::ThreadPool & thread_pool);
 
     using RenderFinishedCallback = std::function<void (IrGraphProcessor::BoxedBuffer)>;
     void RenderState (const IrGraphState & state);
@@ -52,8 +52,7 @@ private:
 
     IrGraphState last_rendered_state_;
     ProcessResultPool result_pool_;
-    juce::ThreadPool
-        thread_pool_; // We need to reconsider thread pools here due to removing all jobs.
+    juce::ThreadPool & thread_pool_;
 
     std::shared_ptr<BaseIrProcessor> base_ir_processor_ = std::make_shared<BaseIrProcessor> ();
     std::shared_ptr<RoomSizeProcessor> room_size_processor_ =
