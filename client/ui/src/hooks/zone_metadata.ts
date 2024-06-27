@@ -9,6 +9,8 @@ const TargetFormat = z.enum([
   "quadraphonic",
 ]);
 
+type TargetFormat = z.infer<typeof TargetFormat>;
+
 const PositionMap = z.object({
   centre: z.string().optional(),
   left: z.string().optional(),
@@ -67,4 +69,5 @@ export {
   ChannelFormat,
   IrSelection,
   IrSelectionOptional,
+  TargetFormat,
 };

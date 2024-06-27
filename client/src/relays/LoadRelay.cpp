@@ -12,13 +12,19 @@ LoadRelay::LoadRelay (juce::WebBrowserComponent & web_browser_component,
         juce::MessageManager::callAsync (
             [&]
             {
-                auto loading_ir = load_controller_.GetLoadingIr ();
-                json data = loading_ir;
-
+                json data = load_controller_.GetLoadingIr ();
                 JUCE_ASSERT_MESSAGE_THREAD;
                 web_browser_component_.emitEventIfBrowserIsVisible ("on_loading_ir_updated_native",
                                                                     {data.dump ()});
             });
+    };
+
+    load_controller_.OnValidTargetFormatsUpdated = [&]
+    {
+        json data = load_controller_.GetValidTargetFormats ();
+        JUCE_ASSERT_MESSAGE_THREAD;
+        web_browser_component_.emitEventIfBrowserIsVisible (
+            "on_valid_target_formats_updated_native", {data.dump ()});
     };
 }
 
@@ -46,9 +52,14 @@ LoadRelay::buildOptions (const juce::WebBrowserComponent::Options & initialOptio
         .withNativeFunction ("get_loading_ir_native",
                              [&] (auto & var, auto complete)
                              {
-                                 const auto & loading_zone = load_controller_.GetLoadingIr ();
-                                 json data = loading_zone;
-
+                                 json data = load_controller_.GetLoadingIr ();
+                                 JUCE_ASSERT_MESSAGE_THREAD;
+                                 complete ({data.dump ()});
+                             })
+        .withNativeFunction ("get_valid_target_formats_native",
+                             [&] (auto & var, auto complete)
+                             {
+                                 json data = load_controller_.GetValidTargetFormats ();
                                  JUCE_ASSERT_MESSAGE_THREAD;
                                  complete ({data.dump ()});
                              });

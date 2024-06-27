@@ -115,5 +115,19 @@ void LoadController::SetLoadingIr (const std::optional<IrSelection> & ir_selecti
     loading_ir_mutex_.lock ();
     loading_ir_ = ir_selection;
     loading_ir_mutex_.unlock ();
-    OnLoadingIrUpdated ();
+
+    if (OnLoadingIrUpdated)
+        OnLoadingIrUpdated ();
+}
+
+void LoadController::UpdateValidTargetFormats (const std::vector<TargetFormat> & target_formats)
+{
+    valid_target_formats_ = target_formats;
+    if (OnValidTargetFormatsUpdated)
+        OnValidTargetFormatsUpdated ();
+}
+
+const std::vector<TargetFormat> & LoadController::GetValidTargetFormats () const
+{
+    return valid_target_formats_;
 }

@@ -14,6 +14,10 @@ public:
     std::function<void ()> OnLoadingIrUpdated;
     const std::optional<IrSelection> & GetLoadingIr ();
 
+    void UpdateValidTargetFormats (const std::vector<TargetFormat> & target_formats);
+    const std::vector<TargetFormat> & GetValidTargetFormats () const;
+    std::function<void ()> OnValidTargetFormatsUpdated;
+
 private:
     void SetLoadingIr (const std::optional<IrSelection> & ir_selection);
 
@@ -22,6 +26,7 @@ private:
 
     static const juce::String kFilePickerDialogTitle;
     std::unique_ptr<juce::FileChooser> file_picker_;
+
     std::vector<TargetFormat> valid_target_formats_;
 
     std::mutex loading_ir_mutex_;

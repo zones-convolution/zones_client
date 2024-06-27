@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 
 import { LoadProvider, useLoadContext } from "@/context/LoadContext";
 import { useUserZones } from "@/hooks/use_user_zones";
+import { useValidTargetFormats } from "@/hooks/use_valid_target_formats";
 
 export const CategoryCard: FC<{
   category: string;
@@ -157,6 +158,8 @@ const UserIRs = () => {
 };
 
 const Browser = () => {
+  const { validTargetFormats } = useValidTargetFormats();
+
   return (
     <LoadProvider>
       <div className="flex flex-col gap-0.5 h-full">
@@ -171,6 +174,11 @@ const Browser = () => {
           <Button asChild className="ml-auto">
             <Link to="/create">Create Zone</Link>
           </Button>
+        </div>
+        <div className="flex flex-col">
+          {validTargetFormats.map((format) => (
+            <span>{format}</span>
+          ))}
         </div>
         <Categories />
         <UserIRs />
