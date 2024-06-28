@@ -33,6 +33,7 @@
     "react-hook-form": "^7.52.0",
     "react-knob-headless": "0.3.0",
     "react-router-dom": "^6.23.1",
+    "rxjs": "^7.8.1",
     "tailwind-merge": "^2.3.0",
     "tailwindcss-animate": "^1.0.7",
     "three": "^0.165.0",
