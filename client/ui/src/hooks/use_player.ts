@@ -1,21 +1,6 @@
-import { useEffect, useState } from "react";
-import { z } from "zod";
+import { useEffect, useRef, useState } from "react";
 
-import {
-  addNativeEventListener,
-  juce,
-  removeNativeEventListener,
-} from "@/lib/juce";
-
-const PlayerResource = z.enum(["snare", "numbers"]);
-export type PlayerResource = z.infer<typeof PlayerResource>;
-
-const PlayerState = z.object({
-  looping: z.boolean(),
-  playing: z.boolean(),
-  resource: PlayerResource,
-});
-type PlayerState = z.infer<typeof PlayerState>;
+import { PlayerIPC, PlayerResource, PlayerState } from "@/ipc/player_ipc";
 
 interface IUsePlayer {
   playerState: PlayerState;
@@ -24,63 +9,29 @@ interface IUsePlayer {
   selectResource: (resource: PlayerResource) => Promise<void>;
 }
 
-const playerUpdateNative = juce.getNativeFunction("player_update_native");
-const getPlayerStateNative = juce.getNativeFunction("get_player_state_native");
-const onPlayerUpdateNative = "on_player_update_native";
-
 const usePlayer = (): IUsePlayer => {
-  const [playerState, setPlayerState] = useState<PlayerState>({
-    playing: false,
-    looping: false,
-    resource: "snare",
-  });
+  const { current: playerIPC } = useRef(new PlayerIPC());
 
-  const playerUpdate = async (playerState: PlayerState) => {
-    await playerUpdateNative(JSON.stringify(playerState));
-  };
+  const [playerState, setPlayerState] = useState<PlayerState>(
+    playerIPC.state.value,
+  );
 
   const togglePlaying = async () => {
-    await playerUpdate({
-      ...playerState,
-      playing: !playerState.playing,
-    });
+    await playerIPC.update((state) => ({ ...state, playing: !state.playing }));
   };
 
   const toggleLooping = async () => {
     setPlayerState({ ...playerState, looping: !playerState.looping });
-    await playerUpdate({
-      ...playerState,
-      looping: !playerState.looping,
-    });
+    await playerIPC.update((state) => ({ ...state, looping: !state.looping }));
   };
 
   const selectResource = async (resource: PlayerResource) => {
-    await playerUpdate({ ...playerState, resource: resource });
-  };
-
-  const getPlayerState = async () => {
-    return await getPlayerStateNative();
-  };
-
-  const handleReceivePlayerState = (data: any) => {
-    try {
-      setPlayerState(PlayerState.parse(JSON.parse(data)));
-    } catch (err) {
-      console.error("Failed to parse PlayerState!", err);
-    }
+    await playerIPC.update((state) => ({ ...state, resource: resource }));
   };
 
   useEffect(() => {
-    getPlayerState().then(handleReceivePlayerState);
-
-    let registrationId = addNativeEventListener(
-      onPlayerUpdateNative,
-      handleReceivePlayerState,
-    );
-
-    return () => {
-      removeNativeEventListener(registrationId);
-    };
+    let sub = playerIPC.state.subscribe({ next: (s) => setPlayerState(s) });
+    return () => sub.unsubscribe();
   }, []);
 
   return {

@@ -1,4 +1,4 @@
-import { Subject } from "rxjs";
+import { BehaviorSubject, Subject } from "rxjs";
 import { z } from "zod";
 
 import { addNativeEventListener, juce } from "@/lib/juce";
@@ -19,12 +19,17 @@ const getPlayerStateNative = juce.getNativeFunction("get_player_state_native");
 const onPlayerUpdateNative = "on_player_update_native";
 
 export interface IPlayerIPC {
-  update: (playerState: PlayerState) => Promise<void>;
-  state: Subject<PlayerState>;
+  update: (set: (state: PlayerState) => PlayerState) => Promise<void>;
+  state: BehaviorSubject<PlayerState>;
 }
 
-class PlayerIPC implements IPlayerIPC {
-  public readonly state: Subject<PlayerState> = new Subject<PlayerState>();
+export class PlayerIPC implements IPlayerIPC {
+  public readonly state: BehaviorSubject<PlayerState> =
+    new BehaviorSubject<PlayerState>({
+      playing: false,
+      looping: false,
+      resource: "snare",
+    });
 
   constructor() {
     this.getPlayerState().then((playerState) => this.state.next(playerState));
@@ -39,7 +44,7 @@ class PlayerIPC implements IPlayerIPC {
     return this.handleReceivePlayerState(await getPlayerStateNative());
   };
 
-  update = async (playerState: PlayerState): Promise<void> => {
-    await playerUpdateNative(JSON.stringify(playerState));
+  update = async (set: (state: PlayerState) => PlayerState): Promise<void> => {
+    await playerUpdateNative(JSON.stringify(set(this.state.value)));
   };
 }
