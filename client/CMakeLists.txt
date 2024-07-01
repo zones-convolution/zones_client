@@ -22,6 +22,8 @@ set(SOURCES
         src/ProcessorContainer.h
         src/ProcessorContainer.cpp
         src/WithJuceEventLoop.h
+        src/relays/EngineRelay.h
+        src/relays/EngineRelay.cpp
         src/relays/PlayerRelay.h
         src/relays/PlayerRelay.cpp
         src/relays/PreferencesRelay.h

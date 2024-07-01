@@ -4,6 +4,8 @@ void ResamplerProcessor::Process (IrGraphProcessor::BoxedBuffer & input_buffer,
                                   juce::AudioBuffer<float> & output_buffer,
                                   const IrGraphState & state)
 {
+    juce::LagrangeInterpolator interpolator;
+
     auto ratio = state.resampler_ratio;
     jassert (ratio > 0.1f && ratio < 2.f);
 
@@ -15,10 +17,10 @@ void ResamplerProcessor::Process (IrGraphProcessor::BoxedBuffer & input_buffer,
 
     for (auto channel_index = 0; channel_index < num_channels; ++channel_index)
     {
-        interpolator_.reset ();
-        interpolator_.process (ratio,
-                               input_buffer->getReadPointer (channel_index),
-                               output_buffer.getWritePointer (channel_index),
-                               output_num_samples);
+        interpolator.reset ();
+        interpolator.process (ratio,
+                              input_buffer->getReadPointer (channel_index),
+                              output_buffer.getWritePointer (channel_index),
+                              output_num_samples);
     }
 }

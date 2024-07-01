@@ -1,10 +1,11 @@
-import { Home, Settings, Target } from "lucide-react";
+import { Home, Loader, Settings, Target } from "lucide-react";
 import { FC, ReactNode } from "react";
 import { NavLink, Outlet } from "react-router-dom";
 
 import { buttonVariants } from "@/components/ui/button";
 
 import ZonesLight from "@/assets/zones_light.svg";
+import { useEngineLoading } from "@/hooks/use_engine";
 import { cn } from "@/lib/utils";
 
 const NavButton: FC<{
@@ -29,6 +30,8 @@ const NavButton: FC<{
 };
 
 const Sidebar = () => {
+  const { irEngineLoading, convolutionEngineLoading } = useEngineLoading();
+
   return (
     <div className="bg-card flex flex-col gap-0.5">
       <img src={ZonesLight} className="w-[80px] ml-4" alt="Zones Logo Dark" />
@@ -44,6 +47,22 @@ const Sidebar = () => {
         <Settings className="w-4 h-4 mr-4" />
         Preferences
       </NavButton>
+
+      <div className="p-4 flex flex-col gap-4 mt-auto">
+        {irEngineLoading && (
+          <div className="flex items-center">
+            <Loader className="w-4 h-4 animate-spin mr-2 shrink-0" /> Impulse
+            Engine
+          </div>
+        )}
+
+        {convolutionEngineLoading && (
+          <div className="flex items-center">
+            <Loader className="w-4 h-4 animate-spin mr-2 shrink-0" />{" "}
+            Convolution Engine
+          </div>
+        )}
+      </div>
     </div>
   );
 };

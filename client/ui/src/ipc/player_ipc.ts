@@ -32,12 +32,12 @@ export class PlayerIPC implements IPlayerIPC {
     });
 
   constructor() {
-    this.getPlayerState().then((playerState) => this.state.next(playerState));
+    this.getPlayerState().then(this.handleReceivePlayerState);
     addNativeEventListener(onPlayerUpdateNative, this.handleReceivePlayerState);
   }
 
-  private handleReceivePlayerState = (data: any): PlayerState => {
-    return PlayerState.parse(JSON.parse(data));
+  private handleReceivePlayerState = (data: any) => {
+    this.state.next(PlayerState.parse(JSON.parse(data)));
   };
 
   private getPlayerState = async () => {

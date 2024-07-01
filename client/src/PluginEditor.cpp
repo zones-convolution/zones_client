@@ -83,11 +83,17 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (
     : AudioProcessorEditor (&processor)
     , processor_ (processor)
     , processor_container_ (processor_container)
+    , engine_relay_ (web_browser_component_,
+                     processor_container.ir_engine_,
+                     processor_container.convolution_engine_)
     , player_relay_ (web_browser_component_, processor_container.player_controller_)
     , preferences_relay_ (web_browser_component_, preferences_controller_)
     , user_zones_relay_ (web_browser_component_)
     , load_relay_ (web_browser_component_, processor_container.load_controller_)
     , web_browser_component_ (kBaseWebOptions.withOptionsFrom (wet_dry_mix_relay_)
+                                  .withOptionsFrom (resampler_relay_)
+                                  .withOptionsFrom (room_size_relay_)
+                                  .withOptionsFrom (engine_relay_)
                                   .withOptionsFrom (player_relay_)
                                   .withOptionsFrom (preferences_relay_)
                                   .withOptionsFrom (user_zones_relay_)
@@ -95,6 +101,12 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (
     , wet_dry_mix_attachment_ (
           *processor_container_.parameter_tree_.getParameter (ParameterTree::kDryWetMixParameterId),
           wet_dry_mix_relay_)
+    , resampler_attachment_ (
+          *processor_container_.parameter_tree_.getParameter (ParameterTree::kResamplerParameterId),
+          resampler_relay_)
+    , room_size_attachment_ (
+          *processor_container_.parameter_tree_.getParameter (ParameterTree::kRoomSizeParameterId),
+          room_size_relay_)
 
 {
     setResizable (true, true);
