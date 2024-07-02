@@ -36,11 +36,9 @@ void IrEngine::RenderState (const IrGraphState & state)
 
             for (auto itr = pending_renders_.begin (); itr != render_it;
                  ++itr) // invalidate old renders
-            {
                 thread_pool_.removeJob (*itr, true, 0);
-                itr = pending_renders_.erase (itr);
-            }
-            pending_renders_.erase (render_it);
+
+            pending_renders_.erase (pending_renders_.begin (), std::next (render_it));
 
             if (pending_renders_.empty ())
                 is_loading_ = false;
@@ -50,7 +48,7 @@ void IrEngine::RenderState (const IrGraphState & state)
                 {
                     if (OnLoadingUpdated)
                         OnLoadingUpdated ();
-
+                    
                     if (process_result.has_value ())
                     {
                         listeners_.call (

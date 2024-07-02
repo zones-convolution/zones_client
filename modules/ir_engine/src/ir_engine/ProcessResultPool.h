@@ -12,7 +12,7 @@ public:
     std::optional<IrGraphProcessor::BoxedBuffer> GetResult (const GraphStateKey & key);
     void CacheResult (const GraphStateKey & key, const IrGraphProcessor::BoxedBuffer & buffer);
     void RemoveUnusedKeys (const std::vector<GraphStateKey> & used_keys);
-    [[nodiscard]] int GetPoolSize () const;
+    [[nodiscard]] int GetPoolSize ();
 
 private:
     std::mutex mutex_;
