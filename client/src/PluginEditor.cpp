@@ -90,6 +90,8 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (
     , preferences_relay_ (web_browser_component_, preferences_controller_)
     , user_zones_relay_ (web_browser_component_)
     , load_relay_ (web_browser_component_, processor_container.load_controller_)
+    , metering_relay_ (processor_container.input_graph_metering_,
+                       processor_container.output_graph_metering_)
     , web_browser_component_ (kBaseWebOptions.withOptionsFrom (wet_dry_mix_relay_)
                                   .withOptionsFrom (resampler_relay_)
                                   .withOptionsFrom (room_size_relay_)
@@ -97,7 +99,8 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (
                                   .withOptionsFrom (player_relay_)
                                   .withOptionsFrom (preferences_relay_)
                                   .withOptionsFrom (user_zones_relay_)
-                                  .withOptionsFrom (load_relay_))
+                                  .withOptionsFrom (load_relay_)
+                                  .withOptionsFrom (metering_relay_))
     , wet_dry_mix_attachment_ (
           *processor_container_.parameter_tree_.getParameter (ParameterTree::kDryWetMixParameterId),
           wet_dry_mix_relay_)

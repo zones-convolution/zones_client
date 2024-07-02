@@ -32,6 +32,8 @@ set(SOURCES
         src/relays/UserZonesRelay.cpp
         src/relays/LoadRelay.h
         src/relays/LoadRelay.cpp
+        src/relays/MeteringRelay.h
+        src/relays/MeteringRelay.cpp
         src/controllers/UserZonesController.h
         src/controllers/UserZonesController.cpp
         src/controllers/LoadController.h

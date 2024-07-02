@@ -6,6 +6,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 
 import ZonesLight from "@/assets/zones_light.svg";
+import { Meter } from "@/components/meter";
 import { LoadProvider, useLoadContext } from "@/context/LoadContext";
 import { useEngineLoading } from "@/hooks/use_engine";
 import { cn } from "@/lib/utils";
@@ -73,6 +74,7 @@ const Sidebar = () => {
           </div>
         )}
       </div>
+      <Meter />
     </div>
   );
 };
