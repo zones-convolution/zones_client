@@ -19,6 +19,18 @@ LoadRelay::LoadRelay (juce::WebBrowserComponent & web_browser_component,
             });
     };
 
+    load_controller_.OnCurrentIrUpdated = [&]
+    {
+        juce::MessageManager::callAsync (
+            [&]
+            {
+                json data = load_controller_.GetCurrentIr ();
+                JUCE_ASSERT_MESSAGE_THREAD;
+                web_browser_component_.emitEventIfBrowserIsVisible ("on_current_ir_updated_native",
+                                                                    {data.dump ()});
+            });
+    };
+
     load_controller_.OnValidTargetFormatsUpdated = [&]
     {
         json data = load_controller_.GetValidTargetFormats ();
@@ -53,6 +65,13 @@ LoadRelay::buildOptions (const juce::WebBrowserComponent::Options & initialOptio
                              [&] (auto & var, auto complete)
                              {
                                  json data = load_controller_.GetLoadingIr ();
+                                 JUCE_ASSERT_MESSAGE_THREAD;
+                                 complete ({data.dump ()});
+                             })
+        .withNativeFunction ("get_current_ir_native",
+                             [&] (auto & var, auto complete)
+                             {
+                                 json data = load_controller_.GetCurrentIr ();
                                  JUCE_ASSERT_MESSAGE_THREAD;
                                  complete ({data.dump ()});
                              })

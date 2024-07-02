@@ -3,8 +3,10 @@ import { FC, ReactNode } from "react";
 import { NavLink, Outlet } from "react-router-dom";
 
 import { buttonVariants } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 
 import ZonesLight from "@/assets/zones_light.svg";
+import { LoadProvider, useLoadContext } from "@/context/LoadContext";
 import { useEngineLoading } from "@/hooks/use_engine";
 import { cn } from "@/lib/utils";
 
@@ -31,6 +33,7 @@ const NavButton: FC<{
 
 const Sidebar = () => {
   const { irEngineLoading, convolutionEngineLoading } = useEngineLoading();
+  const { currentIr } = useLoadContext();
 
   return (
     <div className="bg-card flex flex-col gap-0.5">
@@ -48,18 +51,25 @@ const Sidebar = () => {
         Preferences
       </NavButton>
 
-      <div className="p-4 flex flex-col gap-4 mt-auto">
+      <div className="p-4 flex flex-col gap-4 mt-auto overflow-hidden">
         {irEngineLoading && (
           <div className="flex items-center">
             <Loader className="w-4 h-4 animate-spin mr-2 shrink-0" /> Impulse
-            Engine
           </div>
         )}
 
         {convolutionEngineLoading && (
           <div className="flex items-center">
-            <Loader className="w-4 h-4 animate-spin mr-2 shrink-0" />{" "}
-            Convolution Engine
+            <Loader className="w-4 h-4 animate-spin mr-2 shrink-0" />
+            <p className="line-clamp-1">Convolver</p>
+          </div>
+        )}
+
+        {currentIr && (
+          <div className="flex flex-col gap-2">
+            <Separator />
+            <span className="text-base">{currentIr.ir.title}</span>
+            <span className="text-sm font-thin">{currentIr.zone.title}</span>
           </div>
         )}
       </div>
@@ -70,10 +80,12 @@ const Sidebar = () => {
 const Root = () => {
   return (
     <div className="flex flex-row h-screen bg-background" data-theme="dark">
-      <Sidebar />
-      <div className="w-full ml-0.5">
-        <Outlet />
-      </div>
+      <LoadProvider>
+        <Sidebar />
+        <div className="w-full ml-0.5">
+          <Outlet />
+        </div>
+      </LoadProvider>
     </div>
   );
 };

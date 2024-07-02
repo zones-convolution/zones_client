@@ -91,7 +91,8 @@ const ZoneCard: FC<{
   onLoad?: () => void;
   onView?: () => void;
   loading: boolean;
-}> = ({ category, imageUrl, rt60, onLoad, onView, loading }) => {
+  disabled: boolean;
+}> = ({ category, imageUrl, rt60, onLoad, onView, loading, disabled }) => {
   return (
     <div className="w-full h-full relative flex justify-between items-end">
       <img
@@ -104,7 +105,7 @@ const ZoneCard: FC<{
         <em className="text-xs font-thin ml-1">{rt60}s</em>
       </div>
       <div className="flex gap-2 p-2 w-fit h-fit rounded-md">
-        <Button variant="blur" onClick={onLoad} disabled={loading}>
+        <Button variant="blur" onClick={onLoad} disabled={loading || disabled}>
           {loading ? (
             <Loader className="w-4 h-4 animate-spin" />
           ) : (
@@ -121,7 +122,7 @@ const ZoneCard: FC<{
 
 const UserIRs = () => {
   const { userZones } = useUserZones();
-  const { load, loadingIr } = useLoadContext();
+  const { load, loadingIr, currentIr } = useLoadContext();
 
   return (
     <div className="flex flex-col w-full bg-card p-2 gap-4">
@@ -133,6 +134,10 @@ const UserIRs = () => {
             if (loadingIr)
               isLoadingZone = loadingIr.zone.title === userZone.title;
 
+            let isCurrentZone = false;
+            if (currentIr)
+              isCurrentZone = currentIr.zone.title == userZone.title;
+
             return (
               <div className="w-80" key={index}>
                 <ZoneCard
@@ -140,6 +145,7 @@ const UserIRs = () => {
                   imageUrl="https://picsum.photos/607"
                   rt60={1.2}
                   loading={isLoadingZone}
+                  disabled={isCurrentZone}
                   onLoad={async () => {
                     await load({
                       zone: userZone,
@@ -161,29 +167,27 @@ const Browser = () => {
   const { validTargetFormats } = useValidTargetFormats();
 
   return (
-    <LoadProvider>
-      <div className="flex flex-col gap-0.5 h-full">
-        <div className="flex w-full bg-card p-2 items-center">
-          <Button variant="ghost">
-            <ChevronLeft className="w-4 h-4" />
-          </Button>
-          <Button variant="ghost" className="mr-4">
-            <ChevronRight className="w-4 h-4" />
-          </Button>
-          Browser
-          <Button asChild className="ml-auto">
-            <Link to="/create">Create Zone</Link>
-          </Button>
-        </div>
-        <div className="flex flex-col">
-          {validTargetFormats.map((format) => (
-            <span>{format}</span>
-          ))}
-        </div>
-        <Categories />
-        <UserIRs />
+    <div className="flex flex-col gap-0.5 h-full">
+      <div className="flex w-full bg-card p-2 items-center">
+        <Button variant="ghost">
+          <ChevronLeft className="w-4 h-4" />
+        </Button>
+        <Button variant="ghost" className="mr-4">
+          <ChevronRight className="w-4 h-4" />
+        </Button>
+        Browser
+        <Button asChild className="ml-auto">
+          <Link to="/create">Create Zone</Link>
+        </Button>
       </div>
-    </LoadProvider>
+      <div className="flex flex-col">
+        {validTargetFormats.map((format) => (
+          <span>{format}</span>
+        ))}
+      </div>
+      <Categories />
+      <UserIRs />
+    </div>
   );
 };
 

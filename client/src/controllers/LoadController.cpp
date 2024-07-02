@@ -29,6 +29,7 @@ void LoadController::Load (const IrSelection & ir_selection,
 
             callback (load_result);
             SetLoadingIr (std::nullopt);
+            SetCurrentIr (ir_selection);
         });
 }
 
@@ -110,6 +111,12 @@ const std::optional<IrSelection> & LoadController::GetLoadingIr ()
     return loading_ir_;
 }
 
+const std::optional<IrSelection> & LoadController::GetCurrentIr ()
+{
+    std::lock_guard guard {current_ir_mutex_};
+    return current_ir_;
+}
+
 void LoadController::SetLoadingIr (const std::optional<IrSelection> & ir_selection)
 {
     loading_ir_mutex_.lock ();
@@ -118,6 +125,16 @@ void LoadController::SetLoadingIr (const std::optional<IrSelection> & ir_selecti
 
     if (OnLoadingIrUpdated)
         OnLoadingIrUpdated ();
+}
+
+void LoadController::SetCurrentIr (const std::optional<IrSelection> & ir_selection)
+{
+    current_ir_mutex_.lock ();
+    current_ir_ = ir_selection;
+    current_ir_mutex_.unlock ();
+
+    if (OnCurrentIrUpdated)
+        OnCurrentIrUpdated ();
 }
 
 void LoadController::UpdateValidTargetFormats (const std::vector<TargetFormat> & target_formats)

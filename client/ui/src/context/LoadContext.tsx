@@ -18,18 +18,25 @@ import {
 interface ILoadContext {
   load: (irSelection: IrSelection) => Promise<void>;
   loadingIr?: IrSelection;
+  currentIr?: IrSelection;
 }
 
 const LoadContext = createContext<ILoadContext | null>(null);
 
 const loadIrNative = juce.getNativeFunction("load_ir_native");
 const getLoadingIrNative = juce.getNativeFunction("get_loading_ir_native");
+const getCurrentIrNative = juce.getNativeFunction("get_current_ir_native");
 const onLoadingIrUpdatedNative = "on_loading_ir_updated_native";
+const onCurrentIrUpdatedNative = "on_current_ir_updated_native";
 
 export const LoadProvider: FC<{
   children: ReactNode;
 }> = ({ children }) => {
   const [loadingIr, setLoadingIr] = useState<IrSelection | undefined>(
+    undefined,
+  );
+
+  const [currentIr, setCurrentIr] = useState<IrSelection | undefined>(
     undefined,
   );
 
@@ -50,11 +57,23 @@ export const LoadProvider: FC<{
     return await getLoadingIrNative();
   };
 
+  const getCurrentIr = async () => {
+    return await getCurrentIrNative();
+  };
+
   const handleReceiveLoadingIr = (data: any) => {
     try {
       setLoadingIr(IrSelectionOptional.parse(JSON.parse(data)).irSelection);
     } catch (err) {
-      console.error("Failed to parse IrSelection!", err);
+      console.error("Failed to parse LoadingIr!", err);
+    }
+  };
+
+  const handleReceiveCurrentIr = (data: any) => {
+    try {
+      setCurrentIr(IrSelectionOptional.parse(JSON.parse(data)).irSelection);
+    } catch (err) {
+      console.error("Failed to parse CurrentIr!", err);
     }
   };
 
@@ -71,8 +90,21 @@ export const LoadProvider: FC<{
     };
   }, []);
 
+  useEffect(() => {
+    getCurrentIr().then(handleReceiveCurrentIr);
+
+    let registrationId = addNativeEventListener(
+      onCurrentIrUpdatedNative,
+      handleReceiveCurrentIr,
+    );
+
+    return () => {
+      removeNativeEventListener(registrationId);
+    };
+  }, []);
+
   return (
-    <LoadContext.Provider value={{ load, loadingIr }}>
+    <LoadContext.Provider value={{ load, loadingIr, currentIr }}>
       {children}
     </LoadContext.Provider>
   );
