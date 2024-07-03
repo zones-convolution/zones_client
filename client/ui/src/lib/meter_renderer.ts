@@ -19,7 +19,7 @@ const smoothedValue = (
 };
 
 const BarSmoothing = 200;
-const PeakSmoothing = 600;
+const PeakSmoothing = 400;
 const PeakFadeDurationMs = 2000;
 
 const updateChannelMeter = (
@@ -79,16 +79,26 @@ const buildChannelGroups = (targetGroups: ChannelGroups) => {
   return newGroups;
 };
 
+const deepCopyGroups = (groups: SmoothedChannelGroups) => {
+  return groups.map((grp) =>
+    grp.map((channel) => ({
+      ...channel,
+    })),
+  );
+};
+
 export const renderMeters = (
   groups: SmoothedChannelGroups,
   targetGroups: ChannelGroups,
   frameDelta: number,
 ): SmoothedChannelGroups => {
-  let newGroups;
+  let newGroups: SmoothedChannelGroups = [];
 
-  if (shouldBuildNewGroups(groups, targetGroups))
+  if (shouldBuildNewGroups(groups, targetGroups)) {
     newGroups = buildChannelGroups(targetGroups);
-  else newGroups = [...groups];
+  } else {
+    newGroups = deepCopyGroups(groups);
+  }
 
   for (let grpIndex = 0; grpIndex < newGroups.length; ++grpIndex) {
     let grp = newGroups[grpIndex];

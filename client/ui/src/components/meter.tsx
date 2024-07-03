@@ -15,7 +15,6 @@ const MeterBar: FC<{ peak: number; fill: number }> = ({ fill, peak }) => {
         className="absolute w-full h-1 bg-cyan-200"
         style={{
           bottom: `${peak * 100}%`,
-          transform: "translateY(50%)",
         }}
       />
     </div>
@@ -33,12 +32,12 @@ const Meter = () => {
     }, 20);
 
     let lastUpdate = 0;
-    let groups: SmoothedChannelGroups = [];
 
     const t = timer((elapsed) => {
       let frameDelta = elapsed - lastUpdate;
-      groups = renderMeters(groups, ipc.channelGroups, frameDelta);
-      setChannelGroups(groups);
+      setChannelGroups((groups) => {
+        return renderMeters(groups, ipc.channelGroups, frameDelta);
+      });
       lastUpdate = elapsed;
     });
 
