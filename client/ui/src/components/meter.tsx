@@ -26,15 +26,15 @@ const Meter = () => {
   const [channelGroups, setChannelGroups] = useState<SmoothedChannelGroups>([]);
 
   useEffect(() => {
-    const meterIPC = new MeteringIPC();
-    const meterRenderer = new MeterRenderer(meterIPC);
+    const ipc = new MeteringIPC();
+    const renderer = new MeterRenderer();
 
     const i = interval(async () => {
-      await meterIPC.update();
+      await ipc.update();
     }, 20);
 
     const t = timer((elapsed) => {
-      setChannelGroups([...meterRenderer.render()]);
+      setChannelGroups([...renderer.render(ipc.channelGroups)]);
     });
 
     return () => {

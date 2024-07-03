@@ -1,4 +1,4 @@
-import { ChannelMeter, MeteringIPC } from "@/ipc/metering_ipc";
+import { ChannelGroups, ChannelMeter, MeteringIPC } from "@/ipc/metering_ipc";
 
 interface ISmoothedChannelMeter {
   smoothedTarget: number;
@@ -48,20 +48,15 @@ const compare = (a1: number[], a2: number[]) =>
   a1.length == a2.length && a1.every((element, index) => element === a2[index]);
 
 export class MeterRenderer {
-  private readonly meteringIPC;
   private channelGroups: SmoothedChannelGroups = [];
 
-  constructor(meteringIPC: MeteringIPC) {
-    this.meteringIPC = meteringIPC;
-  }
-
-  public buildChannelGroupsIfUpdated = () => {
-    let ipcDimensions = this.meteringIPC.channelGroups.map((grp) => grp.length);
+  public buildChannelGroupsIfUpdated = (targetGroups: ChannelGroups) => {
+    let ipcDimensions = targetGroups.map((grp) => grp.length);
     let smoothedDimensions = this.channelGroups.map((grp) => grp.length);
 
     if (!compare(ipcDimensions, smoothedDimensions)) {
       this.channelGroups = [];
-      this.meteringIPC.channelGroups.forEach((grp) => {
+      targetGroups.forEach((grp) => {
         this.channelGroups.push(
           grp.map(() => ({
             smoothedTarget: 0.0,
@@ -73,15 +68,15 @@ export class MeterRenderer {
     }
   };
 
-  public render = (): SmoothedChannelGroups => {
-    this.buildChannelGroupsIfUpdated();
+  public render = (targetGroups: ChannelGroups): SmoothedChannelGroups => {
+    this.buildChannelGroupsIfUpdated(targetGroups);
 
     for (let grpIndex = 0; grpIndex < this.channelGroups.length; ++grpIndex) {
       let grp = this.channelGroups[grpIndex];
       for (let channelIndex = 0; channelIndex < grp.length; ++channelIndex) {
         updateChannelMeter(
           grp[channelIndex],
-          this.meteringIPC.channelGroups[grpIndex][channelIndex],
+          targetGroups[grpIndex][channelIndex],
         );
       }
     }
