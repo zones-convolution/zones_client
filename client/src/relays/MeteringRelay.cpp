@@ -12,14 +12,6 @@ static void to_json (json & data, const MeteringRelay::ChannelMetering & channel
     };
 }
 
-static void to_json (json & data, const MeteringRelay::Metering & metering)
-{
-    data = json {
-        {"inputChannels", metering.input_channels},
-        {"outputChannels", metering.output_channels},
-    };
-}
-
 MeteringRelay::MeteringRelay (AudioGraphMetering & input_metering,
                               AudioGraphMetering & output_metering)
     : input_metering_ (input_metering)
@@ -36,23 +28,23 @@ MeteringRelay::buildOptions (const juce::WebBrowserComponent::Options & initialO
         {
             JUCE_ASSERT_MESSAGE_THREAD;
 
-            Metering metering;
+            std::vector<std::vector<ChannelMetering>> metering {{}, {}};
+
             for (auto channel_index = 0; channel_index < input_metering_.GetNumChannels ();
                  ++channel_index)
-                metering.input_channels.push_back ({
+                metering [0].push_back ({
                     .is_clipping = input_metering_.GetChannelClipping (channel_index),
                     .peak_value = input_metering_.GetChannelPeak (channel_index),
                 });
 
             for (auto channel_index = 0; channel_index < output_metering_.GetNumChannels ();
                  ++channel_index)
-                metering.output_channels.push_back ({
+                metering [1].push_back ({
                     .is_clipping = output_metering_.GetChannelClipping (channel_index),
                     .peak_value = output_metering_.GetChannelPeak (channel_index),
                 });
 
             json data = metering;
-
             complete ({data.dump ()});
         });
 }

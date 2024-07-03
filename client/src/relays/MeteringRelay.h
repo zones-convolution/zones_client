@@ -19,12 +19,6 @@ public:
         float peak_value;
     };
 
-    struct Metering
-    {
-        std::vector<ChannelMetering> input_channels;
-        std::vector<ChannelMetering> output_channels;
-    };
-
 private:
     AudioGraphMetering & input_metering_;
     AudioGraphMetering & output_metering_;
