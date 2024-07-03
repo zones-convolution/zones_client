@@ -18,16 +18,21 @@ const smoothedValue = (
   return valueToSmooth + step;
 };
 
+const BarSmoothing = 200;
+const PeakSmoothing = 600;
+const PeakFadeDurationMs = 2000;
+
 const updateChannelMeter = (
   smoothed: ISmoothedChannelMeter,
   target: ChannelMeter,
+  frameDelta: number,
 ) => {
   let peak = target.peakValue;
   let isClipping = target.isClipping;
 
   smoothed.smoothedTarget =
     peak < smoothed.smoothedTarget
-      ? smoothedValue(smoothed.smoothedTarget, peak, 80.0)
+      ? smoothedValue(smoothed.smoothedTarget, peak, BarSmoothing / frameDelta)
       : peak;
 
   let smoothedPeak = smoothed.smoothedPeak;
@@ -36,11 +41,13 @@ const updateChannelMeter = (
     smoothed.smoothedPeak = peak;
     smoothed.peakFadeTimer = 0;
   } else {
-    smoothed.peakFadeTimer += 10;
-    const kPeakFadeDurationMs = 1000;
-
-    if (smoothed.peakFadeTimer >= kPeakFadeDurationMs)
-      smoothed.smoothedPeak = smoothedValue(smoothed.smoothedPeak, 0, 100.0);
+    smoothed.peakFadeTimer += frameDelta;
+    if (smoothed.peakFadeTimer >= PeakFadeDurationMs)
+      smoothed.smoothedPeak = smoothedValue(
+        smoothed.smoothedPeak,
+        0,
+        PeakSmoothing / frameDelta,
+      );
   }
 };
 
@@ -75,6 +82,7 @@ const buildChannelGroups = (targetGroups: ChannelGroups) => {
 export const renderMeters = (
   groups: SmoothedChannelGroups,
   targetGroups: ChannelGroups,
+  frameDelta: number,
 ): SmoothedChannelGroups => {
   let newGroups;
 
@@ -92,6 +100,7 @@ export const renderMeters = (
       updateChannelMeter(
         grp[channelIndex],
         targetGroups[grpIndex][channelIndex],
+        frameDelta,
       );
     }
   }

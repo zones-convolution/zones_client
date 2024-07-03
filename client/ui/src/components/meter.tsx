@@ -32,8 +32,14 @@ const Meter = () => {
       await ipc.update();
     }, 20);
 
+    let lastUpdate = 0;
+    let groups: SmoothedChannelGroups = [];
+
     const t = timer((elapsed) => {
-      setChannelGroups((groups) => renderMeters(groups, ipc.channelGroups));
+      let frameDelta = elapsed - lastUpdate;
+      groups = renderMeters(groups, ipc.channelGroups, frameDelta);
+      setChannelGroups(groups);
+      lastUpdate = elapsed;
     });
 
     return () => {
