@@ -12,7 +12,7 @@ const MeterBar: FC<{ peak: number; fill: number }> = ({ fill, peak }) => {
         style={{ height: `${fill * 100}%` }}
       />
       <div
-        className="absolute w-full h-1 bg-cyan-200"
+        className="absolute w-full h-0.5 bg-cyan-200"
         style={{
           bottom: `${peak * 100}%`,
         }}
@@ -48,7 +48,7 @@ const Meter = () => {
   }, []);
 
   return (
-    <div className="w-full h-80 flex flex-row gap-2">
+    <div className="w-full h-full flex flex-row gap-2">
       {channelGroups.map((group, index) => {
         return (
           <div className="flex flex-row gap-0.5 w-full" key={index}>

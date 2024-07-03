@@ -1,6 +1,12 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
-import { PlayerIPC, PlayerResource, PlayerState } from "@/ipc/player_ipc";
+import {
+  defaultPlayerState,
+  PlayerResource,
+  PlayerState,
+  playerUpdateListener,
+  updatePlayerState,
+} from "@/ipc/player_ipc";
 
 interface IUsePlayer {
   playerState: PlayerState;
@@ -10,28 +16,29 @@ interface IUsePlayer {
 }
 
 const usePlayer = (): IUsePlayer => {
-  const { current: playerIPC } = useRef(new PlayerIPC());
-
-  const [playerState, setPlayerState] = useState<PlayerState>(
-    playerIPC.state.value,
-  );
+  const [playerState, setPlayerState] =
+    useState<PlayerState>(defaultPlayerState);
 
   const togglePlaying = async () => {
-    await playerIPC.update((state) => ({ ...state, playing: !state.playing }));
+    await updatePlayerState({ ...playerState, playing: !playerState.playing });
   };
 
   const toggleLooping = async () => {
-    setPlayerState({ ...playerState, looping: !playerState.looping });
-    await playerIPC.update((state) => ({ ...state, looping: !state.looping }));
+    let newState: PlayerState = {
+      ...playerState,
+      looping: !playerState.looping,
+    };
+
+    setPlayerState(newState);
+    await updatePlayerState(newState);
   };
 
   const selectResource = async (resource: PlayerResource) => {
-    await playerIPC.update((state) => ({ ...state, resource: resource }));
+    await updatePlayerState({ ...playerState, resource: resource });
   };
 
   useEffect(() => {
-    let sub = playerIPC.state.subscribe({ next: (s) => setPlayerState(s) });
-    return () => sub.unsubscribe();
+    return playerUpdateListener((s) => setPlayerState(s));
   }, []);
 
   return {

@@ -1,7 +1,10 @@
-import { BehaviorSubject, Subject } from "rxjs";
 import { z } from "zod";
 
-import { addNativeEventListener, juce } from "@/lib/juce";
+import {
+  addNativeEventListener,
+  juce,
+  removeNativeEventListener,
+} from "@/lib/juce";
 
 const PlayerResource = z.enum(["snare", "numbers"]);
 export type PlayerResource = z.infer<typeof PlayerResource>;
@@ -18,33 +21,38 @@ const playerUpdateNative = juce.getNativeFunction("player_update_native");
 const getPlayerStateNative = juce.getNativeFunction("get_player_state_native");
 const onPlayerUpdateNative = "on_player_update_native";
 
-export interface IPlayerIPC {
-  update: (set: (state: PlayerState) => PlayerState) => Promise<void>;
-  state: BehaviorSubject<PlayerState>;
-}
+export const defaultPlayerState: PlayerState = {
+  playing: false,
+  looping: false,
+  resource: "snare",
+};
 
-export class PlayerIPC implements IPlayerIPC {
-  public readonly state: BehaviorSubject<PlayerState> =
-    new BehaviorSubject<PlayerState>({
-      playing: false,
-      looping: false,
-      resource: "snare",
-    });
-
-  constructor() {
-    this.getPlayerState().then(this.handleReceivePlayerState);
-    addNativeEventListener(onPlayerUpdateNative, this.handleReceivePlayerState);
+const handleReceivePlayerState = (data: any) => {
+  try {
+    return PlayerState.parse(JSON.parse(data));
+  } catch (err) {
+    console.error("Failed to parse PlayerIPC!", err);
   }
 
-  private handleReceivePlayerState = (data: any) => {
-    this.state.next(PlayerState.parse(JSON.parse(data)));
-  };
+  return defaultPlayerState;
+};
 
-  private getPlayerState = async () => {
-    return this.handleReceivePlayerState(await getPlayerStateNative());
-  };
+export const getPlayerState = async () => {
+  return handleReceivePlayerState(await getPlayerStateNative());
+};
 
-  update = async (set: (state: PlayerState) => PlayerState): Promise<void> => {
-    await playerUpdateNative(JSON.stringify(set(this.state.value)));
+export const updatePlayerState = async (state: PlayerState): Promise<void> => {
+  await playerUpdateNative(JSON.stringify(state));
+};
+
+export const playerUpdateListener = (
+  onUpdate: (state: PlayerState) => void,
+) => {
+  const listener = addNativeEventListener(onPlayerUpdateNative, (data: any) =>
+    onUpdate(handleReceivePlayerState(data)),
+  );
+
+  return () => {
+    removeNativeEventListener(listener);
   };
-}
+};

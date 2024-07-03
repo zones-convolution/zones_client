@@ -30,7 +30,6 @@ const useEngineLoading = (): EngineLoading => {
   };
 
   const handleReceiveEngineLoading = (data: any) => {
-    console.log("Engine loading state updated");
     try {
       setEngineLoading(EngineLoading.parse(JSON.parse(data)));
     } catch (err) {

@@ -74,7 +74,9 @@ const Sidebar = () => {
           </div>
         )}
       </div>
-      <Meter />
+      <div className="h-60 w-full p-2">
+        <Meter />
+      </div>
     </div>
   );
 };
