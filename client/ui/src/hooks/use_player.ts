@@ -6,6 +6,7 @@ import {
   PlayerState,
   playerUpdateListener,
   updatePlayerState,
+  getPlayerState,
 } from "@/ipc/player_ipc";
 
 interface IUsePlayer {
@@ -38,6 +39,7 @@ const usePlayer = (): IUsePlayer => {
   };
 
   useEffect(() => {
+    getPlayerState().then(setPlayerState);
     return playerUpdateListener((s) => setPlayerState(s));
   }, []);
 
