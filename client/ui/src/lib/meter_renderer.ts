@@ -47,40 +47,54 @@ const updateChannelMeter = (
 const compare = (a1: number[], a2: number[]) =>
   a1.length == a2.length && a1.every((element, index) => element === a2[index]);
 
-export class MeterRenderer {
-  private channelGroups: SmoothedChannelGroups = [];
+const shouldBuildNewGroups = (
+  groups: SmoothedChannelGroups,
+  targetGroups: ChannelGroups,
+) => {
+  let ipcDimensions = targetGroups.map((grp) => grp.length);
+  let smoothedDimensions = groups.map((grp) => grp.length);
+  return !compare(ipcDimensions, smoothedDimensions);
+};
 
-  public buildChannelGroupsIfUpdated = (targetGroups: ChannelGroups) => {
-    let ipcDimensions = targetGroups.map((grp) => grp.length);
-    let smoothedDimensions = this.channelGroups.map((grp) => grp.length);
+const buildChannelGroups = (targetGroups: ChannelGroups) => {
+  let newGroups: SmoothedChannelGroups = [];
 
-    if (!compare(ipcDimensions, smoothedDimensions)) {
-      this.channelGroups = [];
-      targetGroups.forEach((grp) => {
-        this.channelGroups.push(
-          grp.map(() => ({
-            smoothedTarget: 0.0,
-            smoothedPeak: 0.0,
-            peakFadeTimer: 0,
-          })),
-        );
-      });
+  targetGroups.forEach((grp) => {
+    newGroups.push(
+      grp.map(() => ({
+        smoothedTarget: 0.0,
+        smoothedPeak: 0.0,
+        peakFadeTimer: 0,
+      })),
+    );
+  });
+
+  return newGroups;
+};
+
+export const renderMeters = (
+  groups: SmoothedChannelGroups,
+  targetGroups: ChannelGroups,
+): SmoothedChannelGroups => {
+  let newGroups;
+
+  if (shouldBuildNewGroups(groups, targetGroups))
+    newGroups = buildChannelGroups(targetGroups);
+  else newGroups = [...groups];
+
+  for (let grpIndex = 0; grpIndex < newGroups.length; ++grpIndex) {
+    let grp = newGroups[grpIndex];
+    for (
+      let channelIndex = 0;
+      channelIndex < newGroups.length;
+      ++channelIndex
+    ) {
+      updateChannelMeter(
+        grp[channelIndex],
+        targetGroups[grpIndex][channelIndex],
+      );
     }
-  };
+  }
 
-  public render = (targetGroups: ChannelGroups): SmoothedChannelGroups => {
-    this.buildChannelGroupsIfUpdated(targetGroups);
-
-    for (let grpIndex = 0; grpIndex < this.channelGroups.length; ++grpIndex) {
-      let grp = this.channelGroups[grpIndex];
-      for (let channelIndex = 0; channelIndex < grp.length; ++channelIndex) {
-        updateChannelMeter(
-          grp[channelIndex],
-          targetGroups[grpIndex][channelIndex],
-        );
-      }
-    }
-
-    return this.channelGroups;
-  };
-}
+  return newGroups;
+};

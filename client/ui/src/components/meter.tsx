@@ -1,8 +1,8 @@
-import { interval, Timer, timer } from "d3";
+import { interval, timer } from "d3";
 import { FC, useEffect, useState } from "react";
 
 import { MeteringIPC } from "@/ipc/metering_ipc";
-import { MeterRenderer, SmoothedChannelGroups } from "@/lib/meter_renderer";
+import { renderMeters, SmoothedChannelGroups } from "@/lib/meter_renderer";
 
 const MeterBar: FC<{ peak: number; fill: number }> = ({ fill, peak }) => {
   return (
@@ -27,14 +27,13 @@ const Meter = () => {
 
   useEffect(() => {
     const ipc = new MeteringIPC();
-    const renderer = new MeterRenderer();
 
     const i = interval(async () => {
       await ipc.update();
     }, 20);
 
     const t = timer((elapsed) => {
-      setChannelGroups([...renderer.render(ipc.channelGroups)]);
+      setChannelGroups((groups) => renderMeters(groups, ipc.channelGroups));
     });
 
     return () => {
