@@ -4,17 +4,26 @@ import { FC, useEffect, useState } from "react";
 import { ChannelGroups, getMetering } from "@/ipc/metering_ipc";
 import { renderMeters, SmoothedChannelGroups } from "@/lib/meter_renderer";
 
+const gradient = `linear-gradient(to top, rgb(75, 217, 102), rgb(255, 149, 0)`;
+
 const MeterBar: FC<{ peak: number; fill: number }> = ({ fill, peak }) => {
+  const barWidth = 1;
+
   return (
     <div className="h-full w-full border relative">
       <div
-        className="absolute w-full bg-yellow-200 bottom-0"
-        style={{ height: `${fill * 100}%` }}
-      />
-      <div
-        className="absolute w-full h-0.5 bg-cyan-200"
+        className="absolute w-full h-full"
         style={{
-          bottom: `${peak * 100}%`,
+          background: gradient,
+          clipPath: `inset(${(1 - fill) * 100}% 0px 0px)`,
+        }}
+      />
+
+      <div
+        className="absolute w-full h-full"
+        style={{
+          background: gradient,
+          clipPath: `inset(${(1 - peak) * 100}% 0px ${peak * 100 - barWidth}% 0px)`,
         }}
       />
     </div>
@@ -30,7 +39,7 @@ const Meter = () => {
 
     const updateTimer = interval(async () => {
       targetGroups = await getMetering();
-    }, 100);
+    }, 10);
 
     const renderTimer = timer((elapsed) => {
       let frameDelta = elapsed - lastUpdate;

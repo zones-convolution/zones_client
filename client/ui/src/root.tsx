@@ -52,7 +52,7 @@ const Sidebar = () => {
         Preferences
       </NavButton>
 
-      <div className="p-4 flex flex-col gap-4 mt-auto overflow-hidden">
+      <div className="px-2 flex flex-col gap-4 mt-auto overflow-hidden">
         {irEngineLoading && (
           <div className="flex items-center">
             <Loader className="w-4 h-4 animate-spin mr-2 shrink-0" /> Impulse

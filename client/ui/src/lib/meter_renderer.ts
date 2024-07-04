@@ -1,4 +1,4 @@
-import { ChannelGroups, ChannelMeter, MeteringIPC } from "@/ipc/metering_ipc";
+import { ChannelGroups, ChannelMeter } from "@/ipc/metering_ipc";
 
 interface ISmoothedChannelMeter {
   smoothedTarget: number;
