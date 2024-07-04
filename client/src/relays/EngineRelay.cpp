@@ -40,14 +40,9 @@ EngineRelay::buildOptions (const juce::WebBrowserComponent::Options & initialOpt
 
 void EngineRelay::OnEngineUpdatedEmitEvent ()
 {
-    juce::MessageManager::callAsync (
-        [&]
-        {
-            json data =
-                EngineLoading {.convolution_engine_loading = convolution_engine_.IsLoading (),
+    json data = EngineLoading {.convolution_engine_loading = convolution_engine_.IsLoading (),
                                .ir_engine_loading = ir_engine_.IsLoading ()};
-            JUCE_ASSERT_MESSAGE_THREAD;
-            web_browser_component_.emitEventIfBrowserIsVisible ("on_engine_loading_updated",
-                                                                {data.dump ()});
-        });
+    JUCE_ASSERT_MESSAGE_THREAD;
+    web_browser_component_.emitEventIfBrowserIsVisible ("on_engine_loading_updated",
+                                                        {data.dump ()});
 }

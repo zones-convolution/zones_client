@@ -27,7 +27,8 @@ void LoadController::Load (const IrSelection & ir_selection,
             {
             }
 
-            callback (load_result);
+            juce::MessageManager::callAsync ([callback, load_result] { callback (load_result); });
+
             SetLoadingIr (std::nullopt);
             SetCurrentIr (ir_selection);
         });

@@ -83,7 +83,7 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (
     : AudioProcessorEditor (&processor)
     , processor_ (processor)
     , processor_container_ (processor_container)
-    , parameter_relay_ (web_browser_component_, processor_container.parameter_tree_)
+    , parameter_relay_ (web_browser_component_)
     , engine_relay_ (web_browser_component_,
                      processor_container.ir_engine_,
                      processor_container.convolution_engine_)
@@ -101,6 +101,7 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (
                                   .withOptionsFrom (load_relay_)
                                   .withOptionsFrom (metering_relay_)
                                   .withOptionsFrom (resize_relay_))
+    , parameter_attachments_ (parameter_relay_, processor_container.parameter_tree_)
 
 {
     setResizable (true, false);

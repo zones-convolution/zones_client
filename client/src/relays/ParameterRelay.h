@@ -4,11 +4,14 @@
 
 #include <juce_gui_extra/juce_gui_extra.h>
 
+class ParameterAttachments;
+
 class ParameterRelay : public OptionsBuilder<juce::WebBrowserComponent::Options>
 {
 public:
-    ParameterRelay (juce::WebBrowserComponent & web_browser_component,
-                    juce::AudioProcessorValueTreeState & parameter_tree);
+    friend class ParameterAttachments;
+
+    ParameterRelay (juce::WebBrowserComponent & web_browser_component);
     ~ParameterRelay () override = default;
 
     juce::WebBrowserComponent::Options
@@ -23,7 +26,20 @@ private:
                                            ParameterTree::kResamplerParameterId};
     juce::WebSliderRelay room_size_relay_ {web_browser_component_,
                                            ParameterTree::kRoomSizeParameterId};
+};
 
+/**
+ * This is annoying that this is needed. It appears that the destruction order of this needs to come
+ * before the web browser component. However relays should appear before the construction of the
+ * browser.
+ */
+class ParameterAttachments
+{
+public:
+    ParameterAttachments (ParameterRelay & parameter_relay,
+                          juce::AudioProcessorValueTreeState & parameter_tree);
+
+private:
     juce::WebSliderParameterAttachment wet_dry_mix_attachment_;
     juce::WebSliderParameterAttachment resampler_attachment_;
     juce::WebSliderParameterAttachment room_size_attachment_;

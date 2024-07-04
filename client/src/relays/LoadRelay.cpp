@@ -9,6 +9,7 @@ LoadRelay::LoadRelay (juce::WebBrowserComponent & web_browser_component,
 {
     load_controller_.OnLoadingIrUpdated = [&]
     {
+        // NEED TO REVISIT THIS, THIS PATTERN ISN"T OKAY AND WILL CAUSE CRASHES
         juce::MessageManager::callAsync (
             [&]
             {
@@ -21,6 +22,7 @@ LoadRelay::LoadRelay (juce::WebBrowserComponent & web_browser_component,
 
     load_controller_.OnCurrentIrUpdated = [&]
     {
+        // NEED TO REVISIT THIS, THIS PATTERN ISN"T OKAY AND WILL CAUSE CRASHES
         juce::MessageManager::callAsync (
             [&]
             {
@@ -53,12 +55,8 @@ LoadRelay::buildOptions (const juce::WebBrowserComponent::Options & initialOptio
                 load_controller_.Load (ir_selection,
                                        [complete, ir_selection] (bool result)
                                        {
-                                           juce::MessageManager::callAsync (
-                                               [result, complete]
-                                               {
-                                                   JUCE_ASSERT_MESSAGE_THREAD;
-                                                   complete ({result});
-                                               });
+                                           JUCE_ASSERT_MESSAGE_THREAD;
+                                           complete ({result});
                                        });
             })
         .withNativeFunction ("get_loading_ir_native",

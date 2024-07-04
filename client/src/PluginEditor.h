@@ -63,5 +63,7 @@ private:
 
     SinglePageBrowser web_browser_component_;
 
+    ParameterAttachments parameter_attachments_;
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioPluginAudioProcessorEditor)
 };
