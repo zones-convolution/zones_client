@@ -1,53 +1,19 @@
 import { useEffect, useState } from "react";
-import { z } from "zod";
 
 import {
-  addNativeEventListener,
-  juce,
-  removeNativeEventListener,
-} from "@/lib/juce";
-
-const EngineLoading = z.object({
-  convolutionEngineLoading: z.boolean(),
-  irEngineLoading: z.boolean(),
-});
-
-type EngineLoading = z.infer<typeof EngineLoading>;
-
-const getEngineLoadingNative = juce.getNativeFunction(
-  "get_engine_loading_native",
-);
-const onEngineLoadingUpdated = "on_engine_loading_updated";
+  defaultEngineLoading,
+  EngineLoading,
+  engineUpdateListener,
+  getEngineLoading,
+} from "@/ipc/engine_ipc";
 
 const useEngineLoading = (): EngineLoading => {
-  const [engineLoading, setEngineLoading] = useState<EngineLoading>({
-    convolutionEngineLoading: false,
-    irEngineLoading: false,
-  });
-
-  const getEngineLoading = async () => {
-    return await getEngineLoadingNative();
-  };
-
-  const handleReceiveEngineLoading = (data: any) => {
-    try {
-      setEngineLoading(EngineLoading.parse(JSON.parse(data)));
-    } catch (err) {
-      console.error("Failed to parse EngineLoading!", err);
-    }
-  };
+  const [engineLoading, setEngineLoading] =
+    useState<EngineLoading>(defaultEngineLoading);
 
   useEffect(() => {
-    getEngineLoading().then(handleReceiveEngineLoading);
-
-    let registrationId = addNativeEventListener(
-      onEngineLoadingUpdated,
-      handleReceiveEngineLoading,
-    );
-
-    return () => {
-      removeNativeEventListener(registrationId);
-    };
+    getEngineLoading().then(setEngineLoading);
+    return engineUpdateListener(setEngineLoading);
   }, []);
 
   return engineLoading;

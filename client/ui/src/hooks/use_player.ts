@@ -40,7 +40,7 @@ const usePlayer = (): IUsePlayer => {
 
   useEffect(() => {
     getPlayerState().then(setPlayerState);
-    return playerUpdateListener((s) => setPlayerState(s));
+    return playerUpdateListener(setPlayerState);
   }, []);
 
   return {
