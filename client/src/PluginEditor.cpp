@@ -100,7 +100,8 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (
                                   .withOptionsFrom (preferences_relay_)
                                   .withOptionsFrom (user_zones_relay_)
                                   .withOptionsFrom (load_relay_)
-                                  .withOptionsFrom (metering_relay_))
+                                  .withOptionsFrom (metering_relay_)
+                                  .withOptionsFrom (resize_relay_))
     , wet_dry_mix_attachment_ (
           *processor_container_.parameter_tree_.getParameter (ParameterTree::kDryWetMixParameterId),
           wet_dry_mix_relay_)
@@ -112,13 +113,13 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (
           room_size_relay_)
 
 {
-    setResizable (true, true);
+    setResizable (true, false);
     setResizeLimits (kWindowMinimumWidth,
                      static_cast<int> (kWindowMinimumWidth * kPreferredAspectRatio),
                      kWindowMaxWidth,
                      static_cast<int> (kWindowMaxWidth * kPreferredAspectRatio));
     setSize (1280, 600);
-
+    resize_relay_.Setup (this, getConstrainer ());
     asset_directory_ = GetAssetsDirectory ();
 
 #if DEV_LOCALHOST

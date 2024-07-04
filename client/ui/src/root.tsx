@@ -8,6 +8,7 @@ import { Separator } from "@/components/ui/separator";
 import ZonesLight from "@/assets/zones_light.svg";
 import { DiscreteLevelLayout } from "@/components/discrete_level_layout";
 import { Meter } from "@/components/meter";
+import { ResizeHandle } from "@/components/resize_handle";
 import { LoadProvider, useLoadContext } from "@/context/LoadContext";
 import { useEngineLoading } from "@/hooks/use_engine";
 import { cn } from "@/lib/utils";
@@ -76,8 +77,8 @@ const Sidebar = () => {
         )}
       </div>
       <div className="h-60 w-full p-2">
-        {/*<Meter />*/}
-        <DiscreteLevelLayout levels={[0, -3, -6, -18, -30, -60]} />
+        <Meter />
+        {/*<DiscreteLevelLayout levels={[0, -3, -6, -18, -30, -60]} />*/}
       </div>
     </div>
   );
@@ -85,13 +86,17 @@ const Sidebar = () => {
 
 const Root = () => {
   return (
-    <div className="flex flex-row h-screen bg-background" data-theme="dark">
+    <div
+      className="flex flex-row h-screen bg-background relative"
+      data-theme="dark"
+    >
       <LoadProvider>
         <Sidebar />
         <div className="w-full ml-0.5">
           <Outlet />
         </div>
       </LoadProvider>
+      <ResizeHandle />
     </div>
   );
 };
