@@ -4,6 +4,7 @@ interface ISmoothedChannelMeter {
   smoothedTarget: number;
   smoothedPeak: number;
   peakFadeTimer: number;
+  clipping: boolean;
 }
 
 export type SmoothedChannelGroups = ISmoothedChannelMeter[][];
@@ -29,20 +30,14 @@ const updateChannelMeter = (
   frameDelta: number,
 ) => {
   let peak = target.peakValue;
-  let isClipping = target.isClipping;
 
-  smoothed.smoothedTarget =
-    peak < smoothed.smoothedTarget
-      ? smoothedValue(
-          smoothed.smoothedTarget,
-          peak,
-          BarSmoothing / frameDelta + 1.0,
-        )
-      : smoothedValue(
-          smoothed.smoothedTarget,
-          peak,
-          BarUpSmoothing / frameDelta + 1.0,
-        );
+  smoothed.smoothedTarget = smoothedValue(
+    smoothed.smoothedTarget,
+    peak,
+    (peak < smoothed.smoothedTarget ? BarSmoothing : BarUpSmoothing) /
+      frameDelta +
+      1.0,
+  );
 
   let smoothedPeak = smoothed.smoothedPeak;
 
@@ -62,6 +57,8 @@ const updateChannelMeter = (
         PeakSmoothing / frameDelta + 1.0,
       );
   }
+
+  smoothed.clipping = target.isClipping;
 };
 
 const compare = (a1: number[], a2: number[]) =>
@@ -85,6 +82,7 @@ const buildChannelGroups = (targetGroups: ChannelGroups) => {
         smoothedTarget: 0.0,
         smoothedPeak: 0.0,
         peakFadeTimer: 0,
+        clipping: false,
       })),
     );
   });

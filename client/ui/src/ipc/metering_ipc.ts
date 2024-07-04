@@ -13,6 +13,9 @@ const ChannelGroups = z.array(z.array(ChannelMeter));
 export type ChannelGroups = z.infer<typeof ChannelGroups>;
 
 const getMeteringNative = juce.getNativeFunction("get_metering_native");
+const resetChannelClippingNative = juce.getNativeFunction(
+  "reset_channel_clipping_native",
+);
 
 const handleReceiveMetering = (data: any): ChannelGroups => {
   try {
@@ -26,4 +29,13 @@ const handleReceiveMetering = (data: any): ChannelGroups => {
 
 export const getMetering = async () => {
   return handleReceiveMetering(await getMeteringNative());
+};
+
+export const resetChannelClipping = async (
+  groupIndex: number,
+  channelIndex: number,
+) => {
+  await resetChannelClippingNative(
+    JSON.stringify({ groupIndex: groupIndex, channelIndex: channelIndex }),
+  );
 };

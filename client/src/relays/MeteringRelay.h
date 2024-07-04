@@ -19,6 +19,12 @@ public:
         float peak_value;
     };
 
+    struct ResetChannelClipping
+    {
+        int group_index;
+        int channel_index;
+    };
+
 private:
     AudioGraphMetering & input_metering_;
     AudioGraphMetering & output_metering_;
