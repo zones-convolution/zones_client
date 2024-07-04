@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 
-import { LoadProvider, useLoadContext } from "@/context/LoadContext";
+import { LoadProvider, useLoadContext } from "@/context/load_context";
 import { useUserZones } from "@/hooks/use_user_zones";
 import { useValidTargetFormats } from "@/hooks/use_valid_target_formats";
 
@@ -131,12 +131,14 @@ const UserIRs = () => {
         <div className="absolute flex gap-0.5 h-full">
           {userZones.map((userZone, index) => {
             let isLoadingZone = false;
-            if (loadingIr)
-              isLoadingZone = loadingIr.zone.title === userZone.title;
+            if (loadingIr.irSelection)
+              isLoadingZone =
+                loadingIr.irSelection.zone.title === userZone.title;
 
             let isCurrentZone = false;
-            if (currentIr)
-              isCurrentZone = currentIr.zone.title == userZone.title;
+            if (currentIr.irSelection)
+              isCurrentZone =
+                currentIr.irSelection.zone.title == userZone.title;
 
             return (
               <div className="w-80" key={index}>

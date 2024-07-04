@@ -4,7 +4,7 @@ import { useFieldArray, useFormContext } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 
 import { IrMetadataForm } from "@/components/create/IrMetadataForm";
-import { CreateZoneSchema } from "@/create_zone";
+import { CreateZoneSchema } from "@/ipc/create_zone_ipc";
 
 const IrForm = () => {
   const { control } = useFormContext<CreateZoneSchema>();

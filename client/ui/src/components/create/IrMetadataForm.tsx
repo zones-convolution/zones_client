@@ -1,6 +1,6 @@
 import { Folder, MinusCircle } from "lucide-react";
 import { FC, useState } from "react";
-import { useFormContext, useFormState, useWatch } from "react-hook-form";
+import { useFormContext, useWatch } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -9,7 +9,6 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-  useFormField,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import {
@@ -21,8 +20,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 
-import { CreateZoneSchema } from "@/create_zone";
-import { IrMetadata } from "@/hooks/zone_metadata";
+import { CreateZoneSchema } from "@/ipc/create_zone_ipc";
 import { juce } from "@/lib/juce";
 
 type SpeakerPosition = "C" | "LR" | "CLR";

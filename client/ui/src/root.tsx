@@ -4,12 +4,13 @@ import { NavLink, Outlet } from "react-router-dom";
 
 import { buttonVariants } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { Toaster } from "@/components/ui/toaster";
 
 import ZonesLight from "@/assets/zones_light.svg";
 import { DiscreteLevelLayout } from "@/components/discrete_level_layout";
 import { Meter } from "@/components/meter";
 import { ResizeHandle } from "@/components/resize_handle";
-import { LoadProvider, useLoadContext } from "@/context/LoadContext";
+import { LoadProvider, useLoadContext } from "@/context/load_context";
 import { useEngineLoading } from "@/hooks/use_engine";
 import { cn } from "@/lib/utils";
 
@@ -68,11 +69,13 @@ const Sidebar = () => {
           </div>
         )}
 
-        {currentIr && (
+        {currentIr.irSelection && (
           <div className="flex flex-col gap-2">
             <Separator />
-            <span className="text-base">{currentIr.ir.title}</span>
-            <span className="text-sm font-thin">{currentIr.zone.title}</span>
+            <span className="text-base">{currentIr.irSelection.ir.title}</span>
+            <span className="text-sm font-thin">
+              {currentIr.irSelection.zone.title}
+            </span>
           </div>
         )}
       </div>
@@ -97,6 +100,7 @@ const Root = () => {
         </div>
       </LoadProvider>
       <ResizeHandle />
+      <Toaster />
     </div>
   );
 };

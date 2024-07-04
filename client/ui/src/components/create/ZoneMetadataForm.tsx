@@ -21,8 +21,8 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 
-import { CreateZoneSchema } from "@/create_zone";
 import { usePreferences } from "@/hooks/use_preferences";
+import { CreateZoneSchema } from "@/ipc/create_zone_ipc";
 
 const ZoneMetadataForm = () => {
   const { control, setValue } = useFormContext<CreateZoneSchema>();
