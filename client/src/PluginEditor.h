@@ -6,6 +6,7 @@
 #include "relays/EngineRelay.h"
 #include "relays/LoadRelay.h"
 #include "relays/MeteringRelay.h"
+#include "relays/ParameterRelay.h"
 #include "relays/PlayerRelay.h"
 #include "relays/PreferencesRelay.h"
 #include "relays/ResizeRelay.h"
@@ -39,13 +40,7 @@ private:
     ProcessorContainer & processor_container_;
     PreferencesController preferences_controller_ {};
 
-    juce::WebSliderRelay wet_dry_mix_relay_ {web_browser_component_,
-                                             ParameterTree::kDryWetMixParameterId};
-    juce::WebSliderRelay resampler_relay_ {web_browser_component_,
-                                           ParameterTree::kResamplerParameterId};
-    juce::WebSliderRelay room_size_relay_ {web_browser_component_,
-                                           ParameterTree::kRoomSizeParameterId};
-
+    ParameterRelay parameter_relay_;
     EngineRelay engine_relay_;
     PlayerRelay player_relay_;
     PreferencesRelay preferences_relay_;
@@ -67,10 +62,6 @@ private:
                                    juce::URL {kLocalDevServerAddress}.getOrigin ());
 
     SinglePageBrowser web_browser_component_;
-
-    juce::WebSliderParameterAttachment wet_dry_mix_attachment_;
-    juce::WebSliderParameterAttachment resampler_attachment_;
-    juce::WebSliderParameterAttachment room_size_attachment_;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioPluginAudioProcessorEditor)
 };
