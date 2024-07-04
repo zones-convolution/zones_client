@@ -6,6 +6,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 
 import ZonesLight from "@/assets/zones_light.svg";
+import { DiscreteLevelLayout } from "@/components/discrete_level_layout";
 import { Meter } from "@/components/meter";
 import { LoadProvider, useLoadContext } from "@/context/LoadContext";
 import { useEngineLoading } from "@/hooks/use_engine";
@@ -75,7 +76,8 @@ const Sidebar = () => {
         )}
       </div>
       <div className="h-60 w-full p-2">
-        <Meter />
+        {/*<Meter />*/}
+        <DiscreteLevelLayout levels={[0, -3, -6, -18, -30, -60]} />
       </div>
     </div>
   );
