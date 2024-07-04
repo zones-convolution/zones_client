@@ -19,6 +19,7 @@ const smoothedValue = (
 };
 
 const BarSmoothing = 200;
+const BarUpSmoothing = 2;
 const PeakSmoothing = 400;
 const PeakFadeDurationMs = 2000;
 
@@ -32,21 +33,33 @@ const updateChannelMeter = (
 
   smoothed.smoothedTarget =
     peak < smoothed.smoothedTarget
-      ? smoothedValue(smoothed.smoothedTarget, peak, BarSmoothing / frameDelta)
-      : peak;
+      ? smoothedValue(
+          smoothed.smoothedTarget,
+          peak,
+          BarSmoothing / frameDelta + 1.0,
+        )
+      : smoothedValue(
+          smoothed.smoothedTarget,
+          peak,
+          BarUpSmoothing / frameDelta + 1.0,
+        );
 
   let smoothedPeak = smoothed.smoothedPeak;
 
   if (peak >= smoothedPeak) {
-    smoothed.smoothedPeak = peak;
+    smoothed.smoothedPeak = smoothedValue(
+      smoothed.smoothedPeak,
+      peak,
+      BarUpSmoothing / frameDelta + 1.0,
+    );
     smoothed.peakFadeTimer = 0;
   } else {
     smoothed.peakFadeTimer += frameDelta;
     if (smoothed.peakFadeTimer >= PeakFadeDurationMs)
       smoothed.smoothedPeak = smoothedValue(
         smoothed.smoothedPeak,
-        0,
-        PeakSmoothing / frameDelta,
+        peak,
+        PeakSmoothing / frameDelta + 1.0,
       );
   }
 };
