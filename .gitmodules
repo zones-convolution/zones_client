@@ -19,3 +19,6 @@
 [submodule "lib/zones_convolver"]
 	path = lib/zones_convolver
 	url = git@github.com:zones-convolution/zones_convolver.git
+[submodule "lib/rocket"]
+	path = lib/rocket
+	url = git@github.com:tripleslash/rocket.git

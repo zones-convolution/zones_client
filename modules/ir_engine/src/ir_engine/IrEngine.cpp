@@ -46,9 +46,8 @@ void IrEngine::RenderState (const IrGraphState & state)
             juce::MessageManager::callAsync (
                 [&, state, process_result] ()
                 {
-                    if (OnLoadingUpdated)
-                        OnLoadingUpdated ();
-                    
+                    OnLoadingUpdated ();
+
                     if (process_result.has_value ())
                     {
                         listeners_.call (
@@ -63,8 +62,7 @@ void IrEngine::RenderState (const IrGraphState & state)
     thread_pool_.moveJobToFront (render_job);
 
     is_loading_ = true;
-    if (OnLoadingUpdated)
-        OnLoadingUpdated ();
+    juce::MessageManager::callAsync ([&] { OnLoadingUpdated (); });
 }
 
 void IrEngine::CleanPool ()

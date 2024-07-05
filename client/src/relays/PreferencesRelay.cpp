@@ -17,13 +17,16 @@ PreferencesRelay::buildOptions (const juce::WebBrowserComponent::Options & initi
         .withNativeFunction ("add_user_path_native",
                              [&] (auto & var, auto complete)
                              {
+                                 juce::WeakReference<PreferencesRelay> weak_self = this;
+
                                  preferences_controller_.AddUserPath (
-                                     [complete] (Preferences result)
+                                     [complete, weak_self] (Preferences result)
                                      {
                                          json data = result;
-
                                          JUCE_ASSERT_MESSAGE_THREAD;
-                                         complete ({data.dump ()});
+
+                                         if (weak_self.get ())
+                                             complete ({data.dump ()});
                                      });
                              })
         .withNativeFunction ("remove_user_path_native",

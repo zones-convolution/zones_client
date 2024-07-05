@@ -14,6 +14,9 @@ public:
     buildOptions (const juce::WebBrowserComponent::Options & initialOptions) override;
 
 private:
+    rocket::scoped_connection_container connections_;
     juce::WebBrowserComponent & web_browser_component_;
     LoadController & load_controller_;
+
+    JUCE_DECLARE_WEAK_REFERENCEABLE (LoadRelay)
 };

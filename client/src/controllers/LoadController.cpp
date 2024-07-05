@@ -124,8 +124,7 @@ void LoadController::SetLoadingIr (const std::optional<IrSelection> & ir_selecti
     loading_ir_ = ir_selection;
     loading_ir_mutex_.unlock ();
 
-    if (OnLoadingIrUpdated)
-        OnLoadingIrUpdated ();
+    juce::MessageManager::callAsync ([&] { OnLoadingIrUpdated (); });
 }
 
 void LoadController::SetCurrentIr (const std::optional<IrSelection> & ir_selection)
@@ -134,15 +133,13 @@ void LoadController::SetCurrentIr (const std::optional<IrSelection> & ir_selecti
     current_ir_ = ir_selection;
     current_ir_mutex_.unlock ();
 
-    if (OnCurrentIrUpdated)
-        OnCurrentIrUpdated ();
+    juce::MessageManager::callAsync ([&] { OnCurrentIrUpdated (); });
 }
 
 void LoadController::UpdateValidTargetFormats (const std::vector<TargetFormat> & target_formats)
 {
     valid_target_formats_ = target_formats;
-    if (OnValidTargetFormatsUpdated)
-        OnValidTargetFormatsUpdated ();
+    OnValidTargetFormatsUpdated ();
 }
 
 const std::vector<TargetFormat> & LoadController::GetValidTargetFormats () const

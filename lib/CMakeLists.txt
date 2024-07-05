@@ -1,5 +1,8 @@
 add_subdirectory(JUCE)
 
+add_library(rocket INTERFACE)
+target_include_directories(rocket SYSTEM INTERFACE rocket)
+
 add_library(immer INTERFACE)
 target_include_directories(immer SYSTEM INTERFACE immer)
 

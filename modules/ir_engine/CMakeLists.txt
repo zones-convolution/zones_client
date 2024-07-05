@@ -31,6 +31,7 @@ zones_add_module(
         audio_engine
         immer
         stretch
+        rocket
         juce::juce_core
         juce::juce_dsp
         juce::juce_events)

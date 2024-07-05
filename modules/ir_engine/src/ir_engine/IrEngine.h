@@ -7,6 +7,8 @@
 #include "processors/ReverbTimeProcessor.h"
 #include "processors/RoomSizeProcessor.h"
 
+#include <rocket.hpp>
+
 class IrEngine
 {
 public:
@@ -42,7 +44,7 @@ public:
     };
 
     [[nodiscard]] bool IsLoading () const;
-    std::function<void ()> OnLoadingUpdated;
+    rocket::signal<void ()> OnLoadingUpdated;
 
 private:
     [[nodiscard]] IrGraph CreateGraphForState (const IrGraphState & ir_graph_state) const;

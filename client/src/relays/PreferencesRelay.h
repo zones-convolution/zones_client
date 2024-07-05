@@ -17,4 +17,6 @@ public:
 private:
     juce::WebBrowserComponent & web_browser_component_;
     PreferencesController & preferences_controller_;
+
+    JUCE_DECLARE_WEAK_REFERENCEABLE (PreferencesRelay)
 };

@@ -4,6 +4,8 @@
 #include "format/ZoneMetadata.h"
 #include "ir_engine/IrController.h"
 
+#include <rocket.hpp>
+
 class LoadController
 {
 public:
@@ -11,15 +13,15 @@ public:
     void Load (const IrSelection & ir_selection, const std::function<void (bool)> & callback);
     void LoadFromDisk ();
 
-    std::function<void ()> OnLoadingIrUpdated;
+    rocket::signal<void ()> OnLoadingIrUpdated;
     const std::optional<IrSelection> & GetLoadingIr ();
 
-    std::function<void ()> OnCurrentIrUpdated;
+    rocket::signal<void ()> OnCurrentIrUpdated;
     const std::optional<IrSelection> & GetCurrentIr ();
 
     void UpdateValidTargetFormats (const std::vector<TargetFormat> & target_formats);
     const std::vector<TargetFormat> & GetValidTargetFormats () const;
-    std::function<void ()> OnValidTargetFormatsUpdated;
+    rocket::signal<void ()> OnValidTargetFormatsUpdated;
 
 private:
     void SetLoadingIr (const std::optional<IrSelection> & ir_selection);

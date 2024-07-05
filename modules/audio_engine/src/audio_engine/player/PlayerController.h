@@ -3,6 +3,8 @@
 #include "../CommandQueue.h"
 #include "PlayerState.h"
 
+#include <rocket.hpp>
+
 struct PlayerControllerNotificationDelegate
 {
     virtual void ReceivedPlayerStateNotification (const Player::PlayerState & new_state) = 0;
@@ -26,13 +28,12 @@ public:
         return player_state_;
     }
 
-    std::function<void ()> OnPlayerStateUpdated;
+    rocket::signal<void ()> OnPlayerStateUpdated;
 
     void ReceivedPlayerStateNotification (const Player::PlayerState & new_state) override
     {
         player_state_ = new_state;
-        if (OnPlayerStateUpdated)
-            OnPlayerStateUpdated ();
+        OnPlayerStateUpdated ();
     }
 
 private:

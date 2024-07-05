@@ -18,4 +18,6 @@ private:
     std::vector<ZoneMetadata> LoadUserZones () const;
     juce::WebBrowserComponent & web_browser_component_;
     UserZonesController user_zones_controller_;
+
+    JUCE_DECLARE_WEAK_REFERENCEABLE (UserZonesRelay)
 };

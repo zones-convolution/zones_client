@@ -18,8 +18,18 @@ EngineRelay::EngineRelay (juce::WebBrowserComponent & web_browser_component,
     , ir_engine_ (ir_engine)
     , convolution_engine_ (convolution_engine)
 {
-    ir_engine_.OnLoadingUpdated = [&] { OnEngineUpdatedEmitEvent (); };
-    convolution_engine_.OnLoadingUpdated = [&] { OnEngineUpdatedEmitEvent (); };
+    connections_ += {ir_engine_.OnLoadingUpdated.connect ([&] { OnEngineUpdatedEmitEvent (); })};
+    convolution_engine_.add (this);
+}
+
+EngineRelay::~EngineRelay ()
+{
+    convolution_engine_.remove (this);
+}
+
+void EngineRelay::OnLoadingUpdated ()
+{
+    OnEngineUpdatedEmitEvent ();
 }
 
 juce::WebBrowserComponent::Options
@@ -32,7 +42,6 @@ EngineRelay::buildOptions (const juce::WebBrowserComponent::Options & initialOpt
             json data =
                 EngineLoading {.convolution_engine_loading = convolution_engine_.IsLoading (),
                                .ir_engine_loading = ir_engine_.IsLoading ()};
-
             JUCE_ASSERT_MESSAGE_THREAD;
             complete ({data.dump ()});
         });

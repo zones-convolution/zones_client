@@ -70,11 +70,14 @@ UserZonesRelay::buildOptions (const juce::WebBrowserComponent::Options & initial
         .withNativeFunction ("choose_ir_path_native",
                              [&] (auto & var, auto complete)
                              {
+                                 juce::WeakReference<UserZonesRelay> weak_self = this;
+
                                  user_zones_controller_.GetIrPath (
-                                     [complete] (const auto & path)
+                                     [complete, weak_self] (const auto & path)
                                      {
                                          JUCE_ASSERT_MESSAGE_THREAD;
-                                         complete ({path});
+                                         if (weak_self.get ())
+                                             complete ({path});
                                      });
                              });
 }

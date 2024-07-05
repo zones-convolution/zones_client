@@ -33,20 +33,16 @@ PlayerRelay::PlayerRelay (juce::WebBrowserComponent & web_browser_component,
     : web_browser_component_ (web_browser_component)
     , player_controller_ (player_controller)
 {
-    player_controller_.OnPlayerStateUpdated = [&]
-    {
-        auto state = player_controller_.GetPlayerState ();
-        json data = state;
+    connections_ += {player_controller_.OnPlayerStateUpdated.connect (
+        [&]
+        {
+            auto state = player_controller_.GetPlayerState ();
+            json data = state;
 
-        JUCE_ASSERT_MESSAGE_THREAD;
-        web_browser_component_.emitEventIfBrowserIsVisible ("on_player_update_native",
-                                                            {data.dump ()});
-    };
-}
-
-PlayerRelay::~PlayerRelay ()
-{
-    player_controller_.OnPlayerStateUpdated = nullptr;
+            JUCE_ASSERT_MESSAGE_THREAD;
+            web_browser_component_.emitEventIfBrowserIsVisible ("on_player_update_native",
+                                                                {data.dump ()});
+        })};
 }
 
 juce::WebBrowserComponent::Options

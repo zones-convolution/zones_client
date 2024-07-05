@@ -12,7 +12,8 @@ set(LINK_COMMON
         audio_engine
         model
         zones_convolver
-        preferences)
+        preferences
+        rocket)
 
 set(SOURCES
         src/PluginProcessor.h
