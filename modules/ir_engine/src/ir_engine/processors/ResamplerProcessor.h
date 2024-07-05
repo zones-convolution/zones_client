@@ -10,7 +10,4 @@ public:
                   juce::AudioBuffer<float> & output_buffer,
                   const IrGraphState & state) override;
     ~ResamplerProcessor () override = default;
-
-private:
-    juce::LagrangeInterpolator interpolator_;
 };

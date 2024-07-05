@@ -3,6 +3,8 @@
 #include "../CommandQueue.h"
 #include "PlayerState.h"
 
+#include <rocket.hpp>
+
 struct PlayerControllerNotificationDelegate
 {
     virtual void ReceivedPlayerStateNotification (const Player::PlayerState & new_state) = 0;
@@ -16,30 +18,9 @@ public:
     {
     }
 
-    void Play (Player::Resources file, bool looping, float gain)
+    void SetPlayerState (Player::PlayerState state)
     {
-        command_queue_.PushCommand (
-            CommandQueue::PlayCommand {.file = file, .looping = looping, .gain = gain});
-    }
-
-    void Stop ()
-    {
-        command_queue_.PushCommand (CommandQueue::StopCommand {});
-    }
-
-    void SetLoop (bool looping)
-    {
-        command_queue_.PushCommand (CommandQueue::LoopCommand {.loop = looping});
-    }
-
-    void SetFile (Player::Resources file)
-    {
-        command_queue_.PushCommand (CommandQueue::FileCommand {.file = file});
-    }
-
-    void SetGain (float gain)
-    {
-        command_queue_.PushCommand (CommandQueue::GainCommand {.gain = gain});
+        command_queue_.PushCommand (CommandQueue::SetPlayerStateCommand {state});
     }
 
     [[nodiscard]] Player::PlayerState GetPlayerState () const
@@ -47,13 +28,12 @@ public:
         return player_state_;
     }
 
-    std::function<void ()> OnPlayerStateUpdated;
+    rocket::signal<void ()> OnPlayerStateUpdated;
 
     void ReceivedPlayerStateNotification (const Player::PlayerState & new_state) override
     {
         player_state_ = new_state;
-        if (OnPlayerStateUpdated)
-            OnPlayerStateUpdated ();
+        OnPlayerStateUpdated ();
     }
 
 private:

@@ -13,7 +13,7 @@ public:
     void reset () override;
     void Clear ();
 
-    void SetPlayerState (Player::PlayerStateOptional new_player_state);
+    void SetPlayerState (const Player::PlayerState & new_player_state);
 
 private:
     juce::AudioBuffer<float> temp_buffer_;
@@ -24,6 +24,7 @@ private:
     NotificationQueue::VisitorQueue & notification_queue_;
     Player::PlayerState player_state_;
     bool is_stopping_;
+    Player::Resource new_resource_;
 
     juce::LinearSmoothedValue<float> smoothed_gain_;
 };

@@ -16,20 +16,31 @@
         "CMAKE_TOOLCHAIN_FILE": {
           "type": "FILEPATH",
           "value": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
-        }
+        },
+        "DEV_LOCALHOST": "OFF"
       },
       "environment": {
         "VCPKG_ROOT": "./vcpkg"
+      }
+    },
+    {
+      "name": "ninja-multi-vcpkg-debug",
+      "inherits": "ninja-multi-vcpkg",
+      "cacheVariables": {
+        "DEV_LOCALHOST": "ON"
       }
     }
   ],
   "buildPresets": [
     {
       "name": "build-debug",
-      "configurePreset": "ninja-multi-vcpkg",
+      "configurePreset": "ninja-multi-vcpkg-debug",
       "displayName": "Build (Debug)",
       "description": "Build with Ninja/vcpkg (Debug)",
-      "configuration": "Debug"
+      "configuration": "Debug",
+      "environment": {
+        "DEV_LOCALHOST": "OFF"
+      }
     },
     {
       "name": "build-release",

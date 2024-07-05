@@ -3,15 +3,15 @@
 #include "model/ParameterTree.h"
 
 ProcessorContainer::ProcessorContainer (juce::AudioProcessor & audio_processor)
-    : graph_ (input_graph_metering_,
-              output_graph_metering_,
-              convolution_engine_,
-              notification_queue_)
-
-    , parameter_tree_ (audio_processor,
+    : parameter_tree_ (audio_processor,
                        nullptr,
                        ParameterTree::kParameterTreeIdentifier,
                        ParameterTree::CreateParameterLayout ())
+
+    , graph_ (input_graph_metering_,
+              output_graph_metering_,
+              convolution_engine_,
+              notification_queue_)
     , audio_engine_ (command_queue_,
                      notification_queue_,
                      parameter_tree_,
@@ -24,7 +24,6 @@ ProcessorContainer::ProcessorContainer (juce::AudioProcessor & audio_processor)
     notification_queue_.SetVisitor (&audio_engine_);
 
     RegisterIrEngineListeners ();
-    store_.dispatch (RefreshUserZonesAction {});
 }
 
 void ProcessorContainer::Prepare (double sampleRate,
@@ -40,9 +39,7 @@ void ProcessorContainer::Prepare (double sampleRate,
     auto state = ir_controller_.GetCurrentGraphState ();
     if (! IsTargetSupported (output_channel_set, state.target_format))
         convolution_engine_.Clear ();
-
-    store_.dispatch (RefreshValidTargetFormatsAction {
-        .target_formats = GetTargetFormatsForChannelSet (output_channel_set)});
+    load_controller_.UpdateValidTargetFormats (GetTargetFormatsForChannelSet (output_channel_set));
 }
 
 void ProcessorContainer::RegisterIrEngineListeners ()

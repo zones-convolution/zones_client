@@ -2,87 +2,68 @@
 
 #include "PluginProcessor.h"
 #include "ProcessorContainer.h"
-#include "browser/BrowserNavigationComponent.h"
-#include "browser/import/ImportComponent.h"
-#include "browser/import/ImportController.h"
-#include "components/SidebarContent.h"
-#include "components/SidebarFooter.h"
-#include "components/SidebarHeader.h"
-#include "editor/EditorComponent.h"
-#include "layout/sidebar/SidebarComponent.h"
-#include "layout/tabs/TabsAction.h"
-#include "layout/tabs/TabsComponent.h"
-#include "layout/tabs/TabsController.h"
-#include "layout/tabs/TabsModel.h"
-#include "look_and_feel/components/PanelComponent.h"
-#include "model/Model.h"
-#include "preferences/PreferencesComponent.h"
+#include "preferences/PreferencesController.h"
+#include "relays/EngineRelay.h"
+#include "relays/LoadRelay.h"
+#include "relays/MeteringRelay.h"
+#include "relays/ParameterRelay.h"
+#include "relays/PlayerRelay.h"
+#include "relays/PreferencesRelay.h"
+#include "relays/ResizeRelay.h"
+#include "relays/UserZonesRelay.h"
 
-#include <juce_gui_basics/juce_gui_basics.h>
-#include <lager/event_loop/manual.hpp>
-#include <lager/store.hpp>
+#include <juce_gui_extra/juce_gui_extra.h>
 
 class AudioPluginAudioProcessorEditor : public juce::AudioProcessorEditor
 {
 public:
     explicit AudioPluginAudioProcessorEditor (AudioPluginAudioProcessor & processor,
                                               ProcessorContainer & processor_container);
-    ~AudioPluginAudioProcessorEditor () override;
+    ~AudioPluginAudioProcessorEditor () override = default;
 
 private:
+    struct SinglePageBrowser : juce::WebBrowserComponent
+    {
+        using WebBrowserComponent::WebBrowserComponent;
+        bool pageAboutToLoad (const juce::String & newURL) override;
+    };
+
     static constexpr float kPreferredAspectRatio = 3.f / 4.f;
     static constexpr int kWindowMinimumWidth = 600;
     static constexpr int kWindowMaxWidth = 2000;
+    static const juce::String kLocalDevServerAddress;
+
+    void resized () override;
+    std::optional<juce::WebBrowserComponent::Resource> GetResource (const juce::String & url);
 
     AudioPluginAudioProcessor & processor_;
     ProcessorContainer & processor_container_;
+    PreferencesController preferences_controller_ {};
 
-    lager::reader<Model> model_;
-    lager::context<Action> context_;
+    ParameterRelay parameter_relay_;
+    EngineRelay engine_relay_;
+    PlayerRelay player_relay_;
+    PreferencesRelay preferences_relay_;
+    UserZonesRelay user_zones_relay_;
+    LoadRelay load_relay_;
+    MeteringRelay metering_relay_;
+    ResizeRelay resize_relay_;
 
-    EditorComponent editor_;
+    juce::File asset_directory_;
+    const juce::WebBrowserComponent::Options kBaseWebOptions =
+        juce::WebBrowserComponent::Options {}
+            .withBackend (juce::WebBrowserComponent::Options::Backend::webview2)
+            .withWinWebView2Options (
+                juce::WebBrowserComponent::Options::WinWebView2 {}.withUserDataFolder (
+                    juce::File::getSpecialLocation (
+                        juce::File::SpecialLocationType::tempDirectory)))
+            .withNativeIntegrationEnabled ()
+            .withResourceProvider ([this] (const auto & url) { return GetResource (url); },
+                                   juce::URL {kLocalDevServerAddress}.getOrigin ());
 
-    lager::store<BrowserAction, BrowserModel> browser_store_ =
-        lager::make_store<BrowserAction> (BrowserModel {},
-                                          WithJuceEventLoop {processor_container_.thread_pool_},
-                                          lager::with_reducer (UpdateBrowser));
+    SinglePageBrowser web_browser_component_;
 
-    lager::store<TabsAction, TabsModel> tabs_store_ = lager::make_store<TabsAction> (
-        TabsModel {},
-        WithJuceEventLoop {processor_container_.thread_pool_},
-        lager::with_deps (std::reference_wrapper<TabsControllerDelegate> (tabs_controller_)),
-        lager::with_reducer (UpdateTabs));
-
-    BrowserNavigationComponent browser_ {browser_store_, model_, context_, tabs_store_};
-
-    ImportComponent import_component_;
-    ImportController import_controller_ {import_component_, tabs_store_};
-
-    PanelComponent import_panel_ {import_component_};
-
-    PreferencesComponent preferences_component_;
-    PanelComponent settings_panel_ {preferences_component_};
-
-    TabsComponent tabs_component_;
-    TabsController tabs_controller_ {tabs_component_};
-
-    SidebarHeader sidebar_header_;
-    PanelComponent sidebar_header_panel_ {sidebar_header_};
-
-    SidebarContent sidebar_content_ {tabs_store_};
-    PanelComponent sidebar_content_panel_ {sidebar_content_};
-
-    SidebarFooter sidebar_footer_;
-    PanelComponent sidebar_footer_panel_ {sidebar_footer_};
-
-    SidebarComponent sidebar_component_ {sidebar_header_panel_,
-                                         sidebar_content_panel_,
-                                         sidebar_footer_panel_};
-
-    IrEngine & ir_engine_;
-
-    void resized () override;
-    void paint (juce::Graphics & graphics) override;
+    ParameterAttachments parameter_attachments_;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioPluginAudioProcessorEditor)
 };

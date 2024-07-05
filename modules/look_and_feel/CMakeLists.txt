@@ -48,7 +48,6 @@ target_link_libraries(storyboard
         juce::juce_core
         juce::juce_gui_basics
         look_and_feel
-        visualiser
         PUBLIC
         juce::juce_recommended_config_flags
         juce::juce_recommended_lto_flags

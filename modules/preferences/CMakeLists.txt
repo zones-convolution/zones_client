@@ -4,12 +4,11 @@ zones_add_module(
         SOURCES
         src/preferences/Preferences.h
         src/preferences/Preferences.cpp
-        src/preferences/PreferencesComponent.h
-        src/preferences/PreferencesComponent.cpp
+        src/preferences/PreferencesController.h
+        src/preferences/PreferencesController.cpp
         DEPS
         look_and_feel
         model
-        lager
         juce::juce_core
         juce::juce_gui_basics
         nlohmann_json::nlohmann_json

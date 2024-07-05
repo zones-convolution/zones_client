@@ -26,14 +26,6 @@ PlayerProcessor::PlayerProcessor (NotificationQueue::VisitorQueue & notification
 
     readers_.push_back (numbers_reader);
 
-    //    readers_.push_back (
-    //        audio_format_manager_.createReaderFor (std::make_unique<juce::MemoryInputStream> (
-    //            &resources_snare_mp3, resources_snare_mp3_size, false)));
-    //
-    //    readers_.push_back (
-    //        audio_format_manager_.createReaderFor (std::make_unique<juce::MemoryInputStream> (
-    //            &resources_numbers_mp3, resources_numbers_mp3_size, false)));
-
     notification_queue_.PushCommand (player_state_);
 }
 
@@ -44,12 +36,13 @@ void PlayerProcessor::prepare (const juce::dsp::ProcessSpec & spec)
     smoothed_gain_.reset (spec.sampleRate, 0.05f);
     smoothed_gain_.setCurrentAndTargetValue (0.f);
 }
+
 void PlayerProcessor::process (const juce::dsp::ProcessContextReplacing<float> & replacing)
 {
-    if (! player_state_.is_playing)
+    if (! player_state_.playing)
         return;
 
-    auto reader_index = static_cast<unsigned long> (player_state_.file);
+    auto reader_index = static_cast<unsigned long> (player_state_.resource);
     auto & reader = readers_ [reader_index];
     auto output_block = replacing.getOutputBlock ();
     auto total_num_samples_to_collect = static_cast<int> (output_block.getNumSamples ());
@@ -72,9 +65,9 @@ void PlayerProcessor::process (const juce::dsp::ProcessContextReplacing<float> &
         {
             read_head_ = 0;
 
-            if (! player_state_.is_looping)
+            if (! player_state_.looping)
             {
-                player_state_.is_playing = false;
+                player_state_.playing = false;
                 smoothed_gain_.setCurrentAndTargetValue (0.f);
                 notification_queue_.PushCommand (player_state_);
                 break;
@@ -87,16 +80,18 @@ void PlayerProcessor::process (const juce::dsp::ProcessContextReplacing<float> &
     if (is_stopping_ && smoothed_gain_.getCurrentValue () == 0.f)
     {
         read_head_ = 0;
-        player_state_.is_playing = false;
+        player_state_.playing = false;
+        player_state_.resource = new_resource_;
         is_stopping_ = false;
+
         notification_queue_.PushCommand (player_state_);
     }
 }
 void PlayerProcessor::reset ()
 {
-    player_state_.file = Player::Resources::kSnare;
-    player_state_.is_looping = false;
-    player_state_.is_playing = false;
+    player_state_.resource = Player::Resource::kSnare;
+    player_state_.looping = false;
+    player_state_.playing = false;
     player_state_.gain = 1.f;
 
     Clear ();
@@ -109,45 +104,36 @@ void PlayerProcessor::Clear ()
     read_head_ = 0;
 }
 
-void PlayerProcessor::SetPlayerState (Player::PlayerStateOptional new_player_state)
+void PlayerProcessor::SetPlayerState (const Player::PlayerState & new_player_state)
 {
-    if (new_player_state.is_looping.has_value ())
-        player_state_.is_looping = new_player_state.is_looping.value ();
+    player_state_.looping = new_player_state.looping;
 
-    if (new_player_state.file.has_value ())
+    auto gain = std::clamp (new_player_state.gain, 0.f, 2.f);
+    smoothed_gain_.setTargetValue (gain);
+    player_state_.gain = gain;
+
+    auto new_playing_state = new_player_state.playing;
+    if (! new_playing_state)
     {
-        auto new_file = new_player_state.file.value ();
-        if (player_state_.file != new_file && player_state_.is_playing)
-        {
-            is_stopping_ = true;
-            smoothed_gain_.setTargetValue (0.f);
-        }
-        else
-        {
-            player_state_.file = new_file;
-        }
+        is_stopping_ = true;
+        smoothed_gain_.setTargetValue (0.f);
+    }
+    else
+    {
+        is_stopping_ = false;
+        player_state_.playing = new_playing_state;
     }
 
-    if (new_player_state.gain.has_value ())
+    auto new_resource = new_player_state.resource;
+    if (player_state_.resource != new_resource && player_state_.playing)
     {
-        auto gain = std::clamp (new_player_state.gain.value (), 0.f, 2.f);
-        smoothed_gain_.setTargetValue (gain);
-        player_state_.gain = gain;
+        is_stopping_ = true;
+        smoothed_gain_.setTargetValue (0.f);
+        new_resource_ = new_resource;
     }
-
-    if (new_player_state.is_playing.has_value ())
+    else
     {
-        auto new_playing_state = new_player_state.is_playing.value ();
-        if (! new_playing_state)
-        {
-            is_stopping_ = true;
-            smoothed_gain_.setTargetValue (0.f);
-        }
-        else
-        {
-            is_stopping_ = false;
-            player_state_.is_playing = new_playing_state;
-        }
+        player_state_.resource = new_resource;
     }
 
     notification_queue_.PushCommand (player_state_);

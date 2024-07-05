@@ -28,7 +28,8 @@ void ProcessResultPool::RemoveUnusedKeys (const std::vector<GraphStateKey> & use
                    });
 }
 
-int ProcessResultPool::GetPoolSize () const
+int ProcessResultPool::GetPoolSize ()
 {
+    std::lock_guard guard (mutex_);
     return process_results_.size ();
 }

@@ -1,20 +1,19 @@
 set(BINARY zones_client)
 
-set(LINK_JUCE juce::juce_gui_extra juce::juce_audio_devices
+set(LINK_JUCE
+        juce::juce_gui_extra
+        juce::juce_audio_devices
         juce::juce_audio_utils)
 
 set(LINK_COMMON
-        zone_repository
         format
         ir_engine
         look_and_feel
         audio_engine
         model
-        layout
-        browser
-        editor
         zones_convolver
-        preferences)
+        preferences
+        rocket)
 
 set(SOURCES
         src/PluginProcessor.h
@@ -23,44 +22,49 @@ set(SOURCES
         src/PluginEditor.cpp
         src/ProcessorContainer.h
         src/ProcessorContainer.cpp
-        src/Translations.h
-        src/Translations.cpp
-        src/components/metering/MeterComponent.h
-        src/components/metering/MeterComponent.cpp
-        src/components/metering/ChannelBar.h
-        src/components/metering/ChannelBar.cpp
-        src/components/metering/DiscreteLevelLabels.h
-        src/components/metering/DiscreteLevelLabels.cpp
-        src/components/metering/ClippingIndicator.h
-        src/components/metering/ClippingIndicator.cpp
-        src/components/SidebarContent.h
-        src/components/SidebarContent.cpp
-        src/components/SidebarHeader.h
-        src/components/SidebarHeader.cpp
-        src/components/SidebarFooter.h
-        src/components/SidebarFooter.cpp
-        src/WithJuceEventLoop.h)
+        src/WithJuceEventLoop.h
+        src/relays/EngineRelay.h
+        src/relays/EngineRelay.cpp
+        src/relays/PlayerRelay.h
+        src/relays/PlayerRelay.cpp
+        src/relays/PreferencesRelay.h
+        src/relays/PreferencesRelay.cpp
+        src/relays/UserZonesRelay.h
+        src/relays/UserZonesRelay.cpp
+        src/relays/LoadRelay.h
+        src/relays/LoadRelay.cpp
+        src/relays/MeteringRelay.h
+        src/relays/MeteringRelay.cpp
+        src/relays/ResizeRelay.h
+        src/relays/ResizeRelay.cpp
+        src/relays/ParameterRelay.h
+        src/relays/ParameterRelay.cpp
+        src/controllers/UserZonesController.h
+        src/controllers/UserZonesController.cpp
+        src/controllers/LoadController.h
+        src/controllers/LoadController.cpp
+)
+
+option(DEV_LOCALHOST OFF)
+set(ASSETS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/ui/dist/)
 
 juce_add_plugin(
         ${BINARY}
-        PLUGIN_MANUFACTURER_CODE
-        Zone
-        PLUGIN_CODE
-        Zone
-        FORMATS
-        AU
-        VST3
-        Standalone
-        COPY_PLUGIN_AFTER_BUILD
-        TRUE
-        PRODUCT_NAME
-        Zones
-        COMPANY_NAME
-        Zones
-        BUNDLE_ID
-        com.zones.zones
-        VERSION
-        0.0.2)
+        PLUGIN_MANUFACTURER_CODE Zone
+        PLUGIN_CODE Zone
+        PRODUCT_NAME Zones
+        COMPANY_NAME Zones
+        BUNDLE_ID com.zones.zones
+        VERSION 0.0.2
+        FORMATS AU VST3 Standalone
+        COPY_PLUGIN_AFTER_BUILD TRUE
+        NEEDS_WEBVIEW2 TRUE)
+
+target_compile_definitions(${BINARY}
+        PRIVATE
+        "DEV_LOCALHOST=$<BOOL:${DEV_LOCALHOST}>"
+        JUCE_WEB_BROWSER=1
+        JUCE_USE_WIN_WEBVIEW2_WITH_STATIC_LINKING=1)
 
 target_sources(${BINARY} PRIVATE ${SOURCES})
 
@@ -71,4 +75,18 @@ target_link_libraries(
 
 target_compile_options(${BINARY} INTERFACE -Wall -Wextra -Werror)
 
-embed_resources(${BINARY} translations/en.translate)
+if (NOT DEV_LOCALHOST)
+    get_target_property(ACTIVE_TARGETS ${BINARY} JUCE_ACTIVE_PLUGIN_TARGETS)
+    foreach (ACTIVE_TARGET IN LISTS ACTIVE_TARGETS)
+        message(STATUS "Adding resource copy step from ${ASSETS_DIR} for ${ACTIVE_TARGET}")
+
+        get_target_property(ARTIFACT_FILE ${ACTIVE_TARGET} JUCE_PLUGIN_ARTEFACT_FILE)
+        set(RESOURCE_DIR "${ARTIFACT_FILE}/Contents/Resources/")
+
+        add_custom_command(TARGET ${ACTIVE_TARGET} POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E rm -rf "${RESOURCE_DIR}/dist"
+                COMMAND ${CMAKE_COMMAND} -E make_directory "${RESOURCE_DIR}/dist"
+                COMMAND ${CMAKE_COMMAND} -E copy_directory "${ASSETS_DIR}" "${RESOURCE_DIR}/dist"
+                VERBATIM)
+    endforeach ()
+endif ()

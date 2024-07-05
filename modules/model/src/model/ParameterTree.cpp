@@ -20,10 +20,12 @@ juce::AudioProcessorValueTreeState::ParameterLayout ParameterTree::CreateParamet
     auto resampler_attributes = juce::AudioParameterFloatAttributes ().withAutomatable (false);
 
     return {
-        std::make_unique<juce::AudioParameterFloat> (juce::ParameterID {kDryWetMixParameterId, 1},
-                                                     juce::translate (kDryWetMixParameterId),
-                                                     juce::NormalisableRange<float> (0.f, 1.f),
-                                                     0.6f),
+        std::make_unique<juce::AudioParameterFloat> (
+            juce::ParameterID {kDryWetMixParameterId, 1},
+            "Dry/Wet Mix",
+            juce::NormalisableRange<float> (0.f, 1.f, 0.1f),
+            0.6f,
+            juce::AudioParameterFloatAttributes ().withLabel ("%")),
         std::make_unique<juce::AudioParameterFloat> (juce::ParameterID {kInputGainParameterId, 1},
                                                      juce::translate (kInputGainParameterId),
                                                      juce::NormalisableRange<float> (0.f, 2.f),

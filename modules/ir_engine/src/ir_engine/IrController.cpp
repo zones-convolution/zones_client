@@ -28,7 +28,7 @@ void IrController::timerCallback ()
 
 void IrController::LoadIr (const IrSelection & ir_selection)
 {
-    auto & zone_path = ir_selection.zone.path_attribute;
+    auto & zone_path = ir_selection.zone.path_attribute.value ();
     auto & ir = ir_selection.ir;
     auto target_format = ir_selection.target_format;
 
