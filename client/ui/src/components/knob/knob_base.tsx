@@ -7,12 +7,12 @@ import {
   useKnobKeyboardControls,
 } from "react-knob-headless";
 
-import { KnobBaseThumb } from "@/components/knob_base_thumb";
+import { KnobBaseThumb } from "@/components/knob/knob_base_thumb";
 import { cn } from "@/lib/utils";
 
 type KnobHeadlessProps = ComponentProps<typeof KnobHeadless>;
 
-type KnobBaseProps = Pick<
+export type KnobBaseProps = Pick<
   KnobHeadlessProps,
   | "valueMin"
   | "valueMax"

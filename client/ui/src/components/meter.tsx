@@ -1,6 +1,5 @@
 import { interval, timer } from "d3";
 import { FC, ReactNode, useEffect, useState } from "react";
-import { Simulate } from "react-dom/test-utils";
 
 import { Separator } from "@/components/ui/separator";
 

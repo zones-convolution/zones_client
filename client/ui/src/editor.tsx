@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/select";
 
 import { CategoryCard } from "@/browser";
-import { Knob } from "@/components/knob";
+import { Knob } from "@/components/knob/knob";
 import { Visualiser } from "@/components/visualiser/visualiser";
 import { useControlParameterIndexUpdater } from "@/hooks/use_control_parameter_index_updater";
 import { usePlayer } from "@/hooks/use_player";

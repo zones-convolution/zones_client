@@ -1,6 +1,6 @@
 import { FC } from "react";
 
-import { KnobBase } from "@/components/knob_base";
+import { KnobBase } from "@/components/knob/knob_base";
 import { controlParameterIndexAnnotation } from "@/hooks/use_control_parameter_index_updater";
 import { useSlider } from "@/hooks/use_slider";
 
