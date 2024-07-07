@@ -16,7 +16,7 @@ const meta: Meta<typeof DiscreteLevelLayout> = {
 
 export default meta;
 
-type Story = StoryObj<typeof Meter>;
+type Story = StoryObj<typeof meta>;
 
 export const DiscreteLevelLayoutStory: Story = {
   args: {

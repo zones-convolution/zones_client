@@ -7,8 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { Separator } from "@/components/ui/separator";
 
-import { IrForm } from "@/components/create/IrForm";
-import { ZoneMetadataForm } from "@/components/create/ZoneMetadataForm";
+import { IrForm } from "@/components/create/ir_form";
+import { ZoneMetadataForm } from "@/components/create/zone_metadata_form";
 import { createZone, CreateZoneSchema } from "@/ipc/create_zone_ipc";
 
 const CreateZone = () => {

@@ -3,7 +3,7 @@ import { useFieldArray, useFormContext } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
 
-import { IrMetadataForm } from "@/components/create/IrMetadataForm";
+import { IrMetadataForm } from "@/components/create/ir_metadata_form";
 import { CreateZoneSchema } from "@/ipc/create_zone_ipc";
 
 const IrForm = () => {

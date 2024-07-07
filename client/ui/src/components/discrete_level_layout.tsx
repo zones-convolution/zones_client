@@ -46,7 +46,7 @@ const LevelSeparator: FC<{ level: number }> = ({ level }) => {
 
 export const DiscreteLevelLayout: FC<{ levels: number[] }> = ({ levels }) => {
   return (
-    <div className="w-full h-full bg-black flex flex-row gap-1">
+    <div className="w-full h-full bg-card flex flex-row gap-1">
       <div className="relative">
         {levels.map((level, index) => (
           <LevelLabel key={`label-${index}`} level={level} />

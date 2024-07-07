@@ -1,4 +1,4 @@
-import { useDrag, useGesture } from "@use-gesture/react";
+import { useGesture } from "@use-gesture/react";
 import { Grip } from "lucide-react";
 
 import { beginResize, endResize, resize } from "@/ipc/resize_ipc";

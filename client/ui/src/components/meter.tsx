@@ -1,14 +1,8 @@
-import { interval, timer } from "d3";
-import { FC, ReactNode, useEffect, useState } from "react";
+import { FC, ReactNode } from "react";
 
 import { Separator } from "@/components/ui/separator";
 
-import {
-  ChannelGroups,
-  getMetering,
-  resetChannelClipping,
-} from "@/ipc/metering_ipc";
-import { renderMeters, SmoothedChannelGroups } from "@/lib/meter_renderer";
+import { IUseMetering } from "@/hooks/use_metering";
 import { cn } from "@/lib/utils";
 
 const gradient = `linear-gradient(to top, rgb(75, 217, 102), rgb(255, 149, 0)`;
@@ -56,31 +50,7 @@ const ClippingIndicator: FC<{
   );
 };
 
-const Meter = () => {
-  const [channelGroups, setChannelGroups] = useState<SmoothedChannelGroups>([]);
-
-  useEffect(() => {
-    let targetGroups: ChannelGroups = [];
-    let lastUpdate = 0;
-
-    const updateTimer = interval(async () => {
-      targetGroups = await getMetering();
-    }, 10);
-
-    const renderTimer = timer((elapsed) => {
-      let frameDelta = elapsed - lastUpdate;
-      setChannelGroups((groups) => {
-        return renderMeters(groups, targetGroups, frameDelta);
-      });
-      lastUpdate = elapsed;
-    });
-
-    return () => {
-      renderTimer.stop();
-      updateTimer.stop();
-    };
-  }, []);
-
+const Meter: FC<IUseMetering> = ({ channelGroups, resetChannelClipping }) => {
   const clippingIndicators = (
     <div className="flex flex-row gap-2 px-2 border border-transparent">
       {channelGroups.map((group, groupIndex) => {

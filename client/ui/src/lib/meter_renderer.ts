@@ -1,13 +1,14 @@
 import { ChannelGroups, ChannelMeter } from "@/ipc/metering_ipc";
 
-interface ISmoothedChannelMeter {
+export interface ISmoothedChannelMeter {
   smoothedTarget: number;
   smoothedPeak: number;
   peakFadeTimer: number;
   clipping: boolean;
 }
 
-export type SmoothedChannelGroups = ISmoothedChannelMeter[][];
+export type SmoothedChannelGroup = ISmoothedChannelMeter[];
+export type SmoothedChannelGroups = SmoothedChannelGroup[];
 
 const smoothedValue = (
   valueToSmooth: number,
@@ -90,7 +91,7 @@ const buildChannelGroups = (targetGroups: ChannelGroups) => {
   return newGroups;
 };
 
-const deepCopyGroups = (groups: SmoothedChannelGroups) => {
+export const deepCopyGroups = (groups: SmoothedChannelGroups) => {
   return groups.map((grp) =>
     grp.map((channel) => ({
       ...channel,

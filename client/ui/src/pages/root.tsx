@@ -12,6 +12,7 @@ import { Meter } from "@/components/meter";
 import { ResizeHandle } from "@/components/resize_handle";
 import { LoadProvider, useLoadContext } from "@/context/load_context";
 import { useEngineLoading } from "@/hooks/use_engine";
+import { useMetering } from "@/hooks/use_metering";
 import { cn } from "@/lib/utils";
 
 const NavButton: FC<{
@@ -38,6 +39,7 @@ const NavButton: FC<{
 const Sidebar = () => {
   const { irEngineLoading, convolutionEngineLoading } = useEngineLoading();
   const { currentIr } = useLoadContext();
+  const metering = useMetering();
 
   return (
     <div className="bg-card flex flex-col gap-0.5">
@@ -80,7 +82,7 @@ const Sidebar = () => {
         )}
       </div>
       <div className="h-60 w-full p-2">
-        <Meter />
+        <Meter {...metering} />
         {/*<DiscreteLevelLayout levels={[0, -3, -6, -18, -30, -60]} />*/}
       </div>
     </div>
