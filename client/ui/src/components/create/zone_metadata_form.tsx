@@ -1,7 +1,6 @@
 import { Settings } from "lucide-react";
 import { useEffect } from "react";
 import { useFormContext } from "react-hook-form";
-import { Link } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -21,6 +20,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 
+import { Tabs, useTabsContext } from "@/context/tabs_context";
 import { usePreferences } from "@/hooks/use_preferences";
 import { CreateZoneSchema } from "@/ipc/create_zone_ipc";
 
@@ -32,7 +32,7 @@ const ZoneMetadataForm = () => {
   }, [preferences]);
 
   const noUserPaths = preferences.userPaths.length == 0;
-
+  const { setTab } = useTabsContext();
   return (
     <>
       <FormField
@@ -90,11 +90,14 @@ const ZoneMetadataForm = () => {
                   </Select>
                 )}
 
-                <Button asChild type="button">
-                  <Link to="/preferences">
-                    Preferences
-                    <Settings className="w-4 h-4 ml-2" />
-                  </Link>
+                <Button
+                  type="button"
+                  onClick={() => {
+                    setTab(Tabs.Preferences);
+                  }}
+                >
+                  Preferences
+                  <Settings className="w-4 h-4 ml-2" />
                 </Button>
               </div>
             </FormControl>

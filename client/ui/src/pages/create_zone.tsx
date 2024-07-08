@@ -25,8 +25,8 @@ const CreateZone = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="bg-card h-full relative">
-      <div className="max-h-full w-full p-2 overflow-y-auto">
+    <div className="h-full bg-card overflow-y-auto p-2">
+      <div className="w-full">
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(async (data) => {

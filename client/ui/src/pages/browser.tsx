@@ -1,14 +1,7 @@
-import { ChevronLeft, ChevronRight, Eye, Loader, Play } from "lucide-react";
-import { FC } from "react";
-import { Link } from "react-router-dom";
-
-import { Button } from "@/components/ui/button";
-
 import { CategoryCard } from "@/components/cards/category_card";
 import { ZoneCard } from "@/components/cards/zone_card";
 import { useLoadContext } from "@/context/load_context";
 import { useUserZones } from "@/hooks/use_user_zones";
-import { useValidTargetFormats } from "@/hooks/use_valid_target_formats";
 
 const Categories = () => {
   return (
@@ -112,30 +105,11 @@ const UserIRs = () => {
 };
 
 const Browser = () => {
-  const { validTargetFormats } = useValidTargetFormats();
-
   return (
-    <div className="flex flex-col gap-0.5 h-full">
-      <div className="flex w-full bg-card p-2 items-center">
-        <Button variant="ghost">
-          <ChevronLeft className="w-4 h-4" />
-        </Button>
-        <Button variant="ghost" className="mr-4">
-          <ChevronRight className="w-4 h-4" />
-        </Button>
-        Browser
-        <Button asChild className="ml-auto">
-          <Link to="/create">Create Zone</Link>
-        </Button>
-      </div>
-      <div className="flex flex-col">
-        {validTargetFormats.map((format) => (
-          <span>{format}</span>
-        ))}
-      </div>
+    <>
       <Categories />
       <UserIRs />
-    </div>
+    </>
   );
 };
 

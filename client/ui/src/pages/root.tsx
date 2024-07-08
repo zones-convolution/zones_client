@@ -1,38 +1,37 @@
 import { Home, Loader, Settings, Target } from "lucide-react";
-import { FC, ReactNode } from "react";
-import { NavLink, Outlet } from "react-router-dom";
+import React, { FC, ReactNode } from "react";
+import { Outlet } from "react-router-dom";
 
-import { buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Toaster } from "@/components/ui/toaster";
 
 import ZonesLight from "@/assets/zones_light.svg";
-import { DiscreteLevelLayout } from "@/components/discrete_level_layout";
 import { Meter } from "@/components/meter";
 import { ResizeHandle } from "@/components/resize_handle";
 import { LoadProvider, useLoadContext } from "@/context/load_context";
+import { Tabs, TabsProvider, useTabsContext } from "@/context/tabs_context";
 import { useEngineLoading } from "@/hooks/use_engine";
 import { useMetering } from "@/hooks/use_metering";
-import { cn } from "@/lib/utils";
+import Editor from "@/pages/editor";
+import Preferences from "@/pages/preferences";
 
 const NavButton: FC<{
   children: ReactNode;
-  to: string;
+  to: Tabs;
 }> = ({ children, to }) => {
+  const { tab, setTab } = useTabsContext();
+
   return (
-    <NavLink
-      to={to}
-      className={(nav) =>
-        cn(
-          buttonVariants({
-            variant: "ghost",
-            className: `justify-start w-full ${nav.isActive && "bg-accent"}`,
-          }),
-        )
-      }
+    <Button
+      variant="ghost"
+      className={`justify-start w-full ${to == tab && "bg-accent"}`}
+      onClick={() => {
+        setTab(to);
+      }}
     >
       {children}
-    </NavLink>
+    </Button>
   );
 };
 
@@ -44,15 +43,15 @@ const Sidebar = () => {
   return (
     <div className="bg-card flex flex-col gap-0.5">
       <img src={ZonesLight} className="w-[80px] ml-4" alt="Zones Logo Dark" />
-      <NavButton to="/browser">
+      <NavButton to={Tabs.Browser}>
         <Home className="w-4 h-4 mr-4" />
         Browse
       </NavButton>
-      <NavButton to="/">
+      <NavButton to={Tabs.Editor}>
         <Target className="w-4 h-4 mr-4" />
         Edit
       </NavButton>
-      <NavButton to="/preferences">
+      <NavButton to={Tabs.Preferences}>
         <Settings className="w-4 h-4 mr-4" />
         Preferences
       </NavButton>
@@ -83,13 +82,14 @@ const Sidebar = () => {
       </div>
       <div className="h-72 w-full p-2">
         <Meter {...metering} />
-        {/*<DiscreteLevelLayout levels={[0, -3, -6, -18, -30, -60]} />*/}
       </div>
     </div>
   );
 };
 
 const Root = () => {
+  const { tab } = useTabsContext();
+
   return (
     <div
       className="flex flex-row h-screen bg-background relative"
@@ -98,7 +98,13 @@ const Root = () => {
       <LoadProvider>
         <Sidebar />
         <div className="w-full ml-0.5">
-          <Outlet />
+          {tab == Tabs.Browser ? (
+            <Outlet />
+          ) : tab == Tabs.Editor ? (
+            <Editor />
+          ) : (
+            <Preferences />
+          )}
         </div>
       </LoadProvider>
       <ResizeHandle />
@@ -107,4 +113,8 @@ const Root = () => {
   );
 };
 
-export default Root;
+export default () => (
+  <TabsProvider>
+    <Root />
+  </TabsProvider>
+);
