@@ -2,6 +2,7 @@ import { FC, ReactNode } from "react";
 
 import { Separator } from "@/components/ui/separator";
 
+import { DiscreteLevelLayout } from "@/components/discrete_level_layout";
 import { IUseMetering } from "@/hooks/use_metering";
 import { cn } from "@/lib/utils";
 
@@ -50,6 +51,8 @@ const ClippingIndicator: FC<{
   );
 };
 
+const levels = [0, -3, -6, -9, -12, -18, -30, -60];
+
 const Meter: FC<IUseMetering> = ({ channelGroups, resetChannelClipping }) => {
   const clippingIndicators = (
     <div className="flex flex-row gap-2 px-2 border border-transparent">
@@ -76,17 +79,6 @@ const Meter: FC<IUseMetering> = ({ channelGroups, resetChannelClipping }) => {
     </div>
   );
 
-  const levelBars = (
-    <div className="w-full h-full flex flex-col justify-around opacity-80">
-      <Separator />
-      <Separator />
-      <Separator />
-      <Separator />
-      <Separator />
-      <Separator />
-    </div>
-  );
-
   const meterBars = (
     <div className="flex-grow flex flex-row gap-2 bg-background p-2 border">
       {channelGroups.map((group, groupIndex) => {
@@ -98,7 +90,9 @@ const Meter: FC<IUseMetering> = ({ channelGroups, resetChannelClipping }) => {
                   key={channelIndex}
                   peak={channel.smoothedPeak}
                   fill={channel.smoothedTarget}
-                  levelBars={levelBars}
+                  levelBars={
+                    <DiscreteLevelLayout levels={levels} showLabels={false} />
+                  }
                 />
               );
             })}
@@ -110,6 +104,14 @@ const Meter: FC<IUseMetering> = ({ channelGroups, resetChannelClipping }) => {
 
   return (
     <div className="w-full h-full flex flex-row">
+      <div className="flex flex-col gap-2 w-12">
+        <div className="border flex invisible">
+          <ClippingIndicator clipping={false} resetClipping={async () => {}} />
+        </div>
+        <div className="py-2 h-full border-y border-transparent">
+          <DiscreteLevelLayout levels={levels} showLabels={true} />
+        </div>
+      </div>
       <div className="w-full h-full flex flex-col gap-2">
         {clippingIndicators}
         {meterBars}

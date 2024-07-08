@@ -81,7 +81,7 @@ const Sidebar = () => {
           </div>
         )}
       </div>
-      <div className="h-60 w-full p-2">
+      <div className="h-72 w-full p-2">
         <Meter {...metering} />
         {/*<DiscreteLevelLayout levels={[0, -3, -6, -18, -30, -60]} />*/}
       </div>

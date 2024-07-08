@@ -22,7 +22,7 @@ const meta: Meta<typeof Meter> = {
   args: {
     resetChannelClipping: fn(),
   },
-  decorators: [(story) => <div className="w-40 h-80">{story()}</div>],
+  decorators: [(story) => <div className="w-40 h-72">{story()}</div>],
 };
 
 export default meta;
@@ -35,7 +35,7 @@ const createStoryChannelGroups = (numGroups: number, numChannels: number) => {
   for (let gi = 0; gi < numGroups; ++gi) {
     let channelGroup: SmoothedChannelGroup = [];
 
-    for (let ci = 0; ci < numGroups; ++ci) {
+    for (let ci = 0; ci < numChannels; ++ci) {
       channelGroup.push({
         smoothedTarget: 0,
         smoothedPeak: 0,
@@ -53,7 +53,7 @@ const createStoryChannelGroups = (numGroups: number, numChannels: number) => {
 export const MeterStory: Story = {
   render: (args) => {
     const [channelGroups, setChannelGroups] = useState<SmoothedChannelGroups>(
-      createStoryChannelGroups(4, 4),
+      createStoryChannelGroups(2, 4),
     );
 
     useEffect(() => {

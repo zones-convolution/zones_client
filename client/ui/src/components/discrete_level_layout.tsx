@@ -16,7 +16,7 @@ const LevelLabel: FC<{ level: number }> = ({ level }) => {
     <div
       className="absolute font-thin text-sm w-full text-center"
       style={{
-        top: `${value * 100}%`,
+        top: `${(1 - value) * 100}%`,
         transform: "translateY(-50%)",
       }}
     >
@@ -31,11 +31,12 @@ const InvisibleLabel: FC<{ level: number }> = ({ level }) => (
 
 const LevelSeparator: FC<{ level: number }> = ({ level }) => {
   const value = getSkewedValue(getLinearValue(level));
+
   return (
     <div
       className="absolute w-full"
       style={{
-        top: `${value * 100}%`,
+        top: `${(1 - value) * 100}%`,
         transform: "translateY(-50%)",
       }}
     >
@@ -44,17 +45,26 @@ const LevelSeparator: FC<{ level: number }> = ({ level }) => {
   );
 };
 
-export const DiscreteLevelLayout: FC<{ levels: number[] }> = ({ levels }) => {
+const LevelLabels: FC<{ levels: number[] }> = ({ levels }) => {
   return (
-    <div className="w-full h-full bg-card flex flex-row gap-1">
-      <div className="relative">
-        {levels.map((level, index) => (
+    <div className="relative">
+      {levels.map((level, index) => (
+        <>
           <LevelLabel key={`label-${index}`} level={level} />
-        ))}
-        {levels.map((level, index) => (
           <InvisibleLabel key={`invisible-${index}`} level={level} />
-        ))}
-      </div>
+        </>
+      ))}
+    </div>
+  );
+};
+
+export const DiscreteLevelLayout: FC<{
+  levels: number[];
+  showLabels: boolean;
+}> = ({ levels, showLabels }) => {
+  return (
+    <div className="w-full h-full flex flex-row gap-1">
+      {showLabels && <LevelLabels levels={levels} />}
       <div className="relative flex-grow">
         {levels.map((level, index) => (
           <LevelSeparator key={`separator-${index}`} level={level} />
