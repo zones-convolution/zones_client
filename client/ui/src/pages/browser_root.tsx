@@ -1,10 +1,9 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { Link, Outlet, use, useLocation, useNavigate } from "react-router-dom";
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 
 import { useValidTargetFormats } from "@/hooks/use_valid_target_formats";
-import browser from "@/pages/browser";
 
 const BrowserRoot = () => {
   const { validTargetFormats } = useValidTargetFormats();

@@ -7,6 +7,7 @@ import BrowserRoot from "@/pages/browser_root";
 import CreateZone from "@/pages/create_zone";
 import ErrorPage from "@/pages/error_page";
 import Root from "@/pages/root";
+import Zone from "@/pages/zone";
 import "@/styles/globals.css";
 
 const router = createMemoryRouter([
@@ -26,6 +27,10 @@ const router = createMemoryRouter([
           {
             path: "/create",
             element: <CreateZone />,
+          },
+          {
+            path: "/zone",
+            element: <Zone />,
           },
         ],
       },
