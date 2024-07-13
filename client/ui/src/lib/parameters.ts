@@ -1,6 +1,6 @@
 export const Parameters = {
-  Input: "dry_wet_mix_parameter",
-  Output: "dry_wet_mix_parameter",
+  Input: "input_gain_parameter",
+  Output: "output_gain_parameter",
   DryWetMix: "dry_wet_mix_parameter",
   Bass: "dry_wet_mix_parameter",
   Treble: "dry_wet_mix_parameter",
