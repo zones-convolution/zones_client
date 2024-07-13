@@ -12,7 +12,10 @@ ParameterRelay::buildOptions (const juce::WebBrowserComponent::Options & initial
         .withOptionsFrom (resampler_relay_)
         .withOptionsFrom (room_size_relay_)
         .withOptionsFrom (input_gain_relay_)
-        .withOptionsFrom (output_gain_relay_);
+        .withOptionsFrom (output_gain_relay_)
+        .withOptionsFrom (treble_relay_)
+        .withOptionsFrom (bass_relay_)
+        .withOptionsFrom (reverb_time_relay_);
 }
 
 ParameterAttachments::ParameterAttachments (ParameterRelay & parameter_relay,
@@ -27,6 +30,12 @@ ParameterAttachments::ParameterAttachments (ParameterRelay & parameter_relay,
                               parameter_relay.input_gain_relay_)
     , output_gain_attachment_ (*parameter_tree.getParameter (ParameterTree::kOutputGainParameterId),
                                parameter_relay.output_gain_relay_)
+    , treble_attachment_ (*parameter_tree.getParameter (ParameterTree::kTrebleParameterId),
+                          parameter_relay.treble_relay_)
+    , bass_attachment_ (*parameter_tree.getParameter (ParameterTree::kBassParameterId),
+                        parameter_relay.bass_relay_)
+    , reverb_time_attachment_ (*parameter_tree.getParameter (ParameterTree::kReverbTimeParameterId),
+                               parameter_relay.reverb_time_relay_)
 
 {
 }

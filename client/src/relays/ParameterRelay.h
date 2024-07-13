@@ -30,6 +30,10 @@ private:
                                             ParameterTree::kInputGainParameterId};
     juce::WebSliderRelay output_gain_relay_ {web_browser_component_,
                                              ParameterTree::kOutputGainParameterId};
+    juce::WebSliderRelay treble_relay_ {web_browser_component_, ParameterTree::kTrebleParameterId};
+    juce::WebSliderRelay bass_relay_ {web_browser_component_, ParameterTree::kBassParameterId};
+    juce::WebSliderRelay reverb_time_relay_ {web_browser_component_,
+                                             ParameterTree::kReverbTimeParameterId};
 };
 
 /**
@@ -49,4 +53,7 @@ private:
     juce::WebSliderParameterAttachment room_size_attachment_;
     juce::WebSliderParameterAttachment input_gain_attachment_;
     juce::WebSliderParameterAttachment output_gain_attachment_;
+    juce::WebSliderParameterAttachment treble_attachment_;
+    juce::WebSliderParameterAttachment bass_attachment_;
+    juce::WebSliderParameterAttachment reverb_time_attachment_;
 };
