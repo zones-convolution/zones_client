@@ -22,3 +22,6 @@
 [submodule "lib/rocket"]
 	path = lib/rocket
 	url = git@github.com:tripleslash/rocket.git
+[submodule "lib/melatonin_audio_sparklines"]
+	path = lib/melatonin_audio_sparklines
+	url = git@github.com:sudara/melatonin_audio_sparklines.git
