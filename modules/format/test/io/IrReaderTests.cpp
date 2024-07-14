@@ -1,5 +1,5 @@
-#include "ir_format/io/IrReader.h"
-#include "ir_format/io/IrWriter.h"
+#include "format/io/IrReader.h"
+#include "format/io/IrWriter.h"
 
 #include <catch2/catch_test_macros.hpp>
 static std::filesystem::path kTestDataDirectory = TEST_DATA_DIRECTORY;

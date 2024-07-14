@@ -37,10 +37,11 @@ zones_add_module(
         juce::juce_events)
 
 zones_add_test(MODULE ir_engine SOURCES
+        test/processors/RoomSizeProcessorTests.cpp
         test/IrGraphCachePolicyTests.cpp
         test/IrGraphTests.cpp
         test/IrEngineTests.cpp
         test/IrGraphStateKeyTests.cpp
         test/ProcessResultPoolTests.cpp
         test/MockProcessor.h
-        DEPS ir_engine)
+        DEPS ir_engine melatonin_test_helpers)

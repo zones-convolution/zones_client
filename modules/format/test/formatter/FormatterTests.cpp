@@ -1,6 +1,6 @@
-#include "ir_format/formatter/MonoFormatter.h"
-#include "ir_format/formatter/StereoFormatter.h"
-#include "ir_format/io/IrReader.h"
+#include "format/formatter/MonoFormatter.h"
+#include "format/formatter/StereoFormatter.h"
+#include "format/io/IrReader.h"
 
 #include <catch2/catch_test_macros.hpp>
 

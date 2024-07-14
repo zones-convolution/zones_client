@@ -11,13 +11,14 @@ SCENARIO ("ir engine jobs execute correctly")
         auto result_pool = ProcessResultPool ();
         bool did_execute_callback = false;
         auto job = IrEngine::Job (
-            ir_graph, {}, result_pool, [&] (auto &&) { did_execute_callback = true; });
+            ir_graph, {}, result_pool, [&] (auto, auto *) { did_execute_callback = true; });
+
         WHEN ("when the job is run")
         {
             job.runJob ();
-            THEN ("then the callback is not executed")
+            THEN ("then the callback is executed")
             {
-                REQUIRE_FALSE (did_execute_callback);
+                REQUIRE (did_execute_callback);
             }
         }
     }
@@ -33,19 +34,20 @@ SCENARIO ("ir engine jobs execute correctly")
             {IrGraph::CachePolicy ().WithPolicyIdentifier ("mock_policy"), mock_processor});
 
         auto result_pool = ProcessResultPool ();
-        IrGraphProcessor::BoxedBuffer callback_result;
+        std::optional<IrGraphProcessor::BoxedBuffer> callback_result;
 
         auto job = IrEngine::Job (
-            ir_graph, {}, result_pool, [&] (auto result) { callback_result = result; });
+            ir_graph, {}, result_pool, [&] (auto result, auto * job) { callback_result = result; });
 
         WHEN ("when the job is run")
         {
             job.runJob ();
             THEN ("then the callback hands over the last processor result")
             {
-                REQUIRE (callback_result.get ().getNumChannels () == copy_buffer.getNumChannels ());
-                REQUIRE (callback_result.get ().getNumSamples () == copy_buffer.getNumSamples ());
-                REQUIRE (juce::approximatelyEqual (callback_result.get ().getSample (0, 0),
+                REQUIRE (callback_result->get ().getNumChannels () ==
+                         copy_buffer.getNumChannels ());
+                REQUIRE (callback_result->get ().getNumSamples () == copy_buffer.getNumSamples ());
+                REQUIRE (juce::approximatelyEqual (callback_result->get ().getSample (0, 0),
                                                    copy_buffer.getSample (0, 0)));
             }
         }

@@ -1,4 +1,4 @@
-#include "ir_format/IrMetadata.h"
+#include "format/IrMetadata.h"
 
 #include <catch2/catch_test_macros.hpp>
 
