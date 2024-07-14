@@ -1,41 +1,22 @@
 #include "BaseIrProcessor.h"
 
-static float CalculateNormalisationFactor (float sum_squared_magnitude) // COPIED FROM JUCE CONV
+static void NormaliseImpulseResponse (juce::AudioBuffer<float> & output_buffer)
 {
-    if (sum_squared_magnitude < 1e-8f)
-        return 1.0f;
+    auto num_channels = output_buffer.getNumChannels ();
+    auto num_samples = output_buffer.getNumSamples ();
 
-    return 0.125f / std::sqrt (sum_squared_magnitude);
-}
+    auto max_rms = 0.0f;
+    for (auto i = 0; i < num_channels; ++i)
+        max_rms = std::max (max_rms, output_buffer.getRMSLevel (i, 0, num_samples));
 
-static void
-NormaliseImpulseResponse (juce::AudioBuffer<float> & output_buffer) // COPIED FROM JUCE CONV
-{
-    const auto num_channels = output_buffer.getNumChannels ();
-    const auto num_samples = output_buffer.getNumSamples ();
-    const auto channel_ptrs = output_buffer.getArrayOfWritePointers ();
+    auto norm_factor = 1.0f / output_buffer.getMagnitude (0, num_samples);
 
-    const auto max_sum_squared_mag =
-        std::accumulate (channel_ptrs,
-                         channel_ptrs + num_channels,
-                         0.0f,
-                         [num_samples] (auto max, auto * channel)
-                         {
-                             return juce::jmax (max,
-                                                std::accumulate (channel,
-                                                                 channel + num_samples,
-                                                                 0.0f,
-                                                                 [] (auto sum, auto samp)
-                                                                 { return sum + (samp * samp); }));
-                         });
+    norm_factor *= 0.125f / max_rms;
+    norm_factor *= std::min (1.2f, 48000.0f / static_cast<float> (num_samples));
+    norm_factor *= juce::Decibels::decibelsToGain (-12.0f);
+    norm_factor = std::clamp (norm_factor, 0.0f, 4.0f);
 
-    const auto normalisation_factor = CalculateNormalisationFactor (max_sum_squared_mag);
-
-    std::for_each (
-        channel_ptrs,
-        channel_ptrs + num_channels,
-        [normalisation_factor, num_samples] (auto * channel)
-        { juce::FloatVectorOperations::multiply (channel, normalisation_factor, num_samples); });
+    juce::dsp::AudioBlock<float> {output_buffer}.multiplyBy (norm_factor);
 }
 
 void BaseIrProcessor::Process (IrGraphProcessor::BoxedBuffer & input_buffer,
