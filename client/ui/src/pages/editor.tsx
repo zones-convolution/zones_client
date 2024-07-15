@@ -120,7 +120,7 @@ const TimePanel = () => {
       <PanelHeading>TIME</PanelHeading>
       <PanelContent>
         <Knob identifier={Parameters.PreDelay} />
-        <Knob identifier={Parameters.PreDelay} />
+        <Knob identifier={Parameters.Trim} />
       </PanelContent>
     </Panel>
   );

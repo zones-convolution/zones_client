@@ -11,6 +11,7 @@ IrController::IrController (IrEngine & ir_engine,
     parameter_tree.addParameterListener (ParameterTree::kReverbTimeParameterId, this);
     parameter_tree.addParameterListener (ParameterTree::kResamplerParameterId, this);
     parameter_tree.addParameterListener (ParameterTree::kPredelayParameterId, this);
+    parameter_tree.addParameterListener (ParameterTree::kTrimParameterId, this);
 
     UpdateParametersFromTree ();
 }
@@ -74,6 +75,9 @@ void IrController::UpdateParametersFromTree ()
     auto predelay_parameter = parameter_tree_.getParameter (ParameterTree::kPredelayParameterId);
     current_graph_state_.pre_delay =
         predelay_parameter->convertFrom0to1 (predelay_parameter->getValue ());
+
+    auto trim_parameter = parameter_tree_.getParameter (ParameterTree::kTrimParameterId);
+    current_graph_state_.trim = trim_parameter->convertFrom0to1 (trim_parameter->getValue ());
 }
 
 void IrController::PerformRender ()

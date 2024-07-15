@@ -22,6 +22,7 @@ public:
     static const juce::String kResamplerParameterId;
 
     static const juce::String kPredelayParameterId;
+    static const juce::String kTrimParameterId;
 
     static juce::AudioProcessorValueTreeState::ParameterLayout CreateParameterLayout ();
 };

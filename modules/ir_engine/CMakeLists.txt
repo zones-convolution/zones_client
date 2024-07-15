@@ -23,8 +23,8 @@ zones_add_module(
         src/ir_engine/processors/TestProcessor.cpp
         src/ir_engine/processors/ResamplerProcessor.h
         src/ir_engine/processors/ResamplerProcessor.cpp
-        src/ir_engine/processors/PreDelayProcessor.h
-        src/ir_engine/processors/PreDelayProcessor.cpp
+        src/ir_engine/processors/TimeProcessor.h
+        src/ir_engine/processors/TimeProcessor.cpp
         src/ir_engine/IrController.h
         src/ir_engine/IrController.cpp
         DEPS

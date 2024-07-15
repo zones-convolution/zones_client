@@ -8,6 +8,7 @@ export const Parameters = {
   Resample: "resampler_parameter",
   RoomSize: "room_size_parameter",
   PreDelay: "predelay_parameter",
+  Trim: "trim_parameter",
   Attack: "dry_wet_mix_parameter",
   ListenGain: "dry_wet_mix_parameter",
 };

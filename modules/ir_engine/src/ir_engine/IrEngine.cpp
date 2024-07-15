@@ -103,7 +103,8 @@ IrGraph IrEngine::CreateGraphForState (const IrGraphState & ir_graph_state) cons
                                  resampler_processor_})
                 .WithProcessor ({IrGraph::CachePolicy ()
                                      .WithPolicyIdentifier ("predelay_processor")
-                                     .WithCachedHandle (&IrGraphState::CachePredelay),
+                                     .WithCachedHandle (&IrGraphState::CachePredelay)
+                                     .WithCachedHandle (&IrGraphState::CacheTrim),
                                  predelay_processor_});
         default:
             return ir_graph;
