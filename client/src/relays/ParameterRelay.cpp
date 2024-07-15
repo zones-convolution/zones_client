@@ -15,7 +15,8 @@ ParameterRelay::buildOptions (const juce::WebBrowserComponent::Options & initial
         .withOptionsFrom (output_gain_relay_)
         .withOptionsFrom (treble_relay_)
         .withOptionsFrom (bass_relay_)
-        .withOptionsFrom (reverb_time_relay_);
+        .withOptionsFrom (reverb_time_relay_)
+        .withOptionsFrom (predelay_relay_);
 }
 
 ParameterAttachments::ParameterAttachments (ParameterRelay & parameter_relay,
@@ -36,6 +37,8 @@ ParameterAttachments::ParameterAttachments (ParameterRelay & parameter_relay,
                         parameter_relay.bass_relay_)
     , reverb_time_attachment_ (*parameter_tree.getParameter (ParameterTree::kReverbTimeParameterId),
                                parameter_relay.reverb_time_relay_)
+    , predelay_attachment_ (*parameter_tree.getParameter (ParameterTree::kPredelayParameterId),
+                            parameter_relay.predelay_relay_)
 
 {
 }

@@ -3,6 +3,7 @@
 #include "IrGraph.h"
 #include "juce_core/juce_core.h"
 #include "processors/BaseIrProcessor.h"
+#include "processors/PreDelayProcessor.h"
 #include "processors/ResamplerProcessor.h"
 #include "processors/ReverbTimeProcessor.h"
 #include "processors/RoomSizeProcessor.h"
@@ -68,6 +69,7 @@ private:
         std::make_shared<ReverbTimeProcessor> ();
     std::shared_ptr<ResamplerProcessor> resampler_processor_ =
         std::make_shared<ResamplerProcessor> ();
+    std::shared_ptr<PreDelayProcessor> predelay_processor_ = std::make_shared<PreDelayProcessor> ();
 
     std::mutex render_mutex_;
     std::vector<juce::ThreadPoolJob *> pending_renders_;

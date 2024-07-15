@@ -13,11 +13,14 @@ const juce::String ParameterTree::kReverbTimeParameterId {"reverb_time_parameter
 const juce::String ParameterTree::kRoomSizeParameterId {"room_size_parameter"};
 const juce::String ParameterTree::kResamplerParameterId {"resampler_parameter"};
 
+const juce::String ParameterTree::kPredelayParameterId {"predelay_parameter"};
+
 juce::AudioProcessorValueTreeState::ParameterLayout ParameterTree::CreateParameterLayout ()
 {
     auto room_size_attributes = juce::AudioParameterFloatAttributes ().withAutomatable (false);
     auto reverb_time_attributes = juce::AudioParameterFloatAttributes ().withAutomatable (false);
     auto resampler_attributes = juce::AudioParameterFloatAttributes ().withAutomatable (false);
+    auto predelay_attributes = juce::AudioParameterFloatAttributes ().withAutomatable (false);
 
     return {
         std::make_unique<juce::AudioParameterFloat> (
@@ -45,16 +48,21 @@ juce::AudioProcessorValueTreeState::ParameterLayout ParameterTree::CreateParamet
         std::make_unique<juce::AudioParameterFloat> (juce::ParameterID {kRoomSizeParameterId, 1},
                                                      "Room Size",
                                                      juce::NormalisableRange<float> (0.f, 1.f),
-                                                     1.0,
+                                                     1.0f,
                                                      room_size_attributes),
         std::make_unique<juce::AudioParameterFloat> (juce::ParameterID {kReverbTimeParameterId, 1},
                                                      "Reverb Time",
                                                      juce::NormalisableRange<float> (0.f, 1.f),
-                                                     1.0,
+                                                     1.0f,
                                                      reverb_time_attributes),
         std::make_unique<juce::AudioParameterFloat> (juce::ParameterID {kResamplerParameterId, 1},
                                                      "Resample",
                                                      juce::NormalisableRange<float> (0.1f, 2.f),
-                                                     1.0,
-                                                     resampler_attributes)};
+                                                     1.0f,
+                                                     resampler_attributes),
+        std::make_unique<juce::AudioParameterFloat> (juce::ParameterID {kPredelayParameterId, 1},
+                                                     "Predelay",
+                                                     juce::NormalisableRange<float> (0.0f, 500.0f),
+                                                     0.0f,
+                                                     predelay_attributes)};
 }

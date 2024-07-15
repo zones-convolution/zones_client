@@ -119,8 +119,8 @@ const TimePanel = () => {
     <Panel>
       <PanelHeading>TIME</PanelHeading>
       <PanelContent>
-        <Knob identifier="IDENTIFIER" />
-        <Knob identifier="IDENTIFIER" />
+        <Knob identifier={Parameters.PreDelay} />
+        <Knob identifier={Parameters.PreDelay} />
       </PanelContent>
     </Panel>
   );

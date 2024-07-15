@@ -34,6 +34,8 @@ private:
     juce::WebSliderRelay bass_relay_ {web_browser_component_, ParameterTree::kBassParameterId};
     juce::WebSliderRelay reverb_time_relay_ {web_browser_component_,
                                              ParameterTree::kReverbTimeParameterId};
+    juce::WebSliderRelay predelay_relay_ {web_browser_component_,
+                                          ParameterTree::kPredelayParameterId};
 };
 
 /**
@@ -56,4 +58,5 @@ private:
     juce::WebSliderParameterAttachment treble_attachment_;
     juce::WebSliderParameterAttachment bass_attachment_;
     juce::WebSliderParameterAttachment reverb_time_attachment_;
+    juce::WebSliderParameterAttachment predelay_attachment_;
 };

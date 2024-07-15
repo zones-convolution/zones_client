@@ -100,7 +100,11 @@ IrGraph IrEngine::CreateGraphForState (const IrGraphState & ir_graph_state) cons
                 .WithProcessor ({IrGraph::CachePolicy ()
                                      .WithPolicyIdentifier ("resampler_processor")
                                      .WithCachedHandle (&IrGraphState::CacheResamplerRatio),
-                                 resampler_processor_});
+                                 resampler_processor_})
+                .WithProcessor ({IrGraph::CachePolicy ()
+                                     .WithPolicyIdentifier ("predelay_processor")
+                                     .WithCachedHandle (&IrGraphState::CachePredelay),
+                                 predelay_processor_});
         default:
             return ir_graph;
     }

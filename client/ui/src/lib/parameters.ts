@@ -7,7 +7,7 @@ export const Parameters = {
   ReverbTime: "reverb_time_parameter",
   Resample: "resampler_parameter",
   RoomSize: "room_size_parameter",
-  PreDelay: "dry_wet_mix_parameter",
+  PreDelay: "predelay_parameter",
   Attack: "dry_wet_mix_parameter",
   ListenGain: "dry_wet_mix_parameter",
 };

@@ -31,6 +31,7 @@ struct IrGraphState
     float room_size;
     float reverb_time;
     float resampler_ratio;
+    float pre_delay;
 
     static float CacheParam1 (const IrGraphState & state)
     {
@@ -70,5 +71,10 @@ struct IrGraphState
     static float CacheResamplerRatio (const IrGraphState & state)
     {
         return state.resampler_ratio;
+    }
+
+    static float CachePredelay (const IrGraphState & state)
+    {
+        return state.pre_delay;
     }
 };

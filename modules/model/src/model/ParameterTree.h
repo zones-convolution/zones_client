@@ -21,5 +21,7 @@ public:
     static const juce::String kRoomSizeParameterId;
     static const juce::String kResamplerParameterId;
 
+    static const juce::String kPredelayParameterId;
+
     static juce::AudioProcessorValueTreeState::ParameterLayout CreateParameterLayout ();
 };
