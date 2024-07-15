@@ -17,7 +17,8 @@ ParameterRelay::buildOptions (const juce::WebBrowserComponent::Options & initial
         .withOptionsFrom (bass_relay_)
         .withOptionsFrom (reverb_time_relay_)
         .withOptionsFrom (predelay_relay_)
-        .withOptionsFrom (trim_relay_);
+        .withOptionsFrom (trim_relay_)
+        .withOptionsFrom (attack_relay_);
 }
 
 ParameterAttachments::ParameterAttachments (ParameterRelay & parameter_relay,
@@ -42,6 +43,8 @@ ParameterAttachments::ParameterAttachments (ParameterRelay & parameter_relay,
                             parameter_relay.predelay_relay_)
     , trim_attachment_ (*parameter_tree.getParameter (ParameterTree::kTrimParameterId),
                         parameter_relay.trim_relay_)
+    , attack_attachment_ (*parameter_tree.getParameter (ParameterTree::kAttackParameterId),
+                          parameter_relay.attack_relay_)
 
 {
 }

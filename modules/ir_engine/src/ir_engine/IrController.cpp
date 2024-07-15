@@ -12,6 +12,7 @@ IrController::IrController (IrEngine & ir_engine,
     parameter_tree.addParameterListener (ParameterTree::kResamplerParameterId, this);
     parameter_tree.addParameterListener (ParameterTree::kPredelayParameterId, this);
     parameter_tree.addParameterListener (ParameterTree::kTrimParameterId, this);
+    parameter_tree.addParameterListener (ParameterTree::kAttackParameterId, this);
 
     UpdateParametersFromTree ();
 }
@@ -78,6 +79,9 @@ void IrController::UpdateParametersFromTree ()
 
     auto trim_parameter = parameter_tree_.getParameter (ParameterTree::kTrimParameterId);
     current_graph_state_.trim = trim_parameter->convertFrom0to1 (trim_parameter->getValue ());
+
+    auto attack_parameter = parameter_tree_.getParameter (ParameterTree::kAttackParameterId);
+    current_graph_state_.attack = trim_parameter->convertFrom0to1 (attack_parameter->getValue ());
 }
 
 void IrController::PerformRender ()

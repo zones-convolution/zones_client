@@ -121,6 +121,7 @@ const TimePanel = () => {
       <PanelContent>
         <Knob identifier={Parameters.PreDelay} />
         <Knob identifier={Parameters.Trim} />
+        <Knob identifier={Parameters.Attack} />
       </PanelContent>
     </Panel>
   );

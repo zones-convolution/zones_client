@@ -37,6 +37,7 @@ private:
     juce::WebSliderRelay predelay_relay_ {web_browser_component_,
                                           ParameterTree::kPredelayParameterId};
     juce::WebSliderRelay trim_relay_ {web_browser_component_, ParameterTree::kTrimParameterId};
+    juce::WebSliderRelay attack_relay_ {web_browser_component_, ParameterTree::kAttackParameterId};
 };
 
 /**
@@ -61,4 +62,5 @@ private:
     juce::WebSliderParameterAttachment reverb_time_attachment_;
     juce::WebSliderParameterAttachment predelay_attachment_;
     juce::WebSliderParameterAttachment trim_attachment_;
+    juce::WebSliderParameterAttachment attack_attachment_;
 };

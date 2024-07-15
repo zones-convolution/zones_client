@@ -33,6 +33,7 @@ struct IrGraphState
     float resampler_ratio;
     float pre_delay;
     float trim;
+    float attack;
 
     static float CacheParam1 (const IrGraphState & state)
     {
@@ -82,5 +83,10 @@ struct IrGraphState
     static float CacheTrim (const IrGraphState & state)
     {
         return state.trim;
+    }
+
+    static float CacheAttack (const IrGraphState & state)
+    {
+        return state.attack;
     }
 };

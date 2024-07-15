@@ -15,6 +15,7 @@ const juce::String ParameterTree::kResamplerParameterId {"resampler_parameter"};
 
 const juce::String ParameterTree::kPredelayParameterId {"predelay_parameter"};
 const juce::String ParameterTree::kTrimParameterId {"trim_parameter"};
+const juce::String ParameterTree::kAttackParameterId {"attack_parameter"};
 
 juce::AudioProcessorValueTreeState::ParameterLayout ParameterTree::CreateParameterLayout ()
 {
@@ -23,6 +24,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout ParameterTree::CreateParamet
     auto resampler_attributes = juce::AudioParameterFloatAttributes ().withAutomatable (false);
     auto predelay_attributes = juce::AudioParameterFloatAttributes ().withAutomatable (false);
     auto trim_attributes = juce::AudioParameterFloatAttributes ().withAutomatable (false);
+    auto attack_attributes = juce::AudioParameterFloatAttributes ().withAutomatable (false);
 
     return {
         std::make_unique<juce::AudioParameterFloat> (
@@ -71,5 +73,10 @@ juce::AudioProcessorValueTreeState::ParameterLayout ParameterTree::CreateParamet
                                                      "Trim",
                                                      juce::NormalisableRange<float> (0.0f, 1.0f),
                                                      0.0f,
-                                                     trim_attributes)};
+                                                     trim_attributes),
+        std::make_unique<juce::AudioParameterFloat> (juce::ParameterID {kAttackParameterId, 1},
+                                                     "Attack",
+                                                     juce::NormalisableRange<float> (0.0f, 1.0f),
+                                                     0.0f,
+                                                     attack_attributes)};
 }
