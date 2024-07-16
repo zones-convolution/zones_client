@@ -14,44 +14,69 @@ void RoomSizeProcessor::Process (IrGraphProcessor::BoxedBuffer & input_buffer,
     jassert (state.room_size > 0);
 
     auto room_size = state.room_size;
-    auto & input_buffer_unboxed = input_buffer.get ();
-    auto input_num_samples = input_buffer_unboxed.getNumSamples ();
-    auto num_channels = input_buffer_unboxed.getNumChannels ();
+    auto input_num_samples = input_buffer->getNumSamples ();
+    auto num_channels = input_buffer->getNumChannels ();
 
     Stretch stretch;
     stretch.presetDefault (num_channels, state.sample_rate);
 
-    auto input_latency = stretch.inputLatency ();
-    auto output_latency = stretch.outputLatency ();
+    /**
+     * Perform Seek
+     */
+    auto one_interval = stretch.intervalSamples ();
+    auto block_length = stretch.blockSamples ();
+    auto seek_samples = one_interval + block_length;
 
-    auto resized_input_num_samples = input_num_samples + input_latency + output_latency;
-    juce::AudioBuffer<float> resized_input {num_channels, resized_input_num_samples};
-    juce::dsp::AudioBlock<float> resized_block {resized_input};
-    resized_block.copyFrom (*input_buffer);
+    juce::AudioBuffer<float> seek_buffer {num_channels, seek_samples};
+    seek_buffer.clear ();
+    stretch.seek (
+        seek_buffer.getArrayOfReadPointers (), seek_samples, static_cast<double> (room_size));
 
-    // ========================
+    /**
+     * Prepare output buffer
+     */
+    auto output_num_samples = juce::roundToInt ((float) input_num_samples * room_size);
+    output_buffer.setSize (num_channels, output_num_samples, true, true, false);
+    juce::dsp::AudioBlock<float> output_block {output_buffer};
 
-    auto actual_output_size = juce::roundToInt ((float) input_num_samples * room_size);
-
-    auto output_num_samples = input_latency + output_latency + actual_output_size;
-
-    output_buffer.setSize (num_channels, output_num_samples);
-
-    stretch.process (resized_input.getArrayOfReadPointers (),
-                     resized_input_num_samples,
+    /**
+     * Process Stretch
+     */
+    stretch.process (input_buffer->getArrayOfReadPointers (),
+                     input_num_samples,
                      output_buffer.getArrayOfWritePointers (),
                      output_num_samples);
 
-    auto samples_to_remove = input_latency + output_latency;
+    /**
+     * Flush Output
+     */
+    auto output_latency = stretch.outputLatency ();
+    juce::AudioBuffer<float> flush_buffer {num_channels, output_latency};
+    flush_buffer.clear ();
+    stretch.flush (flush_buffer.getArrayOfWritePointers (), output_latency);
+    juce::dsp::AudioBlock<float> flush_block {flush_buffer};
 
-    for (auto channel_index = 0; channel_index < num_channels; ++channel_index)
+    //    std::cout << "In: ";
+    //    for (auto i = 0; i < input_buffer->getNumSamples (); ++i)
+    //        std::cout << input_buffer->getSample (0, i) << ",";
+    std::cout << "\n"
+              << "Out: ";
+    for (auto i = 0; i < flush_buffer.getNumSamples (); ++i)
+        std::cout << flush_buffer.getSample (0, i) << ",";
+
+    /**
+     * Stitch the buffers
+     */
+    if (output_num_samples > output_latency)
     {
-        auto channel_ptr = output_buffer.getWritePointer (channel_index);
-        for (auto sample_index = 0; sample_index < actual_output_size; ++sample_index)
-        {
-            channel_ptr [sample_index] = channel_ptr [sample_index + samples_to_remove];
-        }
-    }
+        // Shift valid samples by output_latency
+        output_block.copyFrom (output_block.getSubBlock (output_latency));
 
-    output_buffer.setSize (num_channels, actual_output_size, true, true, false);
+        // Copy flushed output to end
+        output_block.getSubBlock (output_num_samples - output_latency).copyFrom (flush_block);
+    }
+    else
+    {
+        output_block.copyFrom (flush_block.getSubBlock (output_latency - output_num_samples));
+    }
 }
