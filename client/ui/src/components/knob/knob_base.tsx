@@ -26,13 +26,13 @@ export type KnobBaseProps = Pick<
   readonly onMouseDown: () => void;
   readonly valueRaw: number;
   readonly setValueRaw: (valueRaw: number) => void;
-  readonly label: string;
+  readonly name: string;
   readonly stepFn: (valueRaw: number) => number;
   readonly stepLargerFn: (valueRaw: number) => number;
 };
 
 const KnobBase = ({
-  label,
+  name,
   valueRaw,
   setValueRaw,
   valueMin,
@@ -72,7 +72,7 @@ const KnobBase = ({
       )}
     >
       <KnobHeadlessLabel id={labelId} className="text-primary">
-        {label}
+        {name}
       </KnobHeadlessLabel>
       <KnobHeadless
         id={knobId}

@@ -33,6 +33,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout ParameterTree::CreateParamet
             juce::NormalisableRange<float> (0.f, 1.f, 0.1f),
             0.6f,
             juce::AudioParameterFloatAttributes ().withLabel ("%")),
+        
         std::make_unique<juce::AudioParameterFloat> (juce::ParameterID {kInputGainParameterId, 1},
                                                      "Input",
                                                      juce::NormalisableRange<float> (0.f, 2.f),

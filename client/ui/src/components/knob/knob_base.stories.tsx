@@ -8,7 +8,7 @@ const meta: Meta<typeof KnobBase> = {
   component: KnobBase,
   tags: ["autodocs"],
   argTypes: {
-    label: { control: "text" },
+    name: { control: "text" },
     valueMin: { control: "number" },
     valueMax: { control: "number" },
     valueRaw: { control: "number" },
@@ -34,7 +34,7 @@ const Template: StoryObj<KnobBaseProps> = {
 export const Default: Story = {
   ...Template,
   args: {
-    label: "Volume",
+    name: "Volume",
     valueMin: 0,
     valueMax: 100,
     valueRaw: 50,
@@ -52,7 +52,7 @@ export const FineControl: Story = {
   ...Template,
   args: {
     ...Default.args,
-    label: "Fine Volume",
+    name: "Fine Volume",
     valueRaw: 25,
     stepFn: (value) => 0.1,
     stepLargerFn: (value) => 1,
@@ -63,7 +63,7 @@ export const CoarseControl: Story = {
   ...Template,
   args: {
     ...Default.args,
-    label: "Coarse Volume",
+    name: "Coarse Volume",
     valueRaw: 75,
     stepFn: (value) => 5,
     stepLargerFn: (value) => 20,

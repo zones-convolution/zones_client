@@ -39,7 +39,7 @@ const Knob: FC<{ identifier: string }> = ({ identifier }) => {
     <KnobBase
       onRawValueCommit={rawValueCommit}
       onMouseDown={mouseDown}
-      label={properties.name}
+      name={properties.name}
       valueRaw={valueScaled}
       setValueRaw={setValueRaw}
       stepFn={stepFn}
