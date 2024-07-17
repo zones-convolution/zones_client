@@ -3,18 +3,18 @@
 #include "model/ParameterTree.h"
 
 ProcessorContainer::ProcessorContainer (juce::AudioProcessor & audio_processor)
-    : parameter_tree_ (audio_processor,
-                       nullptr,
-                       ParameterTree::kParameterTreeIdentifier,
-                       ParameterTree::CreateParameterLayout ())
+    : parameter_tree_state_ (audio_processor,
+                             nullptr,
+                             ParameterTree::kParameterTreeIdentifier,
+                             CreateParameterLayout ())
 
     , graph_ (input_graph_metering_,
               output_graph_metering_,
               convolution_engine_,
-              notification_queue_)
+              notification_queue_,
+              parameter_tree_)
     , audio_engine_ (command_queue_,
                      notification_queue_,
-                     parameter_tree_,
                      convolution_engine_,
                      player_controller_,
                      audio_processor)
@@ -46,4 +46,11 @@ void ProcessorContainer::RegisterIrEngineListeners ()
 {
     auto & ir_engine_listeners = ir_engine_.GetListeners ();
     ir_engine_listeners.add (&audio_engine_);
+}
+
+juce::AudioProcessorValueTreeState::ParameterLayout ProcessorContainer::CreateParameterLayout ()
+{
+    juce::AudioProcessorValueTreeState::ParameterLayout layout;
+    parameter_tree_ = ParameterTree::CreateParameterTree (layout);
+    return layout;
 }

@@ -22,7 +22,8 @@ public:
     AudioGraphMetering input_graph_metering_;
     AudioGraphMetering output_graph_metering_;
 
-    juce::AudioProcessorValueTreeState parameter_tree_;
+    ParameterTree parameter_tree_;
+    juce::AudioProcessorValueTreeState parameter_tree_state_;
 
     CommandQueue::VisitorQueue command_queue_;
     NotificationQueue::VisitorQueue notification_queue_;
@@ -45,4 +46,5 @@ public:
 
 private:
     void RegisterIrEngineListeners ();
+    juce::AudioProcessorValueTreeState::ParameterLayout CreateParameterLayout ();
 };

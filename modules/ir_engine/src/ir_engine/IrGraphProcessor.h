@@ -29,11 +29,11 @@ struct IrGraphState
     double sample_rate;
     double bit_depth;
     float room_size;
-    float reverb_time;
-    float resampler_ratio;
-    float pre_delay;
-    float trim;
-    float attack;
+    float reverb_time_norm;
+    float resampler;
+    float pre_delay_ms;
+    float trim_norm;
+    float attack_norm;
 
     static float CacheParam1 (const IrGraphState & state)
     {
@@ -67,26 +67,26 @@ struct IrGraphState
 
     static float CacheReverbTime (const IrGraphState & state)
     {
-        return state.reverb_time;
+        return state.reverb_time_norm;
     }
 
     static float CacheResamplerRatio (const IrGraphState & state)
     {
-        return state.resampler_ratio;
+        return state.resampler;
     }
 
     static float CachePredelay (const IrGraphState & state)
     {
-        return state.pre_delay;
+        return state.pre_delay_ms;
     }
 
     static float CacheTrim (const IrGraphState & state)
     {
-        return state.trim;
+        return state.trim_norm;
     }
 
     static float CacheAttack (const IrGraphState & state)
     {
-        return state.attack;
+        return state.attack_norm;
     }
 };

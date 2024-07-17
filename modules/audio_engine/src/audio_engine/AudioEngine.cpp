@@ -2,7 +2,6 @@
 
 AudioEngine::AudioEngine (CommandQueue::VisitorQueue & command_queue,
                           NotificationQueue::VisitorQueue & notification_queue,
-                          juce::AudioProcessorValueTreeState & parameter_tree,
                           zones::ConvolutionEngine & convolution_engine,
                           PlayerController & player_controller,
                           const juce::AudioProcessor & processor)
@@ -10,15 +9,8 @@ AudioEngine::AudioEngine (CommandQueue::VisitorQueue & command_queue,
     , processor_ (processor)
     , command_queue_ (command_queue)
     , notification_queue_ (notification_queue)
-    , parameter_tree_ (parameter_tree)
     , convolution_engine_ (convolution_engine)
 {
-    parameter_tree.addParameterListener (ParameterTree::kDryWetMixParameterId, this);
-    parameter_tree.addParameterListener (ParameterTree::kOutputGainParameterId, this);
-    parameter_tree.addParameterListener (ParameterTree::kInputGainParameterId, this);
-    parameter_tree.addParameterListener (ParameterTree::kBassParameterId, this);
-    parameter_tree.addParameterListener (ParameterTree::kTrebleParameterId, this);
-
     startTimer (kServiceIntervalMs);
 }
 
@@ -52,25 +44,6 @@ void AudioEngine::RenderFinished (IrGraphState state, IrGraphProcessor::BoxedBuf
         convolution_engine_.LoadIR (*render_result, CreateConvolverSpecForState (state));
     else
         jassertfalse;
-}
-
-void AudioEngine::parameterChanged (const juce::String & parameterID, float newValue)
-{
-    auto dry_wet_mix_parameter =
-        parameter_tree_.getParameter (ParameterTree::kDryWetMixParameterId);
-    auto input_gain_parameter = parameter_tree_.getParameter (ParameterTree::kInputGainParameterId);
-    auto output_gain_parameter =
-        parameter_tree_.getParameter (ParameterTree::kOutputGainParameterId);
-    auto bass_parameter = parameter_tree_.getParameter (ParameterTree::kBassParameterId);
-    auto treble_parameter = parameter_tree_.getParameter (ParameterTree::kTrebleParameterId);
-
-    command_queue_.PushCommand (CommandQueue::UpdateParameters {
-        .dry_wet_mix = dry_wet_mix_parameter->convertFrom0to1 (dry_wet_mix_parameter->getValue ()),
-        .input_gain = input_gain_parameter->convertFrom0to1 (input_gain_parameter->getValue ()),
-        .output_gain = output_gain_parameter->convertFrom0to1 (output_gain_parameter->getValue ()),
-        .bass = bass_parameter->convertFrom0to1 (bass_parameter->getValue ()),
-        .treble = treble_parameter->convertFrom0to1 (treble_parameter->getValue ()),
-    });
 }
 
 void AudioEngine::operator() (const Player::PlayerState & player_state_notification)

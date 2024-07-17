@@ -11,7 +11,7 @@ void ReverbTimeProcessor::Process (IrGraphProcessor::BoxedBuffer & input_buffer,
     output_block.copyFrom (input_block);
 
     auto num_samples = input_block.getNumSamples ();
-    auto fade_start = (int) std::floor ((float) num_samples * state.reverb_time);
+    auto fade_start = (int) std::floor ((float) num_samples * state.reverb_time_norm);
     auto fade_samples = num_samples - fade_start;
 
     auto gain_curve = [&] (float sample_index)

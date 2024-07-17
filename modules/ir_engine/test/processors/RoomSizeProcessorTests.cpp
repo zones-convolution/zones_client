@@ -62,24 +62,26 @@ TEST_CASE ("decrease room size", "[IrEngine]")
 {
     RoomSizeProcessor room_size_processor;
 
-    auto num_samples = 1000;
+    auto num_samples = 5000;
     auto num_channels = 2;
 
     auto input = CreateInputBuffer (num_channels, num_samples);
     juce::AudioBuffer<float> output_buffer;
-    room_size_processor.Process (input, output_buffer, {.sample_rate = 48000, .room_size = 2.0f});
+    room_size_processor.Process (input, output_buffer, {.sample_rate = 48000, .room_size = 1.0f});
 
     //    REQUIRE (output_buffer.getNumChannels () == num_channels);
     //    REQUIRE (2 * output_buffer.getNumSamples () == num_samples);
 
-    //    std::cout << "In: ";
-    //    for (auto i = 0; i < input->getNumSamples (); ++i)
-    //        std::cout << input->getSample (0, i) << ",";
-    //
-    //    std::cout << "\n"
-    //              << "Out: ";
-    //    for (auto i = 0; i < output_buffer.getNumSamples (); ++i)
-    //        std::cout << output_buffer.getSample (0, i) << ",";
+    std::cout << "In: ";
+    for (auto i = 0; i < input->getNumSamples (); ++i)
+        std::cout << input->getSample (0, i) << ",";
+
+    std::cout << "==============================" << std::endl;
+
+    std::cout << "\n"
+              << "Out: ";
+    for (auto i = 0; i < output_buffer.getNumSamples (); ++i)
+        std::cout << output_buffer.getSample (0, i) << ",";
 }
 
 TEST_CASE ("increase room size", "[IrEngine]")

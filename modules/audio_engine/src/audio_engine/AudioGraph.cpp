@@ -1,16 +1,19 @@
 #include "AudioGraph.h"
 
+#include <juce_audio_basics/juce_audio_basics.h>
+
 AudioGraph::AudioGraph (AudioGraphMetering & input_graph_metering,
                         AudioGraphMetering & output_graph_metering,
                         zones::ConvolutionEngine & convolution_engine,
-                        NotificationQueue::VisitorQueue & notification_queue)
+                        NotificationQueue::VisitorQueue & notification_queue,
+                        ParameterTree & parameter_tree)
     : notification_queue_ (notification_queue)
     , input_graph_metering_ (input_graph_metering)
     , output_graph_metering_ (output_graph_metering)
+    , parameter_tree_ (parameter_tree)
     , player_processor_ (notification_queue)
     , convolution_engine_ (convolution_engine)
 {
-    dry_wet_mixer_.setWetMixProportion (0.5f);
 }
 
 void AudioGraph::prepare (const juce::dsp::ProcessSpec & spec)
@@ -25,14 +28,19 @@ void AudioGraph::prepare (const juce::dsp::ProcessSpec & spec)
     convolution_engine_.reset ();
     // This will need more checks but is used for now to stop some
     // potential crashes?? would clear be better?
+
+    smoothed_input_gain_.reset (spec.sampleRate, 0.1f);
+    smoothed_output_gain_.reset (spec.sampleRate, 0.1f);
 }
 
 void AudioGraph::process (const juce::dsp::ProcessContextReplacing<float> & replacing)
 {
+    UpdateParameters ();
+
     auto input_block = replacing.getInputBlock ();
     auto output_block = replacing.getOutputBlock ();
 
-    output_block.multiplyBy (input_gain_);
+    output_block.multiplyBy (smoothed_input_gain_);
 
     player_processor_.process (replacing);
 
@@ -45,7 +53,7 @@ void AudioGraph::process (const juce::dsp::ProcessContextReplacing<float> & repl
     eq_processor_.process (replacing.getOutputBlock ());
 
     dry_wet_mixer_.mixWetSamples (replacing.getOutputBlock ());
-    output_block.multiplyBy (output_gain_);
+    output_block.multiplyBy (smoothed_output_gain_);
     output_graph_metering_.UpdateChannelPeak (output_block);
 }
 
@@ -56,16 +64,22 @@ void AudioGraph::reset ()
     eq_processor_.reset ();
 }
 
-void AudioGraph::operator() (const CommandQueue::UpdateParameters & update_parameters)
-{
-    dry_wet_mixer_.setWetMixProportion (update_parameters.dry_wet_mix);
-    input_gain_ = update_parameters.input_gain;
-    output_gain_ = update_parameters.output_gain;
-
-    eq_processor_.UpdateFilters (update_parameters.bass, update_parameters.treble);
-}
-
 void AudioGraph::operator() (const CommandQueue::SetPlayerStateCommand & set_player_state_command)
 {
     player_processor_.SetPlayerState ({set_player_state_command.state});
+}
+
+void AudioGraph::UpdateParameters ()
+{
+    smoothed_input_gain_.setTargetValue (
+        juce::Decibels::decibelsToGain<float> (*parameter_tree_.input_gain_parameter));
+
+    smoothed_output_gain_.setTargetValue (
+        juce::Decibels::decibelsToGain<float> (*parameter_tree_.out_gain_parameter));
+
+    auto dry_wet_parameter = parameter_tree_.dry_wet_parameter;
+    auto dry_wet_norm = dry_wet_parameter->convertTo0to1 (*dry_wet_parameter);
+    dry_wet_mixer_.setWetMixProportion (dry_wet_norm);
+
+    //    eq_processor_.UpdateFilters (update_parameters.bass, update_parameters.treble);
 }

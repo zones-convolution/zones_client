@@ -2,22 +2,21 @@
 
 #include "format/IrFormatter.h"
 
-IrController::IrController (IrEngine & ir_engine,
-                            juce::AudioProcessorValueTreeState & parameter_tree)
+IrController::IrController (IrEngine & ir_engine, ParameterTree & parameter_tree)
     : ir_engine_ (ir_engine)
     , parameter_tree_ (parameter_tree)
 {
-    parameter_tree.addParameterListener (ParameterTree::kRoomSizeParameterId, this);
-    parameter_tree.addParameterListener (ParameterTree::kReverbTimeParameterId, this);
-    parameter_tree.addParameterListener (ParameterTree::kResamplerParameterId, this);
-    parameter_tree.addParameterListener (ParameterTree::kPredelayParameterId, this);
-    parameter_tree.addParameterListener (ParameterTree::kTrimParameterId, this);
-    parameter_tree.addParameterListener (ParameterTree::kAttackParameterId, this);
+    parameter_tree_.room_size_parameter->addListener (this);
+    parameter_tree_.reverb_time_parameter->addListener (this);
+    parameter_tree_.resampler_parameter->addListener (this);
+    parameter_tree_.pre_delay_parameter->addListener (this);
+    parameter_tree_.trim_parameter->addListener (this);
+    parameter_tree_.attack_parameter->addListener (this);
 
     UpdateParametersFromTree ();
 }
 
-void IrController::parameterChanged (const juce::String & parameter_id, float new_value)
+void IrController::parameterValueChanged (int parameter_index, float new_value)
 {
     UpdateParametersFromTree ();
     startTimer (kDebounceTimeMs);
@@ -60,28 +59,21 @@ void IrController::UpdateParametersFromTree ()
 {
     std::lock_guard lock {current_graph_state_mutex_};
 
-    auto room_size_parameter = parameter_tree_.getParameter (ParameterTree::kRoomSizeParameterId);
-    current_graph_state_.room_size =
-        room_size_parameter->convertFrom0to1 (room_size_parameter->getValue ());
+    current_graph_state_.room_size = *parameter_tree_.room_size_parameter;
 
-    auto reverb_time_parameter =
-        parameter_tree_.getParameter (ParameterTree::kReverbTimeParameterId);
-    current_graph_state_.reverb_time =
-        reverb_time_parameter->convertFrom0to1 (reverb_time_parameter->getValue ());
+    auto reverb_time_parameter = parameter_tree_.reverb_time_parameter;
+    current_graph_state_.reverb_time_norm =
+        reverb_time_parameter->convertTo0to1 (*reverb_time_parameter);
 
-    auto resampler_parameter = parameter_tree_.getParameter (ParameterTree::kResamplerParameterId);
-    current_graph_state_.resampler_ratio =
-        resampler_parameter->convertFrom0to1 (resampler_parameter->getValue ());
+    current_graph_state_.resampler = *parameter_tree_.resampler_parameter;
 
-    auto predelay_parameter = parameter_tree_.getParameter (ParameterTree::kPredelayParameterId);
-    current_graph_state_.pre_delay =
-        predelay_parameter->convertFrom0to1 (predelay_parameter->getValue ());
+    current_graph_state_.pre_delay_ms = *parameter_tree_.pre_delay_parameter;
 
-    auto trim_parameter = parameter_tree_.getParameter (ParameterTree::kTrimParameterId);
-    current_graph_state_.trim = trim_parameter->convertFrom0to1 (trim_parameter->getValue ());
+    auto trim_parameter = parameter_tree_.trim_parameter;
+    current_graph_state_.trim_norm = trim_parameter->convertTo0to1 (*trim_parameter);
 
-    auto attack_parameter = parameter_tree_.getParameter (ParameterTree::kAttackParameterId);
-    current_graph_state_.attack = trim_parameter->convertFrom0to1 (attack_parameter->getValue ());
+    auto attack_parameter = parameter_tree_.attack_parameter;
+    current_graph_state_.attack_norm = attack_parameter->convertTo0to1 (*attack_parameter);
 }
 
 void IrController::PerformRender ()
@@ -92,4 +84,8 @@ void IrController::PerformRender ()
 IrGraphState IrController::GetCurrentGraphState ()
 {
     return current_graph_state_;
+}
+
+void IrController::parameterGestureChanged (int parameterIndex, bool gestureIsStarting)
+{
 }

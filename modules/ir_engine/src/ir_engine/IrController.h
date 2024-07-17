@@ -5,13 +5,14 @@
 #include "model/ParameterTree.h"
 
 class IrController
-    : public juce::AudioProcessorValueTreeState::Listener
+    : public juce::AudioProcessorParameter::Listener
     , private juce::Timer
 {
 public:
-    IrController (IrEngine & ir_engine, juce::AudioProcessorValueTreeState & parameter_tree);
+    IrController (IrEngine & ir_engine, ParameterTree & parameter_tree);
     ~IrController () override = default;
-    void parameterChanged (const juce::String & parameter_id, float new_value) override;
+    void parameterValueChanged (int parameter_index, float new_value) override;
+    void parameterGestureChanged (int parameterIndex, bool gestureIsStarting) override;
     void timerCallback () override;
 
     void LoadIr (const IrSelection & ir_selection);
@@ -29,5 +30,5 @@ private:
     IrGraphState current_graph_state_ {};
 
     IrGraphProcessor::BoxedBuffer last_render_result_;
-    juce::AudioProcessorValueTreeState & parameter_tree_;
+    ParameterTree & parameter_tree_;
 };

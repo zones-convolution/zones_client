@@ -6,24 +6,14 @@
 
 struct CommandQueue
 {
-    struct UpdateParameters
-    {
-        float dry_wet_mix;
-        float input_gain;
-        float output_gain;
-        float bass;
-        float treble;
-    };
-
     struct SetPlayerStateCommand
     {
         Player::PlayerState state;
     };
 
-    using Commands = std::variant<UpdateParameters, SetPlayerStateCommand>;
+    using Commands = std::variant<SetPlayerStateCommand>;
     struct Visitor
     {
-        virtual void operator() (const UpdateParameters & update_parameters) = 0;
         virtual void operator() (const SetPlayerStateCommand & set_player_state_command) = 0;
     };
 
