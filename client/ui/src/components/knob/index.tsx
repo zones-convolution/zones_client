@@ -53,8 +53,14 @@ const Knob: FC<{ identifier: string }> = ({ identifier }) => {
 
   const valueRawRoundFn = (value: number) => value;
 
-  const valueRawDisplayFn = (valueRaw: number): string =>
-    `${valueRaw.toFixed(2)}${properties.label}`;
+  const valueRawDisplayFn = (valueRaw: number): string => {
+    const label = properties.label;
+
+    let precision = 1;
+    if (label == "%" || label == "ms") precision = 0;
+
+    return `${valueRaw.toFixed(precision)}${properties.label}`;
+  };
 
   const mapTo01 = (x: number, min: number, max: number) =>
     mapTo01Skewed(x, min, max, properties.skew);
