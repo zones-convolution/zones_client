@@ -1,8 +1,29 @@
+import { mapFrom01Linear, mapTo01Linear } from "@dsp-ts/math";
 import { FC } from "react";
 
 import { KnobBase } from "@/components/knob/knob_base";
 import { controlParameterIndexAnnotation } from "@/hooks/use_control_parameter_index_updater";
 import { useSlider } from "@/hooks/use_slider";
+
+const mapTo01Skewed = (
+  x: number,
+  min: number,
+  max: number,
+  skew: number,
+): number => {
+  const linearMapped = mapTo01Linear(x, min, max);
+  return Math.pow(linearMapped, skew);
+};
+
+const mapFrom01Skewed = (
+  x: number,
+  min: number,
+  max: number,
+  skew: number,
+): number => {
+  let skewedValue = Math.pow(x, 1 / skew);
+  return mapFrom01Linear(skewedValue, min, max);
+};
 
 const Knob: FC<{ identifier: string }> = ({ identifier }) => {
   const {
@@ -35,6 +56,12 @@ const Knob: FC<{ identifier: string }> = ({ identifier }) => {
   const valueRawDisplayFn = (valueRaw: number): string =>
     `${valueRaw.toFixed(2)}${properties.label}`;
 
+  const mapTo01 = (x: number, min: number, max: number) =>
+    mapTo01Skewed(x, min, max, properties.skew);
+
+  const mapFrom01 = (x: number, min: number, max: number) =>
+    mapFrom01Skewed(x, min, max, properties.skew);
+
   return (
     <KnobBase
       onRawValueCommit={rawValueCommit}
@@ -48,6 +75,8 @@ const Knob: FC<{ identifier: string }> = ({ identifier }) => {
       valueMax={properties.end}
       valueRawRoundFn={valueRawRoundFn}
       valueRawDisplayFn={valueRawDisplayFn}
+      mapTo01={mapTo01}
+      mapFrom01={mapFrom01}
       {...{
         [controlParameterIndexAnnotation]: properties.parameterIndex,
       }}

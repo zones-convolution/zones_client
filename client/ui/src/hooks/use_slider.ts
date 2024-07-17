@@ -25,9 +25,11 @@ interface IUseSlider {
 
 const useSlider = (identifier: string): IUseSlider => {
   const sliderState = juce.getSliderState(identifier);
+
   const [valueNormalised, setValueNormalised] = useState(
     sliderState.getNormalisedValue(),
   );
+
   const valueScaled = sliderState.normalisedToScaledValue(valueNormalised);
 
   const [properties, setProperties] = useState(sliderState.properties);
