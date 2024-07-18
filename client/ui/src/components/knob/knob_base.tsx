@@ -76,7 +76,7 @@ const KnobBase = ({
     <div
       className={cn(
         "w-fit flex flex-col justify-center items-center text-xs select-none",
-        "outline-none focus-within:outline-1 focus-within:outline-offset-4 focus-within:outline-muted",
+        // "outline-none focus-within:outline-1 focus-within:outline-offset-4 focus-within:outline-muted", disabled focus outline
       )}
     >
       <KnobHeadlessLabel id={labelId} className="text-primary mb-2">
