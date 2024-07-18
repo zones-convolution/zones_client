@@ -92,7 +92,7 @@ const Root = () => {
 
   return (
     <div
-      className="flex flex-row h-screen bg-background relative"
+      className="flex flex-row h-screen bg-background relative select-none"
       data-theme="dark"
     >
       <LoadProvider>
