@@ -25,7 +25,10 @@ const mapFrom01Skewed = (
   return mapFrom01Linear(skewedValue, min, max);
 };
 
-const Knob: FC<{ identifier: string }> = ({ identifier }) => {
+const Knob: FC<{ identifier: string; showMidpointIndicator?: boolean }> = ({
+  identifier,
+  showMidpointIndicator = true,
+}) => {
   const {
     properties,
     valueScaled,
@@ -49,6 +52,10 @@ const Knob: FC<{ identifier: string }> = ({ identifier }) => {
 
   const rawValueCommit = (valueRaw: number) => {
     changeCommitted(toNormalised(valueRaw));
+  };
+
+  const resetToDefault = () => {
+    changeCommitted(properties.defaultValue);
   };
 
   const valueRawRoundFn = (value: number) => value;
@@ -83,6 +90,9 @@ const Knob: FC<{ identifier: string }> = ({ identifier }) => {
       valueRawDisplayFn={valueRawDisplayFn}
       mapTo01={mapTo01}
       mapFrom01={mapFrom01}
+      midpoint={properties.defaultValue}
+      showMidpointIndicator={showMidpointIndicator}
+      onResetToDefault={resetToDefault}
       {...{
         [controlParameterIndexAnnotation]: properties.parameterIndex,
       }}

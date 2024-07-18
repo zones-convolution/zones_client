@@ -1,6 +1,6 @@
 [submodule "lib/JUCE"]
 	path = lib/JUCE
-	url = git@github.com:juce-framework/JUCE.git
+	url = git@github.com:zones-convolution/JUCE.git
 [submodule "lib/immer"]
 	path = lib/immer
 	url = git@github.com:arximboldi/immer.git

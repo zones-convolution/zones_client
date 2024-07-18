@@ -45,6 +45,7 @@ export const Default: Story = {
     stepLargerFn: (value) => 10,
     mapTo01: mapTo01Linear,
     mapFrom01: mapFrom01Linear,
+    midpoint: 0.5,
   },
 };
 

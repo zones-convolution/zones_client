@@ -77,7 +77,7 @@ ParameterTree::CreateParameterTree (juce::AudioProcessorValueTreeState::Paramete
             std::make_unique<juce::AudioParameterFloat> (
                 juce::ParameterID {kRoomSizeParameterId, 1},
                 "Room Size",
-                juce::NormalisableRange<float> (10.f, 200.f),
+                juce::NormalisableRange<float> (20.f, 180.f),
                 100.0f,
                 juce::AudioParameterFloatAttributes ().withAutomatable (false).withLabel ("%")),
             layout),
@@ -85,7 +85,7 @@ ParameterTree::CreateParameterTree (juce::AudioProcessorValueTreeState::Paramete
             std::make_unique<juce::AudioParameterFloat> (
                 juce::ParameterID {kResamplerParameterId, 1},
                 "Resample",
-                juce::NormalisableRange<float> (10.0f, 200.f),
+                juce::NormalisableRange<float> (20.0f, 180.f),
                 100.0f,
                 juce::AudioParameterFloatAttributes ().withAutomatable (false).withLabel ("%")),
             layout),

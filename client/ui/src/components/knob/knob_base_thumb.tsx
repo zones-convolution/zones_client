@@ -7,8 +7,8 @@ const angleMax = 145;
 
 const arc_gen = arc();
 const arc_style: DefaultArcObject = {
-  innerRadius: 92,
-  outerRadius: 100,
+  innerRadius: 110,
+  outerRadius: 120,
   startAngle: (angleMin / 180) * Math.PI,
   endAngle: (angleMax / 180) * Math.PI,
 };
@@ -19,7 +19,11 @@ const midpoint_indicator = symbol()
   .type(symbolTriangle)
   .size(10 * 10);
 
-const KnobBaseThumb: FC<{ value01: number }> = ({ value01 }) => {
+const KnobBaseThumb: FC<{
+  value01: number;
+  midpoint: number;
+  showMidpointIndicator: boolean;
+}> = ({ value01, midpoint, showMidpointIndicator }) => {
   const angle = mapFrom01Linear(value01, angleMin, angleMax);
 
   const track_fill = arc_gen({
@@ -28,23 +32,35 @@ const KnobBaseThumb: FC<{ value01: number }> = ({ value01 }) => {
   })!;
 
   return (
-    <svg className="w-12" viewBox="-100 -100 200 240">
-      <path
-        className="stroke-0 fill-primary"
-        d={midpoint_indicator()!}
-        transform="rotate(180) translate(0 95)"
-      />
-      <path
-        className="stroke-0 fill-primary-foreground"
-        d={track}
-        transform="translate(0, 40)"
-      />
-      <path
-        className="stroke-0 fill-primary"
-        d={track_fill}
-        transform="translate(0, 40)"
-      />
-    </svg>
+    <div className="relative w-16 h-16">
+      {showMidpointIndicator && (
+        <svg
+          className="w-16 h-16 absolute"
+          viewBox="-120 -120 240 240"
+          style={{
+            rotate: `${midpoint * 290 - 145}deg`,
+          }}
+        >
+          <path
+            className="stroke-0 fill-primary"
+            d={midpoint_indicator()!}
+            transform="rotate(180) translate(0 115)"
+          />
+        </svg>
+      )}
+      <svg
+        className="w-12 h-12 absolute"
+        viewBox="-120 -120 240 240"
+        style={{
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+        }}
+      >
+        <path className="stroke-0 fill-primary-foreground" d={track} />
+        <path className="stroke-0 fill-primary" d={track_fill} />
+      </svg>
+    </div>
   );
 };
 

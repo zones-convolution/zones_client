@@ -11,6 +11,7 @@ interface ISliderProperties {
   numSteps: number;
   interval: number;
   parameterIndex: number;
+  defaultValue: number;
 }
 
 interface IUseSlider {

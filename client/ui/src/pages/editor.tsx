@@ -61,7 +61,10 @@ const MainPanel = () => {
     <Panel>
       <PanelHeading>MAIN</PanelHeading>
       <PanelContent>
-        <Knob identifier={Parameters.ReverbTime} />
+        <Knob
+          identifier={Parameters.ReverbTime}
+          showMidpointIndicator={false}
+        />
         <Knob identifier={Parameters.Resample} />
         <Knob identifier={Parameters.RoomSize} />
       </PanelContent>
@@ -119,9 +122,9 @@ const TimePanel = () => {
     <Panel>
       <PanelHeading>TIME</PanelHeading>
       <PanelContent>
-        <Knob identifier={Parameters.PreDelay} />
-        <Knob identifier={Parameters.Trim} />
-        <Knob identifier={Parameters.Attack} />
+        <Knob identifier={Parameters.PreDelay} showMidpointIndicator={false} />
+        <Knob identifier={Parameters.Trim} showMidpointIndicator={false} />
+        <Knob identifier={Parameters.Attack} showMidpointIndicator={false} />
       </PanelContent>
     </Panel>
   );

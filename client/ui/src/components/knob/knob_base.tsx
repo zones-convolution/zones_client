@@ -29,6 +29,9 @@ export type KnobBaseProps = Pick<
   readonly name: string;
   readonly stepFn: (valueRaw: number) => number;
   readonly stepLargerFn: (valueRaw: number) => number;
+  readonly midpoint: number;
+  readonly showMidpointIndicator: boolean;
+  readonly onResetToDefault: () => void;
 };
 
 const KnobBase = ({
@@ -46,6 +49,9 @@ const KnobBase = ({
   mapFrom01 = mapFrom01Linear,
   onMouseDown,
   onRawValueCommit,
+  midpoint,
+  showMidpointIndicator,
+  onResetToDefault,
 }: KnobBaseProps) => {
   const knobId = useId();
   const labelId = useId();
@@ -67,11 +73,11 @@ const KnobBase = ({
   return (
     <div
       className={cn(
-        "w-fit flex flex-col gap-2 justify-center items-center text-xs select-none",
+        "w-fit flex flex-col justify-center items-center text-xs select-none",
         "outline-none focus-within:outline-1 focus-within:outline-offset-4 focus-within:outline-muted",
       )}
     >
-      <KnobHeadlessLabel id={labelId} className="text-primary">
+      <KnobHeadlessLabel id={labelId} className="text-primary mb-2">
         {name}
       </KnobHeadlessLabel>
       <KnobHeadless
@@ -92,11 +98,20 @@ const KnobBase = ({
         onMouseUp={() => {
           onRawValueCommit(valueRaw);
         }}
+        onClick={(e) => {
+          if (e.altKey) {
+            onResetToDefault();
+          }
+        }}
         {...keyboardControlHandlers}
       >
-        <KnobBaseThumb value01={value01} />
+        <KnobBaseThumb
+          value01={value01}
+          midpoint={midpoint}
+          showMidpointIndicator={showMidpointIndicator}
+        />
       </KnobHeadless>
-      <KnobHeadlessOutput htmlFor={knobId}>
+      <KnobHeadlessOutput htmlFor={knobId} className="mt-0.5">
         {valueRawDisplayFn(valueRaw)}
       </KnobHeadlessOutput>
     </div>
