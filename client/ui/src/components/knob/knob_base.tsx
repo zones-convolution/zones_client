@@ -31,6 +31,7 @@ export type KnobBaseProps = Pick<
   readonly stepLargerFn: (valueRaw: number) => number;
   readonly midpoint: number;
   readonly showMidpointIndicator: boolean;
+  readonly trackFromMidpoint: boolean;
   readonly onResetToDefault: () => void;
 };
 
@@ -51,6 +52,7 @@ const KnobBase = ({
   onRawValueCommit,
   midpoint,
   showMidpointIndicator,
+  trackFromMidpoint,
   onResetToDefault,
 }: KnobBaseProps) => {
   const knobId = useId();
@@ -109,6 +111,7 @@ const KnobBase = ({
           value01={value01}
           midpoint={midpoint}
           showMidpointIndicator={showMidpointIndicator}
+          trackFromMidpoint={trackFromMidpoint}
         />
       </KnobHeadless>
       <KnobHeadlessOutput htmlFor={knobId} className="mt-0.5">

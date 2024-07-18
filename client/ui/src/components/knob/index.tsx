@@ -25,9 +25,14 @@ const mapFrom01Skewed = (
   return mapFrom01Linear(skewedValue, min, max);
 };
 
-const Knob: FC<{ identifier: string; showMidpointIndicator?: boolean }> = ({
+const Knob: FC<{
+  identifier: string;
+  showMidpointIndicator?: boolean;
+  trackFromMidpoint?: boolean;
+}> = ({
   identifier,
   showMidpointIndicator = true,
+  trackFromMidpoint = false,
 }) => {
   const {
     properties,
@@ -55,6 +60,7 @@ const Knob: FC<{ identifier: string; showMidpointIndicator?: boolean }> = ({
   };
 
   const resetToDefault = () => {
+    mouseDown();
     changeCommitted(properties.defaultValue);
   };
 
@@ -93,6 +99,7 @@ const Knob: FC<{ identifier: string; showMidpointIndicator?: boolean }> = ({
       midpoint={properties.defaultValue}
       showMidpointIndicator={showMidpointIndicator}
       onResetToDefault={resetToDefault}
+      trackFromMidpoint={trackFromMidpoint}
       {...{
         [controlParameterIndexAnnotation]: properties.parameterIndex,
       }}

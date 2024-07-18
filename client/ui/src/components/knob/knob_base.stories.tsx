@@ -46,27 +46,29 @@ export const Default: Story = {
     mapTo01: mapTo01Linear,
     mapFrom01: mapFrom01Linear,
     midpoint: 0.5,
+    showMidpointIndicator: true,
+    trackFromMidpoint: false,
   },
 };
 
-export const FineControl: Story = {
+export const NoIndicator: Story = {
   ...Template,
   args: {
     ...Default.args,
-    name: "Fine Volume",
+    name: "Volume",
     valueRaw: 25,
-    stepFn: (value) => 0.1,
-    stepLargerFn: (value) => 1,
+    showMidpointIndicator: false,
   },
 };
 
-export const CoarseControl: Story = {
+export const TrackFromMidpoint: Story = {
   ...Template,
   args: {
     ...Default.args,
-    name: "Coarse Volume",
-    valueRaw: 75,
-    stepFn: (value) => 5,
-    stepLargerFn: (value) => 20,
+    name: "Volume",
+    valueRaw: 25,
+    showMidpointIndicator: true,
+    trackFromMidpoint: true,
+    midpoint: 0.4,
   },
 };

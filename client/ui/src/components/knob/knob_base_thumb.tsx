@@ -23,11 +23,16 @@ const KnobBaseThumb: FC<{
   value01: number;
   midpoint: number;
   showMidpointIndicator: boolean;
-}> = ({ value01, midpoint, showMidpointIndicator }) => {
+  trackFromMidpoint: boolean;
+}> = ({ value01, midpoint, showMidpointIndicator, trackFromMidpoint }) => {
   const angle = mapFrom01Linear(value01, angleMin, angleMax);
+  const midpointAngle = mapFrom01Linear(midpoint, angleMin, angleMax);
 
   const track_fill = arc_gen({
     ...arc_style,
+    ...(trackFromMidpoint && {
+      startAngle: (midpointAngle / 180) * Math.PI,
+    }),
     endAngle: (angle / 180) * Math.PI,
   })!;
 
