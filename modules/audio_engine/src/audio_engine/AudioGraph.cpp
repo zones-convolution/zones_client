@@ -81,5 +81,7 @@ void AudioGraph::UpdateParameters ()
     auto dry_wet_norm = dry_wet_parameter->convertTo0to1 (*dry_wet_parameter);
     dry_wet_mixer_.setWetMixProportion (dry_wet_norm);
 
-    //    eq_processor_.UpdateFilters (update_parameters.bass, update_parameters.treble);
+    eq_processor_.UpdateFilters (
+        juce::Decibels::decibelsToGain<float> (*parameter_tree_.bass_parameter),
+        juce::Decibels::decibelsToGain<float> (*parameter_tree_.treble_parameter));
 }
