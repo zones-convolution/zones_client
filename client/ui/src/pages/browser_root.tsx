@@ -32,11 +32,11 @@ const BrowserRoot = () => {
           <Link to="/create">Create Zone</Link>
         </Button>
       </div>
-      <div className="flex flex-col">
-        {validTargetFormats.map((format) => (
-          <span>{format}</span>
-        ))}
-      </div>
+      {/*<div className="flex flex-col">*/}
+      {/*  {validTargetFormats.map((format) => (*/}
+      {/*    <span>{format}</span>*/}
+      {/*  ))}*/}
+      {/*</div>*/}
       <Outlet />
     </div>
   );

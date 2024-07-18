@@ -24,11 +24,11 @@ const Panel: FC<{ children: ReactNode }> = ({ children }) => (
 );
 
 const PanelHeading: FC<{ children: ReactNode }> = ({ children }) => {
-  return <div className="text-primary uppercase">{children}</div>;
+  return <div className="text-primary uppercase absolute">{children}</div>;
 };
 
 const PanelContent: FC<{ children: ReactNode }> = ({ children }) => {
-  return <div className="flex flex-row justify-around">{children}</div>;
+  return <div className="flex flex-row justify-around h-full">{children}</div>;
 };
 
 const IOPanel = () => {
@@ -82,8 +82,9 @@ const ListenPanel = () => {
     <Panel>
       <PanelHeading>LISTEN</PanelHeading>
       <PanelContent>
-        <div className="flex gap-1">
+        <div className="flex gap-2 grow items-center">
           <Button
+            variant={playing ? "default" : "outline"}
             onClick={async () => {
               await togglePlaying();
             }}
@@ -98,7 +99,7 @@ const ListenPanel = () => {
             onClick={async () => {
               await toggleLooping();
             }}
-            variant={looping ? "default" : "ghost"}
+            variant={looping ? "default" : "outline"}
           >
             <Repeat className="w-4 h-4" />
           </Button>
