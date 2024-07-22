@@ -2,6 +2,7 @@ import { Play, Pause, Repeat } from "lucide-react";
 import { FC, ReactNode } from "react";
 
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -24,7 +25,7 @@ const Panel: FC<{ children: ReactNode }> = ({ children }) => (
 );
 
 const PanelHeading: FC<{ children: ReactNode }> = ({ children }) => {
-  return <div className="text-primary uppercase absolute">{children}</div>;
+  return <div className="uppercase absolute">{children}</div>;
 };
 
 const PanelContent: FC<{ children: ReactNode }> = ({ children }) => {
@@ -82,7 +83,7 @@ const ListenPanel = () => {
     <Panel>
       <PanelHeading>LISTEN</PanelHeading>
       <PanelContent>
-        <div className="flex gap-2 grow items-center">
+        <div className="flex gap-2 items-center grow">
           <Button
             variant={playing ? "default" : "outline"}
             onClick={async () => {
@@ -130,6 +131,7 @@ const TimePanel = () => {
     </Panel>
   );
 };
+
 const Editor = () => {
   useControlParameterIndexUpdater();
 

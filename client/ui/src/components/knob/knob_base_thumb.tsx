@@ -62,7 +62,7 @@ const KnobBaseThumb: FC<{
           transform: "translate(-50%, -50%)",
         }}
       >
-        <path className="stroke-0 fill-primary-foreground" d={track} />
+        <path className="stroke-0 fill-background" d={track} />
         <path className="stroke-0 fill-primary" d={track_fill} />
       </svg>
     </div>

@@ -80,7 +80,7 @@ const Meter: FC<IUseMetering> = ({ channelGroups, resetChannelClipping }) => {
   );
 
   const meterBars = (
-    <div className="flex-grow flex flex-row gap-2 bg-background p-2 border">
+    <div className="flex-grow flex flex-row gap-2 bg-background p-2 border rounded-md">
       {channelGroups.map((group, groupIndex) => {
         return (
           <div className="flex flex-row gap-0.5 w-full" key={groupIndex}>

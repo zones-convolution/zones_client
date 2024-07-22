@@ -8,7 +8,7 @@ export const CategoryCard: FC<{
   return (
     <div className="flex-1 h-full w-full relative flex items-end">
       <img
-        className="absolute object-cover object-center w-full h-full max-h-full rounded-lg"
+        className="absolute object-cover object-center w-full h-full max-h-full rounded-md"
         src={imageUrl}
         alt="gallery-photo"
       />

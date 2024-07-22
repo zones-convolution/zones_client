@@ -41,8 +41,8 @@ const Sidebar = () => {
   const metering = useMetering();
 
   return (
-    <div className="bg-card flex flex-col gap-0.5">
-      <img src={ZonesLight} className="w-[80px] ml-4" alt="Zones Logo Dark" />
+    <div className="bg-card flex flex-col gap-0.5 p-2">
+      <img src={ZonesLight} className="w-[80px]" alt="Zones Logo Dark" />
       <NavButton to={Tabs.Browser}>
         <Home className="w-4 h-4 mr-4" />
         Browse
@@ -56,7 +56,7 @@ const Sidebar = () => {
         Preferences
       </NavButton>
 
-      <div className="px-2 flex flex-col gap-4 mt-auto overflow-hidden">
+      <div className="flex flex-col gap-4 mt-auto overflow-hidden">
         {irEngineLoading && (
           <div className="flex items-center">
             <Loader className="w-4 h-4 animate-spin mr-2 shrink-0" /> Impulse
@@ -80,7 +80,7 @@ const Sidebar = () => {
           </div>
         )}
       </div>
-      <div className="h-72 w-full p-2">
+      <div className="h-72 w-full mt-2">
         <Meter {...metering} />
       </div>
     </div>

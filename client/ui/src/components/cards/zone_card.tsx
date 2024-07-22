@@ -15,7 +15,7 @@ export const ZoneCard: FC<{
   return (
     <div className="w-full h-full relative flex justify-between items-end">
       <img
-        className="absolute object-cover object-center w-full h-full max-h-full rounded-lg"
+        className="absolute object-cover object-center w-full h-full max-h-full rounded-md"
         src={imageUrl}
         alt="gallery-photo"
       />
