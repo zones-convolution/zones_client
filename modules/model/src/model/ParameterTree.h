@@ -14,7 +14,6 @@ public:
     juce::AudioParameterFloat * bass_parameter;
     juce::AudioParameterFloat * treble_parameter;
     juce::AudioParameterFloat * reverb_time_parameter;
-    juce::AudioParameterFloat * room_size_parameter;
     juce::AudioParameterFloat * resampler_parameter;
     juce::AudioParameterFloat * pre_delay_parameter;
     juce::AudioParameterFloat * trim_parameter;
@@ -33,7 +32,6 @@ public:
     static const juce::String kTrebleParameterId;
 
     static const juce::String kReverbTimeParameterId;
-    static const juce::String kRoomSizeParameterId;
     static const juce::String kResamplerParameterId;
 
     static const juce::String kPredelayParameterId;

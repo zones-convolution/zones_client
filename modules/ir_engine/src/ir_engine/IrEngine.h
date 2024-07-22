@@ -5,7 +5,6 @@
 #include "processors/BaseIrProcessor.h"
 #include "processors/ResamplerProcessor.h"
 #include "processors/ReverbTimeProcessor.h"
-#include "processors/RoomSizeProcessor.h"
 #include "processors/TimeProcessor.h"
 
 #include <rocket.hpp>
@@ -63,8 +62,6 @@ private:
     juce::ThreadPool & thread_pool_;
 
     std::shared_ptr<BaseIrProcessor> base_ir_processor_ = std::make_shared<BaseIrProcessor> ();
-    std::shared_ptr<RoomSizeProcessor> room_size_processor_ =
-        std::make_shared<RoomSizeProcessor> ();
     std::shared_ptr<ReverbTimeProcessor> reverb_time_processor_ =
         std::make_shared<ReverbTimeProcessor> ();
     std::shared_ptr<ResamplerProcessor> resampler_processor_ =

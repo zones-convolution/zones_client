@@ -10,9 +10,6 @@
 [submodule "lib/choc/choc"]
 	path = lib/choc/choc
 	url = git@github.com:Tracktion/choc.git
-[submodule "lib/stretch"]
-	path = lib/stretch
-	url = https://signalsmith-audio.co.uk/code/stretch.git
 [submodule "lib/melatonin_test_helpers"]
 	path = lib/melatonin_test_helpers
 	url = https://github.com/sudara/melatonin_test_helpers.git

@@ -15,8 +15,6 @@ zones_add_module(
         src/ir_engine/IrGraphCachePolicy.cpp
         src/ir_engine/IrGraphStateKey.h
         src/ir_engine/IrGraphStateKey.cpp
-        src/ir_engine/processors/RoomSizeProcessor.h
-        src/ir_engine/processors/RoomSizeProcessor.cpp
         src/ir_engine/processors/ReverbTimeProcessor.h
         src/ir_engine/processors/ReverbTimeProcessor.cpp
         src/ir_engine/processors/TestProcessor.h
@@ -32,7 +30,6 @@ zones_add_module(
         format
         audio_engine
         immer
-        stretch
         rocket
         juce::juce_core
         juce::juce_dsp

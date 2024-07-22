@@ -12,7 +12,6 @@ const juce::String ParameterTree::kBassParameterId {"bass_parameter"};
 const juce::String ParameterTree::kTrebleParameterId {"treble_parameter"};
 
 const juce::String ParameterTree::kReverbTimeParameterId {"reverb_time_parameter"};
-const juce::String ParameterTree::kRoomSizeParameterId {"room_size_parameter"};
 const juce::String ParameterTree::kResamplerParameterId {"resampler_parameter"};
 
 const juce::String ParameterTree::kPredelayParameterId {"predelay_parameter"};
@@ -71,14 +70,6 @@ ParameterTree::CreateParameterTree (juce::AudioProcessorValueTreeState::Paramete
                 "Reverb Time",
                 juce::NormalisableRange<float> (0.f, 100.f),
                 0.0f,
-                juce::AudioParameterFloatAttributes ().withAutomatable (false).withLabel ("%")),
-            layout),
-        .room_size_parameter = ParameterUtils::BindLayoutParameter (
-            std::make_unique<juce::AudioParameterFloat> (
-                juce::ParameterID {kRoomSizeParameterId, 1},
-                "Room Size",
-                juce::NormalisableRange<float> (20.f, 180.f),
-                100.0f,
                 juce::AudioParameterFloatAttributes ().withAutomatable (false).withLabel ("%")),
             layout),
         .resampler_parameter = ParameterUtils::BindLayoutParameter (

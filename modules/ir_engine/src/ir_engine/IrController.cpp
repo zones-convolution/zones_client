@@ -6,7 +6,6 @@ IrController::IrController (IrEngine & ir_engine, ParameterTree & parameter_tree
     : ir_engine_ (ir_engine)
     , parameter_tree_ (parameter_tree)
 {
-    parameter_tree_.room_size_parameter->addListener (this);
     parameter_tree_.reverb_time_parameter->addListener (this);
     parameter_tree_.resampler_parameter->addListener (this);
     parameter_tree_.pre_delay_parameter->addListener (this);
@@ -58,8 +57,6 @@ void IrController::LoadIr (const IrSelection & ir_selection)
 void IrController::UpdateParametersFromTree ()
 {
     std::lock_guard lock {current_graph_state_mutex_};
-
-    current_graph_state_.room_size = *parameter_tree_.room_size_parameter;
 
     auto reverb_time_parameter = parameter_tree_.reverb_time_parameter;
     current_graph_state_.reverb_time_norm =

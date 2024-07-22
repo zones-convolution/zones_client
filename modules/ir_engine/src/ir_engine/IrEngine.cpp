@@ -90,10 +90,6 @@ IrGraph IrEngine::CreateGraphForState (const IrGraphState & ir_graph_state) cons
         case TargetFormat::kTrueStereo:
             return ir_graph
                 .WithProcessor ({IrGraph::CachePolicy ()
-                                     .WithPolicyIdentifier ("room_size_processor")
-                                     .WithCachedHandle (&IrGraphState::CacheRoomSize),
-                                 room_size_processor_})
-                .WithProcessor ({IrGraph::CachePolicy ()
                                      .WithPolicyIdentifier ("reverb_time_processor")
                                      .WithCachedHandle (&IrGraphState::CacheReverbTime),
                                  reverb_time_processor_})

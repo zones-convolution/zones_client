@@ -24,8 +24,6 @@ private:
                                              ParameterTree::kDryWetMixParameterId};
     juce::WebSliderRelay resampler_relay_ {web_browser_component_,
                                            ParameterTree::kResamplerParameterId};
-    juce::WebSliderRelay room_size_relay_ {web_browser_component_,
-                                           ParameterTree::kRoomSizeParameterId};
     juce::WebSliderRelay input_gain_relay_ {web_browser_component_,
                                             ParameterTree::kInputGainParameterId};
     juce::WebSliderRelay output_gain_relay_ {web_browser_component_,
@@ -54,7 +52,6 @@ public:
 private:
     juce::WebSliderParameterAttachment wet_dry_mix_attachment_;
     juce::WebSliderParameterAttachment resampler_attachment_;
-    juce::WebSliderParameterAttachment room_size_attachment_;
     juce::WebSliderParameterAttachment input_gain_attachment_;
     juce::WebSliderParameterAttachment output_gain_attachment_;
     juce::WebSliderParameterAttachment treble_attachment_;

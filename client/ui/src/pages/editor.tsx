@@ -67,7 +67,6 @@ const MainPanel = () => {
           showMidpointIndicator={false}
         />
         <Knob identifier={Parameters.Resample} trackFromMidpoint />
-        <Knob identifier={Parameters.RoomSize} trackFromMidpoint />
       </PanelContent>
     </Panel>
   );
