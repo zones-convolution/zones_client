@@ -25,6 +25,25 @@ const Outlet = () => {
   }
 };
 
+const NavigationTitle = () => {
+  const { route } = useBrowserContext();
+  let title: string;
+
+  switch (route.target) {
+    case Route.CreateZone:
+      title = "Create Zone";
+      break;
+    case Route.Home:
+      title = "Browse";
+      break;
+    case Route.Zone:
+      title = route.state.title;
+      break;
+  }
+
+  return <h2 className="font-thin text-lg">{title}</h2>;
+};
+
 const BrowserRoot = () => {
   const { validTargetFormats } = useValidTargetFormats();
   const { canNavigateBack, canNavigateForward, forward, back } =
@@ -49,7 +68,7 @@ const BrowserRoot = () => {
         >
           <ChevronRight className="w-4 h-4" />
         </Button>
-        Browser
+        <NavigationTitle />
         <Button className="ml-auto" onClick={navigateToCreateZone}>
           Create Zone
         </Button>
