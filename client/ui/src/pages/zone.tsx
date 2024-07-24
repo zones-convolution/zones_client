@@ -1,4 +1,5 @@
 import { FC } from "react";
+import { useErrorBoundary } from "react-error-boundary";
 
 import { ZoneMetadata } from "@/hooks/zone_metadata";
 
