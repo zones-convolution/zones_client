@@ -1,6 +1,5 @@
 import { Home, Loader, Settings, Target } from "lucide-react";
 import React, { FC, ReactNode } from "react";
-import { Outlet } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -9,10 +8,12 @@ import { Toaster } from "@/components/ui/toaster";
 import ZonesLight from "@/assets/zones_light.svg";
 import { Meter } from "@/components/meter";
 import { ResizeHandle } from "@/components/resize_handle";
+import { BrowserProvider } from "@/context/browser_context";
 import { LoadProvider, useLoadContext } from "@/context/load_context";
 import { Tabs, TabsProvider, useTabsContext } from "@/context/tabs_context";
 import { useEngineLoading } from "@/hooks/use_engine";
 import { useMetering } from "@/hooks/use_metering";
+import BrowserRoot from "@/pages/browser_root";
 import Editor from "@/pages/editor";
 import Preferences from "@/pages/preferences";
 
@@ -95,18 +96,16 @@ const Root = () => {
       className="flex flex-row h-screen bg-background relative select-none"
       data-theme="dark"
     >
-      <LoadProvider>
-        <Sidebar />
-        <div className="w-full ml-0.5">
-          {tab == Tabs.Browser ? (
-            <Outlet />
-          ) : tab == Tabs.Editor ? (
-            <Editor />
-          ) : (
-            <Preferences />
-          )}
-        </div>
-      </LoadProvider>
+      <Sidebar />
+      <div className="w-full ml-0.5">
+        {tab == Tabs.Browser ? (
+          <BrowserRoot />
+        ) : tab == Tabs.Editor ? (
+          <Editor />
+        ) : (
+          <Preferences />
+        )}
+      </div>
       <ResizeHandle />
       <Toaster />
     </div>
@@ -114,7 +113,11 @@ const Root = () => {
 };
 
 export default () => (
-  <TabsProvider>
-    <Root />
-  </TabsProvider>
+  <LoadProvider>
+    <TabsProvider>
+      <BrowserProvider>
+        <Root />
+      </BrowserProvider>
+    </TabsProvider>
+  </LoadProvider>
 );

@@ -1,7 +1,6 @@
-import { useNavigate } from "react-router-dom";
-
 import { CategoryCard } from "@/components/cards/category_card";
 import { ZoneCard } from "@/components/cards/zone_card";
+import { useNavigation } from "@/context/browser_context";
 import { useLoadContext } from "@/context/load_context";
 import { useUserZones } from "@/hooks/use_user_zones";
 
@@ -64,7 +63,7 @@ const Categories = () => {
 const UserIRs = () => {
   const { userZones } = useUserZones();
   const { load, loadingIr, currentIr } = useLoadContext();
-  const navigate = useNavigate();
+  const { navigateToZone } = useNavigation();
 
   return (
     <div className="flex flex-col w-full bg-card p-2 gap-4">
@@ -98,7 +97,7 @@ const UserIRs = () => {
                     });
                   }}
                   onView={() => {
-                    navigate("/zone", { state: null });
+                    navigateToZone(userZone);
                   }}
                 />
               </div>
