@@ -1,8 +1,16 @@
-import { Play } from "lucide-react";
-import { FC } from "react";
+import { Ellipsis, Loader, Menu, MoreHorizontal, Play } from "lucide-react";
+import { FC, useEffect, useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Table,
   TableBody,
@@ -11,8 +19,18 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { toast } from "@/components/ui/use-toast";
 
-import { IrMetadata, PositionMap, ZoneMetadata } from "@/hooks/zone_metadata";
+import { useLoadContext } from "@/context/load_context";
+import { useValidTargetFormats } from "@/hooks/use_valid_target_formats";
+import {
+  IrMetadata,
+  PositionMap,
+  TargetFormat,
+  ZoneMetadata,
+} from "@/hooks/zone_metadata";
+import { getDefaultTarget, irSupportsTarget } from "@/lib/formats";
+import { doesIrMatchSelection, doesZoneMatchSelection } from "@/lib/irs";
 
 const SpeakerPositionBadge: FC<{ positionMap?: PositionMap }> = ({
   positionMap,
@@ -33,35 +51,112 @@ const SpeakerPositionBadge: FC<{ positionMap?: PositionMap }> = ({
   );
 };
 
-const IrTable: FC<{ irs: IrMetadata[] }> = ({ irs }) => {
+const IrTableRow: FC<{ ir: IrMetadata; zone: ZoneMetadata }> = ({
+  ir,
+  zone,
+}) => {
+  const { load, currentIr, loadingIr } = useLoadContext();
+
+  const { validTargetFormats } = useValidTargetFormats();
+
+  const validTargets = validTargetFormats.filter((target) =>
+    irSupportsTarget(ir, target),
+  );
+
+  const [target, setTarget] = useState<TargetFormat | undefined>();
+
+  useEffect(() => {
+    setTarget(getDefaultTarget(validTargets));
+  }, [validTargetFormats]);
+
+  let isLoadingIr = doesIrMatchSelection(zone, ir, loadingIr);
+  let isCurrentIr =
+    doesIrMatchSelection(zone, ir, currentIr) &&
+    target == currentIr.irSelection?.targetFormat;
+
+  const useIr = async () => {
+    if (target)
+      await load({
+        zone: zone,
+        ir: ir,
+        targetFormat: target,
+      });
+  };
+
+  return (
+    <TableRow>
+      <TableCell className="font-medium">{ir.title}</TableCell>
+      <TableCell>{ir.description}</TableCell>
+      <TableCell>
+        <Badge className="uppercase">{ir.channelFormat}</Badge>
+      </TableCell>
+      <TableCell>
+        <SpeakerPositionBadge positionMap={ir.positionMap} />
+      </TableCell>
+      <TableCell>
+        <Button
+          onClick={useIr}
+          disabled={isLoadingIr || isCurrentIr}
+          variant="secondary"
+        >
+          {isLoadingIr ? (
+            <Loader className="w-4 h-4 animate-spin" />
+          ) : (
+            <>
+              Use <Play className="w-4 h-4 ml-2" />
+            </>
+          )}
+        </Button>
+      </TableCell>
+      <TableCell>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button aria-haspopup="true" size="icon" variant="ghost">
+              <MoreHorizontal className="h-4 w-4" />
+              <span className="sr-only">Toggle menu</span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuLabel>Target Format</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            {validTargets.map((validTarget) => {
+              return (
+                <DropdownMenuCheckboxItem
+                  className="uppercase"
+                  checked={validTarget == target}
+                  onCheckedChange={(checked) => {
+                    if (checked) setTarget(validTarget);
+                  }}
+                >
+                  {validTarget}
+                </DropdownMenuCheckboxItem>
+              );
+            })}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </TableCell>
+    </TableRow>
+  );
+};
+
+const IrTable: FC<{ zone: ZoneMetadata }> = ({ zone }) => {
+  const irs = zone.irs;
+
   return (
     <Table>
       <TableHeader>
         <TableRow>
           <TableHead className="w-[100px]">Title</TableHead>
+          <TableHead>Description</TableHead>
           <TableHead>Channel Format</TableHead>
           <TableHead>Positions</TableHead>
-          <TableHead>Description</TableHead>
+          <TableHead></TableHead>
           <TableHead></TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
         {irs.map((ir, index) => (
-          <TableRow key={index}>
-            <TableCell className="font-medium">{ir.title}</TableCell>
-            <TableCell>
-              <Badge className="uppercase">{ir.channelFormat}</Badge>
-            </TableCell>
-            <TableCell>
-              <SpeakerPositionBadge positionMap={ir.positionMap} />
-            </TableCell>
-            <TableCell>{ir.description}</TableCell>
-            <TableCell>
-              <Button>
-                Use <Play className="w-4 h-4 ml-2" />
-              </Button>
-            </TableCell>
-          </TableRow>
+          <IrTableRow ir={ir} zone={zone} key={index} />
         ))}
       </TableBody>
     </Table>
@@ -75,7 +170,7 @@ const Zone: FC<{ zone: ZoneMetadata }> = ({ zone }) => {
       {zone.description && (
         <span className="font-thin">{zone.description}</span>
       )}
-      <IrTable irs={zone.irs} />
+      <IrTable zone={zone} />
     </div>
   );
 };

@@ -3,6 +3,7 @@ import { ZoneCard } from "@/components/cards/zone_card";
 import { useNavigation } from "@/context/browser_context";
 import { useLoadContext } from "@/context/load_context";
 import { useUserZones } from "@/hooks/use_user_zones";
+import { doesIrMatchSelection, doesZoneMatchSelection } from "@/lib/irs";
 
 const Categories = () => {
   return (
@@ -71,15 +72,8 @@ const UserIRs = () => {
       <div className="h-40 overflow-x-auto relative">
         <div className="absolute flex gap-0.5 h-full">
           {userZones.map((userZone, index) => {
-            let isLoadingZone = false;
-            if (loadingIr.irSelection)
-              isLoadingZone =
-                loadingIr.irSelection.zone.title === userZone.title;
-
-            let isCurrentZone = false;
-            if (currentIr.irSelection)
-              isCurrentZone =
-                currentIr.irSelection.zone.title == userZone.title;
+            let isLoadingZone = doesZoneMatchSelection(userZone, loadingIr);
+            let isCurrentZone = doesZoneMatchSelection(userZone, currentIr);
 
             return (
               <div className="w-80" key={index}>

@@ -7,7 +7,6 @@ import {
   useBrowserContext,
   useNavigation,
 } from "@/context/browser_context";
-import { useValidTargetFormats } from "@/hooks/use_valid_target_formats";
 import Browser from "@/pages/browser";
 import CreateZone from "@/pages/create_zone";
 import Zone from "@/pages/zone";
@@ -45,7 +44,6 @@ const NavigationTitle = () => {
 };
 
 const BrowserRoot = () => {
-  const { validTargetFormats } = useValidTargetFormats();
   const { canNavigateBack, canNavigateForward, forward, back } =
     useBrowserContext();
   const { navigateToCreateZone } = useNavigation();
