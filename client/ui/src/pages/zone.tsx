@@ -19,7 +19,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { toast } from "@/components/ui/use-toast";
 
 import { useLoadContext } from "@/context/load_context";
 import { useValidTargetFormats } from "@/hooks/use_valid_target_formats";
@@ -30,11 +29,13 @@ import {
   ZoneMetadata,
 } from "@/hooks/zone_metadata";
 import { getDefaultTarget, irSupportsTarget } from "@/lib/formats";
-import { doesIrMatchSelection, doesZoneMatchSelection } from "@/lib/irs";
+import { doesIrMatchSelection } from "@/lib/irs";
+import { cn } from "@/lib/utils";
 
-const SpeakerPositionBadge: FC<{ positionMap?: PositionMap }> = ({
-  positionMap,
-}) => {
+const SpeakerPositionBadge: FC<{
+  positionMap?: PositionMap;
+  disabled: boolean;
+}> = ({ positionMap, disabled }) => {
   let positionTitle = "UNKNOWN";
 
   if (positionMap != undefined) {
@@ -45,7 +46,12 @@ const SpeakerPositionBadge: FC<{ positionMap?: PositionMap }> = ({
   }
 
   return (
-    <Badge className="uppercase" variant="secondary">
+    <Badge
+      variant="secondary"
+      className={cn("uppercase", {
+        "bg-muted-foreground": disabled,
+      })}
+    >
       {positionTitle}
     </Badge>
   );
@@ -83,38 +89,65 @@ const IrTableRow: FC<{ ir: IrMetadata; zone: ZoneMetadata }> = ({
       });
   };
 
+  const isDisabled = validTargets.length == 0;
+
   return (
     <TableRow>
-      <TableCell className="font-medium">{ir.title}</TableCell>
-      <TableCell>{ir.description}</TableCell>
-      <TableCell>
-        <Badge className="uppercase">{ir.channelFormat}</Badge>
+      <TableCell
+        className={cn("font-medium", {
+          "text-muted-foreground": isDisabled,
+        })}
+      >
+        {ir.title}
+      </TableCell>
+      <TableCell
+        className={cn("font-medium", {
+          "text-muted-foreground": isDisabled,
+        })}
+      >
+        {ir.description}
       </TableCell>
       <TableCell>
-        <SpeakerPositionBadge positionMap={ir.positionMap} />
-      </TableCell>
-      <TableCell>
-        <Button
-          onClick={useIr}
-          disabled={isLoadingIr || isCurrentIr}
-          variant="secondary"
+        <Badge
+          className={cn("uppercase", {
+            "bg-muted-foreground": isDisabled,
+          })}
         >
-          {isLoadingIr ? (
-            <Loader className="w-4 h-4 animate-spin" />
-          ) : (
-            <>
-              Use <Play className="w-4 h-4 ml-2" />
-            </>
-          )}
-        </Button>
+          {ir.channelFormat}
+        </Badge>
+      </TableCell>
+      <TableCell>
+        <SpeakerPositionBadge
+          disabled={isDisabled}
+          positionMap={ir.positionMap}
+        />
+      </TableCell>
+      <TableCell>
+        {!isDisabled && (
+          <Button
+            onClick={useIr}
+            disabled={isLoadingIr || isCurrentIr}
+            variant={"secondary"}
+          >
+            {isLoadingIr ? (
+              <Loader className="w-4 h-4 animate-spin" />
+            ) : (
+              <>
+                Use <Play className="w-4 h-4 ml-2" />
+              </>
+            )}
+          </Button>
+        )}
       </TableCell>
       <TableCell>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button aria-haspopup="true" size="icon" variant="ghost">
-              <MoreHorizontal className="h-4 w-4" />
-              <span className="sr-only">Toggle menu</span>
-            </Button>
+            {!isDisabled && (
+              <Button aria-haspopup="true" size="icon" variant="ghost">
+                <MoreHorizontal className="h-4 w-4" />
+                <span className="sr-only">Toggle menu</span>
+              </Button>
+            )}
           </DropdownMenuTrigger>
           <DropdownMenuContent>
             <DropdownMenuLabel>Target Format</DropdownMenuLabel>

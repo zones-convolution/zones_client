@@ -1,8 +1,11 @@
 import {
   IrMetadata,
+  IrSelection,
   IrSelectionOptional,
+  TargetFormat,
   ZoneMetadata,
 } from "@/hooks/zone_metadata";
+import { irSupportsTarget } from "@/lib/formats";
 
 const doesZoneMatchSelection = (
   zone: ZoneMetadata,
@@ -22,4 +25,20 @@ const doesIrMatchSelection = (
   );
 };
 
-export { doesZoneMatchSelection, doesIrMatchSelection };
+const getDefaultIrSelection = (
+  zone: ZoneMetadata,
+  targetFormats: TargetFormat[],
+): IrSelection | undefined => {
+  for (const ir of zone.irs) {
+    for (const target of targetFormats) {
+      if (irSupportsTarget(ir, target))
+        return {
+          zone: zone,
+          ir: ir,
+          targetFormat: target,
+        };
+    }
+  }
+};
+
+export { doesZoneMatchSelection, doesIrMatchSelection, getDefaultIrSelection };

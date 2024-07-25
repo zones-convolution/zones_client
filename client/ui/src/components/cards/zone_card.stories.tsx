@@ -2,7 +2,6 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { fn } from "@storybook/test";
 
 import Forest1 from "@/assets/forest-1.png";
-import { CategoryCard } from "@/components/cards/category_card";
 import { ZoneCard } from "@/components/cards/zone_card";
 
 const meta: Meta<typeof ZoneCard> = {

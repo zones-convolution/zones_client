@@ -1,19 +1,13 @@
 import { Target } from "@use-gesture/react";
 
 import { IrMetadata, TargetFormat } from "@/hooks/zone_metadata";
-import { validTargetFormatsListener } from "@/ipc/valid_target_formats_ipc";
 
 const irSupportsMono = (ir: IrMetadata) => {
   return true;
 };
 
 const irSupportsStereo = (ir: IrMetadata) => {
-  if (ir.channelFormat == "stereo") return true;
-  return (
-    ir.channelFormat == "mono" &&
-    ir.positionMap?.right != undefined &&
-    ir.positionMap.left != undefined
-  );
+  if (ir.channelFormat == "stereo" || ir.channelFormat == "mono") return true;
 };
 
 const irSupportsTrueStereo = (ir: IrMetadata) => {
@@ -25,11 +19,19 @@ const irSupportsTrueStereo = (ir: IrMetadata) => {
 };
 
 const irSupportsFoa = (ir: IrMetadata) => {
-  return ir.channelFormat == "foa" || ir.channelFormat == "quadraphonic";
+  return (
+    ir.channelFormat == "foa" ||
+    ir.channelFormat == "quadraphonic" ||
+    ir.channelFormat == "mono"
+  );
 };
 
 const irSupportsQuadraphonic = (ir: IrMetadata) => {
-  return ir.channelFormat == "foa" || ir.channelFormat == "quadraphonic";
+  return (
+    ir.channelFormat == "foa" ||
+    ir.channelFormat == "quadraphonic" ||
+    ir.channelFormat == "mono"
+  );
 };
 
 const irSupportsTarget = (ir: IrMetadata, target: TargetFormat) => {

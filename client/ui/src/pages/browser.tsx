@@ -3,7 +3,12 @@ import { ZoneCard } from "@/components/cards/zone_card";
 import { useNavigation } from "@/context/browser_context";
 import { useLoadContext } from "@/context/load_context";
 import { useUserZones } from "@/hooks/use_user_zones";
-import { doesIrMatchSelection, doesZoneMatchSelection } from "@/lib/irs";
+import { useValidTargetFormats } from "@/hooks/use_valid_target_formats";
+import {
+  doesIrMatchSelection,
+  doesZoneMatchSelection,
+  getDefaultIrSelection,
+} from "@/lib/irs";
 
 const Categories = () => {
   return (
@@ -65,6 +70,7 @@ const UserIRs = () => {
   const { userZones } = useUserZones();
   const { load, loadingIr, currentIr } = useLoadContext();
   const { navigateToZone } = useNavigation();
+  const { validTargetFormats } = useValidTargetFormats();
 
   return (
     <div className="flex flex-col w-full bg-card p-2 gap-4">
@@ -74,6 +80,10 @@ const UserIRs = () => {
           {userZones.map((userZone, index) => {
             let isLoadingZone = doesZoneMatchSelection(userZone, loadingIr);
             let isCurrentZone = doesZoneMatchSelection(userZone, currentIr);
+            let defaultIrSelection = getDefaultIrSelection(
+              userZone,
+              validTargetFormats,
+            );
 
             return (
               <div className="w-80" key={index}>
@@ -83,12 +93,9 @@ const UserIRs = () => {
                   rt60={1.2}
                   loading={isLoadingZone}
                   disabled={isCurrentZone}
+                  canLoad={defaultIrSelection != undefined}
                   onLoad={async () => {
-                    await load({
-                      zone: userZone,
-                      ir: userZone.irs[0]!,
-                      targetFormat: "stereo",
-                    });
+                    if (defaultIrSelection) await load(defaultIrSelection);
                   }}
                   onView={() => {
                     navigateToZone(userZone);
