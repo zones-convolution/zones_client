@@ -39,6 +39,12 @@ set(SOURCES
         src/relays/ResizeRelay.cpp
         src/relays/ParameterRelay.h
         src/relays/ParameterRelay.cpp
+        src/relays/VisualiserRelay.h
+        src/relays/VisualiserRelay.cpp
+        src/controllers/visualiser/VisualiserController.h
+        src/controllers/visualiser/VisualiserController.cpp
+        src/controllers/visualiser/Spectrogram.h
+        src/controllers/visualiser/Spectrogram.cpp
         src/controllers/UserZonesController.h
         src/controllers/UserZonesController.cpp
         src/controllers/LoadController.h

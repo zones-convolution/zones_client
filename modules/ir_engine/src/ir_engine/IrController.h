@@ -29,6 +29,5 @@ private:
     std::mutex current_graph_state_mutex_;
     IrGraphState current_graph_state_ {};
 
-    IrGraphProcessor::BoxedBuffer last_render_result_;
     ParameterTree & parameter_tree_;
 };

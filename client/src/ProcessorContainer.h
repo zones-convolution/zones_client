@@ -7,6 +7,7 @@
 #include "audio_engine/NotificationQueue.h"
 #include "audio_engine/VisitorQueue.h"
 #include "controllers/LoadController.h"
+#include "controllers/visualiser/VisualiserController.h"
 #include "ir_engine/IrController.h"
 #include "ir_engine/IrEngine.h"
 #include "zones_convolver/zones_convolver.h"
@@ -43,6 +44,8 @@ public:
 
     juce::ThreadPool convolution_pool_;
     zones::ConvolutionEngine convolution_engine_ {convolution_pool_};
+
+    VisualiserController visualiser_controller_ {};
 
 private:
     void RegisterIrEngineListeners ();

@@ -93,6 +93,7 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (
     , load_relay_ (web_browser_component_, processor_container.load_controller_)
     , metering_relay_ (processor_container.input_graph_metering_,
                        processor_container.output_graph_metering_)
+    , visualiser_relay_ (web_browser_component_, processor_container.visualiser_controller_)
     , web_browser_component_ (kBaseWebOptions.withOptionsFrom (parameter_relay_)
                                   .withOptionsFrom (engine_relay_)
                                   .withOptionsFrom (player_relay_)
@@ -100,7 +101,8 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (
                                   .withOptionsFrom (user_zones_relay_)
                                   .withOptionsFrom (load_relay_)
                                   .withOptionsFrom (metering_relay_)
-                                  .withOptionsFrom (resize_relay_))
+                                  .withOptionsFrom (resize_relay_)
+                                  .withOptionsFrom (visualiser_relay_))
     , parameter_attachments_ (parameter_relay_, processor_container.parameter_tree_state_)
 
 {

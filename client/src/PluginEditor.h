@@ -11,6 +11,7 @@
 #include "relays/PreferencesRelay.h"
 #include "relays/ResizeRelay.h"
 #include "relays/UserZonesRelay.h"
+#include "relays/VisualiserRelay.h"
 
 #include <juce_gui_extra/juce_gui_extra.h>
 
@@ -48,6 +49,7 @@ private:
     LoadRelay load_relay_;
     MeteringRelay metering_relay_;
     ResizeRelay resize_relay_;
+    VisualiserRelay visualiser_relay_;
 
     juce::File asset_directory_;
     const juce::WebBrowserComponent::Options kBaseWebOptions =

@@ -46,6 +46,7 @@ void ProcessorContainer::RegisterIrEngineListeners ()
 {
     auto & ir_engine_listeners = ir_engine_.GetListeners ();
     ir_engine_listeners.add (&audio_engine_);
+    ir_engine_listeners.add (&visualiser_controller_);
 }
 
 juce::AudioProcessorValueTreeState::ParameterLayout ProcessorContainer::CreateParameterLayout ()
