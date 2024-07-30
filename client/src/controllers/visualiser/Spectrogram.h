@@ -10,5 +10,7 @@
 struct Spectrogram
 {
     using BoxedBuffer = immer::box<juce::AudioBuffer<float>>;
-    static BoxedBuffer CreateNormalisedSpectrogramData (BoxedBuffer buffer);
+    static BoxedBuffer CreateNormalisedSpectrogramData (BoxedBuffer buffer,
+                                                        int base_num_sample,
+                                                        double base_sample_rate);
 };
