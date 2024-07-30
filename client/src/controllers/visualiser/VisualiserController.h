@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Spectrogram.h"
 #include "ir_engine/IrEngine.h"
 #include "juce_gui_extra/juce_gui_extra.h"
 #include "rocket.hpp"
@@ -17,36 +16,24 @@ public:
     class RenderVisualiserJob : public juce::ThreadPoolJob
     {
     public:
-        struct Parameters
-        {
-            IrGraphProcessor::BoxedBuffer result_buffer;
-            int base_num_samples;
-            double base_sample_rate;
-        };
-
-        RenderVisualiserJob (Parameters parameters,
+        RenderVisualiserJob (IrGraphProcessor::BoxedBuffer render_result,
                              std::function<void (BoxedBuffer)> render_callback)
             : juce::ThreadPoolJob ("RenderVisualiserJob")
-            , parameters_ (parameters)
+            , render_result_ (render_result)
             , render_callback_ (render_callback)
         {
         }
 
         JobStatus runJob () override
         {
-            auto render_result =
-                Spectrogram::CreateNormalisedSpectrogramData (parameters_.result_buffer,
-                                                              parameters_.base_num_samples,
-                                                              parameters_.base_sample_rate);
-
             if (! shouldExit ())
-                render_callback_ (render_result);
+                render_callback_ ();
 
             return jobHasFinished;
         }
 
     private:
-        Parameters parameters_;
+        BoxedBuffer render_result_;
         std::function<void (BoxedBuffer)> render_callback_;
     };
 
