@@ -1,93 +1,40 @@
 #include "Spectrogram.h"
 
-// static constexpr float kMaxIrRatio = 2.0f;
-// static constexpr float kResolution = 8.0f;
-//  static constexpr float kReferenceSampleRate = 48000.0f;
-static constexpr int kTargetFFTSize = 256;
+static constexpr float kMaxIrRatio = 2.0f;
+static constexpr float kResolution = 1024.0f;
+static constexpr float kReferenceSampleRate = 48000.0f;
+static constexpr int kTargetFFTSize = 1024;
 
-// auto max_num_samples_frac = kMaxIrRatio * base_num_samples;
-////        auto sample_rate_scale = kReferenceSampleRate / base_sample_rate;
-// auto samples_per_hop = (max_num_samples_frac / kResolution);
-//
-// auto fft_size = static_cast<int> (juce::nextPowerOfTwo (2.0f * samples_per_hop));
-// fft_size = std::max (fft_size, kTargetFFTSize);
-//
-// auto fft_order = static_cast<int> (std::log2 (fft_size));
-//
-//
-// static juce::AudioBuffer<float> PerformFFT (const juce::dsp::AudioBlock<const float> &
-// audio_block,
-//                                            int base_num_samples,
-//                                            double base_sample_rate)
-//{
-//    auto fft_size = kTargetFFTSize;
-//    auto hop_size = static_cast<float> (fft_size) / 2.f;
-//    auto fft_order = static_cast<int> (std::log2 (fft_size));
-//
-//    juce::AudioBuffer<float> fft_data {1, fft_size * 2};
-//    juce::dsp::AudioBlock<float> fft_block {fft_data};
-//    juce::dsp::FFT fft {fft_order};
-//    juce::dsp::WindowingFunction<float> window {static_cast<size_t> (fft_size),
-//                                                juce::dsp::WindowingFunction<float>::hann};
-//
-//    auto num_samples = static_cast<int> (audio_block.getNumSamples ());
-//    auto num_hops = static_cast<int> (std::ceil (static_cast<float> (num_samples) / hop_size));
-//
-//    juce::AudioBuffer<float> frequency_data {static_cast<int> (num_hops),
-//                                             static_cast<int> (fft_size)};
-//    juce::dsp::AudioBlock<float> frequency_block {frequency_data};
-//    frequency_block.clear ();
-//
-//    for (auto hop_index = 0; hop_index < num_hops; ++hop_index)
-//    {
-//        auto sample_index = static_cast<int> (hop_index * hop_size);
-//        auto block_size = std::min (fft_size, num_samples - sample_index);
-//        auto sub_block = audio_block.getSubBlock (sample_index, block_size);
-//
-//        fft_block.clear ();
-//        for (auto channel_index = 0; channel_index < sub_block.getNumChannels (); ++channel_index)
-//            fft_block.add (sub_block.getSingleChannelBlock (channel_index));
-//
-//        window.multiplyWithWindowingTable (fft_block.getChannelPointer (0), fft_size);
-//        fft.performFrequencyOnlyForwardTransform (fft_block.getChannelPointer (0), true);
-//        frequency_block.getSingleChannelBlock (hop_index).copyFrom (
-//            fft_block.getSubBlock (0, (fft_size / 2) + 1));
-//    }
-//
-//    return frequency_data;
-//}
-
-juce::AudioBuffer<float> PerformFFT (const juce::dsp::AudioBlock<const float> & audio_block,
-                                     int base_num_samples,
-                                     double base_sample_rate)
+static juce::AudioBuffer<float> PerformFFT (const juce::dsp::AudioBlock<const float> & audio_block,
+                                            int base_num_samples,
+                                            double base_sample_rate)
 {
-    auto fft_order = 8u;
-    auto fft_size = 1u << fft_order;
+    auto max_num_samples_frac = kMaxIrRatio * base_num_samples;
+    auto sample_rate_scale = kReferenceSampleRate / base_sample_rate;
+    auto samples_per_hop = static_cast<int> (std::round ((max_num_samples_frac / kResolution)));
 
-    juce::AudioBuffer<float> fft_data {1, 2 * static_cast<int> (fft_size)};
+    auto fft_size = static_cast<int> (juce::nextPowerOfTwo (2 * samples_per_hop));
+    fft_size = std::max (fft_size, kTargetFFTSize);
+    auto fft_order = static_cast<int> (std::log2 (fft_size));
+
+    juce::AudioBuffer<float> fft_data {1, fft_size * 2};
     juce::dsp::AudioBlock<float> fft_block {fft_data};
-
-    juce::dsp::FFT fft {static_cast<int> (fft_order)};
-    juce::dsp::WindowingFunction<float> window {fft_size,
+    juce::dsp::FFT fft {fft_order};
+    juce::dsp::WindowingFunction<float> window {static_cast<size_t> (fft_size),
                                                 juce::dsp::WindowingFunction<float>::hann};
 
     auto num_samples = static_cast<int> (audio_block.getNumSamples ());
-    auto hop_length = fft_size / 2;
-    auto num_hops = static_cast<float> (std::ceil (
-        static_cast<float> (num_samples) / static_cast<float> (static_cast<int> (hop_length))));
+    auto num_hops = static_cast<int> (
+        std::ceil (static_cast<float> (num_samples) / static_cast<float> (samples_per_hop)));
 
-    juce::AudioBuffer<float> frequency_data {static_cast<int> (num_hops),
-                                             static_cast<int> (fft_size)};
+    juce::AudioBuffer<float> frequency_data {num_hops, (fft_size / 2) + 1};
     juce::dsp::AudioBlock<float> frequency_block {frequency_data};
     frequency_block.clear ();
 
-    for (auto hop_index = 0u; hop_index < num_hops; ++hop_index)
+    for (auto hop_index = 0; hop_index < num_hops; ++hop_index)
     {
-        auto sample_index = hop_index * hop_length;
-        auto num_samples_remaining = num_samples - sample_index;
-        std::cout << num_samples_remaining << std::endl;
-        auto block_size = std::min (fft_size, num_samples_remaining);
-
+        auto sample_index = hop_index * samples_per_hop;
+        auto block_size = std::min (fft_size, num_samples - sample_index);
         auto sub_block = audio_block.getSubBlock (sample_index, block_size);
 
         fft_block.clear ();
@@ -97,10 +44,10 @@ juce::AudioBuffer<float> PerformFFT (const juce::dsp::AudioBlock<const float> & 
         window.multiplyWithWindowingTable (fft_block.getChannelPointer (0), fft_size);
         fft.performFrequencyOnlyForwardTransform (fft_block.getChannelPointer (0), true);
         frequency_block.getSingleChannelBlock (hop_index).copyFrom (
-            fft_block.getSubBlock (0, fft_size));
+            fft_block.getSubBlock (0, (fft_size / 2) + 1));
     }
 
-    return {std::move (frequency_data)};
+    return frequency_data;
 }
 
 static void NormaliseFrequencyData (juce::dsp::AudioBlock<float> frequency_block)
@@ -148,9 +95,10 @@ static void DrawSpectrogramLine (juce::Image & spectrogram,
     for (auto y = 0; y < height; ++y)
     {
         auto y_normalised = static_cast<float> (y) / static_cast<float> (height);
-        auto y_skewed = std::exp (std::log (0.2f * y_normalised));
-        auto fft_data_index =
-            juce::jlimit (0, fft_size - 1, static_cast<int> (std::round (y_skewed * fft_size)));
+        auto fft_data_index = juce::jlimit (
+            0,
+            fft_size - 1,
+            static_cast<int> (std::round (y_normalised * static_cast<float> (fft_size))));
 
         auto level = frequency_block.getSample (0, fft_data_index);
         auto colour = gradient.getColourAtPosition (level);
@@ -205,13 +153,15 @@ Spectrogram::CreateNormalisedSpectrogramData (Spectrogram::BoxedBuffer buffer,
                                               double base_sample_rate)
 {
     auto frequency_data = PerformFFT (*buffer, base_num_sample, base_sample_rate);
+
     //    if (frequency_data.getNumSamples () > kTargetFFTSize)
     //        frequency_data = AverageFrequencyData (frequency_data);
-    NormaliseFrequencyData (frequency_data);
+    //    NormaliseFrequencyData (frequency_data);
 
     auto spec_image = DrawSpectrogramImage (frequency_data);
 
-    auto png_file = juce::File ("/Users/micahstrange/zones_client/client/zones_spec.png");
+    auto png_file =
+        juce::File ("/Users/leonps/Documents/development/zones_client/client/zones_spec.png");
     png_file.moveToTrash ();
     juce::FileOutputStream stream (png_file);
 

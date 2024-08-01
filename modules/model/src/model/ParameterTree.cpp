@@ -69,7 +69,7 @@ ParameterTree::CreateParameterTree (juce::AudioProcessorValueTreeState::Paramete
                 juce::ParameterID {kReverbTimeParameterId, 1},
                 "Reverb Time",
                 juce::NormalisableRange<float> (0.f, 100.f),
-                0.0f,
+                100.0f,
                 juce::AudioParameterFloatAttributes ().withAutomatable (false).withLabel ("%")),
             layout),
         .resampler_parameter = ParameterUtils::BindLayoutParameter (
