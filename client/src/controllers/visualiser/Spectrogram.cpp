@@ -27,7 +27,8 @@ static juce::AudioBuffer<float> PerformFFT (const juce::dsp::AudioBlock<const fl
     auto num_hops = static_cast<int> (
         std::ceil (static_cast<float> (num_samples) / static_cast<float> (samples_per_hop)));
 
-    juce::AudioBuffer<float> frequency_data {num_hops, (fft_size / 2) + 1};
+    juce::AudioBuffer<float> frequency_data {
+        num_hops, (fft_size / 2)}; // Should actually have a + 1 here I think
     juce::dsp::AudioBlock<float> frequency_block {frequency_data};
     frequency_block.clear ();
 
@@ -44,7 +45,7 @@ static juce::AudioBuffer<float> PerformFFT (const juce::dsp::AudioBlock<const fl
         window.multiplyWithWindowingTable (fft_block.getChannelPointer (0), fft_size);
         fft.performFrequencyOnlyForwardTransform (fft_block.getChannelPointer (0), true);
         frequency_block.getSingleChannelBlock (hop_index).copyFrom (
-            fft_block.getSubBlock (0, (fft_size / 2) + 1));
+            fft_block.getSubBlock (0, (fft_size / 2)));
     }
 
     return frequency_data;
@@ -125,15 +126,15 @@ static juce::Image DrawSpectrogramImage (const juce::dsp::AudioBlock<const float
 static juce::AudioBuffer<float>
 AverageFrequencyData (const juce::dsp::AudioBlock<const float> & frequency_data)
 {
-    auto fft_size = frequency_data.getNumSamples ();
+    auto out_y_dim = frequency_data.getNumSamples ();
     auto num_channels = frequency_data.getNumChannels ();
 
     juce::AudioBuffer<float> averaged_frequency_data;
-    averaged_frequency_data.setSize (num_channels, kTargetFFTSize);
+    averaged_frequency_data.setSize (num_channels, kTargetFFTSize / 2);
 
     juce::LinearInterpolator interpolator;
 
-    auto ratio = static_cast<float> (kTargetFFTSize) / static_cast<float> (fft_size);
+    auto ratio = static_cast<float> (kTargetFFTSize) / static_cast<float> (out_y_dim / 2);
 
     for (auto channel_index = 0; channel_index < num_channels; ++channel_index)
     {
@@ -141,7 +142,7 @@ AverageFrequencyData (const juce::dsp::AudioBlock<const float> & frequency_data)
         interpolator.process (ratio,
                               frequency_data.getChannelPointer (channel_index),
                               averaged_frequency_data.getWritePointer (channel_index),
-                              kTargetFFTSize);
+                              kTargetFFTSize / 2);
     }
 
     return averaged_frequency_data;
@@ -154,9 +155,11 @@ Spectrogram::CreateNormalisedSpectrogramData (Spectrogram::BoxedBuffer buffer,
 {
     auto frequency_data = PerformFFT (*buffer, base_num_sample, base_sample_rate);
 
-    //    if (frequency_data.getNumSamples () > kTargetFFTSize)
-    //        frequency_data = AverageFrequencyData (frequency_data);
-    //    NormaliseFrequencyData (frequency_data);
+    if (frequency_data.getNumSamples () >
+        (kTargetFFTSize /
+         2)) // Divied by 2 here because frquency only with no negative is half size...
+        frequency_data = AverageFrequencyData (frequency_data);
+    NormaliseFrequencyData (frequency_data);
 
     auto spec_image = DrawSpectrogramImage (frequency_data);
 
