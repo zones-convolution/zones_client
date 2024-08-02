@@ -92,46 +92,6 @@ static void NormaliseFrequencyData (juce::dsp::AudioBlock<float> frequency_block
     }
 }
 
-static void DrawSpectrogramLine (juce::Image & spectrogram,
-                                 const juce::dsp::AudioBlock<const float> frequency_block)
-{
-    juce::ColourGradient gradient {
-        juce::Colours::darkblue, {0.f, 0.f}, juce::Colours::cyan, {1.0f, 1.0f}, false};
-
-    auto height = spectrogram.getHeight ();
-    auto right_hand_edge_index = spectrogram.getWidth () - 1;
-    auto fft_size = static_cast<int> (frequency_block.getNumSamples ());
-
-    for (auto y = 0; y < height; ++y)
-    {
-        auto y_normalised = static_cast<float> (y) / static_cast<float> (height);
-        auto fft_data_index = juce::jlimit (
-            0,
-            fft_size - 1,
-            static_cast<int> (std::round (y_normalised * static_cast<float> (fft_size))));
-
-        auto level = frequency_block.getSample (0, fft_data_index);
-        auto colour = gradient.getColourAtPosition (level);
-        spectrogram.setPixelAt (right_hand_edge_index, (height - 1) - y, colour);
-    }
-}
-
-static juce::Image DrawSpectrogramImage (const juce::dsp::AudioBlock<const float> & frequency_block)
-{
-    auto width = static_cast<int> (frequency_block.getNumChannels ());
-    auto height = static_cast<int> (frequency_block.getNumSamples ());
-
-    juce::Image spectrogram {juce::Image::RGB, width, height, true};
-
-    for (auto x = 0; x < width; ++x)
-    {
-        DrawSpectrogramLine (spectrogram, frequency_block.getSingleChannelBlock (x));
-        spectrogram.moveImageSection (0, 0, 1, 0, width, height);
-    }
-
-    return spectrogram;
-}
-
 static juce::AudioBuffer<float>
 AverageFrequencyData (const juce::dsp::AudioBlock<const float> & frequency_data)
 {
@@ -163,20 +123,8 @@ Spectrogram::CreateNormalisedSpectrogramData (Spectrogram::BoxedBuffer buffer,
                                               double base_sample_rate)
 {
     auto frequency_data = PerformFFT (*buffer, base_num_sample, base_sample_rate);
-
     if (frequency_data.getNumSamples () > kTargetNumNonNegativeFFTPoints)
         frequency_data = AverageFrequencyData (frequency_data);
     NormaliseFrequencyData (frequency_data);
-
-    auto spec_image = DrawSpectrogramImage (frequency_data);
-
-    auto png_file =
-        juce::File ("/Users/leonps/Documents/development/zones_client/client/zones_spec.png");
-    png_file.moveToTrash ();
-    juce::FileOutputStream stream (png_file);
-
-    juce::PNGImageFormat png_writer;
-    png_writer.writeImageToStream (spec_image, stream);
-
     return {std::move (frequency_data)};
 }
