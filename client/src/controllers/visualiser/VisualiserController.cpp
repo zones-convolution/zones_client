@@ -22,7 +22,7 @@ void VisualiserController::RenderFinished (IrGraphState state,
         true);
 }
 
-VisualiserController::BoxedBuffer VisualiserController::GetVisualiserRender ()
+std::optional<VisualiserController::BoxedBuffer> VisualiserController::GetVisualiserRender ()
 {
     std::lock_guard render_guard {render_mutex_};
     return frequency_data_;

@@ -51,11 +51,11 @@ public:
     };
 
     rocket::signal<void (BoxedBuffer)> OnVisualiserRendered;
-    BoxedBuffer GetVisualiserRender ();
+    std::optional<BoxedBuffer> GetVisualiserRender ();
 
 private:
     std::mutex render_mutex_;
-    BoxedBuffer last_render_result_;
+    std::optional<BoxedBuffer> last_render_result_ = std::nullopt;
     juce::ThreadPool thread_pool_;
     BoxedBuffer frequency_data_;
 };

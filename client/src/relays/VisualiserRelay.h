@@ -9,15 +9,17 @@
 class VisualiserRelay : public OptionsBuilder<juce::WebBrowserComponent::Options>
 {
 public:
-    using BoxedBuffer = immer::box<juce::AudioBuffer<float>>;
-
     VisualiserRelay (juce::WebBrowserComponent & web_browser_component,
                      VisualiserController & visualiser_controller);
-    ~VisualiserRelay () override;
+    ~VisualiserRelay () override = default;
 
     juce::WebBrowserComponent::Options
     buildOptions (const juce::WebBrowserComponent::Options & initialOptions) override;
 
 private:
+    rocket::scoped_connection_container connections_;
+    juce::WebBrowserComponent & web_browser_component_;
+    VisualiserController & visualiser_controller_;
+
     JUCE_DECLARE_WEAK_REFERENCEABLE (VisualiserRelay)
 };

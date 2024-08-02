@@ -11,6 +11,7 @@ import { ResizeHandle } from "@/components/resize_handle";
 import { BrowserProvider } from "@/context/browser_context";
 import { LoadProvider, useLoadContext } from "@/context/load_context";
 import { Tabs, TabsProvider, useTabsContext } from "@/context/tabs_context";
+import { VisualiserProvider } from "@/context/visualiser_context";
 import { useEngineLoading } from "@/hooks/use_engine";
 import { useMetering } from "@/hooks/use_metering";
 import BrowserRoot from "@/pages/browser_root";
@@ -116,7 +117,9 @@ export default () => (
   <LoadProvider>
     <TabsProvider>
       <BrowserProvider>
-        <Root />
+        <VisualiserProvider>
+          <Root />
+        </VisualiserProvider>
       </BrowserProvider>
     </TabsProvider>
   </LoadProvider>
