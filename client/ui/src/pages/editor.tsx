@@ -9,6 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { CategoryCard } from "@/components/cards/category_card";
 import { Knob } from "@/components/knob";
@@ -149,7 +150,24 @@ const Editor = () => {
       </div>
       <div className="flex flex-row gap-0.5 h-full">
         <TimePanel />
-        <Visualiser2D render={render} />
+        <Tabs defaultValue="3d" className="relative flex-1">
+          <TabsContent
+            value="2d"
+            className="absolute top-0 w-full h-full flex mt-0"
+          >
+            <Visualiser2D render={render} />
+          </TabsContent>
+          <TabsContent
+            value="3d"
+            className="absolute top-0 w-full h-full flex mt-0"
+          >
+            <Visualiser3D render={render} />
+          </TabsContent>
+          <TabsList className="absolute top-0 right-0 m-2">
+            <TabsTrigger value="2d">2D</TabsTrigger>
+            <TabsTrigger value="3d">3D</TabsTrigger>
+          </TabsList>
+        </Tabs>
       </div>
       <div className="flex gap-0.5 h-[600px]">
         <IOPanel />

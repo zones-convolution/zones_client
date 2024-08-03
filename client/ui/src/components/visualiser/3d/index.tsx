@@ -1,7 +1,7 @@
 import { OrbitControls } from "@react-three/drei";
 import { Canvas, useFrame } from "@react-three/fiber";
 import colormap from "colormap";
-import { useMemo, useRef } from "react";
+import { FC, useEffect, useMemo, useRef } from "react";
 import {
   DataTexture,
   DoubleSide,
@@ -10,6 +10,9 @@ import {
   RGBAFormat,
   ShaderMaterial,
 } from "three";
+
+import { generateRenderTexture } from "@/components/visualiser/2d";
+import { VisualiserRender } from "@/ipc/visualiser_ipc";
 
 import frag from "./visualiser.frag";
 import vert from "./visualiser.vert";
@@ -63,7 +66,7 @@ const generateDefaultTexture = (): DataTexture => {
   return texture;
 };
 
-const Graph = () => {
+const Graph: FC<{ render: VisualiserRender }> = ({ render }) => {
   const matRef = useRef<ShaderMaterial>(null);
 
   useFrame(() => {
@@ -72,6 +75,13 @@ const Graph = () => {
       mat.uniforms.time.value += 0.1;
     }
   });
+
+  useEffect(() => {
+    const mat = matRef.current;
+    if (mat) {
+      mat.uniforms.graphTexture.value = generateRenderTexture(render);
+    }
+  }, [render]);
 
   const uniforms = useMemo(
     () => ({
@@ -82,7 +92,7 @@ const Graph = () => {
         value: createColourMapTexture(generateColourMap()),
       },
       graphTexture: {
-        value: generateDefaultTexture(),
+        value: generateRenderTexture(render),
       },
     }),
     [],
@@ -103,7 +113,7 @@ const Graph = () => {
   );
 };
 
-const Visualiser3D = () => {
+const Visualiser3D: FC<{ render: VisualiserRender }> = ({ render }) => {
   return (
     <div className="relative flex-1">
       <div className="absolute w-full h-full">
@@ -111,7 +121,7 @@ const Visualiser3D = () => {
           camera={{ position: [1.0, 1.0, 1.0] }}
           className="min-w-0 min-h-0 flex-1 shrink"
         >
-          <Graph />
+          <Graph render={render} />
           <axesHelper />
           <OrbitControls />
         </Canvas>

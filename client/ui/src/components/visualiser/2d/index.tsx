@@ -2,6 +2,7 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { FC, useEffect, useMemo, useRef } from "react";
 import {
   DataTexture,
+  FloatType,
   FrontSide,
   GLSL3,
   RedFormat,
@@ -17,10 +18,12 @@ import { VisualiserRender } from "@/ipc/visualiser_ipc";
 import frag from "./visualiser.frag";
 import vert from "./visualiser.vert";
 
-const defaultWidth = 512;
-const defaultHeight = 256;
+const defaultWidth = 1024;
+const defaultHeight = 512;
 
-const generateRenderTexture = (render: VisualiserRender): DataTexture => {
+export const generateRenderTexture = (
+  render: VisualiserRender,
+): DataTexture => {
   const size = defaultWidth * defaultHeight;
   const data = new Uint8Array(size);
 
@@ -45,6 +48,34 @@ const generateRenderTexture = (render: VisualiserRender): DataTexture => {
   return texture;
 };
 
+const createScaleTexture = (
+  sampleRate: number,
+  windowSize: number,
+  scale: "linear" | "mel",
+) => {
+  const data = new Float32Array(defaultHeight);
+
+  for (let i = 0; i < defaultHeight; i += 1) {
+    switch (scale) {
+      case "linear":
+        data[i] = i / (defaultHeight - 1);
+        break;
+      case "mel": {
+        const peakHz = (sampleRate * (windowSize - 2)) / (2 * windowSize);
+        data[i] =
+          (700 * ((1 + peakHz / 700) ** (i / (defaultHeight - 1)) - 1)) /
+          peakHz;
+        break;
+      }
+    }
+  }
+
+  const texture = new DataTexture(data, defaultHeight, 1, RedFormat);
+  texture.type = FloatType;
+  texture.needsUpdate = true;
+  return texture;
+};
+
 const FullscreenMesh: FC<{ render: VisualiserRender }> = ({ render }) => {
   const viewport = useThree((state) => state.viewport);
 
@@ -54,6 +85,10 @@ const FullscreenMesh: FC<{ render: VisualiserRender }> = ({ render }) => {
     const mat = matRef.current;
     if (mat) {
       mat.uniforms.time.value += 0.1;
+      mat.uniforms.contrast.value =
+        ((Math.sin(mat.uniforms.time.value * 0.1) + 1.0) / 2.0) * 100.0;
+      mat.uniforms.sensitivity.value =
+        ((Math.sin(mat.uniforms.time.value * 0.2) + 1.0) / 2.0) * 2.0;
     }
   });
 
@@ -74,6 +109,15 @@ const FullscreenMesh: FC<{ render: VisualiserRender }> = ({ render }) => {
       },
       render: {
         value: generateRenderTexture(render),
+      },
+      scale: {
+        value: createScaleTexture(44100, defaultHeight * 2, "mel"),
+      },
+      contrast: {
+        value: 0.0,
+      },
+      sensitivity: {
+        value: 0.0,
       },
     }),
     [],
