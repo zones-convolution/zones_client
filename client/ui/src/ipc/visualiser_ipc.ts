@@ -15,7 +15,6 @@ const getVisualiserRenderNative = juce.getNativeFunction(
 const onVisualiserRenderNative = "on_visualiser_render_native";
 
 const handleReceiveVisualiserRender = (data: any) => {
-  console.log("RCIEVE");
   try {
     return VisualiserRender.parse(JSON.parse(data));
   } catch (err) {

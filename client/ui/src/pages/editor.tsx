@@ -2,7 +2,6 @@ import { Play, Pause, Repeat } from "lucide-react";
 import { FC, ReactNode } from "react";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -13,7 +12,9 @@ import {
 
 import { CategoryCard } from "@/components/cards/category_card";
 import { Knob } from "@/components/knob";
-import { Visualiser } from "@/components/visualiser/visualiser";
+import { Visualiser2D } from "@/components/visualiser/2d";
+import { Visualiser3D } from "@/components/visualiser/3d";
+import { useVisualiserContext } from "@/context/visualiser_context";
 import { useControlParameterIndexUpdater } from "@/hooks/use_control_parameter_index_updater";
 import { usePlayer } from "@/hooks/use_player";
 import { Parameters } from "@/lib/parameters";
@@ -134,6 +135,8 @@ const TimePanel = () => {
 const Editor = () => {
   useControlParameterIndexUpdater();
 
+  const render = useVisualiserContext();
+
   return (
     <div className="flex flex-col gap-0.5 h-full">
       <div className="flex flex-row gap-0.5 h-full">
@@ -146,7 +149,7 @@ const Editor = () => {
       </div>
       <div className="flex flex-row gap-0.5 h-full">
         <TimePanel />
-        <Visualiser />
+        <Visualiser2D render={render} />
       </div>
       <div className="flex gap-0.5 h-[600px]">
         <IOPanel />

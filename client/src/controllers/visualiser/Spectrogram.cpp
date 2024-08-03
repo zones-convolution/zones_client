@@ -1,9 +1,9 @@
 #include "Spectrogram.h"
 
 static constexpr float kMaxIrRatio = 2.0f;
-static constexpr float kResolution = 1024.0f;
+static constexpr float kResolution = 512.0f;
 static constexpr float kReferenceSampleRate = 48000.0f;
-static constexpr int kTargetFFTSize = 1024;
+static constexpr int kTargetFFTSize = 512;
 static constexpr int kTargetNumNonNegativeFFTPoints = kTargetFFTSize / 2;
 
 static int GetFFTSize (int hop_size, double base_sample_rate)

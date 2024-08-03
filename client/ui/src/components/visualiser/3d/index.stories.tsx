@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from "@storybook/react";
 
-import { Visualiser } from "@/components/visualiser/visualiser";
+import { Visualiser3D } from "@/components/visualiser/3d";
 
-const meta: Meta<typeof Visualiser> = {
-  component: Visualiser,
+const meta: Meta<typeof Visualiser3D> = {
+  component: Visualiser3D,
   parameters: {
     layout: "fullscreen",
   },
@@ -14,8 +14,8 @@ const meta: Meta<typeof Visualiser> = {
 
 export default meta;
 
-type Story = StoryObj<typeof Visualiser>;
+type Story = StoryObj<typeof Visualiser3D>;
 
-export const VisualiserStory: Story = {
+export const Visualiser3DStory: Story = {
   args: {},
 };

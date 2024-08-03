@@ -14,7 +14,7 @@ import {
 import frag from "./visualiser.frag";
 import vert from "./visualiser.vert";
 
-const generateColourMap = (): number[][] => {
+export const generateColourMap = (): number[][] => {
   return colormap({
     colormap: "viridis",
     nshades: 256,
@@ -23,7 +23,9 @@ const generateColourMap = (): number[][] => {
   });
 };
 
-const createColourMapTexture = (colourMapArray: number[][]): DataTexture => {
+export const createColourMapTexture = (
+  colourMapArray: number[][],
+): DataTexture => {
   const size = colourMapArray.length;
   const data = new Uint8Array(size * 4);
 
@@ -101,7 +103,7 @@ const Graph = () => {
   );
 };
 
-const Visualiser = () => {
+const Visualiser3D = () => {
   return (
     <div className="relative flex-1">
       <div className="absolute w-full h-full">
@@ -118,4 +120,4 @@ const Visualiser = () => {
   );
 };
 
-export { Visualiser };
+export { Visualiser3D };
