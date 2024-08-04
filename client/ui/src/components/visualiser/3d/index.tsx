@@ -1,5 +1,5 @@
 import { OrbitControls } from "@react-three/drei";
-import { Canvas, useFrame } from "@react-three/fiber";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import colormap from "colormap";
 import { FC, useEffect, useMemo, useRef } from "react";
 import {
@@ -11,7 +11,11 @@ import {
   ShaderMaterial,
 } from "three";
 
-import { generateRenderTexture } from "@/components/visualiser/2d";
+import {
+  createScaleTexture,
+  defaultHeight,
+  generateRenderTexture,
+} from "@/components/visualiser/2d";
 
 import frag from "./visualiser.frag";
 import vert from "./visualiser.vert";
@@ -45,27 +49,9 @@ export const createColourMapTexture = (
   return texture;
 };
 
-const generateDefaultTexture = (): DataTexture => {
-  const width = 1024;
-  const height = 1024;
-  const size = width * height;
-  const data = new Uint8Array(size);
-
-  for (let i = 0; i < width; ++i) {
-    for (let j = 0; j < height; ++j) {
-      const index = i + j * width;
-      const redValue = (Math.sin(j * 0.02) * Math.sin(i * 0.02) + 1) * 0.5;
-      data[index] = Math.floor(redValue * 255);
-    }
-  }
-
-  const texture = new DataTexture(data, width, height, RedFormat);
-  texture.needsUpdate = true;
-
-  return texture;
-};
-
 const Graph: FC<{ render: Uint8Array }> = ({ render }) => {
+  const viewport = useThree((state) => state.viewport);
+
   const matRef = useRef<ShaderMaterial>(null);
 
   useFrame(() => {
@@ -78,7 +64,7 @@ const Graph: FC<{ render: Uint8Array }> = ({ render }) => {
   useEffect(() => {
     const mat = matRef.current;
     if (mat) {
-      mat.uniforms.graphTexture.value = generateRenderTexture(render);
+      mat.uniforms.render.value = generateRenderTexture(render);
     }
   }, [render]);
 
@@ -90,16 +76,29 @@ const Graph: FC<{ render: Uint8Array }> = ({ render }) => {
       colourMap: {
         value: createColourMapTexture(generateColourMap()),
       },
-      graphTexture: {
+      scale: {
+        value: createScaleTexture(44100, defaultHeight * 2, "mel"),
+      },
+      render: {
         value: generateRenderTexture(render),
+      },
+      contrast: {
+        value: 40.0,
+      },
+      sensitivity: {
+        value: 40.0,
       },
     }),
     [],
   );
 
   return (
-    <mesh position={[0, 0, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-      <planeGeometry args={[1, 1.6, 100, 200]} />
+    <mesh
+      position={[0, 0, 0]}
+      rotation={[-Math.PI / 2, 0, 0]}
+      scale={[viewport.width * 0.8, viewport.height * 0.8, 1]}
+    >
+      <planeGeometry args={[1, 1, 1024, 512]} />
       <shaderMaterial
         fragmentShader={frag}
         vertexShader={vert}

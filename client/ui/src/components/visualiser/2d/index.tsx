@@ -17,8 +17,8 @@ import {
 import frag from "./visualiser.frag";
 import vert from "./visualiser.vert";
 
-const defaultWidth = 1024;
-const defaultHeight = 512;
+export const defaultWidth = 1024;
+export const defaultHeight = 512;
 
 export const generateRenderTexture = (render: Uint8Array): DataTexture => {
   const size = defaultWidth * defaultHeight;
@@ -43,7 +43,7 @@ export const generateRenderTexture = (render: Uint8Array): DataTexture => {
   return texture;
 };
 
-const createScaleTexture = (
+export const createScaleTexture = (
   sampleRate: number,
   windowSize: number,
   scale: "linear" | "mel",
@@ -109,10 +109,10 @@ const FullscreenMesh: FC<{ render: Uint8Array }> = ({ render }) => {
         value: createScaleTexture(44100, defaultHeight * 2, "mel"),
       },
       contrast: {
-        value: 0.0,
+        value: 40.0,
       },
       sensitivity: {
-        value: 0.0,
+        value: 40.0,
       },
     }),
     [],

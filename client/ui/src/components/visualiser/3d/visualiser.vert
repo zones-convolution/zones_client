@@ -1,8 +1,31 @@
-uniform sampler2D graphTexture;
-out vec4 graphCoord;
+uniform sampler2D render;
+uniform sampler2D scale;
+uniform float contrast;
+uniform float sensitivity;
+
+out float intensity;
 
 void main() {
-    graphCoord = vec4(position, 1.0);
-    graphCoord.z = texture(graphTexture, graphCoord.xy / 2.0 + 0.5).r * 2.0f - 1.0;
+    vec4 graphCoord = vec4(position, 1.0);
+
+    float sampleY = texture2D(
+        scale,
+        vec2(
+            graphCoord.y + 0.5,
+            0.0
+        )
+    ).r;
+
+    intensity = clamp(
+        texture2D(render, vec2(graphCoord.x + 0.5, sampleY)).r * sensitivity,
+        0.0,
+        1.0
+    );
+
+    if (contrast > 0.0) {
+        intensity = log(1.0 + intensity * contrast) / log(1.0 + contrast);
+    }
+
+    graphCoord.z = intensity;
     gl_Position = projectionMatrix * viewMatrix * modelMatrix * graphCoord;
 }

@@ -5,9 +5,9 @@ uniform sampler2D colourMap;
 uniform sampler2D render;
 uniform sampler2D scale;
 uniform float contrast;
-uniform float time;
 uniform float sensitivity;
 
+uniform float time;
 
 void main(void) {
     float sampleY = texture2D(

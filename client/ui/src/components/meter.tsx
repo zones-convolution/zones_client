@@ -1,7 +1,5 @@
 import { FC, ReactNode } from "react";
 
-import { Separator } from "@/components/ui/separator";
-
 import { DiscreteLevelLayout } from "@/components/discrete_level_layout";
 import { IUseMetering } from "@/hooks/use_metering";
 import { cn } from "@/lib/utils";

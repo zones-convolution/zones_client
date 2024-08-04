@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, Fragment } from "react";
 
 import { Separator } from "@/components/ui/separator";
 
@@ -49,10 +49,10 @@ const LevelLabels: FC<{ levels: number[] }> = ({ levels }) => {
   return (
     <div className="relative">
       {levels.map((level, index) => (
-        <>
+        <Fragment key={index}>
           <LevelLabel key={`label-${index}`} level={level} />
           <InvisibleLabel key={`invisible-${index}`} level={level} />
-        </>
+        </Fragment>
       ))}
     </div>
   );

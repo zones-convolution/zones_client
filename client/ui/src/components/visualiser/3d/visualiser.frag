@@ -1,6 +1,8 @@
-in vec4 graphCoord;
-out vec4 fragColor;
+in float intensity;
 uniform sampler2D colourMap;
+uniform float sensitivity;
+
+out vec4 fragColor;
 
 void main(void) {
     vec4 factor;
@@ -9,5 +11,7 @@ void main(void) {
     else
     factor = vec4(0.2, 0.2, 0.2, 1.0);
 
-    fragColor = texture(colourMap, vec2((graphCoord.z + 1.0) / 2.0), 0.0).rgba * factor;
+    vec4 colour = texture(colourMap, vec2(intensity, 0.0)).rgba;
+
+    fragColor = colour * factor;
 }
