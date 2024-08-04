@@ -66,6 +66,9 @@ static auto StreamToVector (juce::InputStream & stream)
 std::optional<juce::WebBrowserComponent::Resource>
 AudioPluginAudioProcessorEditor::GetResource (const juce::String & url)
 {
+    if (url == "/visualiser.bin")
+        return visualiser_relay_.GetVisualiserResource ();
+
     auto rel_path = "." + (url == "/" ? "/index.html" : url);
     auto asset_file = asset_directory_.getChildFile (rel_path);
 
@@ -101,8 +104,7 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (
                                   .withOptionsFrom (user_zones_relay_)
                                   .withOptionsFrom (load_relay_)
                                   .withOptionsFrom (metering_relay_)
-                                  .withOptionsFrom (resize_relay_)
-                                  .withOptionsFrom (visualiser_relay_))
+                                  .withOptionsFrom (resize_relay_))
     , parameter_attachments_ (parameter_relay_, processor_container.parameter_tree_state_)
 
 {

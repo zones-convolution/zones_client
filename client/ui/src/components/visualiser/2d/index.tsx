@@ -13,7 +13,6 @@ import {
   createColourMapTexture,
   generateColourMap,
 } from "@/components/visualiser/3d";
-import { VisualiserRender } from "@/ipc/visualiser_ipc";
 
 import frag from "./visualiser.frag";
 import vert from "./visualiser.vert";
@@ -21,25 +20,21 @@ import vert from "./visualiser.vert";
 const defaultWidth = 1024;
 const defaultHeight = 512;
 
-export const generateRenderTexture = (
-  render: VisualiserRender,
-): DataTexture => {
+export const generateRenderTexture = (render: Uint8Array): DataTexture => {
   const size = defaultWidth * defaultHeight;
   const data = new Uint8Array(size);
 
-  for (let i = 0; i < defaultWidth; ++i) {
-    for (let j = 0; j < defaultHeight; ++j) {
-      const index = i + j * defaultHeight;
-      data[index] = 0;
-    }
-  }
+  let numChannels = render.length / defaultHeight;
 
-  let width = render.length;
+  for (let channel = 0; channel < numChannels; ++channel) {
+    const channelOffset = channel * defaultHeight;
+    const x = channel;
 
-  for (let i = 0; i < width; ++i) {
-    for (let j = 0; j < defaultHeight; ++j) {
-      const index = i + j * defaultWidth;
-      data[index] = Math.floor(render[i][j] * 255);
+    for (let fftPoint = 0; fftPoint < defaultHeight; ++fftPoint) {
+      const point = render[fftPoint + channelOffset];
+      const y = fftPoint;
+      const textureIndex = x + y * defaultWidth;
+      data[textureIndex] = point;
     }
   }
 
@@ -76,7 +71,7 @@ const createScaleTexture = (
   return texture;
 };
 
-const FullscreenMesh: FC<{ render: VisualiserRender }> = ({ render }) => {
+const FullscreenMesh: FC<{ render: Uint8Array }> = ({ render }) => {
   const viewport = useThree((state) => state.viewport);
 
   const matRef = useRef<ShaderMaterial>(null);
@@ -138,7 +133,7 @@ const FullscreenMesh: FC<{ render: VisualiserRender }> = ({ render }) => {
   );
 };
 
-const Visualiser2D: FC<{ render: VisualiserRender }> = ({ render }) => {
+const Visualiser2D: FC<{ render: Uint8Array }> = ({ render }) => {
   return (
     <div className="relative flex-1">
       <div className="absolute w-full h-full">

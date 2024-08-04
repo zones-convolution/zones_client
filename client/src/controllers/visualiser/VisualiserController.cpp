@@ -12,17 +12,16 @@ void VisualiserController::RenderFinished (IrGraphState state,
                                              .base_num_samples =
                                                  state.base_ir_buffer->getNumSamples (),
                                              .base_sample_rate = state.sample_rate},
-            [&] (BoxedBuffer frequency_data)
+            [&] (Spectrogram::BoxedUint8Buffer frequency_data)
             {
                 std::lock_guard callback_guard {render_mutex_};
                 frequency_data_ = frequency_data;
-                juce::MessageManager::callAsync ([&, frequency_data]
-                                                 { OnVisualiserRendered (frequency_data); });
+                juce::MessageManager::callAsync ([&, frequency_data] { OnVisualiserRendered (); });
             }),
         true);
 }
 
-std::optional<VisualiserController::BoxedBuffer> VisualiserController::GetVisualiserRender ()
+std::optional<Spectrogram::BoxedUint8Buffer> VisualiserController::GetVisualiserRender ()
 {
     std::lock_guard render_guard {render_mutex_};
     return frequency_data_;

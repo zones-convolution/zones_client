@@ -10,8 +10,6 @@
 class VisualiserController : public IrEngine::Listener
 {
 public:
-    using BoxedBuffer = immer::box<juce::AudioBuffer<float>>;
-
     void RenderFinished (IrGraphState state, IrGraphProcessor::BoxedBuffer render_result) override;
 
     class RenderVisualiserJob : public juce::ThreadPoolJob
@@ -25,7 +23,7 @@ public:
         };
 
         RenderVisualiserJob (Parameters parameters,
-                             std::function<void (BoxedBuffer)> render_callback)
+                             std::function<void (Spectrogram::BoxedUint8Buffer)> render_callback)
             : juce::ThreadPoolJob ("RenderVisualiserJob")
             , parameters_ (parameters)
             , render_callback_ (render_callback)
@@ -47,15 +45,15 @@ public:
 
     private:
         Parameters parameters_;
-        std::function<void (BoxedBuffer)> render_callback_;
+        std::function<void (Spectrogram::BoxedUint8Buffer)> render_callback_;
     };
 
-    rocket::signal<void (BoxedBuffer)> OnVisualiserRendered;
-    std::optional<BoxedBuffer> GetVisualiserRender ();
+    rocket::signal<void ()> OnVisualiserRendered;
+    std::optional<Spectrogram::BoxedUint8Buffer> GetVisualiserRender ();
 
 private:
     std::mutex render_mutex_;
-    std::optional<BoxedBuffer> last_render_result_ = std::nullopt;
+    std::optional<Spectrogram::BoxedBuffer> last_render_result_ = std::nullopt;
     juce::ThreadPool thread_pool_;
-    BoxedBuffer frequency_data_;
+    std::optional<Spectrogram::BoxedUint8Buffer> frequency_data_ = std::nullopt;
 };

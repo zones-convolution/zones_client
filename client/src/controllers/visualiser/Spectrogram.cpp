@@ -117,7 +117,24 @@ AverageFrequencyData (const juce::dsp::AudioBlock<const float> & frequency_data)
     return averaged_frequency_data;
 }
 
-Spectrogram::BoxedBuffer
+static juce::AudioBuffer<std::uint8_t>
+ConvertToUint8Buffer (const juce::AudioBuffer<float> & buffer)
+{
+    auto num_channels = buffer.getNumChannels ();
+    auto num_samples = buffer.getNumSamples ();
+
+    juce::AudioBuffer<std::uint8_t> data {num_channels, num_samples};
+    for (auto channel_index = 0; channel_index < num_channels; ++channel_index)
+        for (auto sample_index = 0; sample_index < num_samples; ++sample_index)
+            data.setSample (channel_index,
+                            sample_index,
+                            static_cast<std::uint8_t> (
+                                std::floor (buffer.getSample (channel_index, sample_index) * 255)));
+
+    return data;
+}
+
+Spectrogram::BoxedUint8Buffer
 Spectrogram::CreateNormalisedSpectrogramData (Spectrogram::BoxedBuffer buffer,
                                               int base_num_sample,
                                               double base_sample_rate)
@@ -125,6 +142,6 @@ Spectrogram::CreateNormalisedSpectrogramData (Spectrogram::BoxedBuffer buffer,
     auto frequency_data = PerformFFT (*buffer, base_num_sample, base_sample_rate);
     if (frequency_data.getNumSamples () > kTargetNumNonNegativeFFTPoints)
         frequency_data = AverageFrequencyData (frequency_data);
-    //    NormaliseFrequencyData (frequency_data);
-    return {std::move (frequency_data)};
+    NormaliseFrequencyData (frequency_data);
+    return {ConvertToUint8Buffer (frequency_data)};
 }

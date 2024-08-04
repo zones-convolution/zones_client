@@ -6,15 +6,13 @@
 
 #include <immer/box.hpp>
 
-class VisualiserRelay : public OptionsBuilder<juce::WebBrowserComponent::Options>
+class VisualiserRelay
 {
 public:
     VisualiserRelay (juce::WebBrowserComponent & web_browser_component,
                      VisualiserController & visualiser_controller);
-    ~VisualiserRelay () override = default;
-
-    juce::WebBrowserComponent::Options
-    buildOptions (const juce::WebBrowserComponent::Options & initialOptions) override;
+    ~VisualiserRelay () = default;
+    [[nodiscard]] juce::WebBrowserComponent::Resource GetVisualiserResource () const;
 
 private:
     rocket::scoped_connection_container connections_;
