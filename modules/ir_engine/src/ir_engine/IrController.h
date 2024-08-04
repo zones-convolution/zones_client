@@ -22,7 +22,7 @@ private:
     void UpdateParametersFromTree ();
     void PerformRender ();
 
-    static constexpr auto kDebounceTimeMs = 160.f;
+    static constexpr auto kDebounceTimeMs = 10.f;
 
     IrEngine & ir_engine_;
 
