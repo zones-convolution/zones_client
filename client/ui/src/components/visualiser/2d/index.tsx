@@ -80,10 +80,10 @@ const FullscreenMesh: FC<{ render: Uint8Array }> = ({ render }) => {
     const mat = matRef.current;
     if (mat) {
       mat.uniforms.time.value += 0.1;
-      mat.uniforms.contrast.value =
-        ((Math.sin(mat.uniforms.time.value * 0.1) + 1.0) / 2.0) * 100.0;
-      mat.uniforms.sensitivity.value =
-        ((Math.sin(mat.uniforms.time.value * 0.2) + 1.0) / 2.0) * 2.0;
+      // mat.uniforms.contrast.value =
+      //   ((Math.sin(mat.uniforms.time.value * 0.1) + 1.0) / 2.0) * 100.0;
+      // mat.uniforms.sensitivity.value =
+      //   ((Math.sin(mat.uniforms.time.value * 0.2) + 1.0) / 2.0) * 2.0;
     }
   });
 

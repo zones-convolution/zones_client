@@ -161,7 +161,7 @@ const Editor = () => {
             value="3d"
             className="absolute top-0 w-full h-full flex mt-0"
           >
-            {/*<Visualiser3D render={render} />*/}
+            <Visualiser3D render={render} />
           </TabsContent>
           <TabsList className="absolute top-0 right-0 m-2">
             <TabsTrigger value="2d">2D</TabsTrigger>
