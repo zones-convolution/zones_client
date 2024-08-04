@@ -18,7 +18,5 @@ export default meta;
 type Story = StoryObj<typeof Visualiser2D>;
 
 export const Visualiser2DStory: Story = {
-  args: {
-    render: mockRenderData,
-  },
+  args: {},
 };

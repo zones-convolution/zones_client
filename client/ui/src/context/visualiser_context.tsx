@@ -9,16 +9,15 @@ import {
 
 import {
   getVisualiserRender,
-  VisualiserRender,
   visualiserRenderListener,
 } from "@/ipc/visualiser_ipc";
 
-const VisualiserContext = createContext<VisualiserRender>([]);
+const VisualiserContext = createContext<Uint8Array>(new Uint8Array());
 
 export const VisualiserProvider: FC<{
   children: ReactNode;
 }> = ({ children }) => {
-  const [render, setRender] = useState<VisualiserRender>([]);
+  const [render, setRender] = useState<Uint8Array>(new Uint8Array());
 
   useEffect(() => {
     getVisualiserRender().then(setRender);

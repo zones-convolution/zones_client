@@ -12,7 +12,6 @@ import {
 } from "three";
 
 import { generateRenderTexture } from "@/components/visualiser/2d";
-import { VisualiserRender } from "@/ipc/visualiser_ipc";
 
 import frag from "./visualiser.frag";
 import vert from "./visualiser.vert";
@@ -66,7 +65,7 @@ const generateDefaultTexture = (): DataTexture => {
   return texture;
 };
 
-const Graph: FC<{ render: VisualiserRender }> = ({ render }) => {
+const Graph: FC<{ render: Uint8Array }> = ({ render }) => {
   const matRef = useRef<ShaderMaterial>(null);
 
   useFrame(() => {
@@ -113,7 +112,7 @@ const Graph: FC<{ render: VisualiserRender }> = ({ render }) => {
   );
 };
 
-const Visualiser3D: FC<{ render: VisualiserRender }> = ({ render }) => {
+const Visualiser3D: FC<{ render: Uint8Array }> = ({ render }) => {
   return (
     <div className="relative flex-1">
       <div className="absolute w-full h-full">
