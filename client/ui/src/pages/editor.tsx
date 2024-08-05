@@ -1,5 +1,5 @@
-import { Play, Pause, Repeat } from "lucide-react";
-import { FC, ReactNode } from "react";
+import { Play, Pause, Repeat, Settings } from "lucide-react";
+import { FC, ReactNode, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Toggle } from "@/components/ui/toggle";
 
 import { CategoryCard } from "@/components/cards/category_card";
 import { Knob } from "@/components/knob";
@@ -139,6 +140,8 @@ const Editor = () => {
   useControlParameterIndexUpdater();
 
   const context = useVisualiserContext();
+  const [showVisualiserControls, setShowVisualiserControls] =
+    useState<boolean>(false);
 
   return (
     <div className="flex flex-col gap-0.5 h-full">
@@ -169,9 +172,20 @@ const Editor = () => {
             <TabsTrigger value="2d">2D</TabsTrigger>
             <TabsTrigger value="3d">3D</TabsTrigger>
           </TabsList>
-          <div className="absolute bottom-0 right-0 w-[50%] p-2">
-            <VisualiserControls />
-          </div>
+
+          <Toggle
+            aria-label="Visualiser Controls"
+            className="absolute top-0 left-0 m-2"
+            pressed={showVisualiserControls}
+            onPressedChange={setShowVisualiserControls}
+          >
+            <Settings className="h-4 w-4" />
+          </Toggle>
+          {showVisualiserControls && (
+            <div className="absolute bottom-0 right-0 w-[50%] p-2">
+              <VisualiserControls />
+            </div>
+          )}
         </Tabs>
       </div>
       <div className="flex gap-0.5 h-[600px]">

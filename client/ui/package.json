@@ -22,6 +22,7 @@
     "@radix-ui/react-slot": "^1.0.2",
     "@radix-ui/react-tabs": "^1.1.0",
     "@radix-ui/react-toast": "^1.2.1",
+    "@radix-ui/react-toggle": "^1.1.0",
     "@react-three/drei": "^9.106.0",
     "@react-three/fiber": "^8.16.8",
     "@types/d3": "^7.4.3",
