@@ -1,3 +1,4 @@
+import colormap from "colormap";
 import { Play, Pause, Repeat } from "lucide-react";
 import { FC, ReactNode } from "react";
 
@@ -140,6 +141,14 @@ const TimePanel = () => {
   );
 };
 
+const createCssGradient = (colors: string[]) => {
+  if (!Array.isArray(colors) || colors.length === 0) {
+    throw new Error("Input must be a non-empty array of colors.");
+  }
+
+  return `linear-gradient(90deg, ${colors.join(", ")})`;
+};
+
 const VisualiserControls = () => {
   const context = useVisualiserContext();
   return (
@@ -181,11 +190,28 @@ const VisualiserControls = () => {
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
-          {visualiserColourMaps.map((scale) => (
-            <SelectItem key={scale} value={scale} className="capitalize">
-              {scale}
-            </SelectItem>
-          ))}
+          {visualiserColourMaps.map((colourMap) => {
+            const colours = colormap({
+              colormap: colourMap,
+              nshades: 20,
+              format: "hex",
+              alpha: 1,
+            });
+
+            return (
+              <SelectItem key={colourMap} value={colourMap}>
+                <div className="flex items-center gap-2 capitalize">
+                  <div
+                    className="w-8 h-4"
+                    style={{
+                      background: createCssGradient(colours),
+                    }}
+                  />
+                  {colourMap}
+                </div>
+              </SelectItem>
+            );
+          })}
         </SelectContent>
       </Select>
     </div>
