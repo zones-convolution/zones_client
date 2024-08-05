@@ -141,7 +141,7 @@ const Editor = () => {
 
   const context = useVisualiserContext();
   const [showVisualiserControls, setShowVisualiserControls] =
-    useState<boolean>(false);
+    useState<boolean>(true);
 
   return (
     <div className="flex flex-col gap-0.5 h-full">

@@ -1,5 +1,6 @@
 import colormap from "colormap";
 
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -29,20 +30,33 @@ const VisualiserControls = () => {
   const context = useVisualiserContext();
   return (
     <div className="flex flex-col gap-4">
-      <Slider
-        onValueChange={(v) => context.setSensitivity(v[0])}
-        value={[context.sensitivity]}
-        min={0}
-        max={100}
-        step={0.001}
-      />
-      <Slider
-        onValueChange={(v) => context.setContrast(v[0])}
-        value={[context.contrast]}
-        min={0}
-        max={100}
-        step={0.001}
-      />
+      <div className="flex items-center">
+        <Label htmlFor="sensitivity" className="w-28">
+          Sensitivity
+        </Label>
+        <Slider
+          onValueChange={(v) => context.setSensitivity(v[0])}
+          value={[context.sensitivity]}
+          min={0}
+          max={100}
+          step={0.001}
+          id="sensitivity"
+        />
+      </div>
+
+      <div className="flex items-center">
+        <Label htmlFor="contrast" className="w-28">
+          Contrast
+        </Label>
+        <Slider
+          onValueChange={(v) => context.setContrast(v[0])}
+          value={[context.contrast]}
+          min={0}
+          max={100}
+          step={0.001}
+          id="contrast"
+        />
+      </div>
       <Select
         value={context.scale}
         onValueChange={(v) => context.setScale(v as VisualiserScale)}
