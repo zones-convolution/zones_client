@@ -7,7 +7,7 @@ void ResamplerProcessor::Process (IrGraphProcessor::BoxedBuffer & input_buffer,
     juce::LagrangeInterpolator interpolator;
 
     auto ratio = state.resampler / 100.f;
-    jassert (ratio > 0.1f && ratio < 2.f);
+    jassert (ratio > 0.49f && ratio < 1.51f);
 
     auto num_channels = input_buffer->getNumChannels ();
 

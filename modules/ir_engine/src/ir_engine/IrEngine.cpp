@@ -4,6 +4,9 @@
 
 void IrEngine::RenderState (const IrGraphState & state)
 {
+    if (state.base_ir_buffer->getNumSamples () == 0) // Possibly a better way to check for this
+        return;
+
     std::lock_guard guard {render_mutex_};
 
     ++jobs_since_last_clean_;

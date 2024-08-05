@@ -51,7 +51,7 @@ private:
     void CleanPool ();
 
     static constexpr int kJobTimeout = 200;
-    static constexpr int kMaxNumberOfJobsSinceLastClean = 4;
+    static constexpr int kMaxNumberOfJobsSinceLastClean = 12;
     int jobs_since_last_clean_ = 0;
 
     juce::ListenerList<Listener> listeners_;

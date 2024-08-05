@@ -1,92 +1,82 @@
 import { OrbitControls } from "@react-three/drei";
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import colormap from "colormap";
+import { Canvas, useThree } from "@react-three/fiber";
 import { FC, useEffect, useMemo, useRef } from "react";
-import {
-  DataTexture,
-  DoubleSide,
-  GLSL3,
-  RedFormat,
-  RGBAFormat,
-  ShaderMaterial,
-} from "three";
+import { DoubleSide, GLSL3, ShaderMaterial } from "three";
 
 import {
+  createColourMapTexture,
   createScaleTexture,
   defaultHeight,
+  generateColourMap,
   generateRenderTexture,
-} from "@/components/visualiser/2d";
+} from "@/components/visualiser/visualiser_utils";
+import { IVisualiserContext } from "@/context/visualiser_context";
 
 import frag from "./visualiser.frag";
 import vert from "./visualiser.vert";
 
-export const generateColourMap = (): number[][] => {
-  return colormap({
-    colormap: "viridis",
-    nshades: 256,
-    format: "rgba",
-    alpha: 1,
-  });
-};
-
-export const createColourMapTexture = (
-  colourMapArray: number[][],
-): DataTexture => {
-  const size = colourMapArray.length;
-  const data = new Uint8Array(size * 4);
-
-  for (let i = 0; i < size; i++) {
-    const color = colourMapArray[i];
-    const index = i * 4;
-    data[index] = color[0];
-    data[index + 1] = color[1];
-    data[index + 2] = color[2];
-    data[index + 3] = color[3] * 255;
-  }
-
-  const texture = new DataTexture(data, size, 1, RGBAFormat);
-  texture.needsUpdate = true;
-  return texture;
-};
-
-const Graph: FC<{ render: Uint8Array }> = ({ render }) => {
+const Graph3D: FC<{ context: IVisualiserContext }> = ({ context }) => {
   const viewport = useThree((state) => state.viewport);
 
   const matRef = useRef<ShaderMaterial>(null);
 
-  useFrame(() => {
+  useEffect(() => {
     const mat = matRef.current;
-    if (mat) {
-      mat.uniforms.time.value += 0.1;
+    if (mat && context.render) {
+      mat.uniforms.render.value = generateRenderTexture(context.render);
     }
-  });
+  }, [context.render]);
 
   useEffect(() => {
     const mat = matRef.current;
     if (mat) {
-      mat.uniforms.render.value = generateRenderTexture(render);
+      mat.uniforms.scale.value = createScaleTexture(
+        44100,
+        defaultHeight * 2,
+        context.scale,
+      );
     }
-  }, [render]);
+  }, [context.scale]);
+
+  useEffect(() => {
+    const mat = matRef.current;
+    if (mat) {
+      mat.uniforms.colourMap.value = createColourMapTexture(
+        generateColourMap(context.colourMap),
+      );
+    }
+  }, [context.colourMap]);
+
+  useEffect(() => {
+    const mat = matRef.current;
+    if (mat) {
+      mat.uniforms.sensitivity.value = context.sensitivity;
+    }
+  }, [context.sensitivity]);
+
+  useEffect(() => {
+    const mat = matRef.current;
+    if (mat) {
+      mat.uniforms.contrast.value = context.contrast;
+    }
+  }, [context.contrast]);
 
   const uniforms = useMemo(
     () => ({
-      time: {
-        value: 0.0,
+      render: {
+        value: null,
       },
       colourMap: {
-        value: createColourMapTexture(generateColourMap()),
+        value: null,
       },
       scale: {
-        value: createScaleTexture(44100, defaultHeight * 2, "mel"),
-      },
-      render: {
-        value: generateRenderTexture(render),
+        value: null,
       },
       contrast: {
-        value: 40.0,
+        value: context.contrast,
       },
       sensitivity: {
-        value: 40.0,
+        value: context.sensitivity,
       },
     }),
     [],
@@ -111,7 +101,7 @@ const Graph: FC<{ render: Uint8Array }> = ({ render }) => {
   );
 };
 
-const Visualiser3D: FC<{ render: Uint8Array }> = ({ render }) => {
+const Visualiser3D: FC<{ context: IVisualiserContext }> = ({ context }) => {
   return (
     <div className="relative flex-1">
       <div className="absolute w-full h-full">
@@ -119,7 +109,7 @@ const Visualiser3D: FC<{ render: Uint8Array }> = ({ render }) => {
           camera={{ position: [1.0, 1.0, 1.0] }}
           className="min-w-0 min-h-0 flex-1 shrink"
         >
-          <Graph render={render} />
+          <Graph3D context={context} />
           <axesHelper />
           <OrbitControls />
         </Canvas>

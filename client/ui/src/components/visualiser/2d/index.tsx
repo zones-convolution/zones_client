@@ -1,98 +1,64 @@
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { Canvas, useThree } from "@react-three/fiber";
 import { FC, useEffect, useMemo, useRef } from "react";
-import {
-  DataTexture,
-  FloatType,
-  FrontSide,
-  GLSL3,
-  RedFormat,
-  ShaderMaterial,
-} from "three";
+import { FrontSide, GLSL3, ShaderMaterial } from "three";
 
 import {
   createColourMapTexture,
+  createScaleTexture,
+  defaultHeight,
   generateColourMap,
-} from "@/components/visualiser/3d";
+  generateRenderTexture,
+} from "@/components/visualiser/visualiser_utils";
+import { IVisualiserContext } from "@/context/visualiser_context";
 
 import frag from "./visualiser.frag";
 import vert from "./visualiser.vert";
 
-export const defaultWidth = 1024;
-export const defaultHeight = 512;
-
-export const generateRenderTexture = (render: Uint8Array): DataTexture => {
-  const size = defaultWidth * defaultHeight;
-  const data = new Uint8Array(size);
-
-  let numChannels = render.length / defaultHeight;
-
-  for (let channel = 0; channel < numChannels; ++channel) {
-    const channelOffset = channel * defaultHeight;
-    const x = channel;
-
-    for (let fftPoint = 0; fftPoint < defaultHeight; ++fftPoint) {
-      const point = render[fftPoint + channelOffset];
-      const y = fftPoint;
-      const textureIndex = x + y * defaultWidth;
-      data[textureIndex] = point;
-    }
-  }
-
-  const texture = new DataTexture(data, defaultWidth, defaultHeight, RedFormat);
-  texture.needsUpdate = true;
-  return texture;
-};
-
-export const createScaleTexture = (
-  sampleRate: number,
-  windowSize: number,
-  scale: "linear" | "mel",
-) => {
-  const data = new Float32Array(defaultHeight);
-
-  for (let i = 0; i < defaultHeight; i += 1) {
-    switch (scale) {
-      case "linear":
-        data[i] = i / (defaultHeight - 1);
-        break;
-      case "mel": {
-        const peakHz = (sampleRate * (windowSize - 2)) / (2 * windowSize);
-        data[i] =
-          (700 * ((1 + peakHz / 700) ** (i / (defaultHeight - 1)) - 1)) /
-          peakHz;
-        break;
-      }
-    }
-  }
-
-  const texture = new DataTexture(data, defaultHeight, 1, RedFormat);
-  texture.type = FloatType;
-  texture.needsUpdate = true;
-  return texture;
-};
-
-const FullscreenMesh: FC<{ render: Uint8Array }> = ({ render }) => {
+const Graph2D: FC<{ context: IVisualiserContext }> = ({ context }) => {
   const viewport = useThree((state) => state.viewport);
 
   const matRef = useRef<ShaderMaterial>(null);
 
-  useFrame(() => {
+  useEffect(() => {
     const mat = matRef.current;
-    if (mat) {
-      mat.uniforms.time.value += 0.1;
-      // mat.uniforms.contrast.value =
-      //   ((Math.sin(mat.uniforms.time.value * 0.1) + 1.0) / 2.0) * 100.0;
-      // mat.uniforms.sensitivity.value =
-      //   ((Math.sin(mat.uniforms.time.value * 0.2) + 1.0) / 2.0) * 2.0;
+    if (mat && context.render) {
+      mat.uniforms.render.value = generateRenderTexture(context.render);
     }
-  });
+  }, [context.render]);
 
   useEffect(() => {
     const mat = matRef.current;
     if (mat) {
-      mat.uniforms.render.value = generateRenderTexture(render);
+      mat.uniforms.scale.value = createScaleTexture(
+        44100,
+        defaultHeight * 2,
+        context.scale,
+      );
     }
-  }, [render]);
+  }, [context.scale]);
+
+  useEffect(() => {
+    const mat = matRef.current;
+    if (mat) {
+      mat.uniforms.colourMap.value = createColourMapTexture(
+        generateColourMap(context.colourMap),
+      );
+    }
+  }, [context.colourMap]);
+
+  useEffect(() => {
+    const mat = matRef.current;
+    if (mat) {
+      mat.uniforms.sensitivity.value = context.sensitivity;
+    }
+  }, [context.sensitivity]);
+
+  useEffect(() => {
+    const mat = matRef.current;
+    if (mat) {
+      mat.uniforms.contrast.value = context.contrast;
+    }
+  }, [context.contrast]);
 
   const uniforms = useMemo(
     () => ({
@@ -100,19 +66,19 @@ const FullscreenMesh: FC<{ render: Uint8Array }> = ({ render }) => {
         value: 0.0,
       },
       colourMap: {
-        value: createColourMapTexture(generateColourMap()),
-      },
-      render: {
-        value: generateRenderTexture(render),
+        value: null,
       },
       scale: {
-        value: createScaleTexture(44100, defaultHeight * 2, "mel"),
+        value: null,
       },
       contrast: {
-        value: 40.0,
+        value: context.contrast,
       },
       sensitivity: {
-        value: 40.0,
+        value: context.sensitivity,
+      },
+      render: {
+        value: null,
       },
     }),
     [],
@@ -133,12 +99,12 @@ const FullscreenMesh: FC<{ render: Uint8Array }> = ({ render }) => {
   );
 };
 
-const Visualiser2D: FC<{ render: Uint8Array }> = ({ render }) => {
+const Visualiser2D: FC<{ context: IVisualiserContext }> = ({ context }) => {
   return (
     <div className="relative flex-1">
       <div className="absolute w-full h-full">
         <Canvas className="min-w-0 min-h-0 flex-1 shrink" orthographic>
-          <FullscreenMesh render={render} />
+          <Graph2D context={context} />
         </Canvas>
       </div>
     </div>

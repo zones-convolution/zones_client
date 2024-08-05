@@ -76,7 +76,7 @@ ParameterTree::CreateParameterTree (juce::AudioProcessorValueTreeState::Paramete
             std::make_unique<juce::AudioParameterFloat> (
                 juce::ParameterID {kResamplerParameterId, 1},
                 "Resample",
-                juce::NormalisableRange<float> (20.0f, 180.f),
+                juce::NormalisableRange<float> (50.0f, 150.f),
                 100.0f,
                 juce::AudioParameterFloatAttributes ().withAutomatable (false).withLabel ("%")),
             layout),
