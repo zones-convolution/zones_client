@@ -1,4 +1,3 @@
-import colormap from "colormap";
 import { Play, Pause, Repeat } from "lucide-react";
 import { FC, ReactNode } from "react";
 
@@ -17,13 +16,8 @@ import { CategoryCard } from "@/components/cards/category_card";
 import { Knob } from "@/components/knob";
 import { Visualiser2D } from "@/components/visualiser/2d";
 import { Visualiser3D } from "@/components/visualiser/3d";
-import {
-  useVisualiserContext,
-  VisualiserColourMap,
-  visualiserColourMaps,
-  VisualiserScale,
-  visualiserScales,
-} from "@/context/visualiser_context";
+import { VisualiserControls } from "@/components/visualiser/visualiser_controls";
+import { useVisualiserContext } from "@/context/visualiser_context";
 import { useControlParameterIndexUpdater } from "@/hooks/use_control_parameter_index_updater";
 import { usePlayer } from "@/hooks/use_player";
 import { Parameters } from "@/lib/parameters";
@@ -138,83 +132,6 @@ const TimePanel = () => {
         <Knob identifier={Parameters.Attack} showMidpointIndicator={false} />
       </PanelContent>
     </Panel>
-  );
-};
-
-const createCssGradient = (colors: string[]) => {
-  if (!Array.isArray(colors) || colors.length === 0) {
-    throw new Error("Input must be a non-empty array of colors.");
-  }
-
-  return `linear-gradient(90deg, ${colors.join(", ")})`;
-};
-
-const VisualiserControls = () => {
-  const context = useVisualiserContext();
-  return (
-    <div className="flex flex-col gap-8">
-      <Slider
-        onValueChange={(v) => context.setSensitivity(v[0])}
-        value={[context.sensitivity]}
-        min={0}
-        max={100}
-        step={0.001}
-      />
-      <Slider
-        onValueChange={(v) => context.setContrast(v[0])}
-        value={[context.contrast]}
-        min={0}
-        max={100}
-        step={0.001}
-      />
-      <Select
-        value={context.scale}
-        onValueChange={(v) => context.setScale(v as VisualiserScale)}
-      >
-        <SelectTrigger className="capitalize">
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          {visualiserScales.map((scale) => (
-            <SelectItem key={scale} value={scale} className="capitalize">
-              {scale}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-      <Select
-        value={context.colourMap}
-        onValueChange={(v) => context.setColourMap(v as VisualiserColourMap)}
-      >
-        <SelectTrigger className="capitalize">
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          {visualiserColourMaps.map((colourMap) => {
-            const colours = colormap({
-              colormap: colourMap,
-              nshades: 20,
-              format: "hex",
-              alpha: 1,
-            });
-
-            return (
-              <SelectItem key={colourMap} value={colourMap}>
-                <div className="flex items-center gap-2 capitalize">
-                  <div
-                    className="w-8 h-4"
-                    style={{
-                      background: createCssGradient(colours),
-                    }}
-                  />
-                  {colourMap}
-                </div>
-              </SelectItem>
-            );
-          })}
-        </SelectContent>
-      </Select>
-    </div>
   );
 };
 
