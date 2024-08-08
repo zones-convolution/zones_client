@@ -9,6 +9,7 @@ import {
 } from "@/context/browser_context";
 import Browser from "@/pages/browser";
 import CreateZone from "@/pages/create_zone";
+import Search from "@/pages/search";
 import Zone from "@/pages/zone";
 
 const Outlet = () => {
@@ -21,6 +22,8 @@ const Outlet = () => {
       return <Browser />;
     case Route.Zone:
       return <Zone zone={route.state} />;
+    case Route.Search:
+      return <Search />;
   }
 };
 
@@ -37,6 +40,9 @@ const NavigationTitle = () => {
       break;
     case Route.Zone:
       title = route.state.title;
+      break;
+    case Route.Search:
+      title = "Search";
       break;
   }
 

@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^3.6.0",
+    "@meilisearch/instant-meilisearch": "^0.19.2",
     "@radix-ui/react-dropdown-menu": "^2.1.1",
     "@radix-ui/react-label": "^2.0.2",
     "@radix-ui/react-select": "^2.0.0",
@@ -32,6 +33,7 @@
     "clsx": "^2.1.1",
     "colormap": "^2.3.2",
     "d3": "^7.9.0",
+    "instantsearch.css": "^8.4.0",
     "juce-framework-frontend": "file:../../lib/JUCE/modules/juce_gui_extra/native/javascript",
     "lucide-react": "^0.379.0",
     "prettier": "^3.2.5",
@@ -39,6 +41,7 @@
     "react-dom": "^18.2.0",
     "react-error-boundary": "^4.0.13",
     "react-hook-form": "^7.52.0",
+    "react-instantsearch": "^7.12.4",
     "react-knob-headless": "0.3.0",
     "rxjs": "^7.8.1",
     "tailwind-merge": "^2.3.0",

@@ -6,6 +6,7 @@ export enum Route {
   Home,
   CreateZone,
   Zone,
+  Search,
 }
 
 export type Routes =
@@ -18,7 +19,8 @@ export type Routes =
     }
   | {
       target: Route.Home;
-    };
+    }
+  | { target: Route.Search };
 
 interface INavigation {
   stack: Routes[];
@@ -113,5 +115,6 @@ export const useNavigation = () => {
     navigateToCreateZone: () => push({ target: Route.CreateZone }),
     navigateToZone: (zone: ZoneMetadata) =>
       push({ target: Route.Zone, state: zone }),
+    navigateToSearch: () => push({ target: Route.Search }),
   };
 };

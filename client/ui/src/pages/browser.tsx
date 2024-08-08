@@ -4,15 +4,16 @@ import { useNavigation } from "@/context/browser_context";
 import { useLoadContext } from "@/context/load_context";
 import { useUserZones } from "@/hooks/use_user_zones";
 import { useValidTargetFormats } from "@/hooks/use_valid_target_formats";
-import {
-  doesIrMatchSelection,
-  doesZoneMatchSelection,
-  getDefaultIrSelection,
-} from "@/lib/irs";
+import { doesZoneMatchSelection, getDefaultIrSelection } from "@/lib/irs";
 
 const Categories = () => {
+  const { navigateToSearch } = useNavigation();
+
   return (
-    <div className="flex-grow bg-card p-2 grid grid-cols-3 grid-rows-3 gap-0.5">
+    <div
+      className="flex-grow bg-card p-2 grid grid-cols-3 grid-rows-3 gap-0.5"
+      onClick={navigateToSearch}
+    >
       <div>
         <CategoryCard
           category="CATHEDRALS"
