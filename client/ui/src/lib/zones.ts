@@ -87,4 +87,8 @@ export type IndexedZone = Pick<
   | "tags"
   | "coverImageId"
   | "versionNumber"
-> & { irs: IndexedIr[] };
+>;
+
+export type IndexedImage = Pick<IImage, "imageId" | "createdAt">;
+
+export type ZoneSearchHit = IndexedZone & { irs: IndexedIr[] };

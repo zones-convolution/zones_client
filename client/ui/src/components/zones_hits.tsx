@@ -6,13 +6,15 @@ import { InfiniteHits, useHits, useInstantSearch } from "react-instantsearch";
 import { Skeleton } from "@/components/ui/skeleton";
 
 import { ZoneCard } from "@/components/cards/zone_card";
+import { useNavigation } from "@/context/browser_context";
 import { getImageUrl } from "@/lib/s3_resources";
-import { IndexedZone } from "@/lib/zones";
+import { ZoneSearchHit } from "@/lib/zones";
 
 const ZonesSearchHit: FC<{
-  hit: Hit<IndexedZone>;
+  hit: Hit<ZoneSearchHit>;
 }> = ({ hit }) => {
   const imageUrl = getImageUrl(hit.zoneId, hit.coverImageId!);
+  const { navigateToZone } = useNavigation();
   return (
     <ZoneCard
       category={hit.title!}
@@ -21,6 +23,7 @@ const ZonesSearchHit: FC<{
       loading={false}
       disabled={false}
       canLoad={true}
+      onView={() => navigateToZone(hit.zoneId)}
     />
   );
 };
@@ -64,7 +67,7 @@ const ZonesLoading = () => {
 };
 
 const ZonesHits = () => {
-  const { items } = useHits<IndexedZone>();
+  const { items } = useHits<ZoneSearchHit>();
   const { status } = useInstantSearch();
 
   if (status == "loading") return <ZonesLoading />;

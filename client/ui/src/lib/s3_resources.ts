@@ -1,4 +1,4 @@
-const S3_ENDPOINT = "https://minio.zonesconvolution.com";
+import { Config } from "@/lib/config";
 
 export interface IS3ResourcePath {
   containerId: string;
@@ -25,7 +25,7 @@ const getIrResourcePath = (
 };
 
 const getImageUrl = (containerId: string, resourceId: string) => {
-  return `${S3_ENDPOINT}/images-processed/${getS3ResourcePath({
+  return `${Config.S3_HOST}/images-processed/${getS3ResourcePath({
     containerId: containerId,
     resourceId: resourceId,
     extension: "jpeg",
@@ -37,7 +37,7 @@ const getIrUrl = (
   irId: string,
   position: "centre" | "left" | "right",
 ) => {
-  return `${S3_ENDPOINT}/impulse-responses-processed/${getIrResourcePath(zoneId, irId, position)}`;
+  return `${Config.S3_HOST}/impulse-responses-processed/${getIrResourcePath(zoneId, irId, position)}`;
 };
 
 export { getIrUrl, getImageUrl };

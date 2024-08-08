@@ -5,14 +5,19 @@ import { ZoneMetadata } from "@/hooks/zone_metadata";
 export enum Route {
   Home,
   CreateZone,
+  UserZone,
   Zone,
   Search,
 }
 
 export type Routes =
   | {
-      target: Route.Zone;
+      target: Route.UserZone;
       state: ZoneMetadata;
+    }
+  | {
+      target: Route.Zone;
+      state: { zoneId: string };
     }
   | {
       target: Route.CreateZone;
@@ -113,8 +118,10 @@ export const useNavigation = () => {
 
   return {
     navigateToCreateZone: () => push({ target: Route.CreateZone }),
-    navigateToZone: (zone: ZoneMetadata) =>
-      push({ target: Route.Zone, state: zone }),
+    navigateToUserZone: (zone: ZoneMetadata) =>
+      push({ target: Route.UserZone, state: zone }),
     navigateToSearch: () => push({ target: Route.Search }),
+    navigateToZone: (zoneId: string) =>
+      push({ target: Route.Zone, state: { zoneId: zoneId } }),
   };
 };

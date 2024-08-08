@@ -1,5 +1,6 @@
 import { Home, Loader, Settings, Target } from "lucide-react";
 import React, { FC, ReactNode } from "react";
+import { SWRConfig } from "swr";
 
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -14,6 +15,7 @@ import { Tabs, TabsProvider, useTabsContext } from "@/context/tabs_context";
 import { VisualiserProvider } from "@/context/visualiser_context";
 import { useEngineLoading } from "@/hooks/use_engine";
 import { useMetering } from "@/hooks/use_metering";
+import { fetcher } from "@/lib/api";
 import BrowserRoot from "@/pages/browser_root";
 import Editor from "@/pages/editor";
 import Preferences from "@/pages/preferences";
@@ -114,13 +116,15 @@ const Root = () => {
 };
 
 export default () => (
-  <LoadProvider>
-    <TabsProvider>
-      <BrowserProvider>
-        <VisualiserProvider>
-          <Root />
-        </VisualiserProvider>
-      </BrowserProvider>
-    </TabsProvider>
-  </LoadProvider>
+  <SWRConfig value={{ fetcher: fetcher }}>
+    <LoadProvider>
+      <TabsProvider>
+        <BrowserProvider>
+          <VisualiserProvider>
+            <Root />
+          </VisualiserProvider>
+        </BrowserProvider>
+      </TabsProvider>
+    </LoadProvider>
+  </SWRConfig>
 );

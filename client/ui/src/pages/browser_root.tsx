@@ -10,6 +10,7 @@ import {
 import Browser from "@/pages/browser";
 import CreateZone from "@/pages/create_zone";
 import Search from "@/pages/search";
+import UserZone from "@/pages/user_zone";
 import Zone from "@/pages/zone";
 
 const Outlet = () => {
@@ -20,10 +21,12 @@ const Outlet = () => {
       return <CreateZone />;
     case Route.Home:
       return <Browser />;
-    case Route.Zone:
-      return <Zone zone={route.state} />;
+    case Route.UserZone:
+      return <UserZone zone={route.state} />;
     case Route.Search:
       return <Search />;
+    case Route.Zone:
+      return <Zone zoneId={route.state.zoneId} />;
   }
 };
 
@@ -38,11 +41,14 @@ const NavigationTitle = () => {
     case Route.Home:
       title = "Browse";
       break;
-    case Route.Zone:
+    case Route.UserZone:
       title = route.state.title;
       break;
     case Route.Search:
       title = "Search";
+      break;
+    case Route.Zone:
+      title = "Zone";
       break;
   }
 
@@ -77,11 +83,6 @@ const BrowserRoot = () => {
           Create Zone
         </Button>
       </div>
-      {/*<div className="flex flex-col">*/}
-      {/*  {validTargetFormats.map((format) => (*/}
-      {/*    <span>{format}</span>*/}
-      {/*  ))}*/}
-      {/*</div>*/}
       <Outlet />
     </div>
   );

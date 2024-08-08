@@ -70,7 +70,7 @@ const Categories = () => {
 const UserIRs = () => {
   const { userZones } = useUserZones();
   const { load, loadingIr, currentIr } = useLoadContext();
-  const { navigateToZone } = useNavigation();
+  const { navigateToUserZone } = useNavigation();
   const { validTargetFormats } = useValidTargetFormats();
 
   return (
@@ -99,7 +99,7 @@ const UserIRs = () => {
                     if (defaultIrSelection) await load(defaultIrSelection);
                   }}
                   onView={() => {
-                    navigateToZone(userZone);
+                    navigateToUserZone(userZone);
                   }}
                 />
               </div>
