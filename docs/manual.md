@@ -139,4 +139,63 @@ colour scheme can be altered.
 
 ## Upload requirements
 
-# Uploading User zones
+# Uploading User Zones
+
+User zones are a type of zone you can store locally on your computer, allowing you to quickly try out
+your personal recordings in the plug-in. They are slightly simplified compared to zones uploaded to
+the web, with reduced metadata features.
+
+Whilst this is great for testing out an impulse response or converting your existing library to be
+more easily accessed in the DAW, we strongly encourage you to upload recordings to the zones convolution
+website to share your work with others!
+
+To get started with user zones, head to the *Preferences* tab and add a file path to the list of user
+paths. This is where your zones will be copied to in the correct format. Note that this is a separate
+path to where zones are downloaded from the *Browse* tab.
+
+Next, head to *Browse* and select *Create Zone* in the top right corner. If you are unsure of the
+difference between an Zone and an IR, please see *What is a Zone* (LINK).Start by adding details about
+the zone such as the title, description and user path to use. Then select *Add IR* for each IR recording,
+where you can add the title, description, channel format and speaker positions used. Selecting the
+speaker positions will display the correct amount of *Choose* buttons, which allow you to select the
+file you want to copy. Each audio file must be separate and the correct number of channels.
+
+This is an example of a true stereo IR:
+
+//Use screenshot of form
+
+Title: Hall Close
+
+Description: Recorded using a C414 pair, spaced 2m apart, 3m from the stage.
+
+Channel Format: Stereo
+
+Speaker Positions: LR
+
+Left: users/myrecording/C414_left.wav
+
+Right users/myrecording/C414_right.wav
+
+Once all the IRs are added, select *Create Zone* to add the audio files to the user path directory.
+You can see your user zones on the browse page.
+
+Currently, the easiest way to remove or modify a user zone is to select reveal on the user path in the
+*Preferences* tab and manually delete the associated folder. Also note that removing a user path will
+not delete the User Ir's inside it.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
