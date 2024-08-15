@@ -75,7 +75,7 @@ handles getting the list of zones from the web API. Communication with the backe
 relays.
 
 When an IR is selected, the relevant metadata is sent to the backend so that the Audio can be
-downloaded on the C++ side. From here the audio can be written to disk and then loaded to be formatted
+downloaded on the C++ side. From here the audio can be written to disk and then loaded and formatted
 in the correct way to pass to IR engine.
 
 IR engine handles the augmentation of the IR offline in the IR graph, which contains a number
@@ -87,11 +87,82 @@ real-time parameters such as dry/wet mix.
 
 The following sections provide a more detailed overview of specific modules.
 
+## Web UI
+
+how the webview ui works / relays
+
 ## Web API
 
-## Visualiser
+how we get data from the web
 
-## IR Engine
+## Saving IR's to Disk
 
-## Audio Engine
+how zones are formatted
+
+## Loading IR's
+
+IR engine is owned by the processor container. As the processor container also owns the audio engine and visualiser
+controller,
+it is able to add them as listeners of IR engine in its constructor. The other task processor container has is to
+pass a reference of IR Engine to IR controller, which calls IR Engine's functions.
+
+### IR Controller
+
+A good place to start is in IRController::LoadIR(), which is called on a background thread when an IR has been selected.
+Here the IR Selection (which contains the relevant metadata) is used to load the IR from disk and format the buffer.
+A mutex for the current graph state is then obtained to update it with the new audio.
+IrEngine::RenderState() can then be called, passing in the state stored by IRController.
+
+IRGraphState is a struct containing the parameter values for IR engine controller, the base IR buffer that was loaded
+from disk and
+other useful data such as sample rate and bit depth. immer::box is used to wrap the audio buffer so that it can be
+passed around
+without lots of copying
+
+Another role of IR Controller is to collect the relevant parameter values and add them to the graph state. A re-render
+can then
+be triggered, with a de-bounce time added to prevent excessive render calls.
+
+### Ir Engine
+
+IR Engine owns the IRGraph, IrEngineProcessors, listener list and ProcessResultPool. It is responsible for organising
+processing
+on the IRGraph and caching results, then letting the listeners know when a render is complete.
+
+In RenderState(), IR engine obtains a mutex and creates a new job which calls process() on IR graph. It will only pass
+on
+the result if job->shouldExit() is false. This means that it hasn't been invalidated by a more recent render result.
+
+### IR Graph
+
+For each state that is passed to IR engine, a new graph is created. This allows the possibilty of different processors
+to be added and removed based on the target format.
+IrGraph::Process() loops through each processor. If a result for that processor for a given state already exists, it
+obtains
+the buffer and passes it on to the next processor. Otherwise, the processor is called then the result is stored in the
+ProcessResultPool. This means that if you were to alter a parameter at the end of the chain, the entire graph would
+not be re-processed.
+
+### Audio Engine
+
+As a listener of IrEngine, AudioEngine::RenderFinished() is called when the buffer is ready
+to be passed to the convolver. Here it checks that the target format is compatible then
+loads the IR into the convolution engine with a given ConvolverSpec.
+
+It also has a part in the notification/command queue system to update the player state as this
+communication is bidirectional and not part of the parameter tree.
+
+### Audio Graph
+
+Audio graph is a relatively simple processor, inheriting from juce::dsp::ProcessorBase.
+Unlike IrGraph, the processors are fixed and handle real time controls, with smoothing
+where necessary.
+
+## Other Features/Modules
+
+### Visualiser
+
+### Meter
+
+
 

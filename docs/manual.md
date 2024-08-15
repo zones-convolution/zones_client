@@ -55,7 +55,7 @@ Say you had a dry stereo piano recording that you wanted to sound nicer. In the 
 the *York Minster* zone and click the eye to see the full details. Here you can see details about the
 space and its recording. You can experiment with the different mic placements depending on whether you
 want the piano to sound close or far. Before selecting the IR, ensure true stereo is selected using
-the ... next to the IR. This will perform more convolution creating a richer and more realistic sounding
+the ... next to the IR. This will perform more convolution calculations creating a richer and more realistic sounding
 reverb and stereo image.
 
 //image of zone page
