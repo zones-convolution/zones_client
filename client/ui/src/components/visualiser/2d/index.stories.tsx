@@ -1,7 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 
 import { Visualiser2D } from "@/components/visualiser/2d";
-import { mockRenderData } from "@/components/visualiser/2d/mock_render_data";
 
 const meta: Meta<typeof Visualiser2D> = {
   component: Visualiser2D,

@@ -16,6 +16,7 @@ const meta: Meta<typeof ZoneCard> = {
     rt60: { control: "number" },
     loading: { control: "boolean" },
     disabled: { control: "boolean" },
+    canLoad: { control: "boolean" },
   },
   args: {
     onLoad: fn(),
@@ -35,6 +36,7 @@ export const Default: Story = {
     rt60: 12.86,
     loading: false,
     disabled: false,
+    canLoad: true,
   },
 };
 
