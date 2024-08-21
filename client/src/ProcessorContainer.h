@@ -7,6 +7,7 @@
 #include "audio_engine/NotificationQueue.h"
 #include "audio_engine/VisitorQueue.h"
 #include "controllers/LoadController.h"
+#include "controllers/WebLoadController.h"
 #include "controllers/visualiser/VisualiserController.h"
 #include "ir_engine/IrController.h"
 #include "ir_engine/IrEngine.h"
@@ -39,8 +40,11 @@ public:
 
     IrController ir_controller_ {ir_engine_, parameter_tree_};
 
-    juce::ThreadPool loading_pool_;
-    LoadController load_controller_ {loading_pool_, ir_controller_};
+    juce::ThreadPool user_loading_pool_;
+    LoadController load_controller_ {user_loading_pool_, ir_controller_};
+
+    juce::ThreadPool web_loading_pool_;
+    WebLoadController web_load_controller_ {web_loading_pool_, ir_controller_};
 
     juce::ThreadPool convolution_pool_;
     zones::ConvolutionEngine convolution_engine_ {convolution_pool_};

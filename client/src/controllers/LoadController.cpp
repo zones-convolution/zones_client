@@ -11,26 +11,34 @@ LoadController::LoadController (juce::ThreadPool & thread_pool, IrController & i
 void LoadController::Load (const IrSelection & ir_selection,
                            const std::function<void (bool)> & callback)
 {
-    SetLoadingIr (ir_selection);
+    {
+        std::lock_guard loading_guard {loading_ir_mutex_};
+        SetLoadingIr (ir_selection);
+    }
 
     thread_pool_.addJob (
         [&, ir_selection, callback]
         {
-            auto load_result = false;
+            std::lock_guard loading_guard {loading_ir_mutex_};
+            std::lock_guard current_guard {current_ir_mutex_};
 
-            try
+            auto load_result = true;
+            if (*loading_ir_ == ir_selection)
             {
-                ir_controller_.LoadIr (ir_selection);
-                load_result = true;
-            }
-            catch (...)
-            {
+                try
+                {
+                    ir_controller_.LoadIr (ir_selection);
+                    SetCurrentIr (ir_selection);
+                }
+                catch (...)
+                {
+                    load_result = false;
+                }
+
+                SetLoadingIr (std::nullopt);
             }
 
             juce::MessageManager::callAsync ([callback, load_result] { callback (load_result); });
-
-            SetLoadingIr (std::nullopt);
-            SetCurrentIr (ir_selection);
         });
 }
 
@@ -120,19 +128,13 @@ const std::optional<IrSelection> & LoadController::GetCurrentIr ()
 
 void LoadController::SetLoadingIr (const std::optional<IrSelection> & ir_selection)
 {
-    loading_ir_mutex_.lock ();
     loading_ir_ = ir_selection;
-    loading_ir_mutex_.unlock ();
-
     juce::MessageManager::callAsync ([&] { OnLoadingIrUpdated (); });
 }
 
 void LoadController::SetCurrentIr (const std::optional<IrSelection> & ir_selection)
 {
-    current_ir_mutex_.lock ();
     current_ir_ = ir_selection;
-    current_ir_mutex_.unlock ();
-
     juce::MessageManager::callAsync ([&] { OnCurrentIrUpdated (); });
 }
 

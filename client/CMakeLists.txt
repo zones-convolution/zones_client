@@ -29,10 +29,6 @@ set(SOURCES
         src/relays/PlayerRelay.cpp
         src/relays/PreferencesRelay.h
         src/relays/PreferencesRelay.cpp
-        src/relays/UserZonesRelay.h
-        src/relays/UserZonesRelay.cpp
-        src/relays/LoadRelay.h
-        src/relays/LoadRelay.cpp
         src/relays/MeteringRelay.h
         src/relays/MeteringRelay.cpp
         src/relays/ResizeRelay.h
@@ -41,14 +37,24 @@ set(SOURCES
         src/relays/ParameterRelay.cpp
         src/relays/VisualiserRelay.h
         src/relays/VisualiserRelay.cpp
+        src/relays/LoadRelay.h
+        src/relays/LoadRelay.cpp
+        src/relays/UserZonesRelay.h
+        src/relays/UserZonesRelay.cpp
+        src/relays/WebZonesRelay.h
+        src/relays/WebZonesRelay.cpp
         src/controllers/visualiser/VisualiserController.h
         src/controllers/visualiser/VisualiserController.cpp
         src/controllers/visualiser/Spectrogram.h
         src/controllers/visualiser/Spectrogram.cpp
-        src/controllers/UserZonesController.h
-        src/controllers/UserZonesController.cpp
         src/controllers/LoadController.h
         src/controllers/LoadController.cpp
+        src/controllers/UserZonesController.h
+        src/controllers/UserZonesController.cpp
+        src/controllers/WebZonesController.h
+        src/controllers/WebZonesController.cpp
+        src/controllers/WebLoadController.h
+        src/controllers/WebLoadController.cpp
 )
 
 option(DEV_LOCALHOST OFF)

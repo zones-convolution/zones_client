@@ -27,6 +27,11 @@ struct IrSelection
     ZoneMetadata zone;
     IrMetadata ir;
     TargetFormat target_format;
+
+    bool operator== (const IrSelection & rhs) const
+    {
+        return std::tie (zone, ir, target_format) == std::tie (rhs.zone, rhs.ir, rhs.target_format);
+    }
 };
 
 struct IrFormatData
