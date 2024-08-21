@@ -5,6 +5,12 @@
 #include <string>
 #include <vector>
 
+enum class ZoneType
+{
+    kUser,
+    kWeb
+};
+
 enum class ChannelFormat
 {
     kMono,
@@ -27,6 +33,7 @@ struct PositionMap
 
 struct IrMetadata
 {
+    std::optional<std::string> ir_id;
     std::optional<ChannelFormat> channel_format;
     std::optional<PositionMap> position_map;
     std::optional<std::string> title;
@@ -35,8 +42,9 @@ struct IrMetadata
 
     bool operator== (const IrMetadata & rhs) const
     {
-        return std::tie (channel_format, position_map, title, description, relative_path) ==
-               std::tie (rhs.channel_format,
+        return std::tie (ir_id, channel_format, position_map, title, description, relative_path) ==
+               std::tie (ir_id,
+                         rhs.channel_format,
                          rhs.position_map,
                          rhs.title,
                          rhs.description,
@@ -57,7 +65,9 @@ struct ImageMetadata
 
 struct ZoneMetadata
 {
+    ZoneType zone_type;
     std::string title;
+    std::optional<std::string> zone_id;
     std::optional<std::string> description;
     std::vector<ImageMetadata> images;
     std::optional<std::string> cover_image_id;
@@ -77,13 +87,21 @@ struct ZoneMetadata
 
     bool operator== (const ZoneMetadata & rhs) const
     {
-        return std::tie (title, description, images, cover_image_id, irs, path_attribute) ==
-               std::tie (rhs.title,
-                         rhs.description,
-                         rhs.images,
-                         rhs.cover_image_id,
-                         rhs.irs,
-                         rhs.path_attribute);
+        return std::tie (zone_type,
+                         title,
+                         zone_id,
+                         description,
+                         images,
+                         cover_image_id,
+                         irs,
+                         path_attribute) == std::tie (rhs.zone_type,
+                                                      rhs.title,
+                                                      rhs.zone_id,
+                                                      rhs.description,
+                                                      rhs.images,
+                                                      rhs.cover_image_id,
+                                                      rhs.irs,
+                                                      rhs.path_attribute);
     }
 };
 

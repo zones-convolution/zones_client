@@ -1,4 +1,5 @@
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Loader } from "lucide-react";
+import { FC } from "react";
 
 import { Button } from "@/components/ui/button";
 
@@ -7,6 +8,7 @@ import {
   useBrowserContext,
   useNavigation,
 } from "@/context/browser_context";
+import { useZone } from "@/hooks/use_zone";
 import Browser from "@/pages/browser";
 import CreateZone from "@/pages/create_zone";
 import Search from "@/pages/search";
@@ -30,6 +32,12 @@ const Outlet = () => {
   }
 };
 
+const WebZoneTitle: FC<{ zoneId: string }> = ({ zoneId }) => {
+  const { data, isLoading } = useZone(zoneId);
+  if (isLoading || !data) return <Loader className="w-4 h-4 animate-spin" />;
+  return <h2 className="font-thin text-lg">{data.zone.title}</h2>;
+};
+
 const NavigationTitle = () => {
   const { route } = useBrowserContext();
   let title: string;
@@ -48,15 +56,14 @@ const NavigationTitle = () => {
       title = "Search";
       break;
     case Route.Zone:
-      title = "Zone";
-      break;
+      return <WebZoneTitle zoneId={route.state.zoneId} />;
   }
 
   return <h2 className="font-thin text-lg">{title}</h2>;
 };
 
 const BrowserRoot = () => {
-  const { canNavigateBack, canNavigateForward, forward, back } =
+  const { canNavigateBack, canNavigateForward, forward, back, route } =
     useBrowserContext();
   const { navigateToCreateZone } = useNavigation();
 
@@ -79,9 +86,11 @@ const BrowserRoot = () => {
           <ChevronRight className="w-4 h-4" />
         </Button>
         <NavigationTitle />
-        <Button className="ml-auto" onClick={navigateToCreateZone}>
-          Create Zone
-        </Button>
+        {route.target == Route.Home && (
+          <Button className="ml-auto" onClick={navigateToCreateZone}>
+            Create Zone
+          </Button>
+        )}
       </div>
       <Outlet />
     </div>

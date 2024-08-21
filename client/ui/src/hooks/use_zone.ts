@@ -1,15 +1,15 @@
 import useSWR from "swr";
 
-import { IndexedImage, IndexedIr, IndexedZone } from "@/lib/zones";
+import { IImage, IImpulseResponse, IZone } from "@/lib/zones";
 
-export interface IZone {
-  zone: IndexedZone;
-  irs: IndexedIr[];
-  images: IndexedImage[];
+export interface IUseZone {
+  zone: IZone;
+  irs: IImpulseResponse[];
+  images: IImage[];
 }
 
 const useZone = (zoneId: string) => {
-  return useSWR<IZone>(`/zones/${zoneId}`);
+  return useSWR<IUseZone>(`/zones/${zoneId}`);
 };
 
 export { useZone };

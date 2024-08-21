@@ -8,6 +8,8 @@
 
 using json = nlohmann::json;
 
+NLOHMANN_JSON_SERIALIZE_ENUM (ZoneType, {{ZoneType::kUser, "user"}, {ZoneType::kWeb, "web"}})
+
 NLOHMANN_JSON_SERIALIZE_ENUM (ChannelFormat,
                               {{ChannelFormat::kMono, "mono"},
                                {ChannelFormat::kStereo, "stereo"},
@@ -37,6 +39,7 @@ static void to_json (json & data, const PositionMap & position_map)
 
 static void from_json (const json & data, IrMetadata & ir_metadata)
 {
+    OptionalFromJson (data, "irId", ir_metadata.ir_id);
     OptionalFromJson (data, "channelFormat", ir_metadata.channel_format);
     OptionalFromJson (data, "positionMap", ir_metadata.position_map);
     OptionalFromJson (data, "title", ir_metadata.title);
@@ -47,6 +50,7 @@ static void from_json (const json & data, IrMetadata & ir_metadata)
 static void to_json (json & data, const IrMetadata & ir_metadata)
 {
     data = json {{"relativePath", ir_metadata.relative_path}};
+    OptionalToJson (data, "irId", ir_metadata.ir_id);
     OptionalToJson (data, "channelFormat", ir_metadata.channel_format);
     OptionalToJson (data, "positionMap", ir_metadata.position_map);
     OptionalToJson (data, "title", ir_metadata.title);
@@ -66,7 +70,9 @@ static void to_json (json & data, const ImageMetadata & image_metadata)
 
 static void from_json (const json & data, ZoneMetadata & zone_metadata)
 {
+    data.at ("zoneType").get_to (zone_metadata.zone_type);
     data.at ("title").get_to (zone_metadata.title);
+    OptionalFromJson (data, "zoneId", zone_metadata.zone_id);
     OptionalFromJson (data, "description", zone_metadata.description);
     data.at ("images").get_to (zone_metadata.images);
     OptionalFromJson (data, "coverImageId", zone_metadata.cover_image_id);
@@ -76,10 +82,12 @@ static void from_json (const json & data, ZoneMetadata & zone_metadata)
 
 static void to_json (json & data, const ZoneMetadata & zone_metadata)
 {
-    data = json {{"title", zone_metadata.title},
+    data = json {{"zoneType", zone_metadata.zone_type},
+                 {"title", zone_metadata.title},
                  {"images", zone_metadata.images},
                  {"irs", zone_metadata.irs}};
 
+    OptionalToJson (data, "zoneId", zone_metadata.zone_id);
     OptionalToJson (data, "description", zone_metadata.description);
     OptionalToJson (data, "coverImageId", zone_metadata.cover_image_id);
     OptionalToJson (data, "pathAttribute", zone_metadata.path_attribute);

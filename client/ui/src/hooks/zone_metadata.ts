@@ -1,6 +1,10 @@
 import { z } from "zod";
 
+const ZoneType = z.enum(["web", "user"]);
 const ChannelFormat = z.enum(["mono", "stereo", "foa", "quadraphonic"]);
+
+type ChannelFormat = z.infer<typeof ChannelFormat>;
+
 const TargetFormat = z.enum([
   "mono",
   "stereo",
@@ -23,6 +27,7 @@ const IrMetadata = z.object({
   channelFormat: ChannelFormat.optional(),
   positionMap: PositionMap.optional(),
   title: z.string().optional(),
+  irId: z.string().optional(),
   description: z.string().optional(),
   relativePath: z.string(),
 });
@@ -37,7 +42,9 @@ const ImageMetadata = z.object({
 type ImageMetadata = z.infer<typeof ImageMetadata>;
 
 const ZoneMetadata = z.object({
+  zoneType: ZoneType,
   title: z.string(),
+  zoneId: z.string().optional(),
   description: z.string().optional(),
   images: z.array(ImageMetadata),
   coverImageId: z.string().optional(),

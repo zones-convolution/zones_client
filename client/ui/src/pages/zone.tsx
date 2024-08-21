@@ -6,6 +6,7 @@ import { BannerImageGallery } from "@/components/banner_image_gallery";
 import { IrTable } from "@/components/zone_page/ir_table";
 import { useZone } from "@/hooks/use_zone";
 import { getImageUrl } from "@/lib/s3_resources";
+import { toZoneMetadata } from "@/lib/zones";
 
 const Zone: FC<{ zoneId: string }> = ({ zoneId }) => {
   const { data, isLoading } = useZone(zoneId);
@@ -18,6 +19,7 @@ const Zone: FC<{ zoneId: string }> = ({ zoneId }) => {
     );
 
   const { zone, images, irs } = data;
+  const zoneMetadata = toZoneMetadata(zone, images, irs);
 
   return (
     <div className="flex flex-col gap-4 bg-card h-full p-4">
@@ -34,7 +36,7 @@ const Zone: FC<{ zoneId: string }> = ({ zoneId }) => {
           }
         />
       </div>
-      <IrTable zone={data.zone} />
+      <IrTable zone={zoneMetadata} />
     </div>
   );
 };

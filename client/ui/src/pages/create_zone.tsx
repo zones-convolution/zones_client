@@ -16,12 +16,12 @@ const CreateZone = () => {
     resolver: zodResolver(CreateZoneSchema),
     defaultValues: {
       metadata: {
+        zoneType: "user",
         irs: [],
         images: [],
       },
     },
   });
-
   const { back } = useBrowserContext();
 
   return (

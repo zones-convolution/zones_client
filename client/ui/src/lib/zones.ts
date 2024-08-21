@@ -1,3 +1,11 @@
+import {
+  ImageMetadata,
+  IrMetadata,
+  ZoneMetadata,
+  ChannelFormat,
+  PositionMap,
+} from "@/hooks/zone_metadata";
+
 export const AllSpeakerPositions = ["C", "LR", "CLR"] as const;
 export type SpeakerPositions = (typeof AllSpeakerPositions)[number];
 
@@ -26,8 +34,8 @@ export const GenerationTypes = [
 
 export type GenerationType = (typeof GenerationTypes)[number];
 
-export const ChannelFormats = ["MONO", "STEREO", "FOA"] as const;
-export type ChannelFormat = (typeof ChannelFormats)[number];
+export const ZonesChannelFormats = ["MONO", "STEREO", "FOA"] as const;
+export type ZonesChannelFormat = (typeof ZonesChannelFormats)[number];
 
 export type ZoneStatus = "CREATING" | "PENDING" | "PUBLISHED";
 
@@ -64,7 +72,7 @@ export interface IImpulseResponse {
   title: string;
   description?: string;
   ttl?: number;
-  channelFormat: ChannelFormat;
+  channelFormat: ZonesChannelFormat;
   speakerPositions: SpeakerPositions;
 }
 
@@ -92,3 +100,64 @@ export type IndexedZone = Pick<
 export type IndexedImage = Pick<IImage, "imageId" | "createdAt">;
 
 export type ZoneSearchHit = IndexedZone & { irs: IndexedIr[] };
+
+export const toPositionMap = (
+  speakerPositions: SpeakerPositions,
+): PositionMap => {
+  let pMap: PositionMap = {};
+  if (speakerPositions == "CLR" || speakerPositions == "C")
+    pMap.centre = "centre.wav";
+
+  if (speakerPositions == "CLR" || speakerPositions == "LR") {
+    pMap.left = "left.wav";
+    pMap.right = "right.wav";
+  }
+
+  return pMap;
+};
+export const toChannelFormat = (
+  channelFormat: ZonesChannelFormat,
+): ChannelFormat => {
+  switch (channelFormat) {
+    case "STEREO":
+      return "stereo";
+    case "MONO":
+      return "mono";
+    case "FOA":
+      return "foa";
+  }
+};
+
+export const toImageMetadata = (image: IImage): ImageMetadata => {
+  return {
+    imageId: image.imageId,
+    imagePath: image.zoneId, // This is wrong
+  };
+};
+
+export const toIrMetadata = (ir: IImpulseResponse): IrMetadata => {
+  return {
+    channelFormat: toChannelFormat(ir.channelFormat),
+    positionMap: toPositionMap(ir.speakerPositions),
+    title: ir.title,
+    irId: ir.irId,
+    description: ir.description,
+    relativePath: `impulse-response/${ir.irId}`,
+  };
+};
+
+export const toZoneMetadata = (
+  zone: IZone,
+  images: IImage[],
+  irs: IImpulseResponse[],
+): ZoneMetadata => {
+  return {
+    zoneType: "web",
+    title: zone.title || "No title?",
+    description: zone.description,
+    zoneId: zone.zoneId,
+    images: images.map(toImageMetadata),
+    irs: irs.map(toIrMetadata),
+    coverImageId: zone.coverImageId,
+  };
+};
