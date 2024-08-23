@@ -1,5 +1,7 @@
 #include "WebZonesController.h"
 
+#include <algorithm>
+
 static const std::filesystem::path kS3Host = "https://minio.zonesconvolution.com";
 static const std::filesystem::path kImpulseResponsesBucket = "impulse-responses-processed";
 
@@ -16,13 +18,6 @@ static std::filesystem::path GetZonesDataDirectory ()
 static std::filesystem::path GetZoneResourceDirectory (const std::string & zone_id)
 {
     return GetZonesDataDirectory () / zone_id;
-}
-
-static ZoneMetadata CreatePartialMetadataFromSelection (const IrSelection & ir_selection)
-{
-    auto partial_metadata = ir_selection.zone;
-    partial_metadata.irs = {ir_selection.ir};
-    return partial_metadata;
 }
 
 static void DownloadZoneIr (const std::string & zone_id,
@@ -53,28 +48,45 @@ bool WebZonesController::LoadWebZone (const IrSelection & ir_selection)
     if (! zone_id)
         return false;
 
-    auto & ir = ir_selection.ir;
+    auto & target_ir = ir_selection.ir;
     auto zone_resource_directory = GetZoneResourceDirectory (*zone_id);
     auto zone_metadata_path = zone_resource_directory / (*zone_id + ".json");
-    auto ir_resource_path = zone_resource_directory / ir.relative_path;
+
+    std::vector<IrMetadata> irs;
 
     try
     {
         ZoneMetadata zone_metadata;
         ReadZoneMetadata (zone_metadata_path, zone_metadata);
+        irs = zone_metadata.irs;
     }
     catch (...)
     {
-        if (ir.position_map->centre.has_value ())
-            DownloadZoneIr (*zone_id, *ir.ir_id, ir.relative_path, "centre.wav");
-        if (ir.position_map->left.has_value ())
-            DownloadZoneIr (*zone_id, *ir.ir_id, ir.relative_path, "left.wav");
-        if (ir.position_map->right.has_value ())
-            DownloadZoneIr (*zone_id, *ir.ir_id, ir.relative_path, "right.wav");
-
-        auto partial_metadata = CreatePartialMetadataFromSelection (ir_selection);
-        auto zones_data_directory = GetZonesDataDirectory ();
-        juce::File {zone_metadata_path.string ()}.create ();
-        WriteZoneMetadata (zone_metadata_path, partial_metadata);
     }
+
+    if (std::find (irs.begin (), irs.end (), target_ir) != irs.end ())
+    {
+        // check audio actually exists
+        return true;
+    }
+
+    auto position_map = *target_ir.position_map;
+
+    // THIS NEEDS REFACTORING!!!! - DOWNLOADS
+    if (position_map.centre.has_value ())
+        DownloadZoneIr (*zone_id, *target_ir.ir_id, target_ir.relative_path, "centre.wav");
+    if (position_map.left.has_value ())
+        DownloadZoneIr (*zone_id, *target_ir.ir_id, target_ir.relative_path, "left.wav");
+    if (position_map.right.has_value ())
+        DownloadZoneIr (*zone_id, *target_ir.ir_id, target_ir.relative_path, "right.wav");
+
+    irs.push_back (target_ir);
+
+    auto zone_metadata = ir_selection.zone;
+    zone_metadata.irs = irs;
+
+    juce::File {zone_metadata_path.string ()}.create ();
+    WriteZoneMetadata (zone_metadata_path, zone_metadata);
+
+    return true;
 }
