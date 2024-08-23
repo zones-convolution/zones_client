@@ -142,7 +142,7 @@ export const toIrMetadata = (ir: IImpulseResponse): IrMetadata => {
     title: ir.title,
     irId: ir.irId,
     description: ir.description,
-    relativePath: `impulse-response/${ir.irId}`,
+    relativePath: `impulse-responses/${ir.irId}`,
   };
 };
 

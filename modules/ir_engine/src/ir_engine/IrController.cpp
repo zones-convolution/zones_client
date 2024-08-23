@@ -27,9 +27,26 @@ void IrController::timerCallback ()
     stopTimer ();
 }
 
+static std::filesystem::path GetZonesDataDirectory ()
+{
+    return juce::File::getSpecialLocation (
+               juce::File::SpecialLocationType::userApplicationDataDirectory)
+        .getChildFile ("zones")
+        .getChildFile ("zones")
+        .getFullPathName ()
+        .toStdString ();
+}
+
 void IrController::LoadIr (const IrSelection & ir_selection)
 {
-    auto & zone_path = ir_selection.zone.path_attribute.value ();
+    auto & zone = ir_selection.zone;
+    std::filesystem::path zone_path;
+
+    if (zone.zone_type == ZoneType::kWeb)
+        zone_path = GetZonesDataDirectory () / *zone.zone_id;
+    else
+        zone_path = ir_selection.zone.path_attribute.value ();
+
     auto & ir = ir_selection.ir;
     auto target_format = ir_selection.target_format;
 
