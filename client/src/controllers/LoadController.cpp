@@ -21,25 +21,30 @@ void LoadController::Load (const IrSelection & ir_selection,
     thread_pool_.addJob (
         [&, ir_selection, callback]
         {
+            auto load_result = true;
+
             if (ir_selection.zone.zone_type == ZoneType::kWeb)
             {
                 WebZonesController web_zones_controller;
-                web_zones_controller.LoadWebZone (ir_selection);
+                load_result = web_zones_controller.LoadWebZone (ir_selection);
             }
 
             std::lock_guard loading_guard {loading_ir_mutex_};
             std::lock_guard current_guard {current_ir_mutex_};
-            auto load_result = true;
+
             if (*loading_ir_ == ir_selection)
             {
-                try
+                if (load_result)
                 {
-                    ir_controller_.LoadIr (ir_selection);
-                    SetCurrentIr (ir_selection);
-                }
-                catch (...)
-                {
-                    load_result = false;
+                    try
+                    {
+                        ir_controller_.LoadIr (ir_selection);
+                        SetCurrentIr (ir_selection);
+                    }
+                    catch (...)
+                    {
+                        load_result = false;
+                    }
                 }
 
                 SetLoadingIr (std::nullopt);
