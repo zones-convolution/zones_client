@@ -28,14 +28,8 @@ const Outlet = () => {
     case Route.Search:
       return <Search />;
     case Route.Zone:
-      return <Zone zoneId={route.state.zoneId} />;
+      return <Zone zone={route.state} />;
   }
-};
-
-const WebZoneTitle: FC<{ zoneId: string }> = ({ zoneId }) => {
-  const { data, isLoading } = useZone(zoneId);
-  if (isLoading || !data) return <Loader className="w-4 h-4 animate-spin" />;
-  return <h2 className="font-thin text-lg">{data.zone.title}</h2>;
 };
 
 const NavigationTitle = () => {
@@ -56,7 +50,8 @@ const NavigationTitle = () => {
       title = "Search";
       break;
     case Route.Zone:
-      return <WebZoneTitle zoneId={route.state.zoneId} />;
+      title = route.state.title;
+      break;
   }
 
   return <h2 className="font-thin text-lg">{title}</h2>;

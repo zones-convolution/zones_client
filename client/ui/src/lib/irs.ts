@@ -11,6 +11,7 @@ const doesZoneMatchSelection = (
   zone: ZoneMetadata,
   selection: IrSelectionOptional,
 ) => {
+  // Should write real equality operator here... fine-ish for now xD
   return selection.irSelection?.zone.title === zone.title;
 };
 

@@ -9,7 +9,6 @@ import { ZoneCard } from "@/components/cards/zone_card";
 import { useNavigation } from "@/context/browser_context";
 import { useLoadContext } from "@/context/load_context";
 import { useValidTargetFormats } from "@/hooks/use_valid_target_formats";
-import { fetchZoneAndMutate, useZone } from "@/hooks/use_zone";
 import { doesZoneMatchSelection, getDefaultIrSelection } from "@/lib/irs";
 import { getImageUrl } from "@/lib/s3_resources";
 import { toZoneMetadata, ZoneSearchHit } from "@/lib/zones";
@@ -17,29 +16,29 @@ import { toZoneMetadata, ZoneSearchHit } from "@/lib/zones";
 const ZonesSearchHit: FC<{
   hit: Hit<ZoneSearchHit>;
 }> = ({ hit }) => {
+  const zoneMetadata = toZoneMetadata(hit, hit.images, hit.irs);
   const imageUrl = getImageUrl(hit.zoneId, hit.coverImageId!);
   const { navigateToZone } = useNavigation();
   const { load, loadingIr, currentIr } = useLoadContext();
   const { validTargetFormats } = useValidTargetFormats();
+  let isLoadingZone = doesZoneMatchSelection(zoneMetadata, loadingIr);
+  let isCurrentZone = doesZoneMatchSelection(zoneMetadata, currentIr);
+  let defaultIrSelection = getDefaultIrSelection(
+    zoneMetadata,
+    validTargetFormats,
+  );
 
   return (
     <ZoneCard
       category={hit.title!}
       imageUrl={imageUrl}
       rt60={1.2}
-      loading={false}
-      disabled={false}
-      canLoad={true}
-      onView={() => navigateToZone(hit.zoneId)}
+      loading={isLoadingZone}
+      disabled={isCurrentZone}
+      canLoad={defaultIrSelection != undefined}
+      onView={() => navigateToZone(hit)}
       onLoad={async () => {
-        // const data = await fetchZoneAndMutate(hit.zoneId);
-        // const { zone, images, irs } = data;
-        // const zoneMetadata = toZoneMetadata(zone, images, irs);
-        // let defaultIrSelection = getDefaultIrSelection(
-        //   zoneMetadata,
-        //   validTargetFormats,
-        // );
-        // if (defaultIrSelection) await load(defaultIrSelection);
+        if (defaultIrSelection) await load(defaultIrSelection);
       }}
     />
   );

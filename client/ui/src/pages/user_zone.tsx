@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { FC } from "react";
 
 import { IrTable } from "@/components/zone_page/ir_table";
 import { ZoneMetadata } from "@/hooks/zone_metadata";

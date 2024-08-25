@@ -44,7 +44,7 @@ export interface IZone {
   createdAt: Date;
   updatedAt: Date;
   authorId: string;
-  title?: string;
+  title: string;
   description?: string;
   captureDate?: Date;
   coordinate?: ICoordinate;
@@ -97,9 +97,12 @@ export type IndexedZone = Pick<
   | "versionNumber"
 >;
 
-export type IndexedImage = Pick<IImage, "imageId" | "createdAt">;
+export type IndexedImage = Pick<IImage, "imageId">;
 
-export type ZoneSearchHit = IndexedZone & { irs: IndexedIr[] };
+export type ZoneSearchHit = IndexedZone & {
+  irs: IndexedIr[];
+  images: IndexedImage[];
+};
 
 export const toPositionMap = (
   speakerPositions: SpeakerPositions,
@@ -128,14 +131,14 @@ export const toChannelFormat = (
   }
 };
 
-export const toImageMetadata = (image: IImage): ImageMetadata => {
+export const toImageMetadata = (image: IndexedImage): ImageMetadata => {
   return {
     imageId: image.imageId,
-    imagePath: image.zoneId, // This is wrong
+    imagePath: image.imageId, // This is wrong
   };
 };
 
-export const toIrMetadata = (ir: IImpulseResponse): IrMetadata => {
+export const toIrMetadata = (ir: IndexedIr): IrMetadata => {
   return {
     channelFormat: toChannelFormat(ir.channelFormat),
     positionMap: toPositionMap(ir.speakerPositions),
@@ -147,9 +150,9 @@ export const toIrMetadata = (ir: IImpulseResponse): IrMetadata => {
 };
 
 export const toZoneMetadata = (
-  zone: IZone,
-  images: IImage[],
-  irs: IImpulseResponse[],
+  zone: IndexedZone,
+  images: IndexedImage[],
+  irs: IndexedIr[],
 ): ZoneMetadata => {
   return {
     zoneType: "web",
