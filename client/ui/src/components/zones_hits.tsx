@@ -7,14 +7,21 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 import { ZoneCard } from "@/components/cards/zone_card";
 import { useNavigation } from "@/context/browser_context";
+import { useLoadContext } from "@/context/load_context";
+import { useValidTargetFormats } from "@/hooks/use_valid_target_formats";
+import { fetchZoneAndMutate, useZone } from "@/hooks/use_zone";
+import { doesZoneMatchSelection, getDefaultIrSelection } from "@/lib/irs";
 import { getImageUrl } from "@/lib/s3_resources";
-import { ZoneSearchHit } from "@/lib/zones";
+import { toZoneMetadata, ZoneSearchHit } from "@/lib/zones";
 
 const ZonesSearchHit: FC<{
   hit: Hit<ZoneSearchHit>;
 }> = ({ hit }) => {
   const imageUrl = getImageUrl(hit.zoneId, hit.coverImageId!);
   const { navigateToZone } = useNavigation();
+  const { load, loadingIr, currentIr } = useLoadContext();
+  const { validTargetFormats } = useValidTargetFormats();
+
   return (
     <ZoneCard
       category={hit.title!}
@@ -24,6 +31,16 @@ const ZonesSearchHit: FC<{
       disabled={false}
       canLoad={true}
       onView={() => navigateToZone(hit.zoneId)}
+      onLoad={async () => {
+        // const data = await fetchZoneAndMutate(hit.zoneId);
+        // const { zone, images, irs } = data;
+        // const zoneMetadata = toZoneMetadata(zone, images, irs);
+        // let defaultIrSelection = getDefaultIrSelection(
+        //   zoneMetadata,
+        //   validTargetFormats,
+        // );
+        // if (defaultIrSelection) await load(defaultIrSelection);
+      }}
     />
   );
 };

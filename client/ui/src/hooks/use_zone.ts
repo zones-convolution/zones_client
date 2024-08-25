@@ -1,5 +1,6 @@
-import useSWR from "swr";
+import useSWR, { mutate } from "swr";
 
+import { fetcher } from "@/lib/api";
 import { IImage, IImpulseResponse, IZone } from "@/lib/zones";
 
 export interface IUseZone {
@@ -8,8 +9,17 @@ export interface IUseZone {
   images: IImage[];
 }
 
-const useZone = (zoneId: string) => {
-  return useSWR<IUseZone>(`/zones/${zoneId}`);
+const getZoneUrl = (zoneId: string) => `/zones/${zoneId}`;
+
+const fetchZoneAndMutate = async (zoneId: string) => {
+  const zoneUrl = getZoneUrl(zoneId);
+  const data = (await fetcher(zoneUrl)) as IUseZone;
+  await mutate(zoneUrl, data);
+  return data;
 };
 
-export { useZone };
+const useZone = (zoneId: string) => {
+  return useSWR<IUseZone>(getZoneUrl(zoneId));
+};
+
+export { useZone, fetchZoneAndMutate };

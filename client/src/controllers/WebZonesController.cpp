@@ -79,7 +79,6 @@ bool WebZonesController::LoadWebZone (const IrSelection & ir_selection)
 
     std::vector<std::unique_ptr<juce::URL::DownloadTask>> download_tasks;
 
-    // THIS NEEDS REFACTORING!!!! - DOWNLOADS
     if (position_map.centre.has_value ())
         download_tasks.push_back (DownloadZoneIr (
             *zone_id, *target_ir.ir_id, target_ir.relative_path, *position_map.centre));
