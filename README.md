@@ -1,34 +1,90 @@
-# Getting Started - CLion
+[![Contributors][contributors-shield]][contributors-url]
+[![Forks][forks-shield]][forks-url]
+[![Stargazers][stars-shield]][stars-url]
+[![Issues][issues-shield]][issues-url]
+[![MIT License][license-shield]][license-url]
+![Tests](https://img.shields.io/github/actions/workflow/status/zones-convolution/zones_client/zones_client_tests.yml?style=for-the-badge&logo=github&label=TESTS)
 
-To get started with CLion, follow these steps:
+![CMake](https://img.shields.io/badge/CMake-%23008FBA.svg?style=for-the-badge&logo=cmake&logoColor=white)
+![C++](https://img.shields.io/badge/c++-%2300599C.svg?style=for-the-badge&logo=c%2B%2B&logoColor=white)
+![JUCE Badge](https://img.shields.io/badge/JUCE-8DC63F?logo=juce&logoColor=fff&style=for-the-badge)
 
-1. Ensure all git submodules have been fetched recursively.
-2. Make sure you have CLion version `>2023.1` installed, as it is required to support VCPKG.
-3. Install VCPKG via CLion using the following steps (see dependencies for more information on this):
-    - Open CLion and go to `View | Tool Windows | Vcpkg` interface.
-    - In the Vcpkg panel, click the `+` button located at the top left.
-    - Use the following details:
-        - **Name**: vcpkg
-        - **URL**: https://github.com/microsoft/vcpkg
-        - **Directory**: Use the suggested directory.
-4. After installing VCPKG, reload the CMake project.
+---
 
-# CMake Format
+<br />
+<div align="center">
+  <a href="https://github.com/zones-convolution/zones_client">
+    <img src="docs/resources/zones_icon.png" alt="Logo" width="80" height="80">
+  </a>
+<p align="center">
 
-To format CMake files, the cmake-format tool is used. You can find the documentation for cmake-format
-at [cheshirekow/cmake_format](https://github.com/cheshirekow/cmake_format).
+### This project is still under development and has not seen production use. We **DO NOT RECOMMEND** using this yet.
 
-You can also set up a CLion external tool to perform formatting within the IDE. This
-article [@amitiitm2009/cmake-formatter-in-clion-7c1917763b34](https://medium.com/@amitiitm2009/cmake-formatter-in-clion-7c1917763b34)
-provides instructions for setting up the tool.
+# Zones Convolution - Spaces On Demand
 
-# Dependencies
+Zones convolution allows users to find and share impulse responses captured in
+great sounding and unique spaces. Inspired by the
+[Open Air library](https://www.openair.hosted.york.ac.uk) and the popular
+[Altiverb](https://www.audioease.com/altiverb/) plugin, Zones extends their
+capabilities by providing; a simple, intuitive interface to tag, categorise and
+upload IRs, and a VST/AU plugin to search and convolve these IRs directly in the
+box!
 
-The repository has several dependencies as submodules, including JUCE, Lager, Immer, and Zug. When cloning the
-repository for development, make sure to fetch the submodules recursively.
+> The Zones library, plugin and convolver will be available for **free**, with an optimistic
+> launch of late 2024.
 
-Some other dependencies, such as Boost (used by Lager) and Catch2 for testing, are managed by VCPKG. The repository
-includes a manifest in the root directory, which specifies the specific versions of these dependencies.
-CLion ```> 2023.1```
-supports and documents the usage of VCPKG. You can find more information about using VCPKG in CLion
-at [clion/2023/01/support-for-vcpkg-in-clion/](https://blog.jetbrains.com/clion/2023/01/support-for-vcpkg-in-clion/).
+This repository contains the source code of the companion audio plugin and also includes technical documentation about
+the plugin's architecture.
+
+---
+
+To check out the library and try out Zones for yourself, please see,
+
+### [zonesconvolution.com](https://zonesconvolution.com)
+
+---
+
+The source code and associated documentation about the underlying convolution algorithm used in the plugin can be
+accessed here,
+
+### [Zones Convolver GitHub](https://github.com/zones-convolution/zones_convolver)
+
+# Contributing
+
+We would really welcome any contributions, feel free to open up a PR and we'll review it as soon as possible. The
+project largely follows the Google C++ coding style and provides a ```.clang-format``` that should be used.
+
+# License
+
+Distributed under the MIT License. See `LICENSE` for more information.
+
+# Contact
+
+Feel free to get in touch,
+
+**Leon Paterson-Stephens** - leon@leonps.com
+
+**Micah Strange** - micahstrange16@gmail.com
+
+[contributors-shield]: https://img.shields.io/github/contributors/zones-convolution/zones_client.svg?style=for-the-badge
+
+[contributors-url]: https://github.com/zones-convolution/zones_client/graphs/contributors
+
+[forks-shield]: https://img.shields.io/github/forks/zones-convolution/zones_client.svg?style=for-the-badge
+
+[forks-url]: https://github.com/zones-convolution/zones_client/network/members
+
+[stars-shield]: https://img.shields.io/github/stars/zones-convolution/zones_client.svg?style=for-the-badge
+
+[stars-url]: https://github.com/zones-convolution/zones_client/stargazers
+
+[issues-shield]: https://img.shields.io/github/issues/zones-convolution/zones_client.svg?style=for-the-badge
+
+[issues-url]: https://github.com/zones-convolution/zones_client/issues
+
+[license-shield]: https://img.shields.io/github/license/zones-convolution/zones_client.svg?style=for-the-badge
+
+[license-url]: https://github.com/zones-convolution/zones_client/blob/main/LICENSE
+
+
+
