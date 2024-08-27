@@ -1,5 +1,5 @@
-import { Play, Pause, Repeat, Settings } from "lucide-react";
-import { FC, ReactNode, useState } from "react";
+import { Pause, Play, Repeat, Search, Settings } from "lucide-react";
+import React, { FC, ReactNode, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -9,19 +9,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Slider } from "@/components/ui/slider";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Toggle } from "@/components/ui/toggle";
 
-import { CategoryCard } from "@/components/cards/category_card";
+import { BannerImageGalleryItem } from "@/components/banner_image_gallery";
 import { Knob } from "@/components/knob";
 import { Visualiser2D } from "@/components/visualiser/2d";
 import { Visualiser3D } from "@/components/visualiser/3d";
 import { VisualiserControls } from "@/components/visualiser/visualiser_controls";
+import { useLoadContext } from "@/context/load_context";
+import { useTabsContext, Tabs as ZoneTab } from "@/context/tabs_context";
 import { useVisualiserContext } from "@/context/visualiser_context";
 import { useControlParameterIndexUpdater } from "@/hooks/use_control_parameter_index_updater";
 import { usePlayer } from "@/hooks/use_player";
 import { Parameters } from "@/lib/parameters";
+import { getImageUrl } from "@/lib/s3_resources";
 
 const Panel: FC<{ children: ReactNode }> = ({ children }) => (
   <div className="flex flex-col flex-1 gap-4 bg-card p-4 rounded-md w-full">
@@ -136,6 +138,57 @@ const TimePanel = () => {
   );
 };
 
+const CurrentIrPanel = () => {
+  const { currentIr } = useLoadContext();
+  const { setTab } = useTabsContext();
+
+  const zone = currentIr.irSelection?.zone;
+
+  if (zone?.zoneId && zone?.coverImageId)
+    return (
+      <div className="flex-1 h-full w-full relative flex items-end">
+        <div className="absolute w-full h-full">
+          <BannerImageGalleryItem
+            imageUrl={getImageUrl(zone.zoneId, zone.coverImageId)}
+          />
+        </div>
+        <div className="backdrop-blur bg-card/40 p-2 m-2 w-fit rounded-md h-fit">
+          {zone?.title}
+        </div>
+      </div>
+    );
+
+  if (zone?.title)
+    return (
+      <div className="flex-1 h-full w-full relative flex items-end">
+        <div className="backdrop-blur bg-card/40 p-2 m-2 w-fit rounded-md h-fit">
+          {zone?.title}
+        </div>
+      </div>
+    );
+
+  return (
+    <div className="flex-1 bg-card">
+      <div className="py-10 px-6 text-center">
+        <h2 className="mt-6 mb-2 text-2xl">No Zone Loaded</h2>
+        <span className="text-secondary">
+          Head over to browse to get started!
+        </span>
+      </div>
+
+      <div className="flex justify-center">
+        <Button
+          onClick={() => {
+            setTab(ZoneTab.Browser);
+          }}
+        >
+          Browse <Search className="w-4 h-4 ml-2" />
+        </Button>
+      </div>
+    </div>
+  );
+};
+
 const Editor = () => {
   useControlParameterIndexUpdater();
 
@@ -147,11 +200,7 @@ const Editor = () => {
     <div className="flex flex-col gap-0.5 h-full">
       <div className="flex flex-row gap-0.5 h-full">
         <MainPanel />
-        <CategoryCard
-          category="Canyon"
-          imageUrl="https://picsum.photos/600"
-          rt60={12.6}
-        />
+        <CurrentIrPanel />
       </div>
       <div className="flex flex-row gap-0.5 h-full">
         <TimePanel />
