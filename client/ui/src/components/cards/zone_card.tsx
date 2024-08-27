@@ -41,7 +41,6 @@ export const ZoneCard: FC<{
       )}
       <div className="backdrop-blur bg-card/40 p-2 m-2 w-fit h-fit rounded-md">
         {category}
-        <em className="text-xs font-thin ml-1">{rt60}s</em>
       </div>
       <div className="flex gap-2 p-2 w-fit h-fit rounded-md">
         {canLoad && (
