@@ -175,7 +175,7 @@ const IrTable: FC<{ zone: ZoneMetadata }> = ({ zone }) => {
   const irs = zone.irs;
 
   return (
-    <Table>
+    <table className={cn("w-full caption-bottom text-sm")}>
       <TableHeader>
         <TableRow>
           <TableHead className="w-[100px]">Title</TableHead>
@@ -191,7 +191,7 @@ const IrTable: FC<{ zone: ZoneMetadata }> = ({ zone }) => {
           <IrTableRow ir={ir} zone={zone} key={index} />
         ))}
       </TableBody>
-    </Table>
+    </table>
   );
 };
 
