@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 
 export const ZoneCard: FC<{
   category: string;
-  imageUrl: string;
+  imageUrl?: string;
+  gradient?: string;
   rt60: number;
   onLoad?: () => void;
   onView?: () => void;
@@ -15,6 +16,7 @@ export const ZoneCard: FC<{
 }> = ({
   category,
   imageUrl,
+  gradient,
   rt60,
   onLoad,
   onView,
@@ -24,11 +26,19 @@ export const ZoneCard: FC<{
 }) => {
   return (
     <div className="w-full h-full relative flex justify-between items-end">
-      <img
-        className="absolute object-cover object-center w-full h-full max-h-full rounded-md"
-        src={imageUrl}
-        alt="gallery-photo"
-      />
+      {gradient && (
+        <div
+          className="absolute object-cover object-center w-full h-full max-h-full rounded-md"
+          style={{ backgroundImage: gradient }}
+        />
+      )}
+      {imageUrl && (
+        <img
+          className="absolute object-cover object-center w-full h-full max-h-full rounded-md"
+          src={imageUrl}
+          alt="gallery-photo"
+        />
+      )}
       <div className="backdrop-blur bg-card/40 p-2 m-2 w-fit h-fit rounded-md">
         {category}
         <em className="text-xs font-thin ml-1">{rt60}s</em>

@@ -4,6 +4,7 @@ import { useLoadContext } from "@/context/load_context";
 import { useUserZones } from "@/hooks/use_user_zones";
 import { useValidTargetFormats } from "@/hooks/use_valid_target_formats";
 import { doesZoneMatchSelection, getDefaultIrSelection } from "@/lib/irs";
+import { getUserZoneGradient } from "@/lib/user_zones";
 import Search from "@/pages/search";
 
 const UserIRs = () => {
@@ -29,7 +30,7 @@ const UserIRs = () => {
               <div className="w-64" key={index}>
                 <ZoneCard
                   category={userZone.title}
-                  imageUrl="https://picsum.photos/607"
+                  gradient={getUserZoneGradient(userZone)}
                   rt60={1.2}
                   loading={isLoadingZone}
                   disabled={isCurrentZone}

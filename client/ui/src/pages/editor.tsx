@@ -24,6 +24,7 @@ import { useControlParameterIndexUpdater } from "@/hooks/use_control_parameter_i
 import { usePlayer } from "@/hooks/use_player";
 import { Parameters } from "@/lib/parameters";
 import { getImageUrl } from "@/lib/s3_resources";
+import { getUserZoneGradient } from "@/lib/user_zones";
 
 const Panel: FC<{ children: ReactNode }> = ({ children }) => (
   <div className="flex flex-col flex-1 gap-4 bg-card p-4 rounded-md w-full">
@@ -161,6 +162,10 @@ const CurrentIrPanel = () => {
   if (zone?.title)
     return (
       <div className="flex-1 h-full w-full relative flex items-end">
+        <div
+          className="absolute w-full h-full"
+          style={{ backgroundImage: getUserZoneGradient(zone) }}
+        />
         <div className="backdrop-blur bg-card/40 p-2 m-2 w-fit rounded-md h-fit">
           {zone?.title}
         </div>

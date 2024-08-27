@@ -25,8 +25,6 @@ const Outlet = () => {
       return <Browser />;
     case Route.UserZone:
       return <UserZone zone={route.state} />;
-    case Route.Search:
-      return <Search />;
     case Route.Zone:
       return <Zone zone={route.state} />;
   }
@@ -45,9 +43,6 @@ const NavigationTitle = () => {
       break;
     case Route.UserZone:
       title = route.state.title;
-      break;
-    case Route.Search:
-      title = "Search";
       break;
     case Route.Zone:
       title = route.state.title;
