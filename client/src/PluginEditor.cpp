@@ -113,7 +113,7 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (
                      static_cast<int> (kWindowMinimumWidth * kPreferredAspectRatio),
                      kWindowMaxWidth,
                      static_cast<int> (kWindowMaxWidth * kPreferredAspectRatio));
-    setSize (1280, 600);
+    setSize (1200, 720);
     resize_relay_.Setup (this, getConstrainer ());
     asset_directory_ = GetAssetsDirectory ();
 

@@ -1,7 +1,7 @@
 import { Hit } from "instantsearch.js";
-import { Salad } from "lucide-react";
+import { Search } from "lucide-react";
 import React, { FC } from "react";
-import { InfiniteHits, useHits, useInstantSearch } from "react-instantsearch";
+import { useHits, useInstantSearch } from "react-instantsearch";
 
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -48,12 +48,15 @@ const ZonesNoHits = () => {
   return (
     <div className="py-10 px-6 text-center">
       <div className="inline-block">
-        <div className="flex justify-center items-center rounded-full bg-red-500 w-28 h-28 p-2 text-foreground">
-          <Salad className="w-16 h-16 text-white" />
+        <div className="flex justify-center items-center rounded-full h-20 w-20 bg-background p-2 text-foreground">
+          <Search className="w-8 h-8 text-white" />
         </div>
       </div>
-      <h2 className="mt-6 mb-2 text-2xl">{"no_hits.heading"}</h2>
-      <span className="text-secondary">{"no_hits.info"}</span>
+      <h2 className="mt-6 mb-2 text-2xl">No Zones Found</h2>
+      <span className="text-secondary">
+        This search had no matching Zones. Please try modifying your search
+        term.
+      </span>
     </div>
   );
 };
@@ -87,18 +90,20 @@ const ZonesHits = () => {
   const { status } = useInstantSearch();
 
   if (status == "loading") return <ZonesLoading />;
+  if (items.length === 0) return <ZonesNoHits />;
 
-  return items.length === 0 ? (
-    <ZonesNoHits />
-  ) : (
-    <InfiniteHits
-      hitComponent={ZonesSearchHit}
-      classNames={{
-        root: "flex flex-col gap-4",
-        list: "grid grid-cols-1 md:grid-cols-3 xl:grid-cols-4 gap-4",
-        item: "h-[200px]",
-      }}
-    />
+  return (
+    <div className="flex flex-col gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-4 gap-4">
+        {items.map((item) => {
+          return (
+            <div className="h-[200px]" key={item.zoneId}>
+              <ZonesSearchHit hit={item} />
+            </div>
+          );
+        })}
+      </div>
+    </div>
   );
 };
 

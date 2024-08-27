@@ -1,5 +1,11 @@
 import { instantMeiliSearch } from "@meilisearch/instant-meilisearch";
-import { InstantSearch } from "react-instantsearch";
+import {
+  Hits,
+  HitsPerPage,
+  InfiniteHits,
+  InstantSearch,
+  Pagination,
+} from "react-instantsearch";
 
 import { ZonesHits } from "@/components/zones_hits";
 import { ZonesSearchBox } from "@/components/zones_search_box";
@@ -11,12 +17,19 @@ const { searchClient } = instantMeiliSearch(
 );
 
 const Search = () => (
-  <div className="flex flex-col gap-4 bg-card h-full p-4">
-    <InstantSearch indexName="zones" searchClient={searchClient}>
-      <ZonesSearchBox />
-      <ZonesHits />
-    </InstantSearch>
-  </div>
+  <InstantSearch indexName="zones" searchClient={searchClient}>
+    <ZonesSearchBox />
+    {/*<HitsPerPage*/}
+    {/*  items={[*/}
+    {/*    { label: "8 hits per page", value: 8, default: true },*/}
+    {/*    { label: "16 hits per page", value: 16 },*/}
+    {/*  ]}*/}
+    {/*/>*/}
+    <ZonesHits />
+    <Pagination
+      classNames={{ root: "flex justify-center", list: "flex flex-row gap-8" }}
+    />
+  </InstantSearch>
 );
 
 export default Search;
