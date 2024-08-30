@@ -3,7 +3,8 @@
 [![Stargazers][stars-shield]][stars-url]
 [![Issues][issues-shield]][issues-url]
 [![MIT License][license-shield]][license-url]
-![Tests](https://img.shields.io/github/actions/workflow/status/zones-convolution/zones_client/zones_client_tests.yml?style=for-the-badge&logo=github&label=TESTS)
+
+[//]: # (![Tests]&#40;https://img.shields.io/github/actions/workflow/status/zones-convolution/zones_client/zones_client_tests.yml?style=for-the-badge&logo=github&label=TESTS&#41;)
 
 ![CMake](https://img.shields.io/badge/CMake-%23008FBA.svg?style=for-the-badge&logo=cmake&logoColor=white)
 ![C++](https://img.shields.io/badge/c++-%2300599C.svg?style=for-the-badge&logo=c%2B%2B&logoColor=white)
@@ -35,6 +36,12 @@ box!
 
 This repository contains the source code of the companion audio plugin and also includes technical documentation about
 the plugin's architecture.
+
+---
+
+## Demo Video
+
+[![Zones Convolution Demo](https://img.youtube.com/vi/xisb5PGXl1M/0.jpg)](https://www.youtube.com/watch?v=xisb5PGXl1M)
 
 ---
 
