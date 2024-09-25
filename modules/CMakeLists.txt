@@ -1,4 +1,3 @@
-add_subdirectory(api)
 add_subdirectory(ir_engine)
 add_subdirectory(format)
 add_subdirectory(audio_engine)
