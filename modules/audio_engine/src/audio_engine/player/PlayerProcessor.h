@@ -24,7 +24,7 @@ private:
     NotificationQueue::VisitorQueue & notification_queue_;
     Player::PlayerState player_state_;
     bool is_stopping_;
-    Player::Resource new_resource_;
+    Player::Resource new_resource_ = Player::Resource::kSnare;
 
     juce::LinearSmoothedValue<float> smoothed_gain_;
 };
