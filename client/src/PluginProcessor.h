@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ProcessorContainer.h"
-#include "look_and_feel/LookAndFeel.h"
 
 #include <juce_audio_processors/juce_audio_processors.h>
 #include <juce_dsp/juce_dsp.h>
@@ -40,7 +39,6 @@ public:
     void setStateInformation (const void * data, int sizeInBytes) override;
 
 private:
-    LookAndFeel look_and_feel_;
     ProcessorContainer processor_container_;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioPluginAudioProcessor)

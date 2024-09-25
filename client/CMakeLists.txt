@@ -8,7 +8,6 @@ set(LINK_JUCE
 set(LINK_COMMON
         format
         ir_engine
-        look_and_feel
         audio_engine
         model
         zones_convolver

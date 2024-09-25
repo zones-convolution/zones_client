@@ -116,7 +116,6 @@ bool AudioPluginAudioProcessor::hasEditor () const
 
 juce::AudioProcessorEditor * AudioPluginAudioProcessor::createEditor ()
 {
-    LookAndFeel::setDefaultLookAndFeel (&look_and_feel_);
     return new AudioPluginAudioProcessorEditor (*this, processor_container_);
 }
 

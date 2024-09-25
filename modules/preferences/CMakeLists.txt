@@ -7,7 +7,6 @@ zones_add_module(
         src/preferences/PreferencesController.h
         src/preferences/PreferencesController.cpp
         DEPS
-        look_and_feel
         model
         juce::juce_core
         juce::juce_gui_basics

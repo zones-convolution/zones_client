@@ -1,4 +1,3 @@
-add_subdirectory(look_and_feel)
 add_subdirectory(api)
 add_subdirectory(ir_engine)
 add_subdirectory(format)
