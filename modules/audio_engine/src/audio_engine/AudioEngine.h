@@ -31,11 +31,12 @@ private:
 
     PlayerController & player_controller_;
 
-    [[nodiscard]] static zones::Convolver::ConvolverSpec
-    CreateConvolverSpecForState (const IrGraphState & ir_graph_state);
+    [[nodiscard]] zones::Convolver::ConvolverSpec
+    CreateConvolverSpecForState (const IrGraphState & ir_graph_state) const;
 
     const juce::AudioProcessor & processor_;
     CommandQueue::VisitorQueue & command_queue_;
     NotificationQueue::VisitorQueue & notification_queue_;
     zones::ConvolutionEngine & convolution_engine_;
+    IrGraphState last_graph_state_ {};
 };

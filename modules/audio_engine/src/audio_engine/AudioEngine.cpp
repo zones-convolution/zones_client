@@ -15,22 +15,29 @@ AudioEngine::AudioEngine (CommandQueue::VisitorQueue & command_queue,
 }
 
 zones::Convolver::ConvolverSpec
-AudioEngine::CreateConvolverSpecForState (const IrGraphState & ir_graph_state)
+AudioEngine::CreateConvolverSpecForState (const IrGraphState & ir_graph_state) const
 {
+    auto fade_strategy = ir_graph_state.base_ir == last_graph_state_.base_ir
+                             ? zones::Convolver::FadeStrategy::kCrossfade
+                             : zones::Convolver::FadeStrategy::kInOut;
+
     switch (ir_graph_state.target_format)
     {
         case TargetFormat::kMono:
-            return zones::Convolver::ConvolverSpec {.input_routing = {0}, .output_routing = {0}};
+            return zones::Convolver::ConvolverSpec {
+                .input_routing = {0}, .output_routing = {0}, .fade_strategy = fade_strategy};
         case TargetFormat::kStereo:
-            return zones::Convolver::ConvolverSpec {.input_routing = {0, 1},
-                                                    .output_routing = {0, 1}};
+            return zones::Convolver::ConvolverSpec {
+                .input_routing = {0, 1}, .output_routing = {0, 1}, .fade_strategy = fade_strategy};
         case TargetFormat::kTrueStereo:
             return zones::Convolver::ConvolverSpec {.input_routing = {0, 0, 1, 1},
-                                                    .output_routing = {0, 1, 0, 1}};
+                                                    .output_routing = {0, 1, 0, 1},
+                                                    .fade_strategy = fade_strategy};
         case TargetFormat::kFoa:
         case TargetFormat::kQuadraphonic:
             return zones::Convolver::ConvolverSpec {.input_routing = {0, 1, 2, 3},
-                                                    .output_routing = {0, 1, 2, 3}};
+                                                    .output_routing = {0, 1, 2, 3},
+                                                    .fade_strategy = fade_strategy};
     }
 }
 
@@ -44,6 +51,8 @@ void AudioEngine::RenderFinished (IrGraphState state, IrGraphProcessor::BoxedBuf
         convolution_engine_.LoadIR (*render_result, CreateConvolverSpecForState (state));
     else
         jassertfalse;
+
+    last_graph_state_ = state;
 }
 
 void AudioEngine::operator() (const Player::PlayerState & player_state_notification)
