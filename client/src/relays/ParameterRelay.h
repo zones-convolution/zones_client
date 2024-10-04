@@ -20,22 +20,16 @@ public:
 private:
     juce::WebBrowserComponent & web_browser_component_;
 
-    juce::WebSliderRelay wet_dry_mix_relay_ {web_browser_component_,
-                                             ParameterTree::kDryWetMixParameterId};
-    juce::WebSliderRelay resampler_relay_ {web_browser_component_,
-                                           ParameterTree::kResamplerParameterId};
-    juce::WebSliderRelay input_gain_relay_ {web_browser_component_,
-                                            ParameterTree::kInputGainParameterId};
-    juce::WebSliderRelay output_gain_relay_ {web_browser_component_,
-                                             ParameterTree::kOutputGainParameterId};
-    juce::WebSliderRelay treble_relay_ {web_browser_component_, ParameterTree::kTrebleParameterId};
-    juce::WebSliderRelay bass_relay_ {web_browser_component_, ParameterTree::kBassParameterId};
-    juce::WebSliderRelay reverb_time_relay_ {web_browser_component_,
-                                             ParameterTree::kReverbTimeParameterId};
-    juce::WebSliderRelay predelay_relay_ {web_browser_component_,
-                                          ParameterTree::kPredelayParameterId};
-    juce::WebSliderRelay trim_relay_ {web_browser_component_, ParameterTree::kTrimParameterId};
-    juce::WebSliderRelay attack_relay_ {web_browser_component_, ParameterTree::kAttackParameterId};
+    juce::WebSliderRelay wet_dry_mix_relay_ {ParameterTree::kDryWetMixParameterId};
+    juce::WebSliderRelay resampler_relay_ {ParameterTree::kResamplerParameterId};
+    juce::WebSliderRelay input_gain_relay_ {ParameterTree::kInputGainParameterId};
+    juce::WebSliderRelay output_gain_relay_ {ParameterTree::kOutputGainParameterId};
+    juce::WebSliderRelay treble_relay_ {ParameterTree::kTrebleParameterId};
+    juce::WebSliderRelay bass_relay_ {ParameterTree::kBassParameterId};
+    juce::WebSliderRelay reverb_time_relay_ {ParameterTree::kReverbTimeParameterId};
+    juce::WebSliderRelay predelay_relay_ {ParameterTree::kPredelayParameterId};
+    juce::WebSliderRelay trim_relay_ {ParameterTree::kTrimParameterId};
+    juce::WebSliderRelay attack_relay_ {ParameterTree::kAttackParameterId};
 };
 
 /**
