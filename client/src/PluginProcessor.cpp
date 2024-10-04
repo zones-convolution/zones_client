@@ -121,10 +121,38 @@ juce::AudioProcessorEditor * AudioPluginAudioProcessor::createEditor ()
 
 void AudioPluginAudioProcessor::getStateInformation (juce::MemoryBlock & destData)
 {
+    auto & ir_selection = processor_container_.load_controller_.GetCurrentIr ();
+    json data = ir_selection;
+    auto dump = data.dump ();
+
+    auto & parameters = processor_container_.parameter_tree_state_;
+    auto state = parameters.copyState ();
+    std::unique_ptr<juce::XmlElement> xml (state.createXml ());
+    xml->setAttribute ("selection", dump);
+    copyXmlToBinary (*xml, destData);
 }
 
 void AudioPluginAudioProcessor::setStateInformation (const void * data, int sizeInBytes)
 {
+    auto & parameters = processor_container_.parameter_tree_state_;
+    std::unique_ptr<juce::XmlElement> xml_state (getXmlFromBinary (data, sizeInBytes));
+    if (xml_state.get () != nullptr)
+        if (xml_state->hasTagName (parameters.state.getType ()))
+            parameters.replaceState (juce::ValueTree::fromXml (*xml_state));
+
+    auto selection_data = xml_state->getStringAttribute ("selection");
+    std::optional<IrSelection> ir_selection;
+    try
+    {
+        json::parse (selection_data.toStdString ()).get_to (ir_selection);
+    }
+    catch (...)
+    {
+        jassertfalse;
+    }
+
+    if (ir_selection.has_value ())
+        processor_container_.load_controller_.Load (*ir_selection, [] (bool on_load) {});
 }
 
 juce::AudioProcessor * JUCE_CALLTYPE createPluginFilter ()
