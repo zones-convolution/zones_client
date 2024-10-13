@@ -21,12 +21,12 @@ template <typename T>
 inline constexpr bool is_variant_v = is_variant<T>::value;
 
 template <typename Commands, typename Visitor>
-class VisitorQueue
+class VisitorQueueT
 {
     static_assert (is_variant_v<Commands>, "Commands must be a variant type");
 
 public:
-    explicit VisitorQueue ()
+    explicit VisitorQueueT ()
     {
         command_queue_.reset (kMaxQueueSize);
     }

@@ -1,4 +1,4 @@
-#include "audio_engine/VisitorQueue.h"
+#include "audio_engine/VisitorQueueT.h"
 
 #include <catch2/catch_test_macros.hpp>
 #include <variant>
@@ -29,7 +29,7 @@ struct MockVisitor
     std::vector<Bar> bar_visits;
 };
 
-using TestVisitorQueue = VisitorQueue<Commands, MockVisitor>;
+using TestVisitorQueue = VisitorQueueT<Commands, MockVisitor>;
 
 SCENARIO ("queues commands", "[CommandQueue]")
 {

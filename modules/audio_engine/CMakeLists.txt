@@ -6,7 +6,7 @@ zones_add_module(
         src/audio_engine/AudioEngine.cpp
         src/audio_engine/AudioGraph.h
         src/audio_engine/AudioGraph.cpp
-        src/audio_engine/VisitorQueue.h
+        src/audio_engine/VisitorQueueT.h
         src/audio_engine/CommandQueue.h
         src/audio_engine/NotificationQueue.h
         src/audio_engine/AudioGraphMetering.h

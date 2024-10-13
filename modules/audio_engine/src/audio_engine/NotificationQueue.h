@@ -1,7 +1,7 @@
 #pragma once
 
 #pragma once
-#include "VisitorQueue.h"
+#include "VisitorQueueT.h"
 #include "player/PlayerController.h"
 #include "player/PlayerState.h"
 
@@ -15,5 +15,5 @@ struct NotificationQueue
         virtual void operator() (const Player::PlayerState & player_state_notification) = 0;
     };
 
-    using VisitorQueue = VisitorQueue<Notifications, Visitor>;
+    using VisitorQueue = VisitorQueueT<Notifications, Visitor>;
 };

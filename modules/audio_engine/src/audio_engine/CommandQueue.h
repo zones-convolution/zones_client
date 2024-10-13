@@ -1,5 +1,5 @@
 #pragma once
-#include "VisitorQueue.h"
+#include "VisitorQueueT.h"
 #include "player/PlayerState.h"
 
 #include <variant>
@@ -17,5 +17,5 @@ struct CommandQueue
         virtual void operator() (const SetPlayerStateCommand & set_player_state_command) = 0;
     };
 
-    using VisitorQueue = VisitorQueue<Commands, Visitor>;
+    using VisitorQueue = VisitorQueueT<Commands, Visitor>;
 };

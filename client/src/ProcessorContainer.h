@@ -5,7 +5,7 @@
 #include "audio_engine/AudioGraph.h"
 #include "audio_engine/CommandQueue.h"
 #include "audio_engine/NotificationQueue.h"
-#include "audio_engine/VisitorQueue.h"
+#include "audio_engine/VisitorQueueT.h"
 #include "controllers/LoadController.h"
 #include "controllers/WebLoadController.h"
 #include "controllers/visualiser/VisualiserController.h"
