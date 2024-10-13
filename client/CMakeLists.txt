@@ -76,6 +76,7 @@ target_compile_definitions(${BINARY}
         PRIVATE
         "DEV_LOCALHOST=$<BOOL:${DEV_LOCALHOST}>"
         JUCE_WEB_BROWSER=1
+        JUCE_USE_CURL=1
         JUCE_USE_WIN_WEBVIEW2_WITH_STATIC_LINKING=1)
 
 target_sources(${BINARY} PRIVATE ${SOURCES})
