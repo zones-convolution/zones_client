@@ -18,7 +18,7 @@ jobs:
     steps:
       - name: Install JUCE's Linux Deps
         run: |
-          sudo apt-get update && sudo apt install libasound2-dev libx11-dev libxinerama-dev libxext-dev libfreetype6-dev libwebkit2gtk-4.0-dev libglu1-mesa-dev libcurl4-openssl-dev xvfb ninja-build
+          sudo apt-get update && sudo apt install libasound2-dev libx11-dev libxinerama-dev libxext-dev libfreetype6-dev libwebkit2gtk-4.1-dev libglu1-mesa-dev libcurl4-openssl-dev xvfb ninja-build
           sudo /usr/bin/Xvfb $DISPLAY &
 
       - name: Checkout code
