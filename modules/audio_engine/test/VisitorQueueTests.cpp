@@ -36,7 +36,8 @@ SCENARIO ("queues commands", "[CommandQueue]")
     GIVEN ("a queued load ir command on a command queue")
     {
         MockVisitor visitor;
-        TestVisitorQueue visitor_queue {visitor};
+        TestVisitorQueue visitor_queue;
+        visitor_queue.SetVisitor (&visitor);
 
         auto foo = Foo {.identifier = juce::Uuid ()};
         visitor_queue.PushCommand (foo);
@@ -57,7 +58,8 @@ SCENARIO ("queues commands", "[CommandQueue]")
     {
         static constexpr int kNumFooCommandsToQueue = 20;
         MockVisitor visitor;
-        TestVisitorQueue visitor_queue {visitor};
+        TestVisitorQueue visitor_queue;
+        visitor_queue.SetVisitor (&visitor);
 
         std::vector<Foo> foos;
         for (auto command_index = 0; command_index < kNumFooCommandsToQueue; ++command_index)
