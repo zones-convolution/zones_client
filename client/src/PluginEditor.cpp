@@ -24,7 +24,9 @@ static juce::File GetAssetsDirectory ()
                           .getParentDirectory ()     // Plugin.vst3/Contents/
                           .getChildFile ("Resources/dist");
 #else
-    #error "We only support Mac and Windows here yet."
+    auto assets_dir = juce::File (); // For running tests only! - should working on packaging for
+                                     // Linux at some point.
+    #warning "We only support Mac and Windows here yet."
 #endif
 
     return assets_dir;
