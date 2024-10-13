@@ -6,6 +6,8 @@ on:
   workflow_dispatch:
   pull_request:
     branches: [ develop ]
+  push:
+    branches: [ develop ]
 
 env:
   CMAKE_BUILD_PARALLEL_LEVEL: 3
