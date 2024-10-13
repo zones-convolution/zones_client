@@ -21,9 +21,9 @@ enum class ChannelFormat
 
 struct PositionMap
 {
-    std::optional<std::string> centre;
-    std::optional<std::string> left;
-    std::optional<std::string> right;
+    std::optional<std::string> centre = std::nullopt;
+    std::optional<std::string> left = std::nullopt;
+    std::optional<std::string> right = std::nullopt;
 
     bool operator== (const PositionMap & rhs) const
     {

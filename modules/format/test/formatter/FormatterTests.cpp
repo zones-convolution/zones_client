@@ -6,9 +6,9 @@
 
 static std::filesystem::path kTestDataDirectory = TEST_DATA_DIRECTORY;
 static std::filesystem::path kMonoTestDataDirectory =
-    kTestDataDirectory / std::filesystem::path {"Mono"};
+    kTestDataDirectory / std::filesystem::path {"mono"};
 static std::filesystem::path kStereoTestDataDirectory =
-    kTestDataDirectory / std::filesystem::path {"Stereo"};
+    kTestDataDirectory / std::filesystem::path {"stereo"};
 
 static void RequirePreservesSamplingData (const IrData & a, const IrData & b)
 {
@@ -19,11 +19,11 @@ static void RequirePreservesSamplingData (const IrData & a, const IrData & b)
 TEST_CASE ("mono formatter correctly loads files", "[MonoFormatter]")
 {
     IrFormatData ir_format_data {.channel_format = ChannelFormat::kMono,
-                                 .position_map = PositionMap {.centre = "C"}};
+                                 .position_map = PositionMap {.centre = "c.wav"}};
 
     IrReader ir_reader;
     IrData correct_ir_data;
-    ir_reader.ReadIrData (kMonoTestDataDirectory, "C", correct_ir_data);
+    ir_reader.ReadIrData (kMonoTestDataDirectory, "c.wav", correct_ir_data);
 
     IrData ir_data;
     MonoFormatter::Format (kMonoTestDataDirectory, ir_format_data, TargetFormat::kMono, ir_data);
@@ -38,15 +38,15 @@ TEST_CASE ("stereo formatter correctly loads files", "[StereoFormatter]")
 {
     IrReader ir_reader;
     IrData correct_ir_data_L;
-    ir_reader.ReadIrData (kStereoTestDataDirectory, "L", correct_ir_data_L);
+    ir_reader.ReadIrData (kStereoTestDataDirectory, "l.wav", correct_ir_data_L);
     IrData correct_ir_data_C;
-    ir_reader.ReadIrData (kStereoTestDataDirectory, "C", correct_ir_data_C);
+    ir_reader.ReadIrData (kStereoTestDataDirectory, "c.wav", correct_ir_data_C);
     IrData correct_ir_data_R;
-    ir_reader.ReadIrData (kStereoTestDataDirectory, "R", correct_ir_data_R);
+    ir_reader.ReadIrData (kStereoTestDataDirectory, "r.wav", correct_ir_data_R);
 
-    IrFormatData ir_format_data {.channel_format = ChannelFormat::kStereo,
-                                 .position_map =
-                                     PositionMap {.centre = "C", .left = "L", .right = "R"}};
+    IrFormatData ir_format_data {
+        .channel_format = ChannelFormat::kStereo,
+        .position_map = PositionMap {.centre = "c.wav", .left = "l.wav", .right = "r.wav"}};
 
     SECTION ("loading for a mono target")
     {

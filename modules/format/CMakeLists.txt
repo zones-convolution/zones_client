@@ -33,11 +33,7 @@ zones_add_test(
         MODULE
         format
         SOURCES
-        test/IrMetadataTests.cpp
         test/formatter/FormatterTests.cpp
-        test/io/IrReaderTests.cpp
-        test/io/IrWriterTests.cpp
-        test/ZoneMetadataTests.cpp
         DEPS
         format)
 

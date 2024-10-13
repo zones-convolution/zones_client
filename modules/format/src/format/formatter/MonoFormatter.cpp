@@ -31,6 +31,7 @@ void MonoFormatter::Format (const std::filesystem::path & load_path,
                 IrReader ir_reader;
                 ir_reader.ReadIrData (load_path, *ir_format_data.position_map.centre, ir_data);
             }
+            break;
         case TargetFormat::kStereo:
             if (ir_format_data.position_map.centre.has_value ())
 
@@ -48,5 +49,6 @@ void MonoFormatter::Format (const std::filesystem::path & load_path,
                 ir_block.getSingleChannelBlock (1).copyFrom (
                     juce::dsp::AudioBlock<float> {mono_ir_data.buffer});
             }
+            break;
     }
 }
