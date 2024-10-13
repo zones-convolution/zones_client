@@ -70,6 +70,7 @@ juce_add_plugin(
         FORMATS AU VST3 Standalone
         COPY_PLUGIN_AFTER_BUILD TRUE
         NEEDS_WEBVIEW2 TRUE
+        NEEDS_WEB_BROWSER TRUE
         NEEDS_CURL TRUE)
 
 target_compile_definitions(${BINARY}
