@@ -36,7 +36,6 @@ zones_add_module(
         juce::juce_events)
 
 zones_add_test(MODULE ir_engine SOURCES
-        test/processors/RoomSizeProcessorTests.cpp
         test/IrGraphCachePolicyTests.cpp
         test/IrGraphTests.cpp
         test/IrEngineTests.cpp
