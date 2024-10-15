@@ -37,3 +37,10 @@ zones_add_test(MODULE audio_engine SOURCES
         audio_engine
         melatonin_test_helpers
         melatonin_audio_sparklines)
+
+target_compile_definitions(
+        audio_engine_test
+        PRIVATE
+        JUCE_WEB_BROWSER=0
+        JUCE_USE_CURL=0
+)
