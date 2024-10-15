@@ -26,8 +26,7 @@ zones_add_module(
         juce::juce_audio_basics
         juce::juce_audio_formats
         nlohmann_json::nlohmann_json
-        immer
-        model)
+        immer)
 
 zones_add_test(
         MODULE
