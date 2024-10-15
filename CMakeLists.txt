@@ -8,7 +8,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED true)
 
 set(CATCH_INSTALL_DOCS OFF)
 set(CATCH_INSTALL_EXTRAS OFF)
-set(BUILD_TESTING OFF)
+set(BUILD_TESTING ON)
 
 include(cmake/update_from_git.cmake)
 include(cmake/zones_module_common.cmake)
