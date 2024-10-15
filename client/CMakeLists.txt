@@ -89,18 +89,18 @@ target_link_libraries(
 
 target_compile_options(${BINARY} INTERFACE -Wall -Wextra -Werror)
 
-if (NOT DEV_LOCALHOST)
-    get_target_property(ACTIVE_TARGETS ${BINARY} JUCE_ACTIVE_PLUGIN_TARGETS)
-    foreach (ACTIVE_TARGET IN LISTS ACTIVE_TARGETS)
-        message(STATUS "Adding resource copy step from ${ASSETS_DIR} for ${ACTIVE_TARGET}")
-
-        get_target_property(ARTIFACT_FILE ${ACTIVE_TARGET} JUCE_PLUGIN_ARTEFACT_FILE)
-        set(RESOURCE_DIR "${ARTIFACT_FILE}/Contents/Resources")
-
-        add_custom_command(TARGET ${ACTIVE_TARGET} POST_BUILD
-                COMMAND ${CMAKE_COMMAND} -E rm -rf "${RESOURCE_DIR}/dist"
-                COMMAND ${CMAKE_COMMAND} -E make_directory "${RESOURCE_DIR}/dist"
-                COMMAND ${CMAKE_COMMAND} -E copy_directory "${ASSETS_DIR}" "${RESOURCE_DIR}/dist"
-                VERBATIM)
-    endforeach ()
-endif ()
+#if (NOT DEV_LOCALHOST)
+#    get_target_property(ACTIVE_TARGETS ${BINARY} JUCE_ACTIVE_PLUGIN_TARGETS)
+#    foreach (ACTIVE_TARGET IN LISTS ACTIVE_TARGETS)
+#        message(STATUS "Adding resource copy step from ${ASSETS_DIR} for ${ACTIVE_TARGET}")
+#
+#        get_target_property(ARTIFACT_FILE ${ACTIVE_TARGET} JUCE_PLUGIN_ARTEFACT_FILE)
+#        set(RESOURCE_DIR "${ARTIFACT_FILE}/Contents/Resources")
+#
+#        add_custom_command(TARGET ${ACTIVE_TARGET} POST_BUILD
+#                COMMAND ${CMAKE_COMMAND} -E rm -rf "${RESOURCE_DIR}/dist"
+#                COMMAND ${CMAKE_COMMAND} -E make_directory "${RESOURCE_DIR}/dist"
+#                COMMAND ${CMAKE_COMMAND} -E copy_directory "${ASSETS_DIR}" "${RESOURCE_DIR}/dist"
+#                VERBATIM)
+#    endforeach ()
+#endif ()
