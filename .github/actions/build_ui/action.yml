@@ -1,0 +1,14 @@
+name: "build_ui"
+description: "Setup Node and build UI"
+runs:
+  using: "composite"
+  defaults:
+    run:
+      working-directory: ./client/ui
+  steps:
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 20
+    - run: npm ci
+    - run: npm run build --if-present
+    - run: npm test
