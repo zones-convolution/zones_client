@@ -95,7 +95,7 @@ if (NOT DEV_LOCALHOST)
         message(STATUS "Adding resource copy step from ${ASSETS_DIR} for ${ACTIVE_TARGET}")
 
         get_target_property(ARTIFACT_FILE ${ACTIVE_TARGET} JUCE_PLUGIN_ARTEFACT_FILE)
-        set(RESOURCE_DIR "${ARTIFACT_FILE}/Contents/Resources/")
+        set(RESOURCE_DIR "${ARTIFACT_FILE}/Contents/Resources")
 
         add_custom_command(TARGET ${ACTIVE_TARGET} POST_BUILD
                 COMMAND ${CMAKE_COMMAND} -E rm -rf "${RESOURCE_DIR}/dist"
