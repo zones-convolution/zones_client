@@ -11,6 +11,8 @@ on:
 
 env:
   CMAKE_BUILD_PARALLEL_LEVEL: 3
+  BUILD_TYPE: Release
+  BUILD_DIR: builds/ninja-multi-vcpkg/client
 
 jobs:
   build_and_test:
