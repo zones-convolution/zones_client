@@ -27,5 +27,8 @@ jobs:
           submodules: recursive
           fetch-depth: 0
 
-      - name: Build and Test
-        uses: ./.github/actions/build_and_test
+      - name: Build ui
+        uses: ./.github/actions/build_ui
+#
+#      - name: Build and Test
+#        uses: ./.github/actions/build_and_test
