@@ -67,7 +67,7 @@ juce_add_plugin(
         COMPANY_NAME Zones
         BUNDLE_ID com.zones.zones
         VERSION 0.0.2
-        FORMATS AU VST3 Standalone
+        FORMATS Standalone
         COPY_PLUGIN_AFTER_BUILD TRUE
         NEEDS_WEBVIEW2 TRUE
         NEEDS_WEB_BROWSER TRUE
