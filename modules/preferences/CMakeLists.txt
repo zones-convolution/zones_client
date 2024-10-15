@@ -7,7 +7,6 @@ zones_add_module(
         src/preferences/PreferencesController.h
         src/preferences/PreferencesController.cpp
         DEPS
-        model
         juce::juce_core
         juce::juce_gui_basics
         nlohmann_json::nlohmann_json
