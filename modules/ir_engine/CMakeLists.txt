@@ -35,6 +35,13 @@ zones_add_module(
         juce::juce_dsp
         juce::juce_events)
 
+target_compile_definitions(
+        ir_engine
+        PRIVATE
+        JUCE_WEB_BROWSER=0
+        JUCE_USE_CURL=0
+)
+
 zones_add_test(MODULE ir_engine SOURCES
         test/IrGraphCachePolicyTests.cpp
         test/IrGraphTests.cpp
