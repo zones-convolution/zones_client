@@ -28,7 +28,6 @@ zones_add_module(
         DEPS
         model
         format
-        audio_engine
         immer
         rocket
         juce::juce_core
