@@ -9,14 +9,17 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 set(CATCH_INSTALL_DOCS OFF)
 set(CATCH_INSTALL_EXTRAS OFF)
-set(BUILD_TESTING ON)
+set(BUILD_TESTING OFF)
+
+find_package(Catch2 3 REQUIRED)
+find_package(nlohmann_json 3.2.0 REQUIRED)
+
+include(CTest)
+include(Catch)
 
 include(cmake/update_from_git.cmake)
 include(cmake/zones_module_common.cmake)
 include(cmake/embed_resources.cmake)
-
-find_package(Catch2 3 REQUIRED)
-find_package(nlohmann_json 3.2.0 REQUIRED)
 
 add_subdirectory(lib)
 add_subdirectory(modules)
