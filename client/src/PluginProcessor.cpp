@@ -68,7 +68,7 @@ void AudioPluginAudioProcessor::prepareToPlay (double sampleRate, int samplesPer
 
 void AudioPluginAudioProcessor::releaseResources ()
 {
-    processor_container_.graph_.reset ();
+    processor_container_.graph_.Reset ();
 }
 
 bool AudioPluginAudioProcessor::isBusesLayoutSupported (const BusesLayout & layouts) const
@@ -99,7 +99,7 @@ void AudioPluginAudioProcessor::processBlock (juce::AudioBuffer<float> & buffer,
     auto total_num_output_channels = getTotalNumOutputChannels ();
 
     for (auto i = total_num_input_channels; i < total_num_output_channels; ++i)
-        buffer.clear (i, 0, buffer.getNumSamples ());
+        buffer.addFrom (i, 0, buffer, 0, 0, buffer.getNumSamples ());
 
     const auto num_channels = juce::jmax (total_num_input_channels, total_num_output_channels);
 
@@ -108,7 +108,7 @@ void AudioPluginAudioProcessor::processBlock (juce::AudioBuffer<float> & buffer,
     juce::dsp::ProcessContextReplacing<float> process_context (process_block);
 
     processor_container_.command_queue_.Service ();
-    processor_container_.graph_.process (process_context);
+    processor_container_.graph_.Process (process_context);
 }
 
 bool AudioPluginAudioProcessor::hasEditor () const

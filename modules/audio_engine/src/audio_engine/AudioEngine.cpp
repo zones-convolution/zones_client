@@ -21,39 +21,21 @@ AudioEngine::CreateConvolverSpecForState (const IrGraphState & ir_graph_state) c
                              ? zones::Convolver::FadeStrategy::kCrossfade
                              : zones::Convolver::FadeStrategy::kInOut;
 
-    auto num_output_channels = processor_.getMainBusNumOutputChannels ();
-    std::vector<int> input_routing = {};
-    if (processor_.getBusesLayout ().getMainInputChannelSet () == juce::AudioChannelSet::mono ())
-    {
-        input_routing.resize (num_output_channels, 0);
-    }
-    else
-    {
-        for (auto output_channel_index = 0; output_channel_index < num_output_channels;
-             ++output_channel_index)
-            input_routing.push_back (output_channel_index);
-
-        if (ir_graph_state.target_format == TargetFormat::kTrueStereo)
-            input_routing = {0, 0, 1, 1};
-    }
-
     switch (ir_graph_state.target_format)
     {
         case TargetFormat::kMono:
-            return zones::Convolver::ConvolverSpec {.input_routing = input_routing,
-                                                    .output_routing = {0},
-                                                    .fade_strategy = fade_strategy};
+            return zones::Convolver::ConvolverSpec {
+                .input_routing = {0}, .output_routing = {0}, .fade_strategy = fade_strategy};
         case TargetFormat::kStereo:
-            return zones::Convolver::ConvolverSpec {.input_routing = input_routing,
-                                                    .output_routing = {0, 1},
-                                                    .fade_strategy = fade_strategy};
+            return zones::Convolver::ConvolverSpec {
+                .input_routing = {0, 1}, .output_routing = {0, 1}, .fade_strategy = fade_strategy};
         case TargetFormat::kTrueStereo:
-            return zones::Convolver::ConvolverSpec {.input_routing = input_routing,
+            return zones::Convolver::ConvolverSpec {.input_routing = {0, 0, 1, 1},
                                                     .output_routing = {0, 1, 0, 1},
                                                     .fade_strategy = fade_strategy};
         case TargetFormat::kFoa:
         case TargetFormat::kQuadraphonic:
-            return zones::Convolver::ConvolverSpec {.input_routing = input_routing,
+            return zones::Convolver::ConvolverSpec {.input_routing = {0, 1, 2, 3},
                                                     .output_routing = {0, 1, 2, 3},
                                                     .fade_strategy = fade_strategy};
     }
