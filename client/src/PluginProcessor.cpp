@@ -74,6 +74,7 @@ void AudioPluginAudioProcessor::releaseResources ()
 bool AudioPluginAudioProcessor::isBusesLayoutSupported (const BusesLayout & layouts) const
 {
     auto main_output_channel_set = layouts.getMainOutputChannelSet ();
+    auto main_input_channel_set = layouts.getMainInputChannelSet ();
 
     if (main_output_channel_set != juce::AudioChannelSet::mono () &&
         main_output_channel_set != juce::AudioChannelSet::stereo () &&
@@ -81,7 +82,8 @@ bool AudioPluginAudioProcessor::isBusesLayoutSupported (const BusesLayout & layo
         main_output_channel_set != juce::AudioChannelSet::quadraphonic ())
         return false;
 
-    if (main_output_channel_set != layouts.getMainInputChannelSet ())
+    if (main_output_channel_set != main_input_channel_set &&
+        main_input_channel_set != juce::AudioChannelSet::mono ())
         return false;
 
     return true;
