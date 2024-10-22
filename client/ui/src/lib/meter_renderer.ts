@@ -114,11 +114,7 @@ export const renderMeters = (
 
   for (let grpIndex = 0; grpIndex < newGroups.length; ++grpIndex) {
     let grp = newGroups[grpIndex];
-    for (
-      let channelIndex = 0;
-      channelIndex < newGroups.length;
-      ++channelIndex
-    ) {
+    for (let channelIndex = 0; channelIndex < grp.length; ++channelIndex) {
       updateChannelMeter(
         grp[channelIndex],
         targetGroups[grpIndex][channelIndex],
