@@ -21,7 +21,7 @@ include(cmake/update_from_git.cmake)
 include(cmake/zones_module_common.cmake)
 include(cmake/embed_resources.cmake)
 
-set(PROJECT_NAME "zones")
+set(PROJECT_NAME "zones_client")
 set(PRODUCT_NAME "Zones")
 set(COMPANY_NAME "Zones")
 set(BUNDLE_ID "com.zones.zones")
