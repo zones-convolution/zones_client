@@ -18,7 +18,7 @@
       "x": 250,
       "y": 200,
       "type": "file",
-      "path": "dmg/Zones Convolver.app"
+      "path": "dmg/Zones.app"
     },
     {
       "x": 480,
@@ -30,7 +30,7 @@
       "x": 250,
       "y": 300,
       "type": "file",
-      "path": "dmg/Zones Convolver.component"
+      "path": "dmg/Zones.component"
     },
     {
       "x": 480,
@@ -42,7 +42,7 @@
       "x": 250,
       "y": 400,
       "type": "file",
-      "path": "dmg/Zones Convolver.vst3"
+      "path": "dmg/Zones.vst3"
     },
     {
       "x": 480,
