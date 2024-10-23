@@ -21,6 +21,14 @@ include(cmake/update_from_git.cmake)
 include(cmake/zones_module_common.cmake)
 include(cmake/embed_resources.cmake)
 
+set(PROJECT_NAME "zones")
+set(PRODUCT_NAME "Zones")
+set(COMPANY_NAME "Zones")
+set(BUNDLE_ID "com.zones.zones")
+set(CURRENT_VERSION "1.0.0")
+
 add_subdirectory(lib)
 add_subdirectory(modules)
 add_subdirectory(client)
+
+include(cmake/github_env.cmake)

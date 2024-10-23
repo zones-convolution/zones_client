@@ -1,0 +1,66 @@
+name: "package_macos"
+description: "Code-sign, apple notary service and package"
+runs:
+  using: "composite"
+  steps:
+    #      - name: Import Certificates (macOS)
+    #        uses: apple-actions/import-codesign-certs@v2 # only exists as a tag right now
+    #        if: ${{ matrix.name == 'macOS' }}
+    #        with:
+    #          p12-file-base64: ${{ secrets.DEV_ID_APP_CERT }}
+    #          p12-password: ${{ secrets.DEV_ID_APP_PASSWORD }}
+
+    #      - name: Codesign (macOS)
+    #        if: ${{ matrix.name == 'macOS' }}
+    #        run: |
+    #          codesign --force -v "${{ env.VST3_PATH }}" --deep --strict --options=runtime --timestamp
+    #          codesign --force -v "${{ env.AU_PATH }}" --deep --strict --options=runtime --timestamp
+    #          codesign --force -v "${{ env.STANDALONE_PATH }}" --deep --strict --options=runtime --timestamp
+
+    - name: Add Custom Icons (macOS)
+      if: ${{ matrix.name == 'macOS' }}
+      shell: bash
+      run: |
+        # add the icns as its own icon resource (meta!)
+        sips -i packaging/sunrise.icns
+        
+        # Grab the resource, put in tempfile
+        DeRez -only icns packaging/sunrise.icns > /tmp/icons
+        
+        # Stuff the resource into the strange Icon? file's resource fork
+        Rez -a /tmp/icons -o "${{ env.VST3_PATH }}/Icon"$'\r'
+        Rez -a /tmp/icons -o "${{ env.AU_PATH }}/Icon"$'\r'
+        
+        # Set custom icon attribute
+        SetFile -a C "${{ env.VST3_PATH }}"
+        SetFile -a C "${{ env.AU_PATH }}"
+
+    - name: Create DMG, Notarize and Staple (macOS)
+      if: ${{ matrix.name == 'macOS' }}
+      shell: bash
+      run: |
+        # workaround for https://github.com/LinusU/node-appdmg/issues/234
+        python3 -m pip install setuptools --break-system-packages
+        npm install -g appdmg
+        mkdir -p packaging/dmg
+        
+        # Create directories for the dmg symlinks
+        sudo mkdir -m 755 -p /Library/Audio/Plug-Ins/Components && sudo mkdir -m 755 -p /Library/Audio/Plug-Ins/VST3
+        ln -s /Library/Audio/Plug-Ins/Components "packaging/dmg/Your Mac's Component folder"
+        ln -s /Library/Audio/Plug-Ins/VST3 "packaging/dmg/Your Mac's VST3 folder"
+        mv "${{ env.VST3_PATH }}" packaging/dmg
+        mv "${{ env.AU_PATH }}" packaging/dmg
+        mv "${{ env.STANDALONE_PATH }}" packaging/dmg
+        
+        # Run appdmg to create the .dmg
+        cd packaging && appdmg dmg.json "${{ env.ARTIFACT_NAME }}.dmg"
+    #          codesign --timestamp -i ${{ env.BUNDLE_ID }} --force "${{ env.ARTIFACT_NAME }}.dmg"
+    #          xcrun notarytool submit "${{ env.ARTIFACT_NAME }}.dmg" --apple-id ${{ secrets.NOTARIZATION_USERNAME }} --password ${{ secrets.NOTARIZATION_PASSWORD }} --team-id ${{ secrets.TEAM_ID }} --wait
+    #          xcrun stapler staple "${{ env.ARTIFACT_NAME }}.dmg"
+
+    - name: Upload DMG (macOS)
+      if: ${{ matrix.name == 'macOS' }}
+      uses: actions/upload-artifact@v3
+      with:
+        name: ${{ env.ARTIFACT_NAME }}.dmg
+        path: packaging/${{ env.ARTIFACT_NAME }}.dmg

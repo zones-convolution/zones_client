@@ -1,0 +1,54 @@
+{
+  "title": "Zones Convolver",
+  "icon": "sunrise.icns",
+  "background-color": "rgb(33, 37, 41)",
+  "window": {
+    "position": {
+      "x": 100,
+      "y": 100
+    },
+    "size": {
+      "width": 730,
+      "height": 520
+    }
+  },
+  "format": "UDZO",
+  "contents": [
+    {
+      "x": 250,
+      "y": 200,
+      "type": "file",
+      "path": "dmg/Zones Convolver.app"
+    },
+    {
+      "x": 480,
+      "y": 200,
+      "type": "link",
+      "path": "/Applications"
+    },
+    {
+      "x": 250,
+      "y": 300,
+      "type": "file",
+      "path": "dmg/Zones Convolver.component"
+    },
+    {
+      "x": 480,
+      "y": 300,
+      "type": "file",
+      "path": "dmg/Your Mac's Component Folder"
+    },
+    {
+      "x": 250,
+      "y": 400,
+      "type": "file",
+      "path": "dmg/Zones Convolver.vst3"
+    },
+    {
+      "x": 480,
+      "y": 400,
+      "type": "file",
+      "path": "dmg/Your Mac's VST3 Folder"
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+name: "setup_environment"
+description: "Pull in env variables from CMake and create some useful paths"
+runs:
+  using: "composite"
+  steps:
+    - name: Read in .env from CMake
+      shell: bash
+      run: |
+        cat .env # show us the config
+        cat .env >> $GITHUB_ENV # pull in our PRODUCT_NAME, etc
+
+    - name: Set additional env vars for next steps
+      shell: bash
+      run: |
+        ARTIFACTS_PATH=${{ env.BUILD_DIR }}/${{ env.PROJECT_NAME }}_artefacts/${{ env.BUILD_TYPE }}
+        echo "ARTIFACTS_PATH=$ARTIFACTS_PATH" >> $GITHUB_ENV
+        echo "VST3_PATH=$ARTIFACTS_PATH/VST3/${{ env.PRODUCT_NAME }}.vst3" >> $GITHUB_ENV
+        echo "AU_PATH=$ARTIFACTS_PATH/AU/${{ env.PRODUCT_NAME }}.component" >> $GITHUB_ENV
+        echo "AUV3_PATH=$ARTIFACTS_PATH/AUv3/${{ env.PRODUCT_NAME }}.appex" >> $GITHUB_ENV          
+        echo "STANDALONE_PATH=$ARTIFACTS_PATH/Standalone/${{ env.PRODUCT_NAME }}.app" >> $GITHUB_ENV
+        echo "ARTIFACT_NAME=${{ env.PRODUCT_NAME }}-${{ env.VERSION }}-${{ matrix.name }}" >> $GITHUB_ENV

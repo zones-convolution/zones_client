@@ -1,0 +1,65 @@
+# Thanks to Pamplejuce for getting this on the right track, https://github.com/sudara/pamplejuce/
+
+name: build_and_release
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ main ]
+
+env:
+  CMAKE_BUILD_PARALLEL_LEVEL: 3
+  BUILD_TYPE: Release
+  BUILD_DIR: builds/ninja-multi-vcpkg/client
+
+jobs:
+  build_and_package:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - name: macOS
+            os: macos-14
+            pluginval-binary: pluginval.app/Contents/MacOS/pluginval
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Build ui
+        uses: ./.github/actions/build_ui
+
+      - name: Build and Test
+        uses: ./.github/actions/build_and_test
+
+      - name: Setup Environment
+        uses: ./.github/actions/setup_environment
+
+      - name: Pluginval
+        uses: ./.github/actions/pluginval
+
+      - name: Package MacOS
+        uses: ./.github/actions/package_macos
+
+  release:
+    if: contains(github.ref, 'tags/v')
+    runs-on: ubuntu-latest
+    needs: build_and_package
+
+    steps:
+      - name: Get Artifacts
+        uses: actions/download-artifact@v3
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          prerelease: true
+          files: |
+            */*.dmg
