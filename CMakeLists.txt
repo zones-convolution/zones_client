@@ -25,7 +25,7 @@ set(PROJECT_NAME "zones_client")
 set(PRODUCT_NAME "Zones")
 set(COMPANY_NAME "Zones")
 set(BUNDLE_ID "com.zones.zones")
-set(CURRENT_VERSION "1.0.0")
+set(CURRENT_VERSION "0.0.1")
 
 add_subdirectory(lib)
 add_subdirectory(modules)
