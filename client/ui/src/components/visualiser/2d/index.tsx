@@ -1,4 +1,5 @@
 import { Canvas, useThree } from "@react-three/fiber";
+import { useMeasure } from "@uidotdev/usehooks";
 import {
   select,
   line,
@@ -7,7 +8,7 @@ import {
   axisBottom,
   axisLeft,
 } from "d3";
-import { FC, useEffect, useMemo, useRef } from "react";
+import { FC, useEffect, useMemo, useRef, useState } from "react";
 import { FrontSide, GLSL3, ShaderMaterial } from "three";
 
 import {
@@ -117,29 +118,37 @@ const data = [
 
 const Axis = () => {
   const svgRef = useRef<SVGSVGElement | null>(null);
+  const [measureRef, { width, height }] = useMeasure<SVGSVGElement>();
 
   useEffect(() => {
     if (svgRef.current) {
       const svg = select(svgRef.current);
 
       const xScale = scaleLinear()
-        .domain([0, data.length - 1])
-        .range([-50, 100]);
+        .domain([0, 60])
+        .range([0, width ?? 0]);
       const xAxis = axisBottom(xScale).ticks(data.length);
-
-      svg.append("g").attr("transform", `translate(-100,0)`).call(xAxis);
+      svg.call(xAxis);
     }
-  }, [data]);
+  }, [width]);
 
   return (
-    <svg className="w-full h-full" viewBox="-100 0 100 100" ref={svgRef} />
+    <svg
+      className="w-full h-full p-2"
+      viewBox={`0 0 ${width} ${height}`}
+      preserveAspectRatio="none"
+      ref={(el) => {
+        measureRef(el);
+        svgRef.current = el;
+      }}
+    />
   );
 };
 
 const Visualiser2D: FC<{ context: IVisualiserContext }> = ({ context }) => {
   return (
     <div className="relative flex-1">
-      <div className="absolute w-full h-full">
+      <div className="absolute w-full h-full p-2">
         <Canvas className="min-w-0 min-h-0 flex-1 shrink" orthographic>
           <Graph2D context={context} />
         </Canvas>
