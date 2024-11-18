@@ -2,11 +2,13 @@ import { Canvas, useThree } from "@react-three/fiber";
 import { useMeasure } from "@uidotdev/usehooks";
 import {
   select,
-  line,
-  curveCardinal,
   scaleLinear,
+  scaleLog,
   axisBottom,
+  format,
+  range,
   axisLeft,
+  axisRight,
 } from "d3";
 import { FC, useEffect, useMemo, useRef, useState } from "react";
 import { FrontSide, GLSL3, ShaderMaterial } from "three";
@@ -108,15 +110,8 @@ const Graph2D: FC<{ context: IVisualiserContext }> = ({ context }) => {
   );
 };
 
-const data = [
-  { x: 0, y: 10 },
-  { x: 1, y: 20 },
-  { x: 2, y: 15 },
-  { x: 3, y: 25 },
-  { x: 4, y: 30 },
-];
-
-const Axis = () => {
+const XAxis = () => {
+  const timeSeconds = 1.4;
   const svgRef = useRef<SVGSVGElement | null>(null);
   const [measureRef, { width, height }] = useMeasure<SVGSVGElement>();
 
@@ -125,16 +120,49 @@ const Axis = () => {
       const svg = select(svgRef.current);
 
       const xScale = scaleLinear()
-        .domain([0, 60])
+        .domain([0, 2.0 * timeSeconds])
         .range([0, width ?? 0]);
-      const xAxis = axisBottom(xScale).ticks(data.length);
+      const xAxis = axisBottom(xScale).ticks(
+        Math.floor((width ?? 0) / 100.0) * 2,
+      );
       svg.call(xAxis);
     }
   }, [width]);
 
   return (
     <svg
-      className="w-full h-full p-2"
+      className="w-full absolute h-6 pr-10 pl-2 bottom-0 stroke-[4px]"
+      viewBox={`0 0 ${width} ${height}`}
+      preserveAspectRatio="none"
+      ref={(el) => {
+        measureRef(el);
+        svgRef.current = el;
+      }}
+    />
+  );
+};
+
+const YAxis = () => {
+  const svgRef = useRef<SVGSVGElement | null>(null);
+  const [measureRef, { width, height }] = useMeasure<SVGSVGElement>();
+
+  useEffect(() => {
+    if (svgRef.current) {
+      const svg = select(svgRef.current);
+
+      const yScale = scaleLinear()
+        .domain([20, 22000])
+        .range([height ?? 0, 0]);
+      const yAxis = axisRight(yScale).ticks(
+        Math.floor((height ?? 0) / 100.0) * 2,
+      );
+      svg.call(yAxis);
+    }
+  }, [height]);
+
+  return (
+    <svg
+      className="h-full absolute w-10 pb-6 pt-2 right-0 stroke-[4px]"
       viewBox={`0 0 ${width} ${height}`}
       preserveAspectRatio="none"
       ref={(el) => {
@@ -147,14 +175,15 @@ const Axis = () => {
 
 const Visualiser2D: FC<{ context: IVisualiserContext }> = ({ context }) => {
   return (
-    <div className="relative flex-1">
-      <div className="absolute w-full h-full p-2">
+    <div className="flex-1 relative">
+      <div className="absolute w-full h-full pt-2 pl-2 pr-10 pb-6">
         <Canvas className="min-w-0 min-h-0 flex-1 shrink" orthographic>
           <Graph2D context={context} />
         </Canvas>
       </div>
-      <div className="absolute w-full h-full">
-        <Axis />
+      <div className="w-full h-full absolute">
+        <XAxis />
+        <YAxis />
       </div>
     </div>
   );
