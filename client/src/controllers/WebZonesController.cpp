@@ -81,13 +81,13 @@ bool WebZonesController::LoadWebZone (const IrSelection & ir_selection)
 
     if (position_map.centre.has_value ())
         download_tasks.push_back (DownloadZoneIr (
-            *zone_id, *target_ir.ir_id, target_ir.relative_path, *position_map.centre));
+            *zone_id, *target_ir.ir_id, target_ir.relative_path.string(), *position_map.centre));
     if (position_map.left.has_value ())
         download_tasks.push_back (DownloadZoneIr (
-            *zone_id, *target_ir.ir_id, target_ir.relative_path, *position_map.left));
+            *zone_id, *target_ir.ir_id, target_ir.relative_path.string(), *position_map.left));
     if (position_map.right.has_value ())
         download_tasks.push_back (DownloadZoneIr (
-            *zone_id, *target_ir.ir_id, target_ir.relative_path, *position_map.right));
+            *zone_id, *target_ir.ir_id, target_ir.relative_path.string(), *position_map.right));
 
     auto download_complete = [&]
     {

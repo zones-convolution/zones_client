@@ -61,7 +61,7 @@ static auto StreamToVector (juce::InputStream & stream)
     std::vector<std::byte> result ((size_t) stream.getTotalLength ());
     stream.setPosition (0);
     [[maybe_unused]] const auto kBytesRead = stream.read (result.data (), result.size ());
-    jassert (kBytesRead == (ssize_t) result.size ());
+    jassert (kBytesRead == result.size ());
     return result;
 }
 
