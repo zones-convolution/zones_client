@@ -66,7 +66,7 @@ void IrController::LoadIr (const IrSelection & ir_selection)
     current_graph_state_.base_ir_buffer = IrGraphProcessor::BoxedBuffer {ir_data.buffer};
     current_graph_state_.sample_rate = ir_data.sample_rate;
     current_graph_state_.bit_depth = ir_data.bit_depth;
-    current_graph_state_.base_ir = ir_path;
+    current_graph_state_.base_ir = ir_path.string();
 
     PerformRender ();
 }

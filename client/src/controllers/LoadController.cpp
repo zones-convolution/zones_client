@@ -112,7 +112,7 @@ void LoadController::LoadFromDisk ()
 
                         auto num_channels = reader->numChannels;
 
-                        ir_metadata.title = ir_filename.stem ();
+                        ir_metadata.title = ir_filename.stem ().string();
                         ir_metadata.description = "Impulse response loaded from disk";
                         ir_metadata.relative_path = file_path;
                         ir_metadata.position_map = PositionMap {.centre = ""};
