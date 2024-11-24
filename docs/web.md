@@ -11,36 +11,75 @@ our plugin.
 Please note: This plugin is currently in development, so we ask that you try it out with caution.
 There may be bugs, crashes and unexpected behaviour whilst we work towards a stable release.
 
-Download links can be found here:
+The latest version can be downloaded [here.](https://github.com/zones-convolution/zones_client/releases)
 
-If you experience any trouble downloading the plugin, please get in touch here. [link to contact page]
+If you experience any trouble downloading the plugin, please [get in touch.](#Contact)
 
 # About
 
 ## Mission Statement
 
-Zones was created as an easy way to share impulse response recordings. Typically good quality
+Zones was created as an easy way to share impulse response's (IR's). Typically, good quality
 libraries and plugins are expensive and finding free IR's is difficult.
 
-Our aim is to simplify the process so that not only is there a range of Zones neatly collected, but
+Our aim is to simplify the process so that not only is there a range of reverbs neatly collected, but
 using them practically in the DAW is easy. This simplifies the workflow and makes
 using IR's more accessible as anyone with the plugin installed can access all zones without leaving
 the DAW.
 
 Zones has also been designed to be flexible in a number or use cases, such as for a pop mixing engineer
 to add nice sounding reverb to a different instruments, a classical engineer who wants to the sound
-of their favourite concert hall or a post-production mixer who wants to add realistic room reverb to
-ADR voices. Impulse responses can also be used beyond reverb to mix sounds together creatively.
+of their favourite concert hall or a post-production mixer who wants to add realistic room reverb after
+ADR. Impulse responses can also be used beyond reverb to mix sounds together creatively.
 
 Zones has been developed with zero budget and is completely free for users.
-For legal information, please see ...
+Legal information can be found [here.](#legal-stuff)
+
+## Features
+
+### Browsing the Library
+
+Exploring Zones is easy using the browse tab. You can see highlighted zones, ones you've used before or search
+the whole library.
+
+GIF BROWSING THE HOME PAGE AND SEARCHING
+
+Trying one out is easy as with one click we'll automatically pick the most appropriate IR and download it. We also
+save every IR you use to speed up loading time.
+
+GIF DOWNLOADING A ZONE THEN GOING TO EDIT
+
+For a more in depth look, select the card to see all the IR's available, more images and details about the recording.
+
+GIF LOOKING AT ZONE CARD
+
+You can also create and test out your own IR's locally.
+
+GIF CREATING USER IR
+
+### Using the editor
+
+Using the editor you can make changes to the ir, with the 2D and 3D visualiser reflecting your changes allowing you
+to make detailed adjustments to the sound. We've used our own convolution algorithm to work efficiently in the plugin.
+It also handles smooth cross-fading when making adjustments to the IR or fading efficiently to
+reduce overloading when the IR is extremely long.
+
+GIF USING THE EDITOR
+
+### Uploading Your Own Recordings
+
+Using this website you can easily upload your own impulse responses to share your sounds with the rest of the world.
+On your account page you can see your contributions and publish new Zones easily, with images, descriptions and
+metadata.
+
+GIF CREATING A ZONE
+
+GIF LOOKING AT PREPUBLISH ZONE PAGE
 
 ## Contact
 
 Feel free to get in touch regarding anything such as questions about uploading recordings or
 contributing to the plugin.
-
-Alternatively, you can join our Discord server.
 
 **Leon Paterson-Stephens** - leon@leonps.com
 
@@ -48,15 +87,15 @@ Alternatively, you can join our Discord server.
 
 ## Useful Links
 
-Upload guide
+### Upload guide
 
-manual
+### Manual
 
-Zones client
+### Zones client
 
-Zones convolver
+### Zones convolver
 
-Legal stuff
+### Legal Stuff
 
 ============================================================================
 
