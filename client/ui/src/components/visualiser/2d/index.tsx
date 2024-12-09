@@ -131,7 +131,7 @@ const XAxis = () => {
 
   return (
     <svg
-      className="w-full absolute h-6 pr-10 pl-2 bottom-0 stroke-[4px]"
+      className="w-full absolute h-6 pr-10 pl-2 bottom-0"
       viewBox={`0 0 ${width} ${height}`}
       preserveAspectRatio="none"
       ref={(el) => {
@@ -162,7 +162,7 @@ const YAxis = () => {
 
   return (
     <svg
-      className="h-full absolute w-10 pb-6 pt-2 right-0 stroke-[4px]"
+      className="h-full absolute w-10 pb-6 pt-2 right-0"
       viewBox={`0 0 ${width} ${height}`}
       preserveAspectRatio="none"
       ref={(el) => {
@@ -174,16 +174,26 @@ const YAxis = () => {
 };
 
 const Visualiser2D: FC<{ context: IVisualiserContext }> = ({ context }) => {
+  const [measureRef, { width, height }] = useMeasure();
+
   return (
-    <div className="flex-1 relative">
-      <div className="absolute w-full h-full pt-2 pl-2 pr-10 pb-6">
-        <Canvas className="min-w-0 min-h-0 flex-1 shrink" orthographic>
-          <Graph2D context={context} />
-        </Canvas>
-      </div>
-      <div className="w-full h-full absolute">
-        <XAxis />
-        <YAxis />
+    <div className="flex flex-1 justify-center items-center" ref={measureRef}>
+      <div
+        className="relative"
+        style={{
+          width: Math.floor(width ?? 0),
+          height: Math.floor(height ?? 0),
+        }}
+      >
+        <div className="absolute w-full h-full pt-2 pl-2 pr-10 pb-6">
+          <Canvas className="min-w-0 min-h-0 flex-1 shrink" orthographic>
+            <Graph2D context={context} />
+          </Canvas>
+        </div>
+        <div className="w-full h-full absolute">
+          <XAxis />
+          <YAxis />
+        </div>
       </div>
     </div>
   );
