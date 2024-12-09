@@ -216,16 +216,16 @@ const Editor = () => {
           >
             <Visualiser2D context={context} />
           </TabsContent>
-          <TabsContent
-            value="3d"
-            className="absolute top-0 w-full h-full flex mt-0"
-          >
-            <Visualiser3D context={context} />
-          </TabsContent>
-          <TabsList className="absolute top-0 right-0 m-2">
-            <TabsTrigger value="2d">2D</TabsTrigger>
-            <TabsTrigger value="3d">3D</TabsTrigger>
-          </TabsList>
+          {/*<TabsContent*/}
+          {/*  value="3d"*/}
+          {/*  className="absolute top-0 w-full h-full flex mt-0"*/}
+          {/*>*/}
+          {/*  <Visualiser3D context={context} />*/}
+          {/*</TabsContent>*/}
+          {/*<TabsList className="absolute top-0 right-0 m-2">*/}
+          {/*  <TabsTrigger value="2d">2D</TabsTrigger>*/}
+          {/*  <TabsTrigger value="3d">3D</TabsTrigger>*/}
+          {/*</TabsList>*/}
 
           <Toggle
             aria-label="Visualiser Controls"
