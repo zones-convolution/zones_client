@@ -632,9 +632,9 @@
 															<key>GID</key>
 															<integer>0</integer>
 															<key>PATH</key>
-															<string>/Users/leonps/Documents/development/zones_client/builds/ninja-multi-vcpkg/client/zones_client_artefacts/Release/VST3/Zones.vst3</string>
+															<string>builds/ninja-multi-vcpkg/client/zones_client_artefacts/Release/VST3/Zones.vst3</string>
 															<key>PATH_TYPE</key>
-															<integer>0</integer>
+															<integer>1</integer>
 															<key>PERMISSIONS</key>
 															<integer>493</integer>
 															<key>TYPE</key>
