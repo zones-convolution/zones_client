@@ -1,14 +1,60 @@
 name: "package_macos"
 description: "Code-sign, apple notary service and package"
+inputs:
+  DEV_ID_APP_CERT:
+    description: 'DEV_ID_APP_CERT'
+    required: true
+  DEV_ID_APP_PASSWORD:
+    description: 'DEV_ID_APP_PASSWORD'
+    required: true
+  DEVELOPER_ID_APPLICATION:
+    description: 'DEVELOPER_ID_APPLICATION'
+    required: true
+  DEV_ID_INSTALLER_CERT:
+    description: 'DEV_ID_INSTALLER_CERT'
+    required: true
+  DEV_ID_INSTALLER_PASSWORD:
+    description: 'DEV_ID_INSTALLER_PASSWORD'
+    required: true
+  DEVELOPER_ID_INSTALLER:
+    description: 'DEVELOPER_ID_INSTALLER'
+    required: true
+  NOTARIZATION_USERNAME:
+    description: 'NOTARIZATION_USERNAME'
+    required: true
+  NOTARIZATION_PASSWORD:
+    description: 'NOTARIZATION_PASSWORD'
+    required: true
+  TEAM_ID:
+    description: 'TEAM_ID'
+    required: true
 runs:
   using: "composite"
   steps:
+    - name: Import Certificates
+      uses: sudara/basic-macos-keychain-action@v1
+      id: keychain
+      with:
+        dev-id-app-cert: ${{ inputs.DEV_ID_APP_CERT }}
+        dev-id-app-password: ${{ inputs.DEV_ID_APP_PASSWORD }}
+        dev-id-installer-cert: ${{ inputs.DEV_ID_INSTALLER_CERT }}
+        dev-id-installer-password: ${{ inputs.DEV_ID_INSTALLER_PASSWORD }}
+    - name: Codesign Plugin Binaries
+      shell: bash
+      run: |
+        codesign --force -s "${{ inputs.DEVELOPER_ID_APPLICATION}}" -v "${{ env.VST3_PATH }}" --deep --strict --options=runtime --timestamp
+        codesign --force -s "${{ inputs.DEVELOPER_ID_APPLICATION}}" -v "${{ env.AU_PATH }}" --deep --strict --options=runtime --timestamp
     - name: Install Packages
       shell: bash
       run: brew install --cask packages
     - name: Create installer
       shell: bash
-      run: packagesbuild --project ./zones.pkgproj VERSION="${{ env.VERSION }}"
+      run: packagesbuild --project ./zones.pkgproj --package-version "${{ env.VERSION }}" --identity "${{ inputs.DEVELOPER_ID_INSTALLER}}"
+    - name: Notarize and Staple
+      shell: bash
+      run: |
+        xcrun notarytool submit builds/Zones.pkg --apple-id ${{ inputs.NOTARIZATION_USERNAME }} --password ${{ inputs.NOTARIZATION_PASSWORD }} --team-id ${{ inputs.TEAM_ID }} --wait
+        xcrun stapler staple builds/Zones.pkg
     - name: Upload PKG (macOS)
       uses: actions/upload-artifact@v4
       with:
