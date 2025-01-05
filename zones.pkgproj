@@ -1121,8 +1121,157 @@
 		</dict>
 		<key>PROJECT_PRESENTATION</key>
 		<dict>
+			<key>BACKGROUND</key>
+			<dict>
+				<key>APPAREANCES</key>
+				<dict>
+					<key>DARK_AQUA</key>
+					<dict/>
+					<key>LIGHT_AQUA</key>
+					<dict/>
+				</dict>
+				<key>SHARED_SETTINGS_FOR_ALL_APPAREANCES</key>
+				<true/>
+			</dict>
+			<key>INSTALLATION TYPE</key>
+			<dict>
+				<key>HIERARCHIES</key>
+				<dict>
+					<key>INSTALLER</key>
+					<dict>
+						<key>LIST</key>
+						<array>
+							<dict>
+								<key>CHILDREN</key>
+								<array/>
+								<key>DESCRIPTION</key>
+								<array/>
+								<key>OPTIONS</key>
+								<dict>
+									<key>HIDDEN</key>
+									<false/>
+									<key>STATE</key>
+									<integer>1</integer>
+								</dict>
+								<key>PACKAGE_UUID</key>
+								<string>38ECB614-5220-4CD5-9C2B-CBA33FAB35C1</string>
+								<key>TITLE</key>
+								<array/>
+								<key>TYPE</key>
+								<integer>0</integer>
+								<key>UUID</key>
+								<string>0F2A63F0-08C2-499B-86DA-3C653CE55E76</string>
+							</dict>
+							<dict>
+								<key>CHILDREN</key>
+								<array/>
+								<key>DESCRIPTION</key>
+								<array/>
+								<key>OPTIONS</key>
+								<dict>
+									<key>HIDDEN</key>
+									<false/>
+									<key>STATE</key>
+									<integer>1</integer>
+								</dict>
+								<key>PACKAGE_UUID</key>
+								<string>309D5CBE-860C-494A-8E9B-E871BED21F66</string>
+								<key>TITLE</key>
+								<array/>
+								<key>TYPE</key>
+								<integer>0</integer>
+								<key>UUID</key>
+								<string>C27BC992-AF79-4173-A772-261B9731DA7F</string>
+							</dict>
+						</array>
+						<key>REMOVED</key>
+						<dict/>
+					</dict>
+				</dict>
+				<key>MODE</key>
+				<integer>0</integer>
+			</dict>
 			<key>INSTALLATION_STEPS</key>
-			<array/>
+			<array>
+				<dict>
+					<key>ICPRESENTATION_CHAPTER_VIEW_CONTROLLER_CLASS</key>
+					<string>ICPresentationViewIntroductionController</string>
+					<key>INSTALLER_PLUGIN</key>
+					<string>Introduction</string>
+					<key>LIST_TITLE_KEY</key>
+					<string>InstallerSectionTitle</string>
+				</dict>
+				<dict>
+					<key>ICPRESENTATION_CHAPTER_VIEW_CONTROLLER_CLASS</key>
+					<string>ICPresentationViewReadMeController</string>
+					<key>INSTALLER_PLUGIN</key>
+					<string>ReadMe</string>
+					<key>LIST_TITLE_KEY</key>
+					<string>InstallerSectionTitle</string>
+				</dict>
+				<dict>
+					<key>ICPRESENTATION_CHAPTER_VIEW_CONTROLLER_CLASS</key>
+					<string>ICPresentationViewLicenseController</string>
+					<key>INSTALLER_PLUGIN</key>
+					<string>License</string>
+					<key>LIST_TITLE_KEY</key>
+					<string>InstallerSectionTitle</string>
+				</dict>
+				<dict>
+					<key>ICPRESENTATION_CHAPTER_VIEW_CONTROLLER_CLASS</key>
+					<string>ICPresentationViewDestinationSelectController</string>
+					<key>INSTALLER_PLUGIN</key>
+					<string>TargetSelect</string>
+					<key>LIST_TITLE_KEY</key>
+					<string>InstallerSectionTitle</string>
+				</dict>
+				<dict>
+					<key>ICPRESENTATION_CHAPTER_VIEW_CONTROLLER_CLASS</key>
+					<string>ICPresentationViewInstallationTypeController</string>
+					<key>INSTALLER_PLUGIN</key>
+					<string>PackageSelection</string>
+					<key>LIST_TITLE_KEY</key>
+					<string>InstallerSectionTitle</string>
+				</dict>
+				<dict>
+					<key>ICPRESENTATION_CHAPTER_VIEW_CONTROLLER_CLASS</key>
+					<string>ICPresentationViewInstallationController</string>
+					<key>INSTALLER_PLUGIN</key>
+					<string>Install</string>
+					<key>LIST_TITLE_KEY</key>
+					<string>InstallerSectionTitle</string>
+				</dict>
+				<dict>
+					<key>ICPRESENTATION_CHAPTER_VIEW_CONTROLLER_CLASS</key>
+					<string>ICPresentationViewSummaryController</string>
+					<key>INSTALLER_PLUGIN</key>
+					<string>Summary</string>
+					<key>LIST_TITLE_KEY</key>
+					<string>InstallerSectionTitle</string>
+				</dict>
+			</array>
+			<key>INTRODUCTION</key>
+			<dict>
+				<key>LOCALIZATIONS</key>
+				<array/>
+			</dict>
+			<key>LICENSE</key>
+			<dict>
+				<key>LOCALIZATIONS</key>
+				<array/>
+				<key>MODE</key>
+				<integer>0</integer>
+			</dict>
+			<key>README</key>
+			<dict>
+				<key>LOCALIZATIONS</key>
+				<array/>
+			</dict>
+			<key>SUMMARY</key>
+			<dict>
+				<key>LOCALIZATIONS</key>
+				<array/>
+			</dict>
 			<key>TITLE</key>
 			<dict>
 				<key>LOCALIZATIONS</key>
@@ -1131,7 +1280,7 @@
 						<key>LANGUAGE</key>
 						<string>English</string>
 						<key>VALUE</key>
-						<string>zones</string>
+						<string>Zones Convolution</string>
 					</dict>
 				</array>
 			</dict>
