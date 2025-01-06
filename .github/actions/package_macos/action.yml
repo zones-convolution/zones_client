@@ -64,16 +64,16 @@ runs:
       shell: bash
       run: |
         mkdir builds/signed
-        productsign -s "${{ inputs.DEVELOPER_ID_INSTALLER }}" builds/Zones.pkg builds/signed/Zones.pkg
+        productsign -s "${{ inputs.DEVELOPER_ID_INSTALLER }}" builds/Zones.pkg builds/signed/${{ inputs.PACKAGE_NAME }}
 
     - name: Notarize and Staple
       shell: bash
       run: |
-        xcrun notarytool submit builds/signed/Zones.pkg --apple-id ${{ inputs.NOTARIZATION_USERNAME }} --password ${{ inputs.NOTARIZATION_PASSWORD }} --team-id ${{ inputs.TEAM_ID }} --wait
-        xcrun stapler staple builds/signed/Zones.pkg
+        xcrun notarytool submit builds/signed/${{ inputs.PACKAGE_NAME }} --apple-id ${{ inputs.NOTARIZATION_USERNAME }} --password ${{ inputs.NOTARIZATION_PASSWORD }} --team-id ${{ inputs.TEAM_ID }} --wait
+        xcrun stapler staple builds/signed/${{ inputs.PACKAGE_NAME }}
 
     - name: Upload PKG (macOS)
       uses: actions/upload-artifact@v4
       with:
         name: ${{ inputs.PACKAGE_NAME }}
-        path: builds/signed/Zones.pkg
+        path: builds/signed/${{ inputs.PACKAGE_NAME }}
