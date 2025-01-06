@@ -2,77 +2,210 @@
   "version": 3,
   "cmakeMinimumRequired": {
     "major": 3,
-    "minor": 20,
+    "minor": 21,
     "patch": 0
   },
   "configurePresets": [
     {
-      "name": "ninja-multi-vcpkg",
-      "displayName": "Ninja Multi-Config",
-      "description": "Configure with vcpkg toolchain and generate Ninja project files for all configurations",
+      "name": "x64-msvc",
+      "generator": "Visual Studio 17 2022",
+      "architecture": "x64",
       "binaryDir": "${sourceDir}/builds/${presetName}",
-      "generator": "Ninja Multi-Config",
+      "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
       "cacheVariables": {
-        "CMAKE_TOOLCHAIN_FILE": {
-          "type": "FILEPATH",
-          "value": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
-        },
-        "DEV_LOCALHOST": "OFF"
+        "BUILD_TESTING": true,
+        "BUILD_SHARED_LIBS": true,
+        "VCPKG_TARGET_TRIPLET": "x64-windows-static",
+        "CMAKE_SYSTEM_VERSION": "10.0.19041.0"
       },
       "environment": {
-        "VCPKG_ROOT": "./vcpkg"
+        "VCPKG_ROOT": "./vcpkg",
+        "DEV_LOCALHOST": "OFF"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
       }
     },
     {
-      "name": "ninja-multi-vcpkg-debug",
-      "inherits": "ninja-multi-vcpkg",
+      "name": "x64-msvc-debug",
+      "displayName": "x64-msvc-debug",
+      "inherits": "x64-msvc",
+      "binaryDir": "${sourceDir}/builds/${presetName}",
+      "environment": {
+        "DEV_LOCALHOST": "ON"
+      }
+    },
+    {
+      "name": "x64-linux",
+      "generator": "Ninja Multi-Config",
+      "binaryDir": "${sourceDir}/builds/${presetName}",
+      "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
       "cacheVariables": {
+        "BUILD_TESTING": true,
+        "BUILD_SHARED_LIBS": true,
+        "VCPKG_TARGET_TRIPLET": "x64-linux"
+      },
+      "environment": {
+        "VCPKG_ROOT": "./vcpkg",
+        "DEV_LOCALHOST": "OFF"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      }
+    },
+    {
+      "name": "x64-linux-debug",
+      "displayName": "x64-linux-debug",
+      "inherits": "x64-linux",
+      "binaryDir": "${sourceDir}/builds/${presetName}",
+      "environment": {
+        "DEV_LOCALHOST": "ON"
+      }
+    },
+    {
+      "name": "x64-osx",
+      "generator": "Ninja Multi-Config",
+      "binaryDir": "${sourceDir}/builds/${presetName}",
+      "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+      "cacheVariables": {
+        "BUILD_TESTING": true,
+        "BUILD_SHARED_LIBS": true,
+        "CMAKE_OSX_ARCHITECTURES": "x86_64",
+        "VCPKG_TARGET_TRIPLET": "x64-osx"
+      },
+      "environment": {
+        "VCPKG_ROOT": "./vcpkg",
+        "DEV_LOCALHOST": "OFF"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Darwin"
+      }
+    },
+    {
+      "name": "x64-osx-debug",
+      "displayName": "x64-osx-debug",
+      "inherits": "x64-osx",
+      "binaryDir": "${sourceDir}/builds/${presetName}",
+      "environment": {
+        "DEV_LOCALHOST": "ON"
+      }
+    },
+    {
+      "name": "arm64-osx",
+      "displayName": "arm64-osx",
+      "inherits": "x64-osx",
+      "binaryDir": "${sourceDir}/builds/${presetName}",
+      "cacheVariables": {
+        "CMAKE_OSX_ARCHITECTURES": "arm64",
+        "VCPKG_TARGET_TRIPLET": "arm64-osx"
+      }
+    },
+    {
+      "name": "arm64-osx-debug",
+      "displayName": "arm64-osx-debug",
+      "inherits": "arm64-osx",
+      "binaryDir": "${sourceDir}/builds/${presetName}",
+      "environment": {
         "DEV_LOCALHOST": "ON"
       }
     }
   ],
   "buildPresets": [
     {
-      "name": "build-debug",
-      "configurePreset": "ninja-multi-vcpkg-debug",
-      "displayName": "Build (Debug)",
-      "description": "Build with Ninja/vcpkg (Debug)",
-      "configuration": "Debug",
-      "environment": {
-        "DEV_LOCALHOST": "OFF"
-      }
+      "name": "x64-msvc-debug",
+      "configurePreset": "x64-msvc-debug",
+      "configuration": "Debug"
     },
     {
-      "name": "build-release",
-      "configurePreset": "ninja-multi-vcpkg",
-      "displayName": "Build (Release)",
-      "description": "Build with Ninja/vcpkg (Release)",
+      "name": "x64-msvc-release",
+      "configurePreset": "x64-msvc",
+      "configuration": "Release"
+    },
+    {
+      "name": "x64-linux-debug",
+      "configurePreset": "x64-linux-debug",
+      "configuration": "Debug"
+    },
+    {
+      "name": "x64-linux-release",
+      "configurePreset": "x64-linux",
+      "configuration": "Release"
+    },
+    {
+      "name": "x64-osx-debug",
+      "configurePreset": "x64-osx-debug",
+      "configuration": "Debug"
+    },
+    {
+      "name": "x64-osx-release",
+      "configurePreset": "x64-osx",
+      "configuration": "Release"
+    },
+    {
+      "name": "arm64-osx-debug",
+      "configurePreset": "arm64-osx-debug",
+      "configuration": "Debug"
+    },
+    {
+      "name": "arm64-osx-release",
+      "configurePreset": "arm64-osx",
       "configuration": "Release"
     }
   ],
   "testPresets": [
     {
-      "name": "test-ninja-vcpkg",
-      "configurePreset": "ninja-multi-vcpkg",
-      "hidden": true
-    },
-    {
-      "name": "test-debug",
-      "description": "Test (Debug)",
-      "displayName": "Test (Debug)",
+      "name": "x64-msvc-debug",
+      "configurePreset": "x64-msvc-debug",
       "configuration": "Debug",
-      "inherits": [
-        "test-ninja-vcpkg"
-      ]
+      "output": {
+        "outputOnFailure": true
+      },
+      "execution": {
+        "noTestsAction": "error",
+        "stopOnFailure": false
+      }
     },
     {
-      "name": "test-release",
-      "description": "Test (Release)",
-      "displayName": "Test (Release)",
-      "configuration": "Release",
-      "inherits": [
-        "test-ninja-vcpkg"
-      ]
+      "name": "x64-linux-debug",
+      "configurePreset": "x64-linux-debug",
+      "configuration": "Debug",
+      "output": {
+        "outputOnFailure": true
+      },
+      "execution": {
+        "noTestsAction": "error",
+        "stopOnFailure": false
+      }
+    },
+    {
+      "name": "x64-osx-debug",
+      "configurePreset": "x64-osx-debug",
+      "configuration": "Debug",
+      "output": {
+        "outputOnFailure": true
+      },
+      "execution": {
+        "noTestsAction": "error",
+        "stopOnFailure": false
+      }
+    },
+    {
+      "name": "arm64-osx-debug",
+      "configurePreset": "arm64-osx-debug",
+      "configuration": "Debug",
+      "output": {
+        "outputOnFailure": true
+      },
+      "execution": {
+        "noTestsAction": "error",
+        "stopOnFailure": false
+      }
     }
   ]
 }

@@ -56,7 +56,6 @@ set(SOURCES
         src/controllers/WebLoadController.cpp
 )
 
-option(DEV_LOCALHOST OFF)
 set(ASSETS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/ui/dist/)
 
 juce_add_plugin(
@@ -75,7 +74,7 @@ juce_add_plugin(
 
 target_compile_definitions(${BINARY}
         PRIVATE
-        "DEV_LOCALHOST=$<BOOL:${DEV_LOCALHOST}>"
+        "DEV_LOCALHOST=$<BOOL:$ENV{DEV_LOCALHOST}>"
         JUCE_WEB_BROWSER=1
         JUCE_USE_CURL=1
         JUCE_USE_WIN_WEBVIEW2_WITH_STATIC_LINKING=1

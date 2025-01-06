@@ -1,4 +1,4 @@
-name: "build_and_test"
+name: "build_and_test_arm"
 description: "Setup VCKPG, CMake, build, test and cache"
 runs:
   using: "composite"
@@ -11,8 +11,8 @@ runs:
     - name: Run CMake consuming CMakePreset.json and run vcpkg to build dependencies
       uses: lukka/run-cmake@v10
       with:
-        configurePreset: 'ninja-multi-vcpkg'
+        configurePreset: 'arm64-osx'
         configurePresetAdditionalArgs: "['-DCMAKE_C_COMPILER_LAUNCHER=ccache', '-DCMAKE_CXX_COMPILER_LAUNCHER=ccache']"
-        buildPreset: 'build-release'
+        buildPreset: 'arm64-osx-release'
         buildPresetAdditionalArgs: "['--parallel 4']"
-        testPreset: 'test-release'
+        testPreset: 'arm64-osx-debug'

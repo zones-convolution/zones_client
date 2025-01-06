@@ -1,6 +1,6 @@
 # Thanks to Pamplejuce for getting this on the right track, https://github.com/sudara/pamplejuce/
 
-name: build_and_release
+name: build_and_release_arm
 
 on:
   workflow_dispatch:
@@ -8,7 +8,7 @@ on:
 env:
   CMAKE_BUILD_PARALLEL_LEVEL: 3
   BUILD_TYPE: Release
-  BUILD_DIR: builds/ninja-multi-vcpkg/client
+  BUILD_DIR: builds/arm64-osx/client
 
 jobs:
   build_and_package:
@@ -33,7 +33,7 @@ jobs:
         uses: ./.github/actions/build_ui
 
       - name: Build and Test
-        uses: ./.github/actions/build_and_test
+        uses: ./.github/actions/build_and_test_arm
 
       - name: Setup Environment
         uses: ./.github/actions/setup_environment
