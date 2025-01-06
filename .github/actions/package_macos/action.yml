@@ -32,7 +32,7 @@ runs:
   using: "composite"
   steps:
     - name: Import Certificates
-      uses: sudara/basic-macos-keychain-action@v1
+      uses: zones-convolution/basic-macos-keychain-action@main
       id: keychain
       with:
         dev-id-app-cert: ${{ inputs.DEV_ID_APP_CERT }}
