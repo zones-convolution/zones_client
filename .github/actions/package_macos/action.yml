@@ -52,7 +52,7 @@ runs:
 
     - name: Create installer
       shell: bash
-      run: packagesbuild --project ./zones.pkgproj --package-version "${{ env.VERSION }}" --identity "${{ inputs.DEVELOPER_ID_INSTALLER }}" --keychain ${{ steps.keychain.outputs.keychain-path }}
+      run: sudo packagesbuild --project ./zones.pkgproj --package-version "${{ env.VERSION }}" --identity "${{ inputs.DEVELOPER_ID_INSTALLER }}" --keychain ${{ steps.keychain.outputs.keychain-path }}
 
     - name: Notarize and Staple
       shell: bash
