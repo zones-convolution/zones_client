@@ -161,7 +161,7 @@
   "testPresets": [
     {
       "name": "test-x64-msvc-release",
-      "configurePreset": "x64-msvc-release",
+      "configurePreset": "x64-msvc",
       "configuration": "Release",
       "output": {
         "outputOnFailure": true
@@ -173,7 +173,7 @@
     },
     {
       "name": "test-x64-linux-release",
-      "configurePreset": "x64-linux-release",
+      "configurePreset": "x64-linux",
       "configuration": "Release",
       "output": {
         "outputOnFailure": true
