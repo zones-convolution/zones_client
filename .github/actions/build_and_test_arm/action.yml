@@ -15,4 +15,4 @@ runs:
         configurePresetAdditionalArgs: "['-DCMAKE_C_COMPILER_LAUNCHER=ccache', '-DCMAKE_CXX_COMPILER_LAUNCHER=ccache']"
         buildPreset: 'build-arm64-osx-release'
         buildPresetAdditionalArgs: "['--parallel 4']"
-        testPreset: 'test-arm64-osx-debug'
+        testPreset: 'test-arm64-osx-release'

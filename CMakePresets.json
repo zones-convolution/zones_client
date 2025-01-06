@@ -160,9 +160,9 @@
   ],
   "testPresets": [
     {
-      "name": "test-x64-msvc-debug",
-      "configurePreset": "x64-msvc-debug",
-      "configuration": "Debug",
+      "name": "test-x64-msvc-release",
+      "configurePreset": "x64-msvc-release",
+      "configuration": "Release",
       "output": {
         "outputOnFailure": true
       },
@@ -172,9 +172,9 @@
       }
     },
     {
-      "name": "test-x64-linux-debug",
-      "configurePreset": "x64-linux-debug",
-      "configuration": "Debug",
+      "name": "test-x64-linux-release",
+      "configurePreset": "x64-linux-release",
+      "configuration": "Release",
       "output": {
         "outputOnFailure": true
       },
@@ -184,9 +184,9 @@
       }
     },
     {
-      "name": "test-x64-osx-debug",
-      "configurePreset": "x64-osx-debug",
-      "configuration": "Debug",
+      "name": "test-x64-osx-release",
+      "configurePreset": "x64-osx",
+      "configuration": "Release",
       "output": {
         "outputOnFailure": true
       },
@@ -196,9 +196,9 @@
       }
     },
     {
-      "name": "test-arm64-osx-debug",
-      "configurePreset": "arm64-osx-debug",
-      "configuration": "Debug",
+      "name": "test-arm64-osx-release",
+      "configurePreset": "arm64-osx",
+      "configuration": "Release",
       "output": {
         "outputOnFailure": true
       },
