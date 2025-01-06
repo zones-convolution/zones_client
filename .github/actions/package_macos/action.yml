@@ -52,16 +52,22 @@ runs:
 
     - name: Create installer
       shell: bash
-      run: sudo packagesbuild --project ./zones.pkgproj --package-version "${{ env.VERSION }}" --identity "${{ inputs.DEVELOPER_ID_INSTALLER }}" --keychain ${{ steps.keychain.outputs.keychain-path }}
+      run: packagesbuild --project ./zones.pkgproj --package-version "${{ env.VERSION }}"
+
+    - name: Sign installer
+      shell: bash
+      run: |
+        mkdir builds/signed
+        productsign -s "${{ inputs.DEVELOPER_ID_INSTALLER }}" builds/Zones.pkg builds/signed/Zones.pkg
 
     - name: Notarize and Staple
       shell: bash
       run: |
-        xcrun notarytool submit builds/Zones.pkg --apple-id ${{ inputs.NOTARIZATION_USERNAME }} --password ${{ inputs.NOTARIZATION_PASSWORD }} --team-id ${{ inputs.TEAM_ID }} --wait
-        xcrun stapler staple builds/Zones.pkg
+        xcrun notarytool submit builds/signed/Zones.pkg --apple-id ${{ inputs.NOTARIZATION_USERNAME }} --password ${{ inputs.NOTARIZATION_PASSWORD }} --team-id ${{ inputs.TEAM_ID }} --wait
+        xcrun stapler staple builds/signed/Zones.pkg
 
     - name: Upload PKG (macOS)
       uses: actions/upload-artifact@v4
       with:
         name: Zones.pkg
-        path: builds/Zones.pkg
+        path: builds/signed/Zones.pkg
