@@ -118,49 +118,49 @@
   ],
   "buildPresets": [
     {
-      "name": "x64-msvc-debug",
+      "name": "build-x64-msvc-debug",
       "configurePreset": "x64-msvc-debug",
       "configuration": "Debug"
     },
     {
-      "name": "x64-msvc-release",
+      "name": "build-x64-msvc-release",
       "configurePreset": "x64-msvc",
       "configuration": "Release"
     },
     {
-      "name": "x64-linux-debug",
+      "name": "build-x64-linux-debug",
       "configurePreset": "x64-linux-debug",
       "configuration": "Debug"
     },
     {
-      "name": "x64-linux-release",
+      "name": "build-x64-linux-release",
       "configurePreset": "x64-linux",
       "configuration": "Release"
     },
     {
-      "name": "x64-osx-debug",
+      "name": "build-x64-osx-debug",
       "configurePreset": "x64-osx-debug",
       "configuration": "Debug"
     },
     {
-      "name": "x64-osx-release",
+      "name": "build-x64-osx-release",
       "configurePreset": "x64-osx",
       "configuration": "Release"
     },
     {
-      "name": "arm64-osx-debug",
+      "name": "build-arm64-osx-debug",
       "configurePreset": "arm64-osx-debug",
       "configuration": "Debug"
     },
     {
-      "name": "arm64-osx-release",
+      "name": "build-arm64-osx-release",
       "configurePreset": "arm64-osx",
       "configuration": "Release"
     }
   ],
   "testPresets": [
     {
-      "name": "x64-msvc-debug",
+      "name": "test-x64-msvc-debug",
       "configurePreset": "x64-msvc-debug",
       "configuration": "Debug",
       "output": {
@@ -172,7 +172,7 @@
       }
     },
     {
-      "name": "x64-linux-debug",
+      "name": "test-x64-linux-debug",
       "configurePreset": "x64-linux-debug",
       "configuration": "Debug",
       "output": {
@@ -184,7 +184,7 @@
       }
     },
     {
-      "name": "x64-osx-debug",
+      "name": "test-x64-osx-debug",
       "configurePreset": "x64-osx-debug",
       "configuration": "Debug",
       "output": {
@@ -196,7 +196,7 @@
       }
     },
     {
-      "name": "arm64-osx-debug",
+      "name": "test-arm64-osx-debug",
       "configurePreset": "arm64-osx-debug",
       "configuration": "Debug",
       "output": {
