@@ -1,6 +1,6 @@
 # Thanks to Pamplejuce for getting this on the right track, https://github.com/sudara/pamplejuce/
 
-name: build_and_release_arm
+name: build_and_release_x64
 
 on:
   workflow_dispatch:
@@ -8,7 +8,7 @@ on:
 env:
   CMAKE_BUILD_PARALLEL_LEVEL: 3
   BUILD_TYPE: Release
-  BUILD_DIR: builds/arm64-osx/client
+  BUILD_DIR: builds/x64-osx/client
 
 jobs:
   build_and_package:
@@ -19,7 +19,7 @@ jobs:
       matrix:
         include:
           - name: macOS
-            os: macos-14
+            os: macos-12
             pluginval-binary: pluginval.app/Contents/MacOS/pluginval
 
     steps:
@@ -33,7 +33,7 @@ jobs:
         uses: ./.github/actions/build_ui
 
       - name: Build and Test
-        uses: ./.github/actions/build_and_test_arm
+        uses: ./.github/actions/build_and_test_x64
 
       - name: Setup Environment
         uses: ./.github/actions/setup_environment
@@ -53,8 +53,8 @@ jobs:
           NOTARIZATION_USERNAME: ${{ secrets.NOTARIZATION_USERNAME }}
           NOTARIZATION_PASSWORD: ${{ secrets.NOTARIZATION_PASSWORD }}
           TEAM_ID: ${{ secrets.TEAM_ID }}
-          PACKAGES_PROJECT: ./zones_arm64.pkgproj
-          PACKAGE_NAME: Zones-arm64.pkg
+          PACKAGES_PROJECT: ./zones_x64.pkgproj
+          PACKAGE_NAME: Zones-x64.pkg
 
   release:
     if: contains(github.ref, 'tags/v')

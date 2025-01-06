@@ -28,6 +28,12 @@ inputs:
   TEAM_ID:
     description: 'TEAM_ID'
     required: true
+  PACKAGES_PROJECT:
+    description: 'PACKAGES_PROJECT'
+    required: true
+  PACKAGE_NAME:
+    description: 'PACKAGE_NAME'
+    required: true
 runs:
   using: "composite"
   steps:
@@ -52,7 +58,7 @@ runs:
 
     - name: Create installer
       shell: bash
-      run: packagesbuild --project ./zones.pkgproj --package-version "${{ env.VERSION }}"
+      run: packagesbuild --project "${{ inputs.PACKAGES_PROJECT }}" --package-version "${{ env.VERSION }}"
 
     - name: Sign installer
       shell: bash
@@ -69,5 +75,5 @@ runs:
     - name: Upload PKG (macOS)
       uses: actions/upload-artifact@v4
       with:
-        name: Zones.pkg
+        name: ${{ inputs.PACKAGE_NAME }}
         path: builds/signed/Zones.pkg

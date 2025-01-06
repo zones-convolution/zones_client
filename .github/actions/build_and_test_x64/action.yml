@@ -1,0 +1,18 @@
+name: "build_and_test_x64"
+description: "Setup VCKPG, CMake, build, test and cache"
+runs:
+  using: "composite"
+  steps:
+    - uses: lukka/get-cmake@latest
+    - name: ccache
+      uses: hendrikmuhs/ccache-action@v1.2
+    - name: Setup vcpkg (it does not install any package yet)
+      uses: lukka/run-vcpkg@v11
+    - name: Run CMake consuming CMakePreset.json and run vcpkg to build dependencies
+      uses: lukka/run-cmake@v10
+      with:
+        configurePreset: 'x64-osx'
+        configurePresetAdditionalArgs: "['-DCMAKE_C_COMPILER_LAUNCHER=ccache', '-DCMAKE_CXX_COMPILER_LAUNCHER=ccache']"
+        buildPreset: 'build-x64-osx-release'
+        buildPresetAdditionalArgs: "['--parallel 4']"
+        testPreset: 'test-x64-osx-release'
