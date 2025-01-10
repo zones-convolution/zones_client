@@ -31,10 +31,11 @@ jobs:
 
       - uses: ilammy/msvc-dev-cmd@v1
 
-      - name: Setup NuGet.exe for use with actions
-        uses: NuGet/setup-nuget@v2.0.1
-
-      - run: nuget install Microsoft.Web.WebView2 -Version 1.0.2903.40
+      - name: Install WebView2
+        shell: pwsh
+        run: |
+          Register-PackageSource -provider NuGet -name nugetRepository -location https://www.nuget.org/api/v2
+          Install-Package Microsoft.Web.WebView2 -Scope CurrentUser -RequiredVersion 1.0.1901.177 -Source nugetRepository
 
       - name: Build and Test
         uses: ./.github/actions/build_and_test_win
