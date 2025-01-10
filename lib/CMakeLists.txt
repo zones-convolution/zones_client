@@ -1,3 +1,12 @@
+if (DEFINED ENV{CI} AND WIN32)
+    execute_process(
+            COMMAND nuget install Microsoft.Web.WebView2 -OutputDirectory "${CMAKE_BINARY_DIR}/_deps/Nuget"
+            WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
+    )
+endif ()
+
+set(JUCE_WEBVIEW2_PACKAGE_LOCATION "${CMAKE_BINARY_DIR}/_deps/Nuget")
+
 add_subdirectory(JUCE)
 
 add_library(rocket INTERFACE)
