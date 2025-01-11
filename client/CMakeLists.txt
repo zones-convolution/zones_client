@@ -58,6 +58,15 @@ set(SOURCES
 
 set(ASSETS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/ui/dist/)
 
+if (DEFINED ENV{CI} AND WIN32)
+    execute_process(
+            COMMAND nuget install Microsoft.Web.WebView2 -OutputDirectory "${CMAKE_BINARY_DIR}/_deps/Nuget"
+            WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
+    )
+
+    set(JUCE_WEBVIEW2_PACKAGE_LOCATION "${CMAKE_BINARY_DIR}/_deps/Nuget")
+endif ()
+
 juce_add_plugin(
         ${BINARY}
         PLUGIN_MANUFACTURER_CODE Zone
