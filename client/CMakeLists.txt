@@ -67,6 +67,13 @@ if (DEFINED ENV{CI} AND WIN32)
     set(JUCE_WEBVIEW2_PACKAGE_LOCATION "${CMAKE_BINARY_DIR}/_deps/Nuget")
 endif ()
 
+set(FORMATS AU VST3)
+set(SHOULD_COPY FALSE)
+if (NOT DEFINED ENV{CI} AND APPLE)
+    list(APPEND FORMATS Standalone)
+    set(SHOULD_COPY TRUE)
+endif ()
+
 juce_add_plugin(
         ${BINARY}
         PLUGIN_MANUFACTURER_CODE Zone
@@ -75,8 +82,8 @@ juce_add_plugin(
         COMPANY_NAME "${COMPANY_NAME}"
         BUNDLE_ID "${BUNDLE_ID}"
         VERSION "${CURRENT_VERSION}"
-        FORMATS Standalone VST3 AU
-        COPY_PLUGIN_AFTER_BUILD TRUE
+        FORMATS ${FORMATS}
+        COPY_PLUGIN_AFTER_BUILD ${SHOULD_COPY}
         NEEDS_WEBVIEW2 TRUE
         NEEDS_WEB_BROWSER TRUE
         NEEDS_CURL TRUE)
@@ -107,7 +114,7 @@ if (NOT DEV_LOCALHOST AND NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
         get_target_property(ARTIFACT_FILE ${ACTIVE_TARGET} JUCE_PLUGIN_ARTEFACT_FILE)
         set(RESOURCE_DIR "${ARTIFACT_FILE}/Contents/Resources")
 
-        add_custom_command(TARGET ${ACTIVE_TARGET} POST_BUILD
+        add_custom_command(TARGET ${ACTIVE_TARGET} PRE_BUILD
                 COMMAND ${CMAKE_COMMAND} -E rm -rf "${RESOURCE_DIR}/dist"
                 COMMAND ${CMAKE_COMMAND} -E make_directory "${RESOURCE_DIR}/dist"
                 COMMAND ${CMAKE_COMMAND} -E copy_directory "${ASSETS_DIR}" "${RESOURCE_DIR}/dist"
