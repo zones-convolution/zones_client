@@ -3,6 +3,18 @@
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
 
+static void from_json (const json & data, PreferencesController::VersionData & version_data)
+{
+    data.at ("versionNumber").get_to (version_data.version_number);
+    data.at ("buildType").get_to (version_data.build_type);
+}
+
+static void to_json (json & data, const PreferencesController::VersionData & version_data)
+{
+    data = json {{"versionNumber", version_data.version_number},
+                 {"buildType", version_data.build_type}};
+}
+
 PreferencesRelay::PreferencesRelay (juce::WebBrowserComponent & web_browser_component,
                                     PreferencesController & preferences_controller)
     : web_browser_component_ (web_browser_component)
@@ -53,6 +65,15 @@ PreferencesRelay::buildOptions (const juce::WebBrowserComponent::Options & initi
                                  const auto & preferences =
                                      preferences_controller_.GetPreferences ();
                                  json data = preferences;
+
+                                 JUCE_ASSERT_MESSAGE_THREAD;
+                                 complete ({data.dump ()});
+                             })
+        .withNativeFunction ("get_version_data_native",
+                             [&] (auto & var, auto complete)
+                             {
+                                 const auto & version_data = preferences_controller_.GetVersion ();
+                                 json data = version_data;
 
                                  JUCE_ASSERT_MESSAGE_THREAD;
                                  complete ({data.dump ()});

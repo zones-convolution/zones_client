@@ -58,6 +58,7 @@ set(SOURCES
 
 set(ASSETS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/ui/dist/)
 
+
 if (DEFINED ENV{CI} AND WIN32)
     execute_process(
             COMMAND nuget install Microsoft.Web.WebView2 -OutputDirectory "${CMAKE_BINARY_DIR}/_deps/Nuget"
@@ -88,13 +89,16 @@ juce_add_plugin(
         NEEDS_WEB_BROWSER TRUE
         NEEDS_CURL TRUE)
 
+
 target_compile_definitions(${BINARY}
         PRIVATE
+        VERSION="${CURRENT_VERSION}"
         "DEV_LOCALHOST=$<BOOL:$ENV{DEV_LOCALHOST}>"
         JUCE_WEB_BROWSER=1
         JUCE_USE_CURL=1
         JUCE_USE_WIN_WEBVIEW2_WITH_STATIC_LINKING=1
         JUCE_VST3_CAN_REPLACE_VST2=0
+
 )
 
 target_sources(${BINARY} PRIVATE ${SOURCES})
@@ -121,3 +125,4 @@ if (NOT DEV_LOCALHOST AND NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
                 VERBATIM)
     endforeach ()
 endif ()
+

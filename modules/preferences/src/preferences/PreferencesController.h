@@ -14,7 +14,18 @@ public:
     void RevealUserPath (const std::filesystem::path & user_path);
     [[nodiscard]] Preferences GetPreferences () const;
 
+    struct VersionData
+    {
+        std::string version_number;
+        std::string build_type;
+    };
+
+    void SetVersion (const VersionData & version_data);
+    [[nodiscard]] VersionData GetVersion () const;
+
 private:
     static const juce::String kPathPickerDialogTitle;
     std::unique_ptr<juce::FileChooser> directory_picker_;
+
+    VersionData version_data_ {};
 };

@@ -57,3 +57,13 @@ void PreferencesController::RevealUserPath (const std::filesystem::path & user_p
     if (path_it != user_paths.end ())
         juce::File (path_it->string ()).revealToUser ();
 }
+
+void PreferencesController::SetVersion (const PreferencesController::VersionData & version_data)
+{
+    version_data_ = version_data;
+}
+
+PreferencesController::VersionData PreferencesController::GetVersion () const
+{
+    return version_data_;
+}

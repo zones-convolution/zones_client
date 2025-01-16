@@ -6,7 +6,8 @@ import { Separator } from "@/components/ui/separator";
 import { usePreferences } from "@/hooks/use_preferences";
 
 const Preferences = () => {
-  const { preferences, addPath, revealPath, removePath } = usePreferences();
+  const { preferences, versionData, addPath, revealPath, removePath } =
+    usePreferences();
 
   return (
     <div className="flex flex-col bg-card p-4 gap-4 h-full">
@@ -45,6 +46,14 @@ const Preferences = () => {
           </div>
         );
       })}
+      <Separator />
+      <div className={"flex flex-row gap-2"}>
+        <div>Version:</div>
+        <div>
+          {versionData.versionNumber}
+          {versionData.buildType == "DEBUG" ? " | DEBUG" : ""}
+        </div>
+      </div>
     </div>
   );
 };

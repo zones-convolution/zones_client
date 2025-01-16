@@ -126,6 +126,10 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (
 #endif
 
     addAndMakeVisible (web_browser_component_);
+
+    preferences_controller_.SetVersion (
+        {.version_number = std::string (VERSION),
+         .build_type = std::string (DEV_LOCALHOST ? "DEBUG" : "RELEASE")});
 }
 
 void AudioPluginAudioProcessorEditor::resized ()
