@@ -18,6 +18,8 @@ public:
     void LoadIr (const IrSelection & ir_selection);
     IrGraphState GetCurrentGraphState ();
 
+    void internalBlockSizeValueChanged (int new_block_size);
+
 private:
     void UpdateParametersFromTree ();
     void PerformRender ();

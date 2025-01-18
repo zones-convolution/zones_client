@@ -39,7 +39,6 @@ private:
 
     AudioPluginAudioProcessor & processor_;
     ProcessorContainer & processor_container_;
-    PreferencesController preferences_controller_ {};
 
     ParameterRelay parameter_relay_;
     EngineRelay engine_relay_;

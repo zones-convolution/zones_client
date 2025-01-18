@@ -2,6 +2,11 @@
 
 const juce::String PreferencesController::kPathPickerDialogTitle = "Pick Project Directory";
 
+PreferencesController::PreferencesController (IrController & ir_controller)
+    : ir_controller_ (ir_controller)
+{
+}
+
 Preferences PreferencesController::GetPreferences () const
 {
     Preferences preferences;
@@ -66,4 +71,25 @@ void PreferencesController::SetVersion (const PreferencesController::VersionData
 PreferencesController::VersionData PreferencesController::GetVersion () const
 {
     return version_data_;
+}
+
+void PreferencesController::SetInternalBlockSize (const int new_blocksize)
+{
+    if (new_blocksize <= max_block_size_)
+    {
+        ir_controller_.internalBlockSizeValueChanged (new_blocksize);
+    }
+}
+
+void PreferencesController::SetMaxBlockSize (const int new_maximum)
+{
+    max_block_size_ = new_maximum;
+
+    if (ir_controller_.GetCurrentGraphState ().convolver_block_size > new_maximum)
+        ir_controller_.internalBlockSizeValueChanged (new_maximum);
+}
+PreferencesController::BlockSizes PreferencesController::GetBlockSizes ()
+{
+    return BlockSizes {.maximum = max_block_size_,
+                       .current = ir_controller_.GetCurrentGraphState ().convolver_block_size};
 }

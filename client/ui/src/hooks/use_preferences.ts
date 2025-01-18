@@ -10,11 +10,17 @@ import {
   getVersionData,
   VersionData,
   defaultVersionData,
+  BlockSizes,
+  defaultBlockSizes,
+  setInternalBlockSize,
+  getBlockSizes,
 } from "@/ipc/preferences_ipc";
 
 interface IUsePreferences {
   preferences: Preferences;
   versionData: VersionData;
+  blockSizes: BlockSizes;
+  setBlockSize: (blockSize: number) => Promise<void>;
   addPath: () => Promise<void>;
   removePath: (path: string) => Promise<void>;
   revealPath: (path: string) => Promise<void>;
@@ -25,10 +31,12 @@ const usePreferences = (): IUsePreferences => {
     useState<Preferences>(defaultPreferences);
   const [versionData, setVersionData] =
     useState<VersionData>(defaultVersionData);
+  const [blockSizes, setBlockSizes] = useState<BlockSizes>(defaultBlockSizes);
 
   useEffect(() => {
     getPreferences().then(setPreferences);
     getVersionData().then(setVersionData);
+    getBlockSizes().then(setBlockSizes);
   }, []);
 
   const addPath = async () => {
@@ -39,9 +47,15 @@ const usePreferences = (): IUsePreferences => {
     setPreferences(await removePreferencesPath(path));
   };
 
+  const setBlockSize = async (blockSize: number) => {
+    await setInternalBlockSize(blockSize);
+  };
+
   return {
     preferences: preferences,
     versionData: versionData,
+    blockSizes: blockSizes,
+    setBlockSize: setBlockSize,
     addPath: addPath,
     removePath: removePath,
     revealPath: revealPreferencesPath,

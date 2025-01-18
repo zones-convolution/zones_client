@@ -15,6 +15,17 @@ static void to_json (json & data, const PreferencesController::VersionData & ver
                  {"buildType", version_data.build_type}};
 }
 
+static void from_json (const json & data, PreferencesController::BlockSizes & block_sizes)
+{
+    data.at ("maximum").get_to (block_sizes.maximum);
+    data.at ("current").get_to (block_sizes.current);
+}
+
+static void to_json (json & data, const PreferencesController::BlockSizes & block_sizes)
+{
+    data = json {{"maximum", block_sizes.maximum}, {"current", block_sizes.current}};
+}
+
 PreferencesRelay::PreferencesRelay (juce::WebBrowserComponent & web_browser_component,
                                     PreferencesController & preferences_controller)
     : web_browser_component_ (web_browser_component)
@@ -69,6 +80,39 @@ PreferencesRelay::buildOptions (const juce::WebBrowserComponent::Options & initi
                                  JUCE_ASSERT_MESSAGE_THREAD;
                                  complete ({data.dump ()});
                              })
+
+        .withNativeFunction ("get_block_sizes_native",
+                             [&] (auto & var, auto complete)
+                             {
+                                 json data = preferences_controller_.GetBlockSizes ();
+
+                                 JUCE_ASSERT_MESSAGE_THREAD;
+                                 complete ({data.dump ()});
+                             })
+        .withNativeFunction (
+            "set_internal_block_size_native",
+            [&] (auto & var, auto complete)
+            {
+                // the string and error checking might be unnecessary here
+                // weak reference might be needed
+                std::string block_size_string;
+                json::parse (var [0].toString ().toStdString ()).get_to (block_size_string);
+
+                auto block_size_int = 0;
+                try
+                {
+                    block_size_int = std::stoi (block_size_string);
+                }
+                catch (...)
+                {
+                }
+
+                if (block_size_int > 0)
+                    preferences_controller_.SetInternalBlockSize (block_size_int);
+
+                JUCE_ASSERT_MESSAGE_THREAD;
+                complete ({});
+            })
         .withNativeFunction ("get_version_data_native",
                              [&] (auto & var, auto complete)
                              {

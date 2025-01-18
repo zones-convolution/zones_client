@@ -93,7 +93,7 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (
                      processor_container.ir_engine_,
                      processor_container.convolution_engine_)
     , player_relay_ (web_browser_component_, processor_container.player_controller_)
-    , preferences_relay_ (web_browser_component_, preferences_controller_)
+    , preferences_relay_ (web_browser_component_, processor_container.preferences_controller_)
     , user_zones_relay_ (web_browser_component_)
     , load_relay_ (web_browser_component_, processor_container.load_controller_)
     , metering_relay_ (processor_container.input_graph_metering_,
@@ -126,10 +126,6 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (
 #endif
 
     addAndMakeVisible (web_browser_component_);
-
-    preferences_controller_.SetVersion (
-        {.version_number = std::string (VERSION),
-         .build_type = std::string (DEV_LOCALHOST ? "DEBUG" : "RELEASE")});
 }
 
 void AudioPluginAudioProcessorEditor::resized ()

@@ -24,6 +24,10 @@ ProcessorContainer::ProcessorContainer (juce::AudioProcessor & audio_processor)
     notification_queue_.SetVisitor (&audio_engine_);
 
     RegisterIrEngineListeners ();
+
+    preferences_controller_.SetVersion (
+        {.version_number = std::string (VERSION),
+         .build_type = std::string (DEV_LOCALHOST ? "DEBUG" : "RELEASE")});
 }
 
 void ProcessorContainer::Prepare (double sampleRate,
@@ -40,6 +44,7 @@ void ProcessorContainer::Prepare (double sampleRate,
     if (! IsTargetSupported (output_channel_set, state.target_format))
         convolution_engine_.Clear ();
     load_controller_.UpdateValidTargetFormats (GetTargetFormatsForChannelSet (output_channel_set));
+    preferences_controller_.SetMaxBlockSize (samplesPerBlock);
 }
 
 void ProcessorContainer::RegisterIrEngineListeners ()

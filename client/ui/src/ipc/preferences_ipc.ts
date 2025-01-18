@@ -11,8 +11,14 @@ const VersionData = z.object({
   buildType: z.string(),
 });
 
+const BlockSizes = z.object({
+  maximum: z.number(),
+  current: z.number(),
+});
+
 export type Preferences = z.infer<typeof Preferences>;
 export type VersionData = z.infer<typeof VersionData>;
+export type BlockSizes = z.infer<typeof BlockSizes>;
 
 const addUserPathNative = juce.getNativeFunction("add_user_path_native");
 const removeUserPathNative = juce.getNativeFunction("remove_user_path_native");
@@ -21,8 +27,21 @@ const getPreferencesNative = juce.getNativeFunction("get_preferences_native");
 
 const getVersionDataNative = juce.getNativeFunction("get_version_data_native");
 
+const getBlockSizesNative = juce.getNativeFunction("get_block_sizes_native");
+const setInternalBlockSizeNative = juce.getNativeFunction(
+  "set_internal_block_size_native",
+);
+
 export const defaultPreferences: Preferences = {
   userPaths: [],
+};
+export const defaultVersionData: VersionData = {
+  versionNumber: "",
+  buildType: "",
+};
+export const defaultBlockSizes: BlockSizes = {
+  maximum: 0,
+  current: 0,
 };
 
 const handleReceivePreferences = (data: any) => {
@@ -51,10 +70,6 @@ export const revealPreferencesPath = async (path: string) => {
   await revealUserPathNative(path);
 };
 
-export const defaultVersionData: VersionData = {
-  versionNumber: "",
-  buildType: "",
-};
 const handleReceiveVersionData = (data: any) => {
   try {
     return VersionData.parse(JSON.parse(data));
@@ -67,4 +82,21 @@ const handleReceiveVersionData = (data: any) => {
 
 export const getVersionData = async () => {
   return handleReceiveVersionData(await getVersionDataNative());
+};
+
+const handleReceiveBlockSizes = (data: any) => {
+  try {
+    return BlockSizes.parse(JSON.parse(data));
+  } catch (err) {
+    console.error("Failed to parse BlockSizesIPC!", err);
+  }
+
+  return defaultBlockSizes;
+};
+
+export const getBlockSizes = async () => {
+  return handleReceiveBlockSizes(await getBlockSizesNative());
+};
+export const setInternalBlockSize = async (blockSize: number) => {
+  await setInternalBlockSizeNative(blockSize);
 };

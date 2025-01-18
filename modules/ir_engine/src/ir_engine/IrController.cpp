@@ -66,7 +66,7 @@ void IrController::LoadIr (const IrSelection & ir_selection)
     current_graph_state_.base_ir_buffer = IrGraphProcessor::BoxedBuffer {ir_data.buffer};
     current_graph_state_.sample_rate = ir_data.sample_rate;
     current_graph_state_.bit_depth = ir_data.bit_depth;
-    current_graph_state_.base_ir = ir_path.string();
+    current_graph_state_.base_ir = ir_path.string ();
 
     PerformRender ();
 }
@@ -102,4 +102,13 @@ IrGraphState IrController::GetCurrentGraphState ()
 
 void IrController::parameterGestureChanged (int parameterIndex, bool gestureIsStarting)
 {
+}
+
+void IrController::internalBlockSizeValueChanged (const int new_block_size)
+{
+    {
+        std::lock_guard lock {current_graph_state_mutex_};
+        current_graph_state_.convolver_block_size = new_block_size;
+    }
+    startTimer (kDebounceTimeMs);
 }

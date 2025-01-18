@@ -11,6 +11,7 @@
 #include "controllers/visualiser/VisualiserController.h"
 #include "ir_engine/IrController.h"
 #include "ir_engine/IrEngine.h"
+#include "preferences/PreferencesController.h"
 #include "zones_convolver/zones_convolver.h"
 
 #include <juce_audio_processors/juce_audio_processors.h>
@@ -50,6 +51,8 @@ public:
     zones::ConvolutionEngine convolution_engine_ {convolution_pool_};
 
     VisualiserController visualiser_controller_ {};
+
+    PreferencesController preferences_controller_ {ir_controller_};
 
 private:
     void RegisterIrEngineListeners ();

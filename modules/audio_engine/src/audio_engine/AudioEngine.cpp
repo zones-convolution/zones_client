@@ -21,23 +21,31 @@ AudioEngine::CreateConvolverSpecForState (const IrGraphState & ir_graph_state) c
                              ? zones::Convolver::FadeStrategy::kCrossfade
                              : zones::Convolver::FadeStrategy::kInOut;
 
+    auto block_size = ir_graph_state.convolver_block_size;
+
     switch (ir_graph_state.target_format)
     {
         case TargetFormat::kMono:
-            return zones::Convolver::ConvolverSpec {
-                .input_routing = {0}, .output_routing = {0}, .fade_strategy = fade_strategy};
+            return zones::Convolver::ConvolverSpec {.input_routing = {0},
+                                                    .output_routing = {0},
+                                                    .fade_strategy = fade_strategy,
+                                                    .internal_block_size = block_size};
         case TargetFormat::kStereo:
-            return zones::Convolver::ConvolverSpec {
-                .input_routing = {0, 1}, .output_routing = {0, 1}, .fade_strategy = fade_strategy};
+            return zones::Convolver::ConvolverSpec {.input_routing = {0, 1},
+                                                    .output_routing = {0, 1},
+                                                    .fade_strategy = fade_strategy,
+                                                    .internal_block_size = block_size};
         case TargetFormat::kTrueStereo:
             return zones::Convolver::ConvolverSpec {.input_routing = {0, 0, 1, 1},
                                                     .output_routing = {0, 1, 0, 1},
-                                                    .fade_strategy = fade_strategy};
+                                                    .fade_strategy = fade_strategy,
+                                                    .internal_block_size = block_size};
         case TargetFormat::kFoa:
         case TargetFormat::kQuadraphonic:
             return zones::Convolver::ConvolverSpec {.input_routing = {0, 1, 2, 3},
                                                     .output_routing = {0, 1, 2, 3},
-                                                    .fade_strategy = fade_strategy};
+                                                    .fade_strategy = fade_strategy,
+                                                    .internal_block_size = block_size};
     }
 }
 

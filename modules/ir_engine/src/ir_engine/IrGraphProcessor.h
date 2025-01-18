@@ -28,6 +28,7 @@ struct IrGraphState
     IrGraphProcessor::BoxedBuffer base_ir_buffer;
     double sample_rate;
     double bit_depth;
+    int convolver_block_size;
     float room_size;
     float reverb_time_norm;
     float resampler;
