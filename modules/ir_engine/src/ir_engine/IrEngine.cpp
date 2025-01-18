@@ -85,7 +85,8 @@ IrGraph IrEngine::CreateGraphForState (const IrGraphState & ir_graph_state) cons
         IrGraph ().WithProcessor ({IrGraph::CachePolicy ()
                                        .WithPolicyIdentifier ("base_ir_processor")
                                        .WithCachedHandle (&IrGraphState::CacheBaseIr)
-                                       .WithCachedHandle (&IrGraphState::CacheTargetFormat),
+                                       .WithCachedHandle (&IrGraphState::CacheTargetFormat)
+                                       .WithCachedHandle (&IrGraphState::CacheConvolverBlockSize),
                                    base_ir_processor_});
     switch (ir_graph_state.target_format)
     {

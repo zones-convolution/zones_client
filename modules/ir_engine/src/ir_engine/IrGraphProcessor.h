@@ -90,4 +90,9 @@ struct IrGraphState
     {
         return state.attack_norm;
     }
+
+    static int CacheConvolverBlockSize (const IrGraphState & state)
+    {
+        return state.convolver_block_size;
+    }
 };

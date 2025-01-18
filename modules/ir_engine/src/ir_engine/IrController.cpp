@@ -106,9 +106,8 @@ void IrController::parameterGestureChanged (int parameterIndex, bool gestureIsSt
 
 void IrController::internalBlockSizeValueChanged (const int new_block_size)
 {
-    {
-        std::lock_guard lock {current_graph_state_mutex_};
-        current_graph_state_.convolver_block_size = new_block_size;
-    }
+    std::lock_guard lock {current_graph_state_mutex_};
+    current_graph_state_.convolver_block_size = new_block_size;
+
     startTimer (kDebounceTimeMs);
 }

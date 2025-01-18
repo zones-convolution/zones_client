@@ -1,9 +1,31 @@
-import { PlusCircle, Trash, FolderOpen } from "lucide-react";
+import { PlusCircle, Trash, FolderOpen, MoreHorizontal } from "lucide-react";
+import { number } from "zod";
 
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Separator } from "@/components/ui/separator";
 
 import { usePreferences } from "@/hooks/use_preferences";
+
+function getValidBlockSizes(maximum: number): number[] {
+  console.log(maximum);
+  const result: number[] = [];
+  let currentpo2 = 32;
+
+  while (currentpo2 <= maximum) {
+    result.push(currentpo2);
+    currentpo2 *= 2;
+  }
+  console.log(result);
+  return result;
+}
 
 const Preferences = () => {
   const {
@@ -56,6 +78,33 @@ const Preferences = () => {
       <Separator />
       <div>{blockSizes.current}</div>
       <div>{blockSizes.maximum}</div>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          {
+            <Button aria-haspopup="true" size="icon" variant="ghost">
+              <MoreHorizontal className="h-4 w-4" />
+              <span className="sr-only">Toggle menu</span>
+            </Button>
+          }
+        </DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuLabel>Internal Block Size</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          {getValidBlockSizes(blockSizes.maximum).map((validBlockSize) => {
+            return (
+              <DropdownMenuCheckboxItem
+                className="uppercase"
+                checked={validBlockSize == blockSizes.current}
+                onCheckedChange={(checked) => {
+                  if (checked) setBlockSize(validBlockSize);
+                }}
+              >
+                {validBlockSize}
+              </DropdownMenuCheckboxItem>
+            );
+          })}
+        </DropdownMenuContent>
+      </DropdownMenu>
 
       <Separator />
       <div className={"flex flex-row gap-2"}>

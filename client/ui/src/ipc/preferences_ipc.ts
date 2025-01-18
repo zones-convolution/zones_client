@@ -98,5 +98,5 @@ export const getBlockSizes = async () => {
   return handleReceiveBlockSizes(await getBlockSizesNative());
 };
 export const setInternalBlockSize = async (blockSize: number) => {
-  await setInternalBlockSizeNative(blockSize);
+  await setInternalBlockSizeNative(JSON.stringify(blockSize.toString()));
 };
