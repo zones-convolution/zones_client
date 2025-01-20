@@ -87,7 +87,8 @@ void PreferencesController::SetMaxBlockSize (const int new_maximum)
 {
     max_block_size_ = new_maximum;
 
-    if (ir_controller_.GetCurrentGraphState ().convolver_block_size > new_maximum)
+    auto current_block_size = ir_controller_.GetCurrentGraphState ().convolver_block_size;
+    if (current_block_size <= 0 || current_block_size > new_maximum)
         ir_controller_.internalBlockSizeValueChanged (new_maximum);
 
     OnBlockSizeUpdated ();
