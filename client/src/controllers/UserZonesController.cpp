@@ -34,6 +34,8 @@ void UserZonesController::Import (ImportMetadata import_metadata)
 
     for (auto & import_ir : import_metadata.metadata.irs)
     {
+        if (! import_ir.title.has_value () || ! import_ir.ir_id.has_value ())
+            continue;
         auto safe_ir_title = std::filesystem::path (
             juce::File::createLegalFileName (import_ir.title.value ()).toStdString ());
         auto relative_path = "impulse_responses" / safe_ir_title;
