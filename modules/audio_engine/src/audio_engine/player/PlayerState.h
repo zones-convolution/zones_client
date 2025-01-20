@@ -6,7 +6,7 @@ namespace Player
 enum Resource
 {
     kSnare,
-    kNumbers
+    kVoice
 };
 
 struct PlayerState
@@ -14,6 +14,6 @@ struct PlayerState
     Resource resource = Resource::kSnare;
     bool looping = false;
     bool playing = false;
-    float gain = 1.f;
+    float gain = 0.6f;
 };
 }

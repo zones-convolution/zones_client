@@ -11,7 +11,7 @@ static void NormaliseImpulseResponse (juce::AudioBuffer<float> & output_buffer)
 
     auto norm_factor = 1.0f / output_buffer.getMagnitude (0, num_samples);
 
-    norm_factor *= 0.125f / max_rms;
+    norm_factor *= 0.05f / max_rms;
     norm_factor *= std::min (1.2f, 48000.0f / static_cast<float> (num_samples));
     norm_factor *= juce::Decibels::decibelsToGain (-12.0f);
     norm_factor = std::clamp (norm_factor, 0.0f, 4.0f);

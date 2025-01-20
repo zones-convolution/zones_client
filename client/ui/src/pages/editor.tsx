@@ -117,7 +117,7 @@ const ListenPanel = () => {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="snare">Snare</SelectItem>
-              <SelectItem value="numbers">Numbers</SelectItem>
+              <SelectItem value="voice">Voice</SelectItem>
             </SelectContent>
           </Select>
         </div>
