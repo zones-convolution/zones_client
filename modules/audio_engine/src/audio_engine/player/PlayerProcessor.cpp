@@ -95,6 +95,8 @@ void PlayerProcessor::reset ()
     player_state_.gain = 1.f;
 
     Clear ();
+
+    notification_queue_.PushCommand (player_state_);
 }
 
 void PlayerProcessor::Clear ()

@@ -62,6 +62,7 @@ void AudioGraph::reset ()
     dry_wet_mixer_.reset ();
     convolution_engine_.reset ();
     eq_processor_.reset ();
+    player_processor_.reset ();
 }
 
 void AudioGraph::operator() (const CommandQueue::SetPlayerStateCommand & set_player_state_command)
