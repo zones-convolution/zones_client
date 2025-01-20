@@ -31,6 +31,16 @@ PreferencesRelay::PreferencesRelay (juce::WebBrowserComponent & web_browser_comp
     : web_browser_component_ (web_browser_component)
     , preferences_controller_ (preferences_controller)
 {
+    connections_ += {preferences_controller.OnBlockSizeUpdated.connect (
+        [&]
+        {
+            auto state = preferences_controller.GetBlockSizes ();
+            json data = state;
+
+            JUCE_ASSERT_MESSAGE_THREAD;
+            web_browser_component_.emitEventIfBrowserIsVisible ("on_block_size_update_native",
+                                                                {data.dump ()});
+        })};
 }
 
 juce::WebBrowserComponent::Options

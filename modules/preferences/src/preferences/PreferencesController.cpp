@@ -79,6 +79,8 @@ void PreferencesController::SetInternalBlockSize (const int new_blocksize)
     {
         ir_controller_.internalBlockSizeValueChanged (new_blocksize);
     }
+
+    OnBlockSizeUpdated ();
 }
 
 void PreferencesController::SetMaxBlockSize (const int new_maximum)
@@ -87,6 +89,8 @@ void PreferencesController::SetMaxBlockSize (const int new_maximum)
 
     if (ir_controller_.GetCurrentGraphState ().convolver_block_size > new_maximum)
         ir_controller_.internalBlockSizeValueChanged (new_maximum);
+
+    OnBlockSizeUpdated ();
 }
 PreferencesController::BlockSizes PreferencesController::GetBlockSizes ()
 {

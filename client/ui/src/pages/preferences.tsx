@@ -15,7 +15,6 @@ import { Separator } from "@/components/ui/separator";
 import { usePreferences } from "@/hooks/use_preferences";
 
 function getValidBlockSizes(maximum: number): number[] {
-  console.log(maximum);
   const result: number[] = [];
   let currentpo2 = 32;
 
@@ -23,7 +22,9 @@ function getValidBlockSizes(maximum: number): number[] {
     result.push(currentpo2);
     currentpo2 *= 2;
   }
-  console.log(result);
+
+  if (!((maximum & (maximum - 1)) === 0)) result.push(maximum);
+
   return result;
 }
 
@@ -76,36 +77,37 @@ const Preferences = () => {
         );
       })}
       <Separator />
-      <div>{blockSizes.current}</div>
-      <div>{blockSizes.maximum}</div>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          {
-            <Button aria-haspopup="true" size="icon" variant="ghost">
-              <MoreHorizontal className="h-4 w-4" />
-              <span className="sr-only">Toggle menu</span>
-            </Button>
-          }
-        </DropdownMenuTrigger>
-        <DropdownMenuContent>
-          <DropdownMenuLabel>Internal Block Size</DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          {getValidBlockSizes(blockSizes.maximum).map((validBlockSize) => {
-            return (
-              <DropdownMenuCheckboxItem
-                className="uppercase"
-                checked={validBlockSize == blockSizes.current}
-                onCheckedChange={(checked) => {
-                  if (checked) setBlockSize(validBlockSize);
-                }}
-              >
-                {validBlockSize}
-              </DropdownMenuCheckboxItem>
-            );
-          })}
-        </DropdownMenuContent>
-      </DropdownMenu>
-
+      <div className={"flex flex-row justify-between"}>
+        <div className={"flex items-center"}>Set internal block size</div>
+        <div className={"flex"}>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              {
+                <Button aria-haspopup="true" size="icon">
+                  {blockSizes.current}
+                </Button>
+              }
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuLabel>Internal Block Size</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              {getValidBlockSizes(blockSizes.maximum).map((validBlockSize) => {
+                return (
+                  <DropdownMenuCheckboxItem
+                    className="uppercase"
+                    checked={validBlockSize == blockSizes.current}
+                    onCheckedChange={(checked) => {
+                      if (checked) setBlockSize(validBlockSize);
+                    }}
+                  >
+                    {validBlockSize}
+                  </DropdownMenuCheckboxItem>
+                );
+              })}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </div>
       <Separator />
       <div className={"flex flex-row gap-2"}>
         <div>Version:</div>

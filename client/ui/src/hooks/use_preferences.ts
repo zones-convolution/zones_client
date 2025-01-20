@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 
+import { playerUpdateListener } from "@/ipc/player_ipc";
 import {
   Preferences,
   getPreferences,
@@ -14,6 +15,7 @@ import {
   defaultBlockSizes,
   setInternalBlockSize,
   getBlockSizes,
+  blockSizeUpdateListener,
 } from "@/ipc/preferences_ipc";
 
 interface IUsePreferences {
@@ -37,6 +39,7 @@ const usePreferences = (): IUsePreferences => {
     getPreferences().then(setPreferences);
     getVersionData().then(setVersionData);
     getBlockSizes().then(setBlockSizes);
+    return blockSizeUpdateListener(setBlockSizes);
   }, []);
 
   const addPath = async () => {

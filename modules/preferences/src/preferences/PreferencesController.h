@@ -4,6 +4,7 @@
 #include "ir_engine/IrController.h"
 
 #include <juce_gui_basics/juce_gui_basics.h>
+#include <rocket.hpp>
 
 class PreferencesController
 {
@@ -30,8 +31,10 @@ public:
         int current = 0;
     };
 
+    rocket::signal<void ()> OnBlockSizeUpdated;
     void SetInternalBlockSize (const int new_blocksize);
     void SetMaxBlockSize (const int new_maximum);
+
     BlockSizes GetBlockSizes ();
 
 private:

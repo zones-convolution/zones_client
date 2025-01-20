@@ -1,6 +1,12 @@
+import { data } from "autoprefixer";
 import { z } from "zod";
 
-import { juce } from "@/lib/juce";
+import { PlayerState } from "@/ipc/player_ipc";
+import {
+  addNativeEventListener,
+  juce,
+  removeNativeEventListener,
+} from "@/lib/juce";
 
 const Preferences = z.object({
   userPaths: z.array(z.string()),
@@ -31,6 +37,7 @@ const getBlockSizesNative = juce.getNativeFunction("get_block_sizes_native");
 const setInternalBlockSizeNative = juce.getNativeFunction(
   "set_internal_block_size_native",
 );
+const onBlockSizeUpdateNative = "on_block_size_update_native";
 
 export const defaultPreferences: Preferences = {
   userPaths: [],
@@ -99,4 +106,18 @@ export const getBlockSizes = async () => {
 };
 export const setInternalBlockSize = async (blockSize: number) => {
   await setInternalBlockSizeNative(JSON.stringify(blockSize.toString()));
+};
+
+export const blockSizeUpdateListener = (
+  onUpdate: (state: BlockSizes) => void,
+) => {
+  const listener = addNativeEventListener(
+    onBlockSizeUpdateNative,
+    (data: any) => onUpdate(handleReceiveBlockSizes(data)),
+  );
+
+  console.log("blocksizeupdate listener");
+  return () => {
+    removeNativeEventListener(listener);
+  };
 };
