@@ -30,10 +30,11 @@ void ProcessorContainer::Prepare (double sampleRate,
                                   int samplesPerBlock,
                                   juce::AudioProcessor::BusesLayout layout)
 {
-    graph_.prepare (
+    graph_.Prepare (
         juce::dsp::ProcessSpec {sampleRate,
                                 static_cast<juce::uint32> (samplesPerBlock),
-                                static_cast<juce::uint32> (layout.getMainOutputChannels ())});
+                                static_cast<juce::uint32> (layout.getMainOutputChannels ())},
+        layout);
 
     auto output_channel_set = layout.getMainOutputChannelSet ();
     auto state = ir_controller_.GetCurrentGraphState ();
