@@ -20,6 +20,8 @@ private:
     juce::AudioFormatManager audio_format_manager_;
     std::vector<std::shared_ptr<juce::AudioFormatReader>> readers_;
 
+    std::vector<juce::AudioBuffer<float>> resources_;
+
     int read_head_;
     NotificationQueue::VisitorQueue & notification_queue_;
     Player::PlayerState player_state_;

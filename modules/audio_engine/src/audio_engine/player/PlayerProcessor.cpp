@@ -1,5 +1,7 @@
 #include "PlayerProcessor.h"
 
+#include "ir_engine/processors/ResamplerProcessor.h"
+
 #include <juce_core/juce_core.h>
 
 extern "C" const char resources_snare_mp3 [];
@@ -31,10 +33,34 @@ PlayerProcessor::PlayerProcessor (NotificationQueue::VisitorQueue & notification
 
 void PlayerProcessor::prepare (const juce::dsp::ProcessSpec & spec)
 {
+    reset ();
+
     temp_buffer_.setSize (static_cast<int> (spec.numChannels),
                           static_cast<int> (spec.maximumBlockSize));
     smoothed_gain_.reset (spec.sampleRate, 0.05f);
     smoothed_gain_.setCurrentAndTargetValue (0.f);
+
+    for (auto & reader : readers_)
+    {
+        auto num_reader_samples = reader->lengthInSamples;
+        juce::AudioBuffer<float> input_resource (spec.numChannels, num_reader_samples);
+        reader->read (&input_resource, 0, num_reader_samples, 0, true, true);
+
+        juce::AudioBuffer<float> output_resource {};
+        auto ratio = reader->sampleRate / spec.sampleRate;
+        ResamplerProcessor::ResampleBuffer (input_resource, output_resource, ratio);
+
+        juce::dsp::AudioBlock<float> output_block {output_resource};
+        auto first_output_channel = output_block.getSingleChannelBlock (0);
+        for (auto channel_index = 1; channel_index < output_block.getNumChannels ();
+             ++channel_index)
+        {
+            auto output_channel = output_block.getSingleChannelBlock (channel_index);
+            output_channel.copyFrom (first_output_channel);
+        }
+
+        resources_.push_back (output_resource);
+    }
 }
 
 void PlayerProcessor::process (const juce::dsp::ProcessContextReplacing<float> & replacing)
@@ -43,11 +69,18 @@ void PlayerProcessor::process (const juce::dsp::ProcessContextReplacing<float> &
         return;
 
     auto reader_index = static_cast<unsigned long> (player_state_.resource);
-    auto & reader = readers_ [reader_index];
+
+    if (resources_.size () <= reader_index)
+        return;
+
+    auto & resource = resources_ [reader_index];
     auto output_block = replacing.getOutputBlock ();
     auto total_num_samples_to_collect = static_cast<int> (output_block.getNumSamples ());
-    auto total_num_input_samples = static_cast<int> (reader->lengthInSamples);
+    auto total_num_input_samples = static_cast<int> (resource.getNumSamples ());
     auto num_samples_collected = 0;
+
+    juce::dsp::AudioBlock<float> resource_block {resource};
+    juce::dsp::AudioBlock<float> temp_block {temp_buffer_};
 
     while (num_samples_collected < total_num_samples_to_collect)
     {
@@ -55,8 +88,9 @@ void PlayerProcessor::process (const juce::dsp::ProcessContextReplacing<float> &
         auto num_samples_to_collect =
             std::min (remaining_samples, total_num_samples_to_collect - num_samples_collected);
 
-        reader->read (
-            &temp_buffer_, num_samples_collected, num_samples_to_collect, read_head_, true, true);
+        auto reader_sub_block = resource_block.getSubBlock (read_head_, num_samples_to_collect);
+        temp_block.getSubBlock (num_samples_collected, num_samples_to_collect)
+            .copyFrom (reader_sub_block);
 
         num_samples_collected += num_samples_to_collect;
         read_head_ += num_samples_to_collect;
@@ -93,6 +127,8 @@ void PlayerProcessor::reset ()
     player_state_.looping = false;
     player_state_.playing = false;
     player_state_.gain = 1.f;
+
+    resources_.clear ();
 
     Clear ();
 }
