@@ -1,5 +1,7 @@
 #include "BaseIrProcessor.h"
 
+#include "ResamplerProcessor.h"
+
 static void NormaliseImpulseResponse (juce::AudioBuffer<float> & output_buffer)
 {
     auto num_channels = output_buffer.getNumChannels ();
@@ -23,6 +25,7 @@ void BaseIrProcessor::Process (IrGraphProcessor::BoxedBuffer & input_buffer,
                                juce::AudioBuffer<float> & output_buffer,
                                const IrGraphState & state)
 {
-    output_buffer.makeCopyOf (state.base_ir_buffer.get ());
+    auto ratio = state.base_ir_sample_rate / state.sample_rate;
+    ResamplerProcessor::ResampleBuffer (state.base_ir_buffer.get (), output_buffer, ratio);
     NormaliseImpulseResponse (output_buffer);
 }

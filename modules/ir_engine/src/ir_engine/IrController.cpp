@@ -27,6 +27,17 @@ void IrController::timerCallback ()
     stopTimer ();
 }
 
+void IrController::Prepare (const juce::dsp::ProcessSpec & spec)
+{
+    // block size is handled separately by preferences controller
+    std::lock_guard lock {current_graph_state_mutex_};
+    if (current_graph_state_.sample_rate != spec.sampleRate)
+    {
+        current_graph_state_.sample_rate = spec.sampleRate;
+        startTimer (kDebounceTimeMs);
+    }
+}
+
 static std::filesystem::path GetZonesDataDirectory ()
 {
     return juce::File::getSpecialLocation (
@@ -64,8 +75,8 @@ void IrController::LoadIr (const IrSelection & ir_selection)
 
     current_graph_state_.target_format = target_format;
     current_graph_state_.base_ir_buffer = IrGraphProcessor::BoxedBuffer {ir_data.buffer};
-    current_graph_state_.sample_rate = ir_data.sample_rate;
-    current_graph_state_.bit_depth = ir_data.bit_depth;
+    current_graph_state_.base_ir_sample_rate = ir_data.sample_rate;
+    current_graph_state_.base_ir_bit_depth = ir_data.bit_depth;
     current_graph_state_.base_ir = ir_path.string ();
 
     PerformRender ();

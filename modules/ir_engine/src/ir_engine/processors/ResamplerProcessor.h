@@ -9,5 +9,9 @@ public:
     void Process (BoxedBuffer & input_buffer,
                   juce::AudioBuffer<float> & output_buffer,
                   const IrGraphState & state) override;
+
+    static void ResampleBuffer (const juce::AudioBuffer<float> & input_buffer,
+                                juce::AudioBuffer<float> & output_buffer,
+                                const float & ratio);
     ~ResamplerProcessor () override = default;
 };

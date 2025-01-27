@@ -15,6 +15,8 @@ public:
     void parameterGestureChanged (int parameterIndex, bool gestureIsStarting) override;
     void timerCallback () override;
 
+    void Prepare (const juce::dsp::ProcessSpec & spec);
+
     void LoadIr (const IrSelection & ir_selection);
     IrGraphState GetCurrentGraphState ();
 

@@ -34,16 +34,18 @@ void ProcessorContainer::Prepare (double sampleRate,
                                   int samplesPerBlock,
                                   juce::AudioProcessor::BusesLayout layout)
 {
-    graph_.prepare (
-        juce::dsp::ProcessSpec {sampleRate,
-                                static_cast<juce::uint32> (samplesPerBlock),
-                                static_cast<juce::uint32> (layout.getMainOutputChannels ())});
+    juce::dsp::ProcessSpec spec {sampleRate,
+                                 static_cast<juce::uint32> (samplesPerBlock),
+                                 static_cast<juce::uint32> (layout.getMainOutputChannels ())};
+    graph_.prepare (spec);
 
     auto output_channel_set = layout.getMainOutputChannelSet ();
     auto state = ir_controller_.GetCurrentGraphState ();
     if (! IsTargetSupported (output_channel_set, state.target_format))
         convolution_engine_.Clear ();
     load_controller_.UpdateValidTargetFormats (GetTargetFormatsForChannelSet (output_channel_set));
+
+    ir_controller_.Prepare (spec);
     preferences_controller_.SetMaxBlockSize (samplesPerBlock);
 }
 
