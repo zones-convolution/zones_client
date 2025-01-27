@@ -30,7 +30,7 @@ private:
     };
 
     static constexpr float kPreferredAspectRatio = 3.f / 4.f;
-    static constexpr int kWindowMinimumWidth = 600;
+    static constexpr int kWindowMinimumWidth = 750;
     static constexpr int kWindowMaxWidth = 2000;
     static const juce::String kLocalDevServerAddress;
 

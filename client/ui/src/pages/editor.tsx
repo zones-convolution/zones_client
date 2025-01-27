@@ -199,7 +199,7 @@ const Editor = () => {
 
   const context = useVisualiserContext();
   const [showVisualiserControls, setShowVisualiserControls] =
-    useState<boolean>(true);
+    useState<boolean>(false);
 
   return (
     <div className="flex flex-col gap-0.5 h-full">
@@ -222,6 +222,7 @@ const Editor = () => {
           >
             <Visualiser3D context={context} />
           </TabsContent>
+
           <TabsList className="absolute top-0 right-0 m-2">
             <TabsTrigger value="2d">2D</TabsTrigger>
             <TabsTrigger value="3d">3D</TabsTrigger>
@@ -236,7 +237,7 @@ const Editor = () => {
             <Settings className="h-4 w-4" />
           </Toggle>
           {showVisualiserControls && (
-            <div className="absolute bottom-0 right-0 w-[50%] p-2">
+            <div className=" flex flex-col  h-[80%] absolute bottom-0 right-0 w-[50%]  p-2 overflow-hidden">
               <VisualiserControls />
             </div>
           )}
