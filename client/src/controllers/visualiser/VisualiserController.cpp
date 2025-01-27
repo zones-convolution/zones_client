@@ -5,12 +5,17 @@ void VisualiserController::RenderFinished (IrGraphState state,
 {
     std::lock_guard render_guard {render_mutex_};
     last_render_result_ = render_result;
+    auto base_ir_buffer_samples = state.base_ir_buffer->getNumSamples ();
+    auto interpolated_base_ir_buffer_samples =
+        static_cast<int> (std::ceil ((state.sample_rate / state.base_ir_sample_rate) *
+                                     static_cast<float> (base_ir_buffer_samples)));
+
     thread_pool_.removeAllJobs (true, 0);
     thread_pool_.addJob (
         new RenderVisualiserJob (
             RenderVisualiserJob::Parameters {.result_buffer = render_result,
                                              .base_num_samples =
-                                                 state.base_ir_buffer->getNumSamples (),
+                                                 interpolated_base_ir_buffer_samples,
                                              .base_sample_rate = state.sample_rate},
             [&] (Spectrogram::BoxedUint8Buffer frequency_data)
             {
