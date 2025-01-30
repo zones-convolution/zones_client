@@ -11,9 +11,7 @@
 #include <juce_audio_processors/juce_audio_processors.h>
 #include <juce_dsp/juce_dsp.h>
 
-class AudioGraph
-    : public juce::dsp::ProcessorBase
-    , public CommandQueue::Visitor
+class AudioGraph : public CommandQueue::Visitor
 {
 public:
     explicit AudioGraph (AudioGraphMetering & input_graph_metering,
@@ -21,10 +19,10 @@ public:
                          zones::ConvolutionEngine & convolution_engine,
                          NotificationQueue::VisitorQueue & notification_queue,
                          ParameterTree & parameter_tree);
-    ~AudioGraph () override = default;
-    void prepare (const juce::dsp::ProcessSpec & spec) override;
-    void process (const juce::dsp::ProcessContextReplacing<float> & replacing) override;
-    void reset () override;
+    void Prepare (const juce::dsp::ProcessSpec & spec,
+                  const juce::AudioProcessor::BusesLayout & layout);
+    void Process (const juce::dsp::ProcessContextReplacing<float> & replacing);
+    void Reset ();
 
     void operator() (const CommandQueue::SetPlayerStateCommand & set_player_state_command) override;
 

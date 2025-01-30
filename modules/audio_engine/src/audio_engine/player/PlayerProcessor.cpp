@@ -7,8 +7,8 @@
 extern "C" const char resources_snare_mp3 [];
 extern "C" const unsigned resources_snare_mp3_size;
 
-extern "C" const char resources_numbers_mp3 [];
-extern "C" const unsigned resources_numbers_mp3_size;
+extern "C" const char resources_voice_mp3 [];
+extern "C" const unsigned resources_voice_mp3_size;
 
 PlayerProcessor::PlayerProcessor (NotificationQueue::VisitorQueue & notification_queue)
     : notification_queue_ (notification_queue)
@@ -24,7 +24,7 @@ PlayerProcessor::PlayerProcessor (NotificationQueue::VisitorQueue & notification
 
     std::shared_ptr<juce::AudioFormatReader> numbers_reader {
         audio_format_manager_.createReaderFor (std::make_unique<juce::MemoryInputStream> (
-            &resources_numbers_mp3, resources_numbers_mp3_size, false))};
+            &resources_voice_mp3, resources_voice_mp3_size, false))};
 
     readers_.push_back (numbers_reader);
 
@@ -131,6 +131,8 @@ void PlayerProcessor::reset ()
     resources_.clear ();
 
     Clear ();
+
+    notification_queue_.PushCommand (player_state_);
 }
 
 void PlayerProcessor::Clear ()

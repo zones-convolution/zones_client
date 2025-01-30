@@ -91,8 +91,11 @@ IrGraph IrEngine::CreateGraphForState (const IrGraphState & ir_graph_state) cons
                                    base_ir_processor_});
     switch (ir_graph_state.target_format)
     {
+        case TargetFormat::kMono:
         case TargetFormat::kStereo:
         case TargetFormat::kTrueStereo:
+        case TargetFormat::kQuadraphonic:
+        case TargetFormat::kFoa:
             return ir_graph
                 .WithProcessor ({IrGraph::CachePolicy ()
                                      .WithPolicyIdentifier ("reverb_time_processor")

@@ -8,7 +8,9 @@ auto read_peak = [] (const juce::dsp::AudioBlock<const float> & block)
 
 void AudioGraphMetering::UpdateChannelPeak (const juce::dsp::AudioBlock<const float> & audio_block)
 {
-    for (auto channel_index = 0; channel_index < audio_block.getNumChannels (); ++channel_index)
+    jassert (audio_block.getNumChannels () >= channels_.size ());
+
+    for (auto channel_index = 0; channel_index < channels_.size (); ++channel_index)
     {
         auto channel_block = audio_block.getSingleChannelBlock (channel_index);
         auto peak = read_peak (channel_block);
