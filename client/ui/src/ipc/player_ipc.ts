@@ -6,7 +6,7 @@ import {
   removeNativeEventListener,
 } from "@/lib/juce";
 
-const PlayerResource = z.enum(["snare", "numbers"]);
+const PlayerResource = z.enum(["snare", "voice"]);
 export type PlayerResource = z.infer<typeof PlayerResource>;
 
 const PlayerState = z.object({

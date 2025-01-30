@@ -9,7 +9,7 @@ namespace Player
 {
 NLOHMANN_JSON_SERIALIZE_ENUM (Player::Resource,
                               {{Player::Resource::kSnare, "snare"},
-                               {Player::Resource::kNumbers, "numbers"}})
+                               {Player::Resource::kVoice, "voice"}})
 
 static void from_json (const json & data, PlayerState & player_state)
 {

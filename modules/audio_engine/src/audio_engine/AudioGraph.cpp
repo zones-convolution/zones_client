@@ -16,12 +16,13 @@ AudioGraph::AudioGraph (AudioGraphMetering & input_graph_metering,
 {
 }
 
-void AudioGraph::prepare (const juce::dsp::ProcessSpec & spec)
+void AudioGraph::Prepare (const juce::dsp::ProcessSpec & spec,
+                          const juce::AudioProcessor::BusesLayout & layout)
 {
     dry_wet_mixer_.prepare (spec);
     convolution_engine_.prepare (spec);
-    input_graph_metering_.Prepare (spec.numChannels);
-    output_graph_metering_.Prepare (spec.numChannels);
+    input_graph_metering_.Prepare (static_cast<size_t> (layout.getMainInputChannels ()));
+    output_graph_metering_.Prepare (static_cast<size_t> (layout.getMainOutputChannels ()));
 
     player_processor_.prepare (spec);
     eq_processor_.prepare (spec);
@@ -33,7 +34,7 @@ void AudioGraph::prepare (const juce::dsp::ProcessSpec & spec)
     smoothed_output_gain_.reset (spec.sampleRate, 0.1f);
 }
 
-void AudioGraph::process (const juce::dsp::ProcessContextReplacing<float> & replacing)
+void AudioGraph::Process (const juce::dsp::ProcessContextReplacing<float> & replacing)
 {
     UpdateParameters ();
 
@@ -57,11 +58,12 @@ void AudioGraph::process (const juce::dsp::ProcessContextReplacing<float> & repl
     output_graph_metering_.UpdateChannelPeak (output_block);
 }
 
-void AudioGraph::reset ()
+void AudioGraph::Reset ()
 {
     dry_wet_mixer_.reset ();
     convolution_engine_.reset ();
     eq_processor_.reset ();
+    player_processor_.reset ();
 }
 
 void AudioGraph::operator() (const CommandQueue::SetPlayerStateCommand & set_player_state_command)

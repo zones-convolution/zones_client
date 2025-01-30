@@ -37,7 +37,7 @@ void ProcessorContainer::Prepare (double sampleRate,
     juce::dsp::ProcessSpec spec {sampleRate,
                                  static_cast<juce::uint32> (samplesPerBlock),
                                  static_cast<juce::uint32> (layout.getMainOutputChannels ())};
-    graph_.prepare (spec);
+    graph_.Prepare (spec, layout);
 
     auto output_channel_set = layout.getMainOutputChannelSet ();
     auto state = ir_controller_.GetCurrentGraphState ();

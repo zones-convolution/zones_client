@@ -25,7 +25,7 @@ ParameterTree::CreateParameterTree (juce::AudioProcessorValueTreeState::Paramete
         .dry_wet_parameter = ParameterUtils::BindLayoutParameter (
             std::make_unique<juce::AudioParameterFloat> (
                 juce::ParameterID {kDryWetMixParameterId, 1},
-                "Dry/Wet Mix",
+                "Dry/Wet",
                 juce::NormalisableRange<float> (0.f, 100.f),
                 50.0f,
                 juce::AudioParameterFloatAttributes ().withLabel ("%")),

@@ -29,8 +29,8 @@ const createCssGradient = (colors: string[]) => {
 const VisualiserControls = () => {
   const context = useVisualiserContext();
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex items-center">
+    <div className="flex flex-1 flex-col gap-2 justify-items-end">
+      <div className="flex-1 items-center">
         <Label htmlFor="sensitivity" className="w-28">
           Sensitivity
         </Label>
@@ -44,7 +44,7 @@ const VisualiserControls = () => {
         />
       </div>
 
-      <div className="flex items-center">
+      <div className="flex-1 items-center">
         <Label htmlFor="contrast" className="w-28">
           Contrast
         </Label>
@@ -57,53 +57,57 @@ const VisualiserControls = () => {
           id="contrast"
         />
       </div>
-      <Select
-        value={context.scale}
-        onValueChange={(v) => context.setScale(v as VisualiserScale)}
-      >
-        <SelectTrigger className="capitalize">
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          {visualiserScales.map((scale) => (
-            <SelectItem key={scale} value={scale} className="capitalize">
-              {scale}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-      <Select
-        value={context.colourMap}
-        onValueChange={(v) => context.setColourMap(v as VisualiserColourMap)}
-      >
-        <SelectTrigger className="capitalize">
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          {visualiserColourMaps.map((colourMap) => {
-            const colours = colormap({
-              colormap: colourMap,
-              nshades: 20,
-              format: "hex",
-              alpha: 1,
-            });
-
-            return (
-              <SelectItem key={colourMap} value={colourMap}>
-                <div className="flex items-center gap-2 capitalize">
-                  <div
-                    className="w-8 h-4"
-                    style={{
-                      background: createCssGradient(colours),
-                    }}
-                  />
-                  {colourMap}
-                </div>
+      <div className={"flex-1"}>
+        <Select
+          value={context.scale}
+          onValueChange={(v) => context.setScale(v as VisualiserScale)}
+        >
+          <SelectTrigger className="capitalize">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {visualiserScales.map((scale) => (
+              <SelectItem key={scale} value={scale} className="capitalize">
+                {scale}
               </SelectItem>
-            );
-          })}
-        </SelectContent>
-      </Select>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+      <div className={"flex-1"}>
+        <Select
+          value={context.colourMap}
+          onValueChange={(v) => context.setColourMap(v as VisualiserColourMap)}
+        >
+          <SelectTrigger className="capitalize">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {visualiserColourMaps.map((colourMap) => {
+              const colours = colormap({
+                colormap: colourMap,
+                nshades: 20,
+                format: "hex",
+                alpha: 1,
+              });
+
+              return (
+                <SelectItem key={colourMap} value={colourMap}>
+                  <div className="flex items-center gap-2 capitalize">
+                    <div
+                      className="w-8 h-4"
+                      style={{
+                        background: createCssGradient(colours),
+                      }}
+                    />
+                    {colourMap}
+                  </div>
+                </SelectItem>
+              );
+            })}
+          </SelectContent>
+        </Select>
+      </div>
     </div>
   );
 };
