@@ -58,7 +58,7 @@ want the piano to sound close or far. Before selecting the IR, ensure true stere
 the ... next to the IR. This will perform more convolution calculations creating a richer and more realistic sounding
 reverb and stereo image.
 
-//image of zone page
+![True Stereo Selection](resources/TrueStereoSelection.png "True Stereo Selection")
 
 Next head to the *Edit* tab and set Dry/Wet mix to 100% wet, because the IR will already contain the direct signal.
 Using the spectrogram, you can edit parameters to fine-tune the sound of the reverb, such as using the trim
@@ -115,7 +115,7 @@ The *EQ* controls affect the wet signal.
 
 Bass: This applies a low-shelf filter at 1kHz with a Q factor of 1.
 
-Treble: This applied a high-shelf filter at 1.5kHz with a Q factor of 1.
+Treble: This applies a high-shelf filter at 1.5kHz with a Q factor of 1.
 
 ## Listen Controls
 
@@ -137,7 +137,26 @@ colour scheme can be altered.
 
 ## Basic usage
 
+Once you have a recording ready to upload, log into your account on zonesconvolution.com and head to
+your dashboard. Here you can see the current status of your zones and change your profile settings.
+
+To create a new zone, click the button in the top right, which will open up a form to complete. The
+first page is for general data about the recording, including when and where it happened and what
+type of recording it was. To add IR's, select *Update Impulse Responses*. For each IR you can add
+extra detail about where the mics where placed and select the correct format.
+
+You can also add several images to help users see the space and the recording set up. You can select
+one image to be the cover, which will appear first when users are on the browse page.
+
 ## Upload requirements
+
+Before you can upload, you must meet all the requirements listed in the *Edit Status* section.
+This ensures all the basic requirements such as a title and an IR are there so the zone looks
+nice for users to try.
+
+Once you are happy, select *Publish Zone* and you will see on your dashboard the status change to pending.
+This allows us to manually check everything is ready in the zone and the IRs are correct. Once approved,
+it will be immediately available to find and try out in the plug-in.
 
 # Uploading User Zones
 
@@ -160,21 +179,35 @@ where you can add the title, description, channel format and speaker positions u
 speaker positions will display the correct amount of *Choose* buttons, which allow you to select the
 file you want to copy. Each audio file must be separate and the correct number of channels.
 
-This is an example of a true stereo IR:
+[//]: # (This is an example of a true stereo IR:)
 
-//Use screenshot of form
+[//]: # ()
 
-Title: Hall Close
+[//]: # (//Use screenshot of form)
 
-Description: Recorded using a C414 pair, spaced 2m apart, 3m from the stage.
+[//]: # ()
 
-Channel Format: Stereo
+[//]: # (Title: Hall Close)
 
-Speaker Positions: LR
+[//]: # ()
 
-Left: users/myrecording/C414_left.wav
+[//]: # (Description: Recorded using a C414 pair, spaced 2m apart, 3m from the stage.)
 
-Right users/myrecording/C414_right.wav
+[//]: # ()
+
+[//]: # (Channel Format: Stereo)
+
+[//]: # ()
+
+[//]: # (Speaker Positions: LR)
+
+[//]: # ()
+
+[//]: # (Left: users/myrecording/C414_left.wav)
+
+[//]: # ()
+
+[//]: # (Right users/myrecording/C414_right.wav)
 
 Once all the IRs are added, select *Create Zone* to add the audio files to the user path directory.
 You can see your user zones on the browse page.

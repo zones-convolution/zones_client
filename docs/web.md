@@ -42,20 +42,20 @@ Legal information can be found [here.](#legal-stuff)
 Exploring Zones is easy using the browse tab. You can see highlighted zones, ones you've used before or search
 the whole library.
 
-GIF BROWSING THE HOME PAGE AND SEARCHING
+![Browsing](resources/GIFs/Browsing.gif "Using the Browse Tab")
 
 Trying one out is easy as with one click we'll automatically pick the most appropriate IR and download it. We also
 save every IR you use to speed up loading time.
 
-GIF DOWNLOADING A ZONE THEN GOING TO EDIT
+![LoadingZone](resources/GIFs/LoadingZone.gif "Loading a Zone")
 
 For a more in depth look, select the card to see all the IR's available, more images and details about the recording.
 
-GIF LOOKING AT ZONE CARD
+![ViewZone](resources/GIFs/ViewZone.gif "Viewing a Zone Page")
 
 You can also create and test out your own IR's locally.
 
-GIF CREATING USER IR
+![UserIR](resources/GIFs/CreateUserIR.gif "Creating a User IR")
 
 ### Using the editor
 
@@ -64,7 +64,7 @@ to make detailed adjustments to the sound. We've used our own convolution algori
 It also handles smooth cross-fading when making adjustments to the IR or fading efficiently to
 reduce overloading when the IR is extremely long.
 
-GIF USING THE EDITOR
+![Editor](resources/GIFs/EditTab.gif "Using the Edit Tab")
 
 ### Uploading Your Own Recordings
 
@@ -72,9 +72,9 @@ Using this website you can easily upload your own impulse responses to share you
 On your account page you can see your contributions and publish new Zones easily, with images, descriptions and
 metadata.
 
-GIF CREATING A ZONE
+![CreatingWebZone](resources/GIFs/CreatingWebZone.gif "Creating a Zone")
 
-GIF LOOKING AT PREPUBLISH ZONE PAGE
+![PrepublishZonePage](resources/GIFs/PrepublishZonePage.gif "Viewing your Zones")
 
 ## Contact
 
