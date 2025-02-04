@@ -10,7 +10,13 @@ export const defaultWidth = 1024;
 export const defaultHeight = 512;
 
 export const generateRenderTexture = (render: Uint8Array): DataTexture => {
-  const size = defaultWidth * defaultHeight;
+  const default_size = defaultWidth * defaultHeight;
+  const sampleRate = 48000;
+  const startBin = Math.floor((20.0 * (defaultHeight * 2.0)) / sampleRate);
+  const endBin = Math.ceil((20000 * (defaultHeight * 2.0)) / sampleRate);
+  const height = endBin - startBin;
+  const size = height * defaultWidth;
+
   const data = new Uint8Array(size);
 
   let numChannels = render.length / defaultHeight;
@@ -19,15 +25,15 @@ export const generateRenderTexture = (render: Uint8Array): DataTexture => {
     const channelOffset = channel * defaultHeight;
     const x = channel;
 
-    for (let fftPoint = 0; fftPoint < defaultHeight; ++fftPoint) {
-      const point = render[fftPoint + channelOffset];
+    for (let fftPoint = 0; fftPoint < endBin; ++fftPoint) {
+      const point = render[fftPoint + channelOffset + startBin];
       const y = fftPoint;
       const textureIndex = x + y * defaultWidth;
       data[textureIndex] = point;
     }
   }
 
-  const texture = new DataTexture(data, defaultWidth, defaultHeight, RedFormat);
+  const texture = new DataTexture(data, defaultWidth, height, RedFormat);
   texture.needsUpdate = true;
   return texture;
 };

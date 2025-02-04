@@ -41,7 +41,7 @@ const Graph2D: FC<{ context: IVisualiserContext }> = ({ context }) => {
     const mat = matRef.current;
     if (mat) {
       mat.uniforms.scale.value = createScaleTexture(
-        44100,
+        48000,
         defaultHeight * 2,
         context.scale,
       );

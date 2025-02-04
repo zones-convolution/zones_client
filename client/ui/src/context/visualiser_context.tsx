@@ -91,7 +91,7 @@ export const VisualiserProvider: FC<{
 
   const [sensitivity, setSensitivity] = useState<number>(1.0);
   const [contrast, setContrast] = useState<number>(1.0);
-  const [scale, setScale] = useState<VisualiserScale>("mel");
+  const [scale, setScale] = useState<VisualiserScale>("linear");
   const [colourMap, setColourMap] = useState<VisualiserColourMap>("viridis");
 
   return (
