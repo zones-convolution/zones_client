@@ -10,6 +10,8 @@ void VisualiserController::RenderFinished (IrGraphState state,
         static_cast<int> (std::ceil ((state.sample_rate / state.base_ir_sample_rate) *
                                      static_cast<float> (base_ir_buffer_samples)));
 
+    state_sample_rate = state.sample_rate;
+
     thread_pool_.removeAllJobs (true, 0);
     thread_pool_.addJob (
         new RenderVisualiserJob (
@@ -30,4 +32,9 @@ std::optional<Spectrogram::BoxedUint8Buffer> VisualiserController::GetVisualiser
 {
     std::lock_guard render_guard {render_mutex_};
     return frequency_data_;
+}
+
+double VisualiserController::GetStateSampleRate ()
+{
+    return state_sample_rate;
 }

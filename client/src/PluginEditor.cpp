@@ -106,7 +106,8 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (
                                   .withOptionsFrom (user_zones_relay_)
                                   .withOptionsFrom (load_relay_)
                                   .withOptionsFrom (metering_relay_)
-                                  .withOptionsFrom (resize_relay_))
+                                  .withOptionsFrom (resize_relay_)
+                                  .withOptionsFrom (visualiser_relay_))
     , parameter_attachments_ (parameter_relay_, processor_container.parameter_tree_state_)
 
 {

@@ -33,7 +33,10 @@ const Graph2D: FC<{ context: IVisualiserContext }> = ({ context }) => {
   useEffect(() => {
     const mat = matRef.current;
     if (mat && context.render) {
-      mat.uniforms.render.value = generateRenderTexture(context.render);
+      mat.uniforms.render.value = generateRenderTexture(
+        context.render,
+        context.sampleRate,
+      );
     }
   }, [context.render]);
 
@@ -151,7 +154,7 @@ const YAxis = () => {
       const svg = select(svgRef.current);
 
       const yScale = scaleLinear()
-        .domain([20, 22000])
+        .domain([20, 20000])
         .range([height ?? 0, 0]);
       const yAxis = axisRight(yScale).ticks(
         Math.floor((height ?? 0) / 100.0) * 2,
@@ -195,6 +198,7 @@ const Visualiser2D: FC<{ context: IVisualiserContext }> = ({ context }) => {
           <YAxis />
         </div>
       </div>
+      <div className="w-full h-full absolute">{context.sampleRate}</div>
     </div>
   );
 };

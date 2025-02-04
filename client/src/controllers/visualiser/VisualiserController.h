@@ -51,9 +51,13 @@ public:
     rocket::signal<void ()> OnVisualiserRendered;
     std::optional<Spectrogram::BoxedUint8Buffer> GetVisualiserRender ();
 
+    double GetStateSampleRate ();
+
 private:
     std::mutex render_mutex_;
     std::optional<Spectrogram::BoxedBuffer> last_render_result_ = std::nullopt;
     juce::ThreadPool thread_pool_;
     std::optional<Spectrogram::BoxedUint8Buffer> frequency_data_ = std::nullopt;
+
+    std::atomic<double> state_sample_rate = 48000;
 };

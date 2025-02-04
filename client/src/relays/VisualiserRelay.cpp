@@ -2,6 +2,9 @@
 
 #include "immer/vector.hpp"
 
+#include <nlohmann/json.hpp>
+using json = nlohmann::json;
+
 VisualiserRelay::VisualiserRelay (juce::WebBrowserComponent & web_browser_component,
                                   VisualiserController & visualiser_controller)
     : web_browser_component_ (web_browser_component)
@@ -16,6 +19,20 @@ VisualiserRelay::VisualiserRelay (juce::WebBrowserComponent & web_browser_compon
                                                                     {});
             }),
     };
+}
+
+juce::WebBrowserComponent::Options
+VisualiserRelay::buildOptions (const juce::WebBrowserComponent::Options & initialOptions)
+{
+    return initialOptions.withNativeFunction ("get_sample_rate_native",
+                                              [&] (auto & var, auto complete)
+                                              {
+                                                  json data =
+                                                      visualiser_controller_.GetStateSampleRate ();
+
+                                                  JUCE_ASSERT_MESSAGE_THREAD;
+                                                  complete ({data.dump ()});
+                                              });
 }
 
 juce::WebBrowserComponent::Resource VisualiserRelay::GetVisualiserResource () const

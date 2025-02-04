@@ -9,9 +9,11 @@ import {
 export const defaultWidth = 1024;
 export const defaultHeight = 512;
 
-export const generateRenderTexture = (render: Uint8Array): DataTexture => {
+export const generateRenderTexture = (
+  render: Uint8Array,
+  sampleRate: number,
+): DataTexture => {
   const default_size = defaultWidth * defaultHeight;
-  const sampleRate = 48000;
   const startBin = Math.floor((20.0 * (defaultHeight * 2.0)) / sampleRate);
   const endBin = Math.ceil((20000 * (defaultHeight * 2.0)) / sampleRate);
   const height = endBin - startBin;

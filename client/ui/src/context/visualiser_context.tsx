@@ -10,6 +10,7 @@ import {
 } from "react";
 
 import {
+  getSampleRate,
   getVisualiserRender,
   visualiserRenderListener,
 } from "@/ipc/visualiser_ipc";
@@ -67,6 +68,7 @@ export type VisualiserColourMap = (typeof visualiserColourMaps)[number];
 
 export interface IVisualiserContext {
   render?: Uint8Array;
+  sampleRate: number;
   sensitivity: number;
   setSensitivity: Dispatch<SetStateAction<number>>;
   contrast: number;
@@ -83,10 +85,12 @@ export const VisualiserProvider: FC<{
   children: ReactNode;
 }> = ({ children }) => {
   const [render, setRender] = useState<Uint8Array | undefined>();
+  const [sampleRate, setSampleRate] = useState<number>(48000);
 
   useEffect(() => {
+    getSampleRate().then(setSampleRate);
     getVisualiserRender().then(setRender);
-    return visualiserRenderListener(setRender);
+    return visualiserRenderListener(setRender, setSampleRate);
   }, []);
 
   const [sensitivity, setSensitivity] = useState<number>(1.0);
@@ -98,6 +102,7 @@ export const VisualiserProvider: FC<{
     <VisualiserContext.Provider
       value={{
         render: render,
+        sampleRate: sampleRate,
         sensitivity: sensitivity,
         contrast: contrast,
         setSensitivity: setSensitivity,
