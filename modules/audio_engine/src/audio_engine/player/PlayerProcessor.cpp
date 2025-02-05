@@ -48,7 +48,8 @@ void PlayerProcessor::prepare (const juce::dsp::ProcessSpec & spec)
 
         juce::AudioBuffer<float> output_resource {};
         auto ratio = reader->sampleRate / spec.sampleRate;
-        ResamplerProcessor::ResampleBuffer (input_resource, output_resource, ratio);
+        ResamplerProcessor::ResampleBuffer (
+            input_resource, output_resource, ratio, reader->sampleRate);
 
         juce::dsp::AudioBlock<float> output_block {output_resource};
         auto first_output_channel = output_block.getSingleChannelBlock (0);

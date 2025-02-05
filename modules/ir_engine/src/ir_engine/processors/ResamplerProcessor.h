@@ -12,6 +12,8 @@ public:
 
     static void ResampleBuffer (const juce::AudioBuffer<float> & input_buffer,
                                 juce::AudioBuffer<float> & output_buffer,
-                                const float & ratio);
+                                const float ratio,
+                                const float input_sample_rate,
+                                const bool useLagrangeInterpolator = false);
     ~ResamplerProcessor () override = default;
 };

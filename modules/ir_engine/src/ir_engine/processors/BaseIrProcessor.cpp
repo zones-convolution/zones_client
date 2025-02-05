@@ -26,9 +26,11 @@ void BaseIrProcessor::Process (IrGraphProcessor::BoxedBuffer & input_buffer,
                                const IrGraphState & state)
 {
     auto ratio = 1.f;
+
     if (state.sample_rate > 0)
         ratio = static_cast<float> (state.base_ir_sample_rate / state.sample_rate);
-    
-    ResamplerProcessor::ResampleBuffer (state.base_ir_buffer.get (), output_buffer, ratio);
+
+    ResamplerProcessor::ResampleBuffer (
+        state.base_ir_buffer.get (), output_buffer, ratio, state.base_ir_sample_rate);
     NormaliseImpulseResponse (output_buffer);
 }

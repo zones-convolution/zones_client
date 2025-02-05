@@ -6,12 +6,22 @@ void VisualiserController::RenderFinished (IrGraphState state,
     std::lock_guard render_guard {render_mutex_};
     last_render_result_ = render_result;
     auto base_ir_buffer_samples = state.base_ir_buffer->getNumSamples ();
-    auto interpolated_base_ir_buffer_samples =
-        static_cast<int> (std::ceil ((state.sample_rate / state.base_ir_sample_rate) *
-                                     static_cast<float> (base_ir_buffer_samples)));
 
-    state_sample_rate = state.sample_rate;
+    int interpolated_base_ir_buffer_samples;
+    if (state.sample_rate > 0.f)
+    {
+        interpolated_base_ir_buffer_samples =
+            static_cast<int> (std::ceil ((state.sample_rate / state.base_ir_sample_rate) *
+                                         static_cast<float> (base_ir_buffer_samples)));
 
+        state_sample_rate = state.sample_rate;
+    }
+    else
+    {
+        interpolated_base_ir_buffer_samples = base_ir_buffer_samples;
+        state_sample_rate = state.base_ir_sample_rate;
+    }
+    
     thread_pool_.removeAllJobs (true, 0);
     thread_pool_.addJob (
         new RenderVisualiserJob (
