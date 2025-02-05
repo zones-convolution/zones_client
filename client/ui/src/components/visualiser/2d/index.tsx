@@ -9,6 +9,7 @@ import {
   range,
   axisLeft,
   axisRight,
+  ticks,
 } from "d3";
 import { FC, useEffect, useMemo, useRef, useState } from "react";
 import { FrontSide, GLSL3, ShaderMaterial } from "three";
@@ -156,9 +157,13 @@ const YAxis = () => {
       const yScale = scaleLinear()
         .domain([20, 20000])
         .range([height ?? 0, 0]);
-      const yAxis = axisRight(yScale).ticks(
-        Math.floor((height ?? 0) / 100.0) * 2,
-      );
+      const yAxis = axisRight(yScale);
+      let tickValues = ticks(20, 20000, Math.floor((height ?? 0) / 100.0) * 2);
+      if (!tickValues.includes(20)) {
+        tickValues.unshift(20);
+      }
+      yAxis.tickValues(tickValues);
+
       svg.call(yAxis);
     }
   }, [height]);
