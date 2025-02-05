@@ -13,6 +13,7 @@ import {
 } from "d3";
 import { FC, useEffect, useMemo, useRef, useState } from "react";
 import { FrontSide, GLSL3, ShaderMaterial } from "three";
+import { number } from "zod";
 
 import {
   createColourMapTexture,
@@ -21,7 +22,10 @@ import {
   generateColourMap,
   generateRenderTexture,
 } from "@/components/visualiser/visualiser_utils";
-import { IVisualiserContext } from "@/context/visualiser_context";
+import {
+  IVisualiserContext,
+  VisualiserScale,
+} from "@/context/visualiser_context";
 
 import frag from "./visualiser.frag";
 import vert from "./visualiser.vert";
@@ -146,27 +150,71 @@ const XAxis = () => {
   );
 };
 
-const YAxis = () => {
+const YAxis: FC<{ scale: VisualiserScale }> = ({ scale }) => {
   const svgRef = useRef<SVGSVGElement | null>(null);
   const [measureRef, { width, height }] = useMeasure<SVGSVGElement>();
+
+  function melToHz(mel: number): number {
+    return 700 * (Math.pow(10, mel / 2595) - 1);
+  }
+
+  function hzToMel(frequency: number): number {
+    return 2595 * Math.log10(1 + frequency / 700);
+  }
 
   useEffect(() => {
     if (svgRef.current) {
       const svg = select(svgRef.current);
 
-      const yScale = scaleLinear()
-        .domain([20, 20000])
-        .range([height ?? 0, 0]);
-      const yAxis = axisRight(yScale);
-      let tickValues = ticks(20, 20000, Math.floor((height ?? 0) / 100.0) * 2);
-      if (!tickValues.includes(20)) {
-        tickValues.unshift(20);
-      }
-      yAxis.tickValues(tickValues);
+      switch (scale) {
+        case "linear": {
+          const yScale = scaleLinear()
+            .domain([20, 20000])
+            .range([height ?? 0, 0]);
+          const yAxis = axisRight(yScale);
 
-      svg.call(yAxis);
+          let tickValues = ticks(
+            20,
+            20000,
+            Math.floor((height ?? 0) / 100.0) * 2,
+          );
+          if (!tickValues.includes(20)) {
+            tickValues.unshift(20);
+          }
+          yAxis.tickValues(tickValues);
+          svg.call(yAxis);
+
+          break;
+        }
+        case "mel": {
+          const yScale = scaleLinear()
+            .domain([hzToMel(20), hzToMel(20000)])
+            .range([height ?? 0, 0]);
+          const yAxis = axisRight(yScale);
+
+          let tickValuesHz = [20, 512];
+          let value = 1024;
+          while (
+            value <= 20000 &&
+            tickValuesHz.length < Math.floor((height ?? 0) / 100.0) * 2
+          ) {
+            tickValuesHz.push(value);
+            value *= 2;
+          }
+          tickValuesHz.push(20000);
+
+          let melVals = tickValuesHz.map((hz) => hzToMel(hz));
+
+          yAxis.tickValues(melVals).tickFormat(function (d, i) {
+            return Math.round(melToHz(d.valueOf())).toString();
+          });
+          svg.call(yAxis);
+
+          break;
+        }
+      }
     }
-  }, [height]);
+  }, [height, scale]);
 
   return (
     <svg
@@ -200,7 +248,7 @@ const Visualiser2D: FC<{ context: IVisualiserContext }> = ({ context }) => {
         </div>
         <div className="w-full h-full absolute">
           <XAxis />
-          <YAxis />
+          <YAxis scale={context.scale} />
         </div>
       </div>
       <div className="w-full h-full absolute">{context.sampleRate}</div>

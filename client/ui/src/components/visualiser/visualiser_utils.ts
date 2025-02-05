@@ -52,13 +52,19 @@ export const createScaleTexture = (
       case "linear":
         data[i] = i / (defaultHeight - 1);
         break;
-      case "mel": {
-        const peakHz = (sampleRate * (windowSize - 2)) / (2 * windowSize);
-        data[i] =
-          (700 * ((1 + peakHz / 700) ** (i / (defaultHeight - 1)) - 1)) /
-          peakHz;
+      case "mel":
+        const minHz = 20;
+        const peakHz = sampleRate / 2;
+
+        const melMin = 2595 * Math.log10(1 + minHz / 700);
+        const melMax = 2595 * Math.log10(1 + peakHz / 700);
+
+        const melValue = melMin + (i / (defaultHeight - 1)) * (melMax - melMin);
+        const freq = 700 * (10 ** (melValue / 2595) - 1);
+
+        data[i] = (freq - minHz) / (peakHz - minHz);
+
         break;
-      }
     }
   }
 
