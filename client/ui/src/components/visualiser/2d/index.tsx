@@ -201,7 +201,7 @@ const YAxis: FC<{ scale: VisualiserScale }> = ({ scale }) => {
           let value = 1024;
           while (
             value <= 20000 &&
-            tickValuesHz.length < Math.floor((height ?? 0) / 100.0) * 2
+            tickValuesHz.length < Math.floor((height ?? 0) / 100.0) * 2 + 1
           ) {
             tickValuesHz.push(value);
             value *= 2;
@@ -213,9 +213,9 @@ const YAxis: FC<{ scale: VisualiserScale }> = ({ scale }) => {
           yAxis.tickValues(melVals).tickFormat(function (d, i) {
             return Math.round(melToHz(d.valueOf())).toString();
           });
-          svg.call(yAxis);
+          yAxisGroup.call(yAxis);
 
-          yAxisGroup.attr("transform", "translate(0, 0)").call(yAxis);
+          yAxisGroup.attr("transform", "translate(47, 0)").call(yAxis);
           break;
         }
       }

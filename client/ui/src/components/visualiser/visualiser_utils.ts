@@ -100,6 +100,12 @@ export const createColourMapTexture = (
     data[index + 3] = color[3] * 255;
   }
 
+  const index = 0 * 4;
+  data[index] = 27;
+  data[index + 1] = 27;
+  data[index + 2] = 37;
+  data[index + 3] = 1 * 255;
+
   const texture = new DataTexture(data, size, 1, RGBAFormat);
   texture.needsUpdate = true;
   return texture;
