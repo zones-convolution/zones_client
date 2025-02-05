@@ -223,19 +223,20 @@ const Editor = () => {
             <Visualiser3D context={context} />
           </TabsContent>
 
-          {/*<TabsList className="absolute top-0 right-0 m-2">*/}
-          {/*  <TabsTrigger value="2d">2D</TabsTrigger>*/}
-          {/*  <TabsTrigger value="3d">3D</TabsTrigger>*/}
-          {/*</TabsList>*/}
-
-          <Toggle
-            aria-label="Visualiser Controls"
-            className="absolute top-0 left-0 m-2"
-            pressed={showVisualiserControls}
-            onPressedChange={setShowVisualiserControls}
-          >
-            <Settings className="h-4 w-4" />
-          </Toggle>
+          <div className="absolute top-0 right-0 m-3 flex flex-row justify-around">
+            <Toggle
+              aria-label="Visualiser Controls"
+              className="flex-1 "
+              pressed={showVisualiserControls}
+              onPressedChange={setShowVisualiserControls}
+            >
+              <Settings className="h-4 w-4" />
+            </Toggle>
+            <TabsList className="flex-1 ml-2">
+              <TabsTrigger value="2d">2D</TabsTrigger>
+              <TabsTrigger value="3d">3D</TabsTrigger>
+            </TabsList>
+          </div>
           {showVisualiserControls && (
             <div className=" flex flex-col  h-[80%] absolute bottom-0 right-0 w-[50%]  p-2 overflow-hidden">
               <VisualiserControls />

@@ -139,7 +139,7 @@ const XAxis = () => {
 
   return (
     <svg
-      className="w-full absolute h-6 pr-10 pl-2 bottom-0"
+      className="w-full absolute h-6 pr-2 pl-12 bottom-0 ml-[-1px]"
       viewBox={`0 0 ${width} ${height}`}
       preserveAspectRatio="none"
       ref={(el) => {
@@ -165,24 +165,29 @@ const YAxis: FC<{ scale: VisualiserScale }> = ({ scale }) => {
   useEffect(() => {
     if (svgRef.current) {
       const svg = select(svgRef.current);
+      svg.selectAll(".y-axis").remove();
 
+      const yAxisGroup = svg.append("g").attr("class", "y-axis");
       switch (scale) {
         case "linear": {
           const yScale = scaleLinear()
             .domain([20, 20000])
             .range([height ?? 0, 0]);
-          const yAxis = axisRight(yScale);
+          const yAxis = axisLeft(yScale);
 
           let tickValues = ticks(
             20,
             20000,
             Math.floor((height ?? 0) / 100.0) * 2,
           );
+
           if (!tickValues.includes(20)) {
             tickValues.unshift(20);
           }
           yAxis.tickValues(tickValues);
-          svg.call(yAxis);
+
+          yAxisGroup.call(yAxis);
+          yAxisGroup.attr("transform", "translate(47, 0)").call(yAxis);
 
           break;
         }
@@ -190,7 +195,7 @@ const YAxis: FC<{ scale: VisualiserScale }> = ({ scale }) => {
           const yScale = scaleLinear()
             .domain([hzToMel(20), hzToMel(20000)])
             .range([height ?? 0, 0]);
-          const yAxis = axisRight(yScale);
+          const yAxis = axisLeft(yScale);
 
           let tickValuesHz = [20, 512];
           let value = 1024;
@@ -210,6 +215,7 @@ const YAxis: FC<{ scale: VisualiserScale }> = ({ scale }) => {
           });
           svg.call(yAxis);
 
+          yAxisGroup.attr("transform", "translate(0, 0)").call(yAxis);
           break;
         }
       }
@@ -218,7 +224,7 @@ const YAxis: FC<{ scale: VisualiserScale }> = ({ scale }) => {
 
   return (
     <svg
-      className="h-full absolute w-10 pb-6 pt-2 right-0"
+      className="h-full absolute w-12 pb-6 pt-2 left-0 "
       viewBox={`0 0 ${width} ${height}`}
       preserveAspectRatio="none"
       ref={(el) => {
@@ -241,7 +247,7 @@ const Visualiser2D: FC<{ context: IVisualiserContext }> = ({ context }) => {
           height: Math.floor(height ?? 0),
         }}
       >
-        <div className="absolute w-full h-full pt-2 pl-2 pr-10 pb-6">
+        <div className="absolute w-full h-full pt-2 pl-12 pr-2 pb-6">
           <Canvas className="min-w-0 min-h-0 flex-1 shrink" orthographic>
             <Graph2D context={context} />
           </Canvas>
@@ -251,7 +257,6 @@ const Visualiser2D: FC<{ context: IVisualiserContext }> = ({ context }) => {
           <YAxis scale={context.scale} />
         </div>
       </div>
-      <div className="w-full h-full absolute">{context.sampleRate}</div>
     </div>
   );
 };
