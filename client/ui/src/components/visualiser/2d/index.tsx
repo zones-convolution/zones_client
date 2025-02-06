@@ -267,9 +267,9 @@ const Visualiser2D: FC<{ context: IVisualiserContext }> = ({ context }) => {
   const [measureRef, { width, height }] = useMeasure();
 
   return (
-    <div className="flex flex-1 justify-center items-center" ref={measureRef}>
+    <div className=" relative flex flex-1  " ref={measureRef}>
       <div
-        className="relative"
+        className="absolute w-full h-full"
         style={{
           width: Math.floor(width ?? 0),
           height: Math.floor(height ?? 0),
