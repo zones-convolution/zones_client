@@ -138,15 +138,29 @@ const XAxis = () => {
   }, [width]);
 
   return (
-    <svg
-      className="w-full absolute h-6 pr-2 pl-12 bottom-0 ml-[-1px]"
-      viewBox={`0 0 ${width} ${height}`}
-      preserveAspectRatio="none"
-      ref={(el) => {
-        measureRef(el);
-        svgRef.current = el;
-      }}
-    />
+    <div>
+      <svg
+        className="w-full absolute h-6 pr-6 pl-12 bottom-0 ml-[-1px]"
+        viewBox={`0 0 ${width} ${height}`}
+        preserveAspectRatio="none"
+        ref={(el) => {
+          measureRef(el);
+          svgRef.current = el;
+        }}
+      />
+      <svg className=" absolute h-6 right-0 bottom-0 w-6 pr-2 ">
+        <text
+          x="8"
+          y="22"
+          transform="rotate(-90, 5, 12)"
+          textAnchor="middle"
+          fill="hsl(var(--foreground))"
+          fontSize="10"
+        >
+          sec
+        </text>
+      </svg>
+    </div>
   );
 };
 
@@ -223,15 +237,29 @@ const YAxis: FC<{ scale: VisualiserScale }> = ({ scale }) => {
   }, [height, scale]);
 
   return (
-    <svg
-      className="h-full absolute w-12 pb-6 pt-2 left-0 "
-      viewBox={`0 0 ${width} ${height}`}
-      preserveAspectRatio="none"
-      ref={(el) => {
-        measureRef(el);
-        svgRef.current = el;
-      }}
-    />
+    <div>
+      <svg className=" absolute w-12 pr-2 pt-2 ">
+        <text
+          x="32"
+          y="8"
+          textAnchor="middle"
+          fill="hsl(var(--foreground))"
+          fontSize="10"
+        >
+          Hz
+        </text>
+      </svg>
+
+      <svg
+        className="h-full absolute w-12 pb-6 pt-6 left-0 "
+        viewBox={`0 0 ${width} ${height}`}
+        preserveAspectRatio="none"
+        ref={(el) => {
+          measureRef(el);
+          svgRef.current = el;
+        }}
+      />
+    </div>
   );
 };
 
@@ -247,7 +275,7 @@ const Visualiser2D: FC<{ context: IVisualiserContext }> = ({ context }) => {
           height: Math.floor(height ?? 0),
         }}
       >
-        <div className="absolute w-full h-full pt-2 pl-12 pr-2 pb-6">
+        <div className="absolute w-full h-full pt-6 pl-12 pr-6 pb-6">
           <Canvas className="min-w-0 min-h-0 flex-1 shrink" orthographic>
             <Graph2D context={context} />
           </Canvas>
