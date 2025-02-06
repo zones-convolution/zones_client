@@ -23,7 +23,10 @@ const Graph3D: FC<{ context: IVisualiserContext }> = ({ context }) => {
   useEffect(() => {
     const mat = matRef.current;
     if (mat && context.render) {
-      mat.uniforms.render.value = generateRenderTexture(context.render);
+      mat.uniforms.render.value = generateRenderTexture(
+        context.render,
+        context.sampleRate,
+      );
     }
   }, [context.render]);
 

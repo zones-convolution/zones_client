@@ -38,8 +38,8 @@ const VisualiserControls = () => {
           onValueChange={(v) => context.setSensitivity(v[0])}
           value={[context.sensitivity]}
           min={0}
-          max={100}
-          step={0.001}
+          max={5}
+          step={0.01}
           id="sensitivity"
         />
       </div>
@@ -52,8 +52,8 @@ const VisualiserControls = () => {
           onValueChange={(v) => context.setContrast(v[0])}
           value={[context.contrast]}
           min={0}
-          max={100}
-          step={0.001}
+          max={500}
+          step={0.01}
           id="contrast"
         />
       </div>
