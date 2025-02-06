@@ -1,11 +1,18 @@
 #pragma once
 
 #include "Spectrogram.h"
+#include "ir_engine/IrController.h"
 #include "ir_engine/IrEngine.h"
 #include "juce_gui_extra/juce_gui_extra.h"
 #include "rocket.hpp"
 
 #include <immer/box.hpp>
+
+struct VisualiserMetadata
+{
+    double sample_rate = 48000.0;
+    int base_ir_length_samples = 48000;
+};
 
 class VisualiserController : public IrEngine::Listener
 {
@@ -51,7 +58,7 @@ public:
     rocket::signal<void ()> OnVisualiserRendered;
     std::optional<Spectrogram::BoxedUint8Buffer> GetVisualiserRender ();
 
-    double GetStateSampleRate ();
+    VisualiserMetadata GetMetadata ();
 
 private:
     std::mutex render_mutex_;
@@ -59,5 +66,5 @@ private:
     juce::ThreadPool thread_pool_;
     std::optional<Spectrogram::BoxedUint8Buffer> frequency_data_ = std::nullopt;
 
-    std::atomic<double> state_sample_rate = 48000;
+    IrGraphState last_rendered_state_;
 };

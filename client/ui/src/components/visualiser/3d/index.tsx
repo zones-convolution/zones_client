@@ -25,7 +25,7 @@ const Graph3D: FC<{ context: IVisualiserContext }> = ({ context }) => {
     if (mat && context.render) {
       mat.uniforms.render.value = generateRenderTexture(
         context.render,
-        context.sampleRate,
+        context.visualiserMetadata.sampleRate,
       );
     }
   }, [context.render]);

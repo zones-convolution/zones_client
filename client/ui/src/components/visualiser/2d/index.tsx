@@ -26,6 +26,7 @@ import {
   IVisualiserContext,
   VisualiserScale,
 } from "@/context/visualiser_context";
+import { VisualiserMetadata } from "@/ipc/visualiser_ipc";
 
 import frag from "./visualiser.frag";
 import vert from "./visualiser.vert";
@@ -40,7 +41,7 @@ const Graph2D: FC<{ context: IVisualiserContext }> = ({ context }) => {
     if (mat && context.render) {
       mat.uniforms.render.value = generateRenderTexture(
         context.render,
-        context.sampleRate,
+        context.visualiserMetadata.sampleRate,
       );
     }
   }, [context.render]);
@@ -118,8 +119,10 @@ const Graph2D: FC<{ context: IVisualiserContext }> = ({ context }) => {
   );
 };
 
-const XAxis = () => {
-  const timeSeconds = 1.4;
+const XAxis: FC<{ visualiserMetadata: VisualiserMetadata }> = ({
+  visualiserMetadata,
+}) => {
+  const maxIrRatio = 2.0;
   const svgRef = useRef<SVGSVGElement | null>(null);
   const [measureRef, { width, height }] = useMeasure<SVGSVGElement>();
 
@@ -127,15 +130,20 @@ const XAxis = () => {
     if (svgRef.current) {
       const svg = select(svgRef.current);
 
+      const timeSeconds =
+        visualiserMetadata.baseIrLengthSamples / visualiserMetadata.sampleRate;
+
+      console.log(timeSeconds);
+
       const xScale = scaleLinear()
-        .domain([0, 2.0 * timeSeconds])
+        .domain([0, maxIrRatio * timeSeconds + 0.5])
         .range([0, width ?? 0]);
       const xAxis = axisBottom(xScale).ticks(
         Math.floor((width ?? 0) / 100.0) * 2,
       );
       svg.call(xAxis);
     }
-  }, [width]);
+  }, [width, visualiserMetadata]);
 
   return (
     <div>
@@ -281,7 +289,7 @@ const Visualiser2D: FC<{ context: IVisualiserContext }> = ({ context }) => {
           </Canvas>
         </div>
         <div className="w-full h-full absolute">
-          <XAxis />
+          <XAxis visualiserMetadata={context.visualiserMetadata} />
           <YAxis scale={context.scale} />
         </div>
       </div>

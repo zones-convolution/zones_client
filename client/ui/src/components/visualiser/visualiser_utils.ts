@@ -1,5 +1,12 @@
+import { useThree } from "@react-three/fiber";
 import colormap from "colormap";
-import { DataTexture, FloatType, RedFormat, RGBAFormat } from "three";
+import {
+  DataTexture,
+  FloatType,
+  RedFormat,
+  RGBAFormat,
+  ClampToEdgeWrapping,
+} from "three";
 
 import {
   VisualiserColourMap,

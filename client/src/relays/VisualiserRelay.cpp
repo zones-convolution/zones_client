@@ -5,6 +5,12 @@
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
 
+static void to_json (json & data, const VisualiserMetadata & visualiser_metadata)
+{
+    data = json {{"sampleRate", visualiser_metadata.sample_rate},
+                 {"baseIrLengthSamples", visualiser_metadata.base_ir_length_samples}};
+}
+
 VisualiserRelay::VisualiserRelay (juce::WebBrowserComponent & web_browser_component,
                                   VisualiserController & visualiser_controller)
     : web_browser_component_ (web_browser_component)
@@ -24,11 +30,10 @@ VisualiserRelay::VisualiserRelay (juce::WebBrowserComponent & web_browser_compon
 juce::WebBrowserComponent::Options
 VisualiserRelay::buildOptions (const juce::WebBrowserComponent::Options & initialOptions)
 {
-    return initialOptions.withNativeFunction ("get_sample_rate_native",
+    return initialOptions.withNativeFunction ("get_visualiser_metadata_native",
                                               [&] (auto & var, auto complete)
                                               {
-                                                  json data =
-                                                      visualiser_controller_.GetStateSampleRate ();
+                                                  json data = visualiser_controller_.GetMetadata ();
 
                                                   JUCE_ASSERT_MESSAGE_THREAD;
                                                   complete ({data.dump ()});

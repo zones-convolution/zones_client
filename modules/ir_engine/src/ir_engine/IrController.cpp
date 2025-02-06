@@ -108,6 +108,7 @@ void IrController::PerformRender ()
 
 IrGraphState IrController::GetCurrentGraphState ()
 {
+    std::lock_guard lock {current_graph_state_mutex_};
     return current_graph_state_;
 }
 

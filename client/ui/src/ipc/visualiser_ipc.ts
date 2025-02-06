@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 import { defaultVersionData, VersionData } from "@/ipc/preferences_ipc";
 import {
   addNativeEventListener,
@@ -5,36 +7,50 @@ import {
   removeNativeEventListener,
 } from "@/lib/juce";
 
+const VisualiserMetadata = z.object({
+  sampleRate: z.number(),
+  baseIrLengthSamples: z.number(),
+});
+
+export type VisualiserMetadata = z.infer<typeof VisualiserMetadata>;
+
 const onVisualiserRenderNative = "on_visualiser_render_native";
-const getSampleRateNative = juce.getNativeFunction("get_sample_rate_native");
+const getVisualiserMetadataNative = juce.getNativeFunction(
+  "get_visualiser_metadata_native",
+);
 
 export const getVisualiserRender = async () => {
   const res = await fetch(juce.getBackendResourceAddress("visualiser.bin"));
   return new Uint8Array(await res.arrayBuffer());
 };
 
-const handleReceiveSampleRate = (data: any) => {
-  try {
-    return JSON.parse(data);
-  } catch (err) {
-    console.error("Failed to parse SampleRateIPC!", err);
-  }
-
-  return 48000;
+export const defaultVisualiserMetadata: VisualiserMetadata = {
+  sampleRate: 48000,
+  baseIrLengthSamples: 48000,
 };
 
-export const getSampleRate = async () => {
-  return handleReceiveSampleRate(await getSampleRateNative());
+const handleReceiveVisualiserMetadata = (data: any) => {
+  try {
+    return VisualiserMetadata.parse(JSON.parse(data));
+  } catch (err) {
+    console.error("Failed to parse VisualiserMetadataIPC!", err);
+  }
+
+  return defaultVisualiserMetadata;
+};
+
+export const getVisualiserMetadata = async () => {
+  return handleReceiveVisualiserMetadata(await getVisualiserMetadataNative());
 };
 export const visualiserRenderListener = (
   onRenderUpdate: (state: Uint8Array) => void,
-  onSampleRateUpdate: (state: number) => void,
+  onVisualiserMetadataUpdate: (state: VisualiserMetadata) => void,
 ) => {
   const listener = addNativeEventListener(
     onVisualiserRenderNative,
     async (data: any) => {
       onRenderUpdate(await getVisualiserRender());
-      onSampleRateUpdate(await getSampleRate());
+      onVisualiserMetadataUpdate(await getVisualiserMetadata());
     },
   );
 

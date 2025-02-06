@@ -12,9 +12,9 @@ static int GetFFTSize (int hop_size, double base_sample_rate)
     return std::max (static_cast<int> (juce::nextPowerOfTwo (2 * samples_per_hop)), kTargetFFTSize);
 }
 
-static int GetHopSize (int base_num_samples)
+static int GetHopSize (int base_num_samples, double base_sample_rate)
 {
-    auto max_num_samples_frac = kMaxIrRatio * base_num_samples;
+    auto max_num_samples_frac = (kMaxIrRatio * base_num_samples) + (0.5 * base_sample_rate);
     return static_cast<int> (std::round (max_num_samples_frac / kResolution));
 }
 
@@ -22,7 +22,7 @@ static juce::AudioBuffer<float> PerformFFT (const juce::dsp::AudioBlock<const fl
                                             int base_num_samples,
                                             double base_sample_rate)
 {
-    auto hop_size = GetHopSize (base_num_samples);
+    auto hop_size = GetHopSize (base_num_samples, base_sample_rate);
     auto fft_size = GetFFTSize (hop_size, base_sample_rate);
     auto fft_order = static_cast<int> (std::log2 (fft_size));
 
