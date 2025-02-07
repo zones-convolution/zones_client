@@ -27,6 +27,7 @@ void ResamplerProcessor::ResampleBuffer (const juce::AudioBuffer<float> & input_
     auto num_channels = input_buffer.getNumChannels ();
     auto output_num_samples = static_cast<float> (input_buffer.getNumSamples ()) / ratio;
     output_buffer.setSize (num_channels, static_cast<int> (std::ceil (output_num_samples)));
+    output_buffer.clear ();
 
     if (useLagrangeInterpolator)
     {
