@@ -38,18 +38,18 @@ const createVisualiserTexture = (): Uint8Array => {
   return data;
 };
 
-export const Visualiser2DStory: Story = {
-  args: {
-    context: {
-      render: createVisualiserTexture(),
-      sensitivity: 1.0,
-      contrast: 1.0,
-      scale: "linear",
-      colourMap: "jet",
-      setColourMap: fn(),
-      setScale: fn(),
-      setSensitivity: fn(),
-      setContrast: fn(),
-    },
-  },
-};
+// export const Visualiser2DStory: Story = {
+//   args: {
+//     context: {
+//       render: createVisualiserTexture(),
+//       sensitivity: 1.0,
+//       contrast: 1.0,
+//       scale: "linear",
+//       colourMap: "jet",
+//       setColourMap: fn(),
+//       setScale: fn(),
+//       setSensitivity: fn(),
+//       setContrast: fn(),
+//     },
+//   },
+// };
