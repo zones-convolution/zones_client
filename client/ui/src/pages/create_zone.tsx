@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { Separator } from "@/components/ui/separator";
+import { useToast } from "@/components/ui/use-toast";
 
 import { IrForm } from "@/components/create/ir_form";
 import { ZoneMetadataForm } from "@/components/create/zone_metadata_form";
@@ -23,6 +24,7 @@ const CreateZone = () => {
     },
   });
   const { back } = useBrowserContext();
+  const { toast } = useToast();
 
   return (
     <div className="h-full bg-card overflow-y-auto p-2">
@@ -30,8 +32,18 @@ const CreateZone = () => {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(async (data) => {
-              await createZone(data);
-              back(true);
+              const result = await createZone(data);
+              if (result) {
+                toast({
+                  title: `${data.metadata.title} Created!`,
+                });
+                back(true);
+              } else {
+                toast({
+                  title: "Error Creating Zone",
+                  description: `Maybe the form is incomplete?`,
+                });
+              }
             })}
             className="space-y-8"
           >

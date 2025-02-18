@@ -61,10 +61,13 @@ UserZonesRelay::buildOptions (const juce::WebBrowserComponent::Options & initial
             {
                 ImportMetadata import_metadata;
                 json::parse (var [0].toString ().toStdString ()).get_to (import_metadata);
-                user_zones_controller_.Import (import_metadata);
+
+                auto result = user_zones_controller_.Import (import_metadata);
+
+                json data = result;
 
                 JUCE_ASSERT_MESSAGE_THREAD;
-                complete ({});
+                complete ({data.dump ()});
             })
         .withNativeFunction ("remove_user_zone_native", [&] (auto & var, auto complete) {})
         .withNativeFunction ("choose_ir_path_native",

@@ -15,9 +15,10 @@ class UserZonesController
 public:
     UserZonesController () = default;
     void GetIrPath (std::function<void (const std::string & path)> add_ir_path_callback);
-    void Import (ImportMetadata import_metadata);
+    bool Import (ImportMetadata import_metadata);
 
 private:
+    bool IsImportMetadataValid (ImportMetadata import_metadata);
     PositionMap PerformCopyPositionMap (const PositionMap & position_map,
                                         const std::filesystem::path & zone_directory,
                                         const std::filesystem::path & ir_path);

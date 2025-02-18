@@ -19,31 +19,61 @@ void UserZonesController::GetIrPath (
                                });
 }
 
-void UserZonesController::Import (ImportMetadata import_metadata)
+bool UserZonesController::IsImportMetadataValid (ImportMetadata import_metadata)
 {
+    if (import_metadata.path.empty ())
+        return false;
+
     auto & metadata = import_metadata.metadata;
-    auto destination_path = std::filesystem::path (import_metadata.path);
+    if (metadata.title.empty ())
+        return false;
+    if (metadata.irs.empty ())
+        return false;
 
-    auto zone_title = metadata.title;
-    auto safe_zone_title =
-        std::filesystem::path (juce::File::createLegalFileName (zone_title).toStdString ());
-
-    auto zone_directory_path = destination_path / safe_zone_title;
-    juce::File zone_directory {zone_directory_path.string ()};
-    zone_directory.createDirectory ();
-
-    for (auto & import_ir : import_metadata.metadata.irs)
+    for (auto & ir : metadata.irs)
     {
-        if (! import_ir.title.has_value () || ! import_ir.ir_id.has_value ())
-            continue;
-        auto safe_ir_title = std::filesystem::path (
-            juce::File::createLegalFileName (import_ir.title.value ()).toStdString ());
-        auto relative_path = "impulse_responses" / safe_ir_title;
-        import_ir.position_map = PerformCopyPositionMap (
-            import_ir.position_map.value (), zone_directory_path, relative_path);
-        import_ir.relative_path = relative_path;
+        if (! ir.title.has_value () || ir.title->empty ())
+            return false;
     }
-    WriteZoneMetadata (zone_directory_path / safe_zone_title.replace_extension (".json"), metadata);
+    return true;
+}
+
+bool UserZonesController::Import (ImportMetadata import_metadata)
+{
+    if (! IsImportMetadataValid (import_metadata))
+        return false;
+
+    try
+    {
+        auto & metadata = import_metadata.metadata;
+        auto destination_path = std::filesystem::path (import_metadata.path);
+
+        auto zone_title = metadata.title;
+        auto safe_zone_title =
+            std::filesystem::path (juce::File::createLegalFileName (zone_title).toStdString ());
+
+        auto zone_directory_path = destination_path / safe_zone_title;
+        juce::File zone_directory {zone_directory_path.string ()};
+        zone_directory.createDirectory ();
+
+        for (auto & import_ir : import_metadata.metadata.irs)
+        {
+            auto safe_ir_title = std::filesystem::path (
+                juce::File::createLegalFileName (import_ir.title.value ()).toStdString ());
+            auto relative_path = "impulse_responses" / safe_ir_title;
+            import_ir.position_map = PerformCopyPositionMap (
+                import_ir.position_map.value (), zone_directory_path, relative_path);
+            import_ir.relative_path = relative_path;
+        }
+        WriteZoneMetadata (zone_directory_path / safe_zone_title.replace_extension (".json"),
+                           metadata);
+    }
+    catch (...)
+    {
+        return false;
+    }
+
+    return true;
 }
 
 PositionMap
