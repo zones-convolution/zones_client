@@ -49,8 +49,7 @@ private:
     MeteringRelay metering_relay_;
     ResizeRelay resize_relay_;
     VisualiserRelay visualiser_relay_;
-
-    juce::File asset_directory_;
+    
     const juce::WebBrowserComponent::Options kBaseWebOptions =
         juce::WebBrowserComponent::Options {}
             .withBackend (juce::WebBrowserComponent::Options::Backend::webview2)

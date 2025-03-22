@@ -56,8 +56,7 @@ set(SOURCES
         src/controllers/WebLoadController.cpp
 )
 
-set(ASSETS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/ui/dist/)
-
+set(ASSETS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/ui/dist)
 
 if (DEFINED ENV{CI} AND WIN32)
     execute_process(
@@ -103,26 +102,37 @@ target_compile_definitions(${BINARY}
 
 target_sources(${BINARY} PRIVATE ${SOURCES})
 
-target_link_libraries(
-        ${BINARY}
-        PRIVATE ${LINK_JUCE} ${LINK_COMMON}
-        PUBLIC ${MODULE_LINK_CONF})
 
 #target_compile_options(${BINARY} INTERFACE -Wall -Wextra -Werror)
 
 if (NOT DEV_LOCALHOST AND NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
-    get_target_property(ACTIVE_TARGETS ${BINARY} JUCE_ACTIVE_PLUGIN_TARGETS)
-    foreach (ACTIVE_TARGET IN LISTS ACTIVE_TARGETS)
-        message(STATUS "Adding resource copy step from ${ASSETS_DIR} for ${ACTIVE_TARGET}")
 
-        get_target_property(ARTIFACT_FILE ${ACTIVE_TARGET} JUCE_PLUGIN_ARTEFACT_FILE)
-        set(RESOURCE_DIR "${ARTIFACT_FILE}/Contents/Resources")
+    set(WEBVIEW_FILES_ZIP_NAME "webview_files.zip")
+    set(TARGET_WEBVIEW_FILES_ZIP_PATH "${CMAKE_BINARY_DIR}/${WEBVIEW_FILES_ZIP_NAME}")
+    get_filename_component(PUBLIC_PATH "${ASSETS_DIR}" ABSOLUTE)
 
-        add_custom_command(TARGET ${ACTIVE_TARGET} PRE_BUILD
-                COMMAND ${CMAKE_COMMAND} -E rm -rf "${RESOURCE_DIR}/dist"
-                COMMAND ${CMAKE_COMMAND} -E make_directory "${RESOURCE_DIR}/dist"
-                COMMAND ${CMAKE_COMMAND} -E copy_directory "${ASSETS_DIR}" "${RESOURCE_DIR}/dist"
-                VERBATIM)
-    endforeach ()
+    file(
+            ARCHIVE_CREATE
+            OUTPUT
+            ${TARGET_WEBVIEW_FILES_ZIP_PATH}
+            PATHS
+            "${PUBLIC_PATH}"
+            FORMAT
+            zip
+            VERBOSE
+    )
+    
+    juce_add_binary_data(WebViewFiles
+            HEADER_NAME WebViewFiles.h
+            NAMESPACE webview_files
+            SOURCES ${TARGET_WEBVIEW_FILES_ZIP_PATH}
+    )
+
+
 endif ()
+
+target_link_libraries(
+        ${BINARY}
+        PRIVATE ${LINK_JUCE} ${LINK_COMMON} WebViewFiles
+        PUBLIC ${MODULE_LINK_CONF})
 

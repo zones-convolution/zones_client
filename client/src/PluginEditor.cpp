@@ -1,5 +1,8 @@
 #include "PluginEditor.h"
 
+#include <WebViewFiles.h>
+#include <ranges>
+
 const juce::String AudioPluginAudioProcessorEditor::kLocalDevServerAddress =
     "http://localhost:5173/";
 
@@ -65,21 +68,43 @@ static auto StreamToVector (juce::InputStream & stream)
     return result;
 }
 
+std::vector<std::byte> GetWebViewFileAsBytes (const juce::String & filepath)
+{
+    juce::MemoryInputStream zipStream {
+        webview_files::webview_files_zip, webview_files::webview_files_zipSize, false};
+    juce::ZipFile zipFile {zipStream};
+
+    for (const auto i : std::views::iota (0, zipFile.getNumEntries ()))
+    {
+        const auto * zipEntry = zipFile.getEntry (i);
+
+        if (zipEntry->filename.endsWith (filepath))
+        {
+            const std::unique_ptr<juce::InputStream> entryStream {
+                zipFile.createStreamForEntry (*zipEntry)};
+            return StreamToVector (*entryStream);
+        }
+    }
+}
+
 std::optional<juce::WebBrowserComponent::Resource>
 AudioPluginAudioProcessorEditor::GetResource (const juce::String & url)
 {
     if (url == "/visualiser.bin")
         return visualiser_relay_.GetVisualiserResource ();
 
-    auto rel_path = "." + (url == "/" ? "/index.html" : url);
-    auto asset_file = asset_directory_.getChildFile (rel_path);
+    const auto resourceToRetrieve =
+        url == "/" ? "index.html" : url.fromFirstOccurrenceOf ("/", false, false);
 
-    if (! asset_file.existsAsFile ())
-        return std::nullopt;
+    const auto resource = GetWebViewFileAsBytes (resourceToRetrieve);
+    if (! resource.empty ())
+    {
+        const auto extension = resourceToRetrieve.fromLastOccurrenceOf (".", true, false);
+        return juce::WebBrowserComponent::Resource {std::move (resource),
+                                                    GetMimeForExtension (extension)};
+    }
 
-    auto file_stream = asset_file.createInputStream ();
-    return juce::WebBrowserComponent::Resource {
-        StreamToVector (*file_stream), GetMimeForExtension (asset_file.getFileExtension ())};
+    return std::nullopt;
 }
 
 AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (
@@ -118,7 +143,6 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (
                      static_cast<int> (kWindowMaxWidth * kPreferredAspectRatio));
     setSize (1200, 720);
     resize_relay_.Setup (this, getConstrainer ());
-    asset_directory_ = GetAssetsDirectory ();
 
 #if DEV_LOCALHOST
     web_browser_component_.goToURL (kLocalDevServerAddress);
