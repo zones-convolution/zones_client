@@ -109,25 +109,32 @@ if (NOT DEV_LOCALHOST AND NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
 
     set(WEBVIEW_FILES_ZIP_NAME "webview_files.zip")
     set(TARGET_WEBVIEW_FILES_ZIP_PATH "${CMAKE_BINARY_DIR}/${WEBVIEW_FILES_ZIP_NAME}")
-    get_filename_component(PUBLIC_PATH "${ASSETS_DIR}" ABSOLUTE)
+    cmake_path(ABSOLUTE_PATH ASSETS_DIR NORMALIZE OUTPUT_VARIABLE PUBLIC_PATH)
+    cmake_path(GET PUBLIC_PATH PARENT_PATH WORKING_DIRECTORY)
 
-    file(
-            ARCHIVE_CREATE
-            OUTPUT
-            ${TARGET_WEBVIEW_FILES_ZIP_PATH}
-            PATHS
+    add_custom_target(ZipWebViewFiles
+            COMMAND
+            ${CMAKE_COMMAND} -E tar cvf
+            "${TARGET_WEBVIEW_FILES_ZIP_PATH}"
+            --format=zip
             "${PUBLIC_PATH}"
-            FORMAT
-            zip
-            VERBOSE
+            BYPRODUCTS
+            "${TARGET_WEBVIEW_FILES_ZIP_PATH}"
+            WORKING_DIRECTORY
+            "${WORKING_DIRECTORY}"
+            COMMENT "Zipping WebView files..."
+            VERBATIM
     )
-    
+
+    cmake_path(GET PUBLIC_PATH FILENAME ZIPPED_FILES_PREFIX)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE ZIPPED_FILES_PREFIX="${ZIPPED_FILES_PREFIX}/")
+
     juce_add_binary_data(WebViewFiles
             HEADER_NAME WebViewFiles.h
             NAMESPACE webview_files
             SOURCES ${TARGET_WEBVIEW_FILES_ZIP_PATH}
     )
-
+    add_dependencies(WebViewFiles ZipWebViewFiles)
 
 endif ()
 

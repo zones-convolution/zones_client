@@ -74,17 +74,21 @@ std::vector<std::byte> GetWebViewFileAsBytes (const juce::String & filepath)
         webview_files::webview_files_zip, webview_files::webview_files_zipSize, false};
     juce::ZipFile zipFile {zipStream};
 
-    for (const auto i : std::views::iota (0, zipFile.getNumEntries ()))
+    if (auto * zipEntry = zipFile.getEntry (ZIPPED_FILES_PREFIX + filepath))
     {
-        const auto * zipEntry = zipFile.getEntry (i);
+        const std::unique_ptr<juce::InputStream> entryStream {
+            zipFile.createStreamForEntry (*zipEntry)};
 
-        if (zipEntry->filename.endsWith (filepath))
+        if (entryStream == nullptr)
         {
-            const std::unique_ptr<juce::InputStream> entryStream {
-                zipFile.createStreamForEntry (*zipEntry)};
-            return StreamToVector (*entryStream);
+            jassertfalse;
+            return {};
         }
+
+        return StreamToVector (*entryStream);
     }
+
+    return {};
 }
 
 std::optional<juce::WebBrowserComponent::Resource>
