@@ -1,7 +1,9 @@
 #include "PluginEditor.h"
 
-#include <WebViewFiles.h>
 #include <ranges>
+
+extern "C" const char ui_build_webview_files_zip [];
+extern "C" const unsigned ui_build_webview_files_zip_size;
 
 const juce::String AudioPluginAudioProcessorEditor::kLocalDevServerAddress =
     "http://localhost:5173/";
@@ -71,7 +73,7 @@ static auto StreamToVector (juce::InputStream & stream)
 std::vector<std::byte> GetWebViewFileAsBytes (const juce::String & filepath)
 {
     juce::MemoryInputStream zipStream {
-        webview_files::webview_files_zip, webview_files::webview_files_zipSize, false};
+        &ui_build_webview_files_zip, ui_build_webview_files_zip_size, false};
     juce::ZipFile zipFile {zipStream};
 
     if (auto * zipEntry = zipFile.getEntry (ZIPPED_FILES_PREFIX + filepath))

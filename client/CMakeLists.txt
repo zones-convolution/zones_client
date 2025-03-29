@@ -56,7 +56,6 @@ set(SOURCES
         src/controllers/WebLoadController.cpp
 )
 
-set(ASSETS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/ui/dist)
 
 if (DEFINED ENV{CI} AND WIN32)
     execute_process(
@@ -102,13 +101,16 @@ target_compile_definitions(${BINARY}
 
 target_sources(${BINARY} PRIVATE ${SOURCES})
 
-
-#target_compile_options(${BINARY} INTERFACE -Wall -Wextra -Werror)
+target_link_libraries(
+        ${BINARY}
+        PRIVATE ${LINK_JUCE} ${LINK_COMMON}
+        PUBLIC ${MODULE_LINK_CONF})
 
 if (NOT DEV_LOCALHOST AND NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
 
     set(WEBVIEW_FILES_ZIP_NAME "webview_files.zip")
-    set(TARGET_WEBVIEW_FILES_ZIP_PATH "${CMAKE_BINARY_DIR}/${WEBVIEW_FILES_ZIP_NAME}")
+    set(TARGET_WEBVIEW_FILES_ZIP_PATH "${CMAKE_CURRENT_SOURCE_DIR}/ui/build/${WEBVIEW_FILES_ZIP_NAME}")
+    set(ASSETS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/ui/build/dist)
     cmake_path(ABSOLUTE_PATH ASSETS_DIR NORMALIZE OUTPUT_VARIABLE PUBLIC_PATH)
     cmake_path(GET PUBLIC_PATH PARENT_PATH WORKING_DIRECTORY)
 
@@ -128,18 +130,8 @@ if (NOT DEV_LOCALHOST AND NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
 
     cmake_path(GET PUBLIC_PATH FILENAME ZIPPED_FILES_PREFIX)
     target_compile_definitions(${PROJECT_NAME} PRIVATE ZIPPED_FILES_PREFIX="${ZIPPED_FILES_PREFIX}/")
-
-    juce_add_binary_data(WebViewFiles
-            HEADER_NAME WebViewFiles.h
-            NAMESPACE webview_files
-            SOURCES ${TARGET_WEBVIEW_FILES_ZIP_PATH}
-    )
-    add_dependencies(WebViewFiles ZipWebViewFiles)
-
+    embed_resources(${PROJECT_NAME} ui/build/${WEBVIEW_FILES_ZIP_NAME})
 endif ()
 
-target_link_libraries(
-        ${BINARY}
-        PRIVATE ${LINK_JUCE} ${LINK_COMMON} WebViewFiles
-        PUBLIC ${MODULE_LINK_CONF})
+
 

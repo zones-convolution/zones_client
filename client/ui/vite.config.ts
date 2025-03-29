@@ -5,4 +5,8 @@ import tsconfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig({
   plugins: [react(), tsconfigPaths({ loose: true }), glsl()],
+  build: {
+    outDir: "build/dist",
+    emptyOutDir: true,
+  },
 });
