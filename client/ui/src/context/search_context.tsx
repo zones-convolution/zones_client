@@ -1,4 +1,12 @@
-import { createContext, FC, ReactNode, useContext, useState } from "react";
+import {
+  createContext,
+  Dispatch,
+  FC,
+  ReactNode,
+  SetStateAction,
+  useContext,
+  useState,
+} from "react";
 import useSWR from "swr";
 
 import { Config } from "@/lib/config";
@@ -9,8 +17,17 @@ export interface ISearchZones {
   count: number;
 }
 
+export interface ISearchParams {
+  page: number;
+  pageSize: number;
+  search: string | null;
+}
+
 interface ISearchContext {
   search: ISearchZones;
+  params: ISearchParams;
+  setParams: Dispatch<SetStateAction<ISearchParams>>;
+  isLoading: boolean;
 }
 
 const SearchContext = createContext<ISearchContext | null>(null);
@@ -18,13 +35,25 @@ const SearchContext = createContext<ISearchContext | null>(null);
 export const SearchProvider: FC<{
   children: ReactNode;
 }> = ({ children }) => {
-  const [page, setPage] = useState<number>(1);
-  const [pageSize, setPageSize] = useState<number>(10);
+  const [params, setParams] = useState<ISearchParams>({
+    page: 1,
+    pageSize: 10,
+    search: null,
+  });
 
-  const { data } = useSWR<ISearchZones>(`${Config.API_BASE_URL}/zones`);
+  const { data, isLoading } = useSWR<ISearchZones>(
+    `${Config.API_BASE_URL}/zones?page=${params.page}&pageSize=${params.pageSize}&search=${params.search ?? ""}`,
+  );
 
   return (
-    <SearchContext.Provider value={{ search: data ?? { count: 0, data: [] } }}>
+    <SearchContext.Provider
+      value={{
+        search: data ?? { count: 0, data: [] },
+        params,
+        setParams,
+        isLoading,
+      }}
+    >
       {children}
     </SearchContext.Provider>
   );

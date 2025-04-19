@@ -85,9 +85,9 @@ const ZonesLoading = () => {
 };
 
 const ZonesHits = () => {
-  const { search } = useSearchContext();
+  const { search, isLoading } = useSearchContext();
 
-  // if (status == "loading") return <ZonesLoading />;
+  if (isLoading) return <ZonesLoading />;
   if (search.count === 0) return <ZonesNoHits />;
 
   return (
