@@ -39,30 +39,17 @@ export type ZonesChannelFormat = (typeof ZonesChannelFormats)[number];
 
 export type ZoneStatus = "CREATING" | "PENDING" | "PUBLISHED";
 
-export interface IZone {
-  zoneId: string;
-  createdAt: Date;
-  updatedAt: Date;
-  authorId: string;
-  title: string;
-  description?: string;
-  captureDate?: Date;
-  coordinate?: ICoordinate;
-  spaceCategory?: string;
-  generationType?: GenerationType;
-  tags?: string[];
-  coverImageId?: string;
-  status: ZoneStatus;
-  approvedBy?: string;
-  approvedAt?: Date;
-  versionNumber: number;
+export interface IUser {
+  id: string;
+  name: string | null;
+  description: string | null;
 }
 
 export interface IImage {
   imageId: string;
   zoneId: string;
   createdAt: Date;
-  ttl?: number;
+  processed: boolean;
 }
 
 export interface IImpulseResponse {
@@ -70,39 +57,34 @@ export interface IImpulseResponse {
   zoneId: string;
   createdAt: Date;
   title: string;
-  description?: string;
-  ttl?: number;
+  description: string | null;
   channelFormat: ZonesChannelFormat;
   speakerPositions: SpeakerPositions;
+  processed: boolean;
 }
 
-export type IndexedIr = Pick<
-  IImpulseResponse,
-  "irId" | "title" | "channelFormat" | "speakerPositions" | "description"
->;
+export interface IZone {
+  zoneId: string;
+  createdAt: Date;
+  updatedAt: Date;
+  title: string;
+  description: string | null;
+  attribution: string | null;
+  captureDate: Date | null;
+  coordinate: ICoordinate | null;
+  spaceCategory: string | null;
+  generationType: GenerationType | null;
+  tags: string[];
+  coverImageId: string | null;
+  status: ZoneStatus;
+  approvedBy: string | null;
+  approvedAt: Date | null;
+  versionNumber: number;
 
-export type IndexedZone = Pick<
-  IZone,
-  | "zoneId"
-  | "createdAt"
-  | "updatedAt"
-  | "title"
-  | "description"
-  | "captureDate"
-  | "coordinate"
-  | "spaceCategory"
-  | "generationType"
-  | "tags"
-  | "coverImageId"
-  | "versionNumber"
->;
-
-export type IndexedImage = Pick<IImage, "imageId">;
-
-export type ZoneSearchHit = IndexedZone & {
-  irs: IndexedIr[];
-  images: IndexedImage[];
-};
+  user: IUser;
+  images: IImage[];
+  irs: IImpulseResponse[];
+}
 
 export const toPositionMap = (
   speakerPositions: SpeakerPositions,
@@ -131,36 +113,32 @@ export const toChannelFormat = (
   }
 };
 
-export const toImageMetadata = (image: IndexedImage): ImageMetadata => {
+export const toImageMetadata = (image: IImage): ImageMetadata => {
   return {
     imageId: image.imageId,
     imagePath: image.imageId, // This is wrong
   };
 };
 
-export const toIrMetadata = (ir: IndexedIr): IrMetadata => {
+export const toIrMetadata = (ir: IImpulseResponse): IrMetadata => {
   return {
     channelFormat: toChannelFormat(ir.channelFormat),
     positionMap: toPositionMap(ir.speakerPositions),
     title: ir.title,
     irId: ir.irId,
-    description: ir.description,
+    description: ir.description ?? undefined,
     relativePath: `impulse-responses/${ir.irId}`,
   };
 };
 
-export const toZoneMetadata = (
-  zone: IndexedZone,
-  images: IndexedImage[],
-  irs: IndexedIr[],
-): ZoneMetadata => {
+export const toZoneMetadata = (zone: IZone): ZoneMetadata => {
   return {
     zoneType: "web",
     title: zone.title || "No title?",
-    description: zone.description,
+    description: zone.description ?? undefined,
     zoneId: zone.zoneId,
-    images: images.map(toImageMetadata),
-    irs: irs.map(toIrMetadata),
-    coverImageId: zone.coverImageId,
+    images: zone.images.map(toImageMetadata),
+    irs: zone.irs.map(toIrMetadata),
+    coverImageId: zone.coverImageId ?? undefined,
   };
 };

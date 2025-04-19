@@ -5,10 +5,10 @@ import { Separator } from "@/components/ui/separator";
 import { BannerImageGallery } from "@/components/banner_image_gallery";
 import { IrTable } from "@/components/zone_page/ir_table";
 import { getImageUrl } from "@/lib/s3_resources";
-import { toZoneMetadata, ZoneSearchHit } from "@/lib/zones";
+import { toZoneMetadata, IZone } from "@/lib/zones";
 
-const Zone: FC<{ zone: ZoneSearchHit }> = ({ zone }) => {
-  const zoneMetadata = toZoneMetadata(zone, zone.images, zone.irs);
+const Zone: FC<{ zone: IZone }> = ({ zone }) => {
+  const zoneMetadata = toZoneMetadata(zone);
 
   return (
     <div className="h-full overflow-scroll bg-card">

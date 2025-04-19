@@ -91,7 +91,7 @@ const IrTableRow: FC<{ ir: IrMetadata; zone: ZoneMetadata }> = ({
   const isDisabled = validTargets.length == 0;
 
   return (
-    <TableRow>
+    <TableRow key={ir.irId}>
       <TableCell
         className={cn("font-medium", {
           "text-muted-foreground": isDisabled,
@@ -187,8 +187,8 @@ const IrTable: FC<{ zone: ZoneMetadata }> = ({ zone }) => {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {irs.map((ir, index) => (
-          <IrTableRow ir={ir} zone={zone} key={index} />
+        {irs.map((ir) => (
+          <IrTableRow ir={ir} zone={zone} key={ir.irId} />
         ))}
       </TableBody>
     </table>

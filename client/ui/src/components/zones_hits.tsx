@@ -1,23 +1,22 @@
-import { Hit } from "instantsearch.js";
 import { Search } from "lucide-react";
 import React, { FC } from "react";
-import { useHits, useInstantSearch } from "react-instantsearch";
 
 import { Skeleton } from "@/components/ui/skeleton";
 
 import { ZoneCard } from "@/components/cards/zone_card";
 import { useNavigation } from "@/context/browser_context";
 import { useLoadContext } from "@/context/load_context";
+import { useSearchContext } from "@/context/search_context";
 import { useValidTargetFormats } from "@/hooks/use_valid_target_formats";
 import { doesZoneMatchSelection, getDefaultIrSelection } from "@/lib/irs";
 import { getImageUrl } from "@/lib/s3_resources";
-import { toZoneMetadata, ZoneSearchHit } from "@/lib/zones";
+import { IZone, toZoneMetadata } from "@/lib/zones";
 
 const ZonesSearchHit: FC<{
-  hit: Hit<ZoneSearchHit>;
-}> = ({ hit }) => {
-  const zoneMetadata = toZoneMetadata(hit, hit.images, hit.irs);
-  const imageUrl = getImageUrl(hit.zoneId, hit.coverImageId!);
+  zone: IZone;
+}> = ({ zone }) => {
+  const zoneMetadata = toZoneMetadata(zone);
+  const imageUrl = getImageUrl(zone.zoneId, zone.coverImageId!);
   const { navigateToZone } = useNavigation();
   const { load, loadingIr, currentIr } = useLoadContext();
   const { validTargetFormats } = useValidTargetFormats();
@@ -30,13 +29,13 @@ const ZonesSearchHit: FC<{
 
   return (
     <ZoneCard
-      category={hit.title!}
+      category={zone.title}
       imageUrl={imageUrl}
       rt60={1.2}
       loading={isLoadingZone}
       disabled={isCurrentZone}
       canLoad={defaultIrSelection != undefined}
-      onView={() => navigateToZone(hit)}
+      onView={() => navigateToZone(zone)}
       onLoad={async () => {
         if (defaultIrSelection) await load(defaultIrSelection);
       }}
@@ -86,19 +85,18 @@ const ZonesLoading = () => {
 };
 
 const ZonesHits = () => {
-  const { items } = useHits<ZoneSearchHit>();
-  const { status } = useInstantSearch();
+  const { search } = useSearchContext();
 
-  if (status == "loading") return <ZonesLoading />;
-  if (items.length === 0) return <ZonesNoHits />;
+  // if (status == "loading") return <ZonesLoading />;
+  if (search.count === 0) return <ZonesNoHits />;
 
   return (
     <div className="flex flex-col gap-4">
       <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-4 gap-4">
-        {items.map((item) => {
+        {search.data.map((zone) => {
           return (
-            <div className="h-[200px]" key={item.zoneId}>
-              <ZonesSearchHit hit={item} />
+            <div className="h-[200px]" key={zone.zoneId}>
+              <ZonesSearchHit zone={zone} />
             </div>
           );
         })}

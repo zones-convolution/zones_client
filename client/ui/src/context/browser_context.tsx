@@ -1,7 +1,7 @@
 import { createContext, FC, ReactNode, useContext, useState } from "react";
 
 import { ZoneMetadata } from "@/hooks/zone_metadata";
-import { ZoneSearchHit } from "@/lib/zones";
+import { IZone } from "@/lib/zones";
 
 export enum Route {
   Home,
@@ -17,7 +17,7 @@ export type Routes =
     }
   | {
       target: Route.Zone;
-      state: ZoneSearchHit;
+      state: IZone;
     }
   | {
       target: Route.CreateZone;
@@ -119,7 +119,6 @@ export const useNavigation = () => {
     navigateToCreateZone: () => push({ target: Route.CreateZone }),
     navigateToUserZone: (zone: ZoneMetadata) =>
       push({ target: Route.UserZone, state: zone }),
-    navigateToZone: (zoneSearchHit: ZoneSearchHit) =>
-      push({ target: Route.Zone, state: zoneSearchHit }),
+    navigateToZone: (zone: IZone) => push({ target: Route.Zone, state: zone }),
   };
 };
