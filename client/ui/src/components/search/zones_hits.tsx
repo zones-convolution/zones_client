@@ -9,7 +9,7 @@ import { useLoadContext } from "@/context/load_context";
 import { useSearchContext } from "@/context/search_context";
 import { useValidTargetFormats } from "@/hooks/use_valid_target_formats";
 import { doesZoneMatchSelection, getDefaultIrSelection } from "@/lib/irs";
-import { getImageUrl } from "@/lib/s3_resources";
+import { getImageUrl, getProfileImageUrl } from "@/lib/s3_resources";
 import { IZone, toZoneMetadata } from "@/lib/zones";
 
 const ZonesSearchHit: FC<{
@@ -27,8 +27,12 @@ const ZonesSearchHit: FC<{
     validTargetFormats,
   );
 
+  const profileImageUrl = getProfileImageUrl(zone.user.id);
+
   return (
     <ZoneCard
+      userName={zone.user.name ?? ""}
+      profileImageUrl={profileImageUrl}
       category={zone.title}
       imageUrl={imageUrl}
       rt60={1.2}

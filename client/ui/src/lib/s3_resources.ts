@@ -40,4 +40,8 @@ const getIrUrl = (
   return `${Config.S3_HOST}/impulse-responses-processed/${getIrResourcePath(zoneId, irId, position)}`;
 };
 
-export { getIrUrl, getImageUrl };
+const getProfileImageUrl = (userId: string) => {
+  return `${Config.S3_HOST}/profile-pictures-processed/${userId}.jpeg`;
+};
+
+export { getIrUrl, getImageUrl, getProfileImageUrl };
