@@ -32,7 +32,6 @@ const Zone: FC<{ zone: IZone }> = ({ zone }) => {
             }
           />
         </div>
-        <h1 className="text-xl">IRs</h1>
         <IrTable zone={zoneMetadata} />
         <ZoneDetails zone={zone} />
         <ZoneTags zone={zone} />

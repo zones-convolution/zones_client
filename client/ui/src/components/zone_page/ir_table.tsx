@@ -3,6 +3,7 @@ import { FC, useEffect, useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -20,6 +21,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import { UserProfile } from "@/components/user_profile";
 import { useLoadContext } from "@/context/load_context";
 import { useValidTargetFormats } from "@/hooks/use_valid_target_formats";
 import {
@@ -175,23 +177,30 @@ const IrTable: FC<{ zone: ZoneMetadata }> = ({ zone }) => {
   const irs = zone.irs;
 
   return (
-    <table className={cn("w-full caption-bottom text-sm")}>
-      <TableHeader>
-        <TableRow>
-          <TableHead className="w-[100px]">Title</TableHead>
-          <TableHead>Description</TableHead>
-          <TableHead>Channel Format</TableHead>
-          <TableHead>Positions</TableHead>
-          <TableHead></TableHead>
-          <TableHead></TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {irs.map((ir) => (
-          <IrTableRow ir={ir} zone={zone} key={ir.irId} />
-        ))}
-      </TableBody>
-    </table>
+    <Card>
+      <CardHeader>
+        <CardTitle>Impulse Responses</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-8">
+        <table className={cn("w-full caption-bottom text-sm")}>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-[100px]">Title</TableHead>
+              <TableHead>Description</TableHead>
+              <TableHead>Channel Format</TableHead>
+              <TableHead>Positions</TableHead>
+              <TableHead></TableHead>
+              <TableHead></TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {irs.map((ir) => (
+              <IrTableRow ir={ir} zone={zone} key={ir.irId} />
+            ))}
+          </TableBody>
+        </table>
+      </CardContent>
+    </Card>
   );
 };
 
