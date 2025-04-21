@@ -27,12 +27,9 @@ const ZonesSearchHit: FC<{
     validTargetFormats,
   );
 
-  const profileImageUrl = getProfileImageUrl(zone.user.id);
-
   return (
     <ZoneCard
-      userName={zone.user.name ?? ""}
-      profileImageUrl={profileImageUrl}
+      user={zone.user}
       category={zone.title}
       imageUrl={imageUrl}
       rt60={1.2}

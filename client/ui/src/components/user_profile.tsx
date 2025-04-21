@@ -3,6 +3,9 @@ import { FC } from "react";
 
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
+import { getProfileImageUrl } from "@/lib/s3_resources";
+import { IUser } from "@/lib/zones";
+
 export const getInitials = (fullName: string) => {
   const allNames = fullName.trim().split(" ");
   return allNames.reduce((acc, curr, index) => {
@@ -13,12 +16,9 @@ export const getInitials = (fullName: string) => {
   }, "");
 };
 
-interface IUserProfile {
-  name: string | null;
-  imageUrl: string;
-}
+export const UserProfile: FC<IUser> = ({ name, id }) => {
+  const imageUrl = getProfileImageUrl(id);
 
-export const UserProfile: FC<IUserProfile> = ({ name, imageUrl }) => {
   return (
     <div className="flex flex-row items-center backdrop-blur bg-card/40 w-fit">
       <Avatar className="h-8 w-8 rounded-lg">

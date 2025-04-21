@@ -65,12 +65,12 @@ export interface IImpulseResponse {
 
 export interface IZone {
   zoneId: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
   title: string;
   description: string | null;
   attribution: string | null;
-  captureDate: Date | null;
+  captureDate: string | null;
   coordinate: ICoordinate | null;
   spaceCategory: string | null;
   generationType: GenerationType | null;
@@ -78,7 +78,7 @@ export interface IZone {
   coverImageId: string | null;
   status: ZoneStatus;
   approvedBy: string | null;
-  approvedAt: Date | null;
+  approvedAt: string | null;
   versionNumber: number;
 
   user: IUser;

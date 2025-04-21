@@ -4,10 +4,11 @@ import { FC } from "react";
 import { Button } from "@/components/ui/button";
 
 import { UserProfile } from "@/components/user_profile";
+import { IUser } from "@/lib/zones";
+import zone from "@/pages/zone";
 
 export const ZoneCard: FC<{
-  userName?: string;
-  profileImageUrl?: string;
+  user?: IUser;
   category: string;
   imageUrl?: string;
   gradient?: string;
@@ -18,8 +19,7 @@ export const ZoneCard: FC<{
   disabled: boolean;
   canLoad: boolean;
 }> = ({
-  userName,
-  profileImageUrl,
+  user,
   category,
   imageUrl,
   gradient,
@@ -46,11 +46,7 @@ export const ZoneCard: FC<{
         />
       )}
 
-      <div className="p-2">
-        {userName && profileImageUrl && (
-          <UserProfile name={userName} imageUrl={profileImageUrl} />
-        )}
-      </div>
+      <div className="p-2">{user && <UserProfile {...user} />}</div>
 
       <div className="flex flex-row justify-between">
         <div className="backdrop-blur bg-card/40 p-2 m-2 w-fit h-fit rounded-md">

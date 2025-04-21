@@ -5,6 +5,8 @@ import { Separator } from "@/components/ui/separator";
 import { BannerImageGallery } from "@/components/banner_image_gallery";
 import { UserProfile } from "@/components/user_profile";
 import { IrTable } from "@/components/zone_page/ir_table";
+import { ZoneDetails } from "@/components/zone_page/zone_details";
+import { ZoneTags } from "@/components/zone_page/zone_tags";
 import { getImageUrl, getProfileImageUrl } from "@/lib/s3_resources";
 import { toZoneMetadata, IZone } from "@/lib/zones";
 
@@ -17,9 +19,6 @@ const Zone: FC<{ zone: IZone }> = ({ zone }) => {
       <div className="flex flex-col gap-4 h-full p-4">
         <div className="flex flex-row justify-between">
           <h1 className="text-xl">{zone.title}</h1>
-          {zone.user.name && (
-            <UserProfile name={zone.user.name} imageUrl={profileImageUrl} />
-          )}
         </div>
         <div className="h-[300px]">
           <BannerImageGallery
@@ -33,10 +32,10 @@ const Zone: FC<{ zone: IZone }> = ({ zone }) => {
             }
           />
         </div>
-        <p>{zone.description}</p>
-        <Separator />
         <h1 className="text-xl">IRs</h1>
         <IrTable zone={zoneMetadata} />
+        <ZoneDetails zone={zone} />
+        <ZoneTags zone={zone} />
       </div>
     </div>
   );
