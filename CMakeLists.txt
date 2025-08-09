@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 4.0.2)
 project(zones VERSION 1.0)
 
 enable_testing()
