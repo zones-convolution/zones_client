@@ -12,17 +12,12 @@ on:
 env:
   CMAKE_BUILD_PARALLEL_LEVEL: 3
   BUILD_TYPE: Release
-  BUILD_DIR: builds/ninja-multi-vcpkg
+  BUILD_DIR: builds/arm64-osx/client
 
 jobs:
   build_and_test:
-    runs-on: ubuntu-22.04
+    runs-on: macos-14
     steps:
-      - name: Install JUCE's Linux Deps
-        run: |
-          sudo apt-get update && sudo apt install libasound2-dev libx11-dev libxinerama-dev libxext-dev libfreetype6-dev libwebkit2gtk-4.1-dev libglu1-mesa-dev libcurl4-openssl-dev xvfb ninja-build
-          sudo /usr/bin/Xvfb $DISPLAY &
-
       - name: Checkout code
         uses: actions/checkout@v3
         with:
@@ -33,4 +28,15 @@ jobs:
         uses: ./.github/actions/build_ui
 
       - name: Build and Test
-        uses: ./.github/actions/build_and_test
+        uses: ./.github/actions/build_and_test_arm
+
+      - name: Setup Environment
+        uses: ./.github/actions/setup_environment
+
+      - name: Pluginval
+        uses: ./.github/actions/pluginval
+        with:
+          VERSION: v1.0.3
+          OS: macOS
+          BINARY: pluginval.app/Contents/MacOS/pluginval
+          VST3_PATH: ${{ env.VST3_PATH }}

@@ -1,13 +1,26 @@
 name: "pluginval"
 description: "Downloads and runs pluginval against VST3"
+inputs:
+  VERSION:
+    description: 'PLUGINVAL VERSION TO DOWNLOAD'
+    required: true
+  OS:
+    description: 'PLUGINVAL OS'
+    required: true
+  BINARY:
+    description: 'PLUGINVAL BINARY LOCATION'
+    required: true
+  VST3_PATH:
+    description: 'VST3 PATH'
+    required: true
 runs:
   using: "composite"
   steps:
     - name: Download Pluginval
       shell: bash
       run: |
-        curl -LO "https://github.com/Tracktion/pluginval/releases/download/v1.0.3/pluginval_${{ matrix.name }}.zip"
-        7z x pluginval_${{ matrix.name }}.zip
+        curl -LO "https://github.com/Tracktion/pluginval/releases/download/${{ inputs.VERSION }}/pluginval_${{ inputs.OS }}.zip"
+        7z x pluginval_${{ inputs.OS }}.zip
     - name: Run Pluginval
       shell: bash
-      run: ${{ matrix.pluginval-binary }} --strictness-level 10 --verbose --validate "${{ env.VST3_PATH }}"
+      run: ${{ inputs.BINARY }} --strictness-level 10 --verbose --validate "${{ inputs.VST3_PATH }}"
