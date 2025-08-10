@@ -3,7 +3,7 @@ description: "Setup VCKPG, CMake, build, test and cache"
 runs:
   using: "composite"
   steps:
-    - uses: lukka/get-cmake@latest
+    - uses: lukka/get-cmake@v3.31.5
     - name: ccache
       uses: hendrikmuhs/ccache-action@v1.2
     - name: Setup vcpkg (it does not install any package yet)
