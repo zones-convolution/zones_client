@@ -58,7 +58,6 @@ jobs:
     needs: build_and_package
     permissions:
       contents: write
-
     steps:
       - name: Get Artifacts
         uses: actions/download-artifact@v4
@@ -72,6 +71,7 @@ jobs:
 
   notify-discord:
     runs-on: ubuntu-latest
+    needs: release
     steps:
       - name: Notify Discord
         uses: SethCohen/github-releases-to-discord@v1
