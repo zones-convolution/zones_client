@@ -12,16 +12,7 @@ env:
 
 jobs:
   build_and_package:
-    name: ${{ matrix.name }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: true
-      matrix:
-        include:
-          - name: macOS
-            os: macos-14
-            pluginval-binary: pluginval.app/Contents/MacOS/pluginval
-
+    runs-on: macos-14
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -40,6 +31,11 @@ jobs:
 
       - name: Pluginval
         uses: ./.github/actions/pluginval
+        with:
+          VERSION: v1.0.3
+          OS: macOS
+          BINARY: pluginval.app/Contents/MacOS/pluginval
+          VST3_PATH: ${{ env.VST3_PATH }}
 
       - name: Package MacOS
         uses: ./.github/actions/package_macos
