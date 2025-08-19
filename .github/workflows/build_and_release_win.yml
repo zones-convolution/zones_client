@@ -33,6 +33,9 @@ jobs:
       - name: Setup NuGet.exe for use with actions
         uses: NuGet/setup-nuget@v2.0.1
 
+      - name: Build ui
+        uses: ./.github/actions/build_ui
+
       - name: Build and Test
         uses: ./.github/actions/build_and_test_win
 
