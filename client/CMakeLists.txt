@@ -68,7 +68,7 @@ endif ()
 
 set(FORMATS AU VST3)
 set(SHOULD_COPY FALSE)
-if (NOT DEFINED ENV{CI} AND APPLE)
+if (NOT DEFINED ENV{CI})
     list(APPEND FORMATS Standalone)
     set(SHOULD_COPY TRUE)
 endif ()
@@ -96,7 +96,6 @@ target_compile_definitions(${BINARY}
         JUCE_USE_CURL=1
         JUCE_USE_WIN_WEBVIEW2_WITH_STATIC_LINKING=1
         JUCE_VST3_CAN_REPLACE_VST2=0
-
 )
 
 target_sources(${BINARY} PRIVATE ${SOURCES})
@@ -109,8 +108,16 @@ target_link_libraries(
 if (NOT DEV_LOCALHOST AND NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
 
     set(WEBVIEW_FILES_ZIP_NAME "webview_files.zip")
+    message(${WEBVIEW_FILES_ZIP_NAME})
+
+
     set(TARGET_WEBVIEW_FILES_ZIP_PATH "${CMAKE_CURRENT_SOURCE_DIR}/ui/build/${WEBVIEW_FILES_ZIP_NAME}")
-    set(ASSETS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/ui/build/dist)
+    message(${TARGET_WEBVIEW_FILES_ZIP_PATH})
+
+
+    set(ASSETS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/ui/build/dist")
+    message(${ASSETS_DIR})
+
     cmake_path(ABSOLUTE_PATH ASSETS_DIR NORMALIZE OUTPUT_VARIABLE PUBLIC_PATH)
     cmake_path(GET PUBLIC_PATH PARENT_PATH WORKING_DIRECTORY)
 
