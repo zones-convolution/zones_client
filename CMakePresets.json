@@ -13,8 +13,6 @@
       "binaryDir": "${sourceDir}/builds/${presetName}",
       "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
       "cacheVariables": {
-        "BUILD_TESTING": true,
-        "BUILD_SHARED_LIBS": true,
         "VCPKG_TARGET_TRIPLET": "x64-windows-static",
         "CMAKE_SYSTEM_VERSION": "10.0.19041.0"
       },
@@ -43,8 +41,6 @@
       "binaryDir": "${sourceDir}/builds/${presetName}",
       "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
       "cacheVariables": {
-        "BUILD_TESTING": true,
-        "BUILD_SHARED_LIBS": true,
         "VCPKG_TARGET_TRIPLET": "x64-linux"
       },
       "environment": {
@@ -73,7 +69,6 @@
       "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
       "cacheVariables": {
         "BUILD_TESTING": true,
-        "BUILD_SHARED_LIBS": true,
         "CMAKE_OSX_ARCHITECTURES": "x86_64",
         "VCPKG_TARGET_TRIPLET": "x64-osx"
       },
