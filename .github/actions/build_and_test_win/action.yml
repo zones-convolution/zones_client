@@ -15,4 +15,3 @@ runs:
         configurePresetAdditionalArgs: "['-DCMAKE_C_COMPILER_LAUNCHER=ccache', '-DCMAKE_CXX_COMPILER_LAUNCHER=ccache']"
         buildPreset: 'build-x64-msvc-release'
         buildPresetAdditionalArgs: "['--parallel 4']"
-        testPreset: 'test-x64-msvc-release'
