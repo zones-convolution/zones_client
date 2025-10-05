@@ -13,13 +13,6 @@ env:
 jobs:
   build_and_package:
     runs-on: windows-latest
-    strategy:
-      fail-fast: true
-      matrix:
-        include:
-          - name: Windows
-            os: windows-latest
-            pluginval-binary: ./pluginval.exe
 
     steps:
       - name: Checkout code
@@ -50,9 +43,10 @@ jobs:
           BINARY: ./pluginval.exe
           VST3_PATH: ${{ env.VST3_PATH }}
 
-
       - name: Generate Installer
         run: |
+          winget install --id JRSoftware.InnoSetup -e -s winget
+          $env:path += ";$env:LOCALAPPDATA/Programs/Inno Setup 6"
           iscc "installer.iss"
           mv "Output/${{ env.ARTIFACT_NAME }}.exe" "${{ env.ARTIFACTS_PATH }}/"
 
