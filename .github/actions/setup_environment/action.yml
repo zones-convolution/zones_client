@@ -18,4 +18,4 @@ runs:
         echo "AU_PATH=$ARTIFACTS_PATH/AU/${{ env.PRODUCT_NAME }}.component" >> $GITHUB_ENV
         echo "AUV3_PATH=$ARTIFACTS_PATH/AUv3/${{ env.PRODUCT_NAME }}.appex" >> $GITHUB_ENV
         echo "STANDALONE_PATH=$ARTIFACTS_PATH/Standalone/${{ env.PRODUCT_NAME }}.app" >> $GITHUB_ENV
-        echo "ARTIFACT_NAME=${{ env.PRODUCT_NAME }}-${{ env.VERSION }}-${{ matrix.name }}" >> $GITHUB_ENV
+        echo "ARTIFACT_NAME_WINDOWS=${{ env.PRODUCT_NAME }}-${{ env.VERSION }}-Windows" >> $GITHUB_ENV

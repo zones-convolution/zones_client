@@ -1,11 +1,14 @@
-#define Version Trim(FileRead(FileOpen("..\VERSION")))
+#define Version GetEnv('VERSION')
 #define ProjectName GetEnv('PROJECT_NAME')
 #define ProductName GetEnv('PRODUCT_NAME')
 #define Publisher GetEnv('COMPANY_NAME')
 #define Year GetDateTimeString("yyyy","","")
 
+[Types]
+Name: "full"; Description: "Full installation"
+
 [Components]
-Name: "vst3"; Description: "VST3 plugin";
+Name: "vst3"; Description: "VST3 plugin"; Types: full
 
 [Setup]
 ArchitecturesInstallIn64BitMode=x64compatible

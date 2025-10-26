@@ -54,13 +54,13 @@ jobs:
       - name: Generate Installer
         run: |
           iscc "installer.iss"
-          mv "Output/${{ env.ARTIFACT_NAME }}.exe" "${{ env.ARTIFACTS_PATH }}/"
+          mv "Output/${{ env.ARTIFACT_NAME_WINDOWS }}.exe" "${{ env.ARTIFACTS_PATH }}/"
 
       - name: Upload Installer
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.ARTIFACT_NAME }}.exe
-          path: ${{ env.ARTIFACTS_PATH }}/${{ env.ARTIFACT_NAME }}.exe
+          name: ${{ env.ARTIFACT_NAME_WINDOWS }}.exe
+          path: ${{ env.ARTIFACTS_PATH }}/${{ env.ARTIFACT_NAME_WINDOWS }}.exe
 
   release:
     if: contains(github.ref, 'tags/v')
