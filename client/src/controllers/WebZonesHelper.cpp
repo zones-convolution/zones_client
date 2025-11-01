@@ -1,4 +1,4 @@
-#include "WebZonesController.h"
+#include "WebZonesHelper.h"
 
 #include <algorithm>
 
@@ -18,6 +18,12 @@ static std::filesystem::path GetZonesDataDirectory ()
 static std::filesystem::path GetZoneResourceDirectory (const std::string & zone_id)
 {
     return GetZonesDataDirectory () / zone_id;
+}
+
+static std::filesystem::path GetZoneMetadataPath (const std::string & zone_id)
+{
+    auto zone_resource_directory = GetZoneResourceDirectory (zone_id);
+    return zone_resource_directory / (zone_id + ".json");
 }
 
 static juce::URL
@@ -47,15 +53,57 @@ static std::unique_ptr<juce::URL::DownloadTask> DownloadZoneIr (const std::strin
     return download_url.downloadToFile (ir_file, juce::URL::DownloadTaskOptions {});
 }
 
-bool WebZonesController::LoadWebZone (const IrSelection & ir_selection)
+std::optional<ZoneMetadata> WebZonesHelper::GetCachedWebZoneMetadata (std::string & zone_id) const
+{
+    auto zone_metadata_path = GetZoneMetadataPath (zone_id);
+    try
+    {
+        ZoneMetadata zone_metadata;
+        ReadZoneMetadata (zone_metadata_path, zone_metadata);
+        return zone_metadata;
+    }
+    catch (...)
+    {
+        return std::nullopt;
+    }
+}
+
+std::vector<ZoneMetadata> WebZonesHelper::GetCachedWebZones () const
+{
+    std::vector<ZoneMetadata> cached_zones;
+
+    auto search_directory = juce::File (GetZonesDataDirectory ().string ());
+
+    auto zone_paths = search_directory.findChildFiles (
+        juce::File::TypesOfFileToFind::findFiles, true, "*.json", juce::File::FollowSymlinks::no);
+
+    for (const auto & zone_path : zone_paths)
+    {
+        try
+        {
+            std::filesystem::path absolute_zone_path = zone_path.getFullPathName ().toStdString ();
+            ZoneMetadata zone_metadata;
+            ReadZoneMetadata (absolute_zone_path, zone_metadata);
+            //            zone_metadata.path_attribute = absolute_zone_path.remove_filename (); ->
+            //            We might need this :DD ????
+            cached_zones.push_back (zone_metadata);
+        }
+        catch (...)
+        {
+        }
+    }
+
+    return cached_zones;
+}
+
+bool WebZonesHelper::LoadWebZone (const IrSelection & ir_selection)
 {
     auto zone_id = ir_selection.zone.zone_id;
     if (! zone_id)
         return false;
 
     auto & target_ir = ir_selection.ir;
-    auto zone_resource_directory = GetZoneResourceDirectory (*zone_id);
-    auto zone_metadata_path = zone_resource_directory / (*zone_id + ".json");
+    auto zone_metadata_path = GetZoneMetadataPath (*zone_id);
 
     std::vector<IrMetadata> irs;
 
@@ -81,13 +129,13 @@ bool WebZonesController::LoadWebZone (const IrSelection & ir_selection)
 
     if (position_map.centre.has_value ())
         download_tasks.push_back (DownloadZoneIr (
-            *zone_id, *target_ir.ir_id, target_ir.relative_path.string(), *position_map.centre));
+            *zone_id, *target_ir.ir_id, target_ir.relative_path.string (), *position_map.centre));
     if (position_map.left.has_value ())
         download_tasks.push_back (DownloadZoneIr (
-            *zone_id, *target_ir.ir_id, target_ir.relative_path.string(), *position_map.left));
+            *zone_id, *target_ir.ir_id, target_ir.relative_path.string (), *position_map.left));
     if (position_map.right.has_value ())
         download_tasks.push_back (DownloadZoneIr (
-            *zone_id, *target_ir.ir_id, target_ir.relative_path.string(), *position_map.right));
+            *zone_id, *target_ir.ir_id, target_ir.relative_path.string (), *position_map.right));
 
     auto download_complete = [&]
     {

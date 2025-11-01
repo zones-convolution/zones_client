@@ -50,10 +50,9 @@ set(SOURCES
         src/controllers/LoadController.cpp
         src/controllers/UserZonesController.h
         src/controllers/UserZonesController.cpp
-        src/controllers/WebZonesController.h
-        src/controllers/WebZonesController.cpp
-        src/controllers/WebLoadController.h
-        src/controllers/WebLoadController.cpp
+        src/controllers/WebZonesHelper.h
+        src/controllers/WebZonesHelper.cpp
+
 )
 
 

@@ -12,6 +12,7 @@
 #include "relays/ResizeRelay.h"
 #include "relays/UserZonesRelay.h"
 #include "relays/VisualiserRelay.h"
+#include "relays/WebZonesRelay.h"
 
 #include <juce_gui_extra/juce_gui_extra.h>
 
@@ -49,7 +50,8 @@ private:
     MeteringRelay metering_relay_;
     ResizeRelay resize_relay_;
     VisualiserRelay visualiser_relay_;
-    
+    WebZonesRelay web_zones_relay_;
+
     const juce::WebBrowserComponent::Options kBaseWebOptions =
         juce::WebBrowserComponent::Options {}
             .withBackend (juce::WebBrowserComponent::Options::Backend::webview2)

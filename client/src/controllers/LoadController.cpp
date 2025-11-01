@@ -1,6 +1,6 @@
 #include "LoadController.h"
 
-#include "WebZonesController.h"
+#include "WebZonesHelper.h"
 
 const juce::String LoadController::kFilePickerDialogTitle = "Load IR from disk";
 
@@ -25,8 +25,8 @@ void LoadController::Load (const IrSelection & ir_selection,
 
             if (ir_selection.zone.zone_type == ZoneType::kWeb)
             {
-                WebZonesController web_zones_controller;
-                load_result = web_zones_controller.LoadWebZone (ir_selection);
+                WebZonesHelper web_zones_helper;
+                load_result = web_zones_helper.LoadWebZone (ir_selection);
             }
 
             std::lock_guard loading_guard {loading_ir_mutex_};
@@ -112,7 +112,7 @@ void LoadController::LoadFromDisk ()
 
                         auto num_channels = reader->numChannels;
 
-                        ir_metadata.title = ir_filename.stem ().string();
+                        ir_metadata.title = ir_filename.stem ().string ();
                         ir_metadata.description = "Impulse response loaded from disk";
                         ir_metadata.relative_path = file_path;
                         ir_metadata.position_map = PositionMap {.centre = ""};

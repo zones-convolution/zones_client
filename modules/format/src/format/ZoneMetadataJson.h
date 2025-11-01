@@ -93,6 +93,17 @@ static void to_json (json & data, const ZoneMetadata & zone_metadata)
     OptionalToJson (data, "pathAttribute", zone_metadata.path_attribute);
 }
 
+static void from_json (const json & data, std::optional<ZoneMetadata> & zone_metadata)
+{
+    OptionalFromJson (data, "zoneMetadata", zone_metadata);
+}
+
+static void to_json (json & data, const std::optional<ZoneMetadata> & zone_metadata)
+{
+    data = json ({});
+    OptionalToJson (data, "zoneMetadata", zone_metadata);
+}
+
 static void from_json (const json & data, IrSelection & ir_selection)
 {
     data.at ("zone").get_to (ir_selection.zone);

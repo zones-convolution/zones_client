@@ -1,8 +1,5 @@
 #pragma once
 
-#include "../controllers/WebZonesController.h"
-#include "format/ZoneMetadata.h"
-
 #include <juce_gui_extra/juce_gui_extra.h>
 
 class WebZonesRelay : public OptionsBuilder<juce::WebBrowserComponent::Options>
@@ -16,7 +13,5 @@ public:
 
 private:
     juce::WebBrowserComponent & web_browser_component_;
-    WebZonesController web_zones_controller_;
-
     JUCE_DECLARE_WEAK_REFERENCEABLE (WebZonesRelay)
 };
