@@ -26,12 +26,12 @@ interface IUseCachedWebZone {
   cachedWebZone: ZoneMetadataOptional;
 }
 
-const useCachedWebZone = (zoneId: string): IUseCachedWebZone => {
+const useCachedWebZone = (zoneId?: string): IUseCachedWebZone => {
   const [cachedWebZone, setCachedWebZone] = useState<ZoneMetadataOptional>({});
 
   useEffect(() => {
-    getCachedWebZone(zoneId).then(setCachedWebZone);
-  }, []);
+    zoneId && getCachedWebZone(zoneId).then(setCachedWebZone);
+  }, [zoneId]);
 
   return {
     cachedWebZone: cachedWebZone,

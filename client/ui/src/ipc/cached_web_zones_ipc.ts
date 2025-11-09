@@ -36,5 +36,7 @@ const handleReceiveCachedWebZone = (data: any): ZoneMetadataOptional => {
 };
 
 export const getCachedWebZone = async (zoneId: string) => {
-  return handleReceiveCachedWebZone(await getCachedWebZoneNative(zoneId));
+  return handleReceiveCachedWebZone(
+    await getCachedWebZoneNative(JSON.stringify(zoneId)),
+  );
 };
