@@ -50,9 +50,27 @@ const ZoneMetadata = z.object({
   coverImageId: z.string().optional(),
   irs: z.array(IrMetadata),
   pathAttribute: z.string().optional(),
+  attribution: z.string().optional(),
+  captureDate: z.string().optional(),
+  coordinate: z
+    .object({
+      latitude: z.number().optional(),
+      longitude: z.number().optional(),
+    })
+    .optional(),
+  spaceCategory: z.string().optional(),
+  generationType: z.string().optional(),
+  tags: z.array(z.string()).optional(),
+  versionNumber: z.number().optional(),
 });
 
 type ZoneMetadata = z.infer<typeof ZoneMetadata>;
+
+const ZoneMetadataOptional = z.object({
+  zoneMetadata: ZoneMetadata.optional(),
+});
+
+type ZoneMetadataOptional = z.infer<typeof ZoneMetadataOptional>;
 
 const IrSelection = z.object({
   zone: ZoneMetadata,
@@ -70,6 +88,7 @@ type IrSelectionOptional = z.infer<typeof IrSelectionOptional>;
 
 export {
   ZoneMetadata,
+  ZoneMetadataOptional,
   ImageMetadata,
   IrMetadata,
   PositionMap,
