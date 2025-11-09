@@ -3,14 +3,14 @@ import { FC } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
+import { ZoneMetadata } from "@/hooks/zone_metadata";
 import {
   GenerationTypeOptions,
   SpaceCategoryOptions,
   TagOptions,
 } from "@/lib/zone_options";
-import { IZone } from "@/lib/zones";
 
-const ZoneTags: FC<{ zone: IZone }> = ({ zone }) => {
+const ZoneTags: FC<{ zone: ZoneMetadata }> = ({ zone }) => {
   return (
     <Card>
       <CardHeader>

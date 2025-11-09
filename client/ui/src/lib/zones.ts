@@ -5,6 +5,7 @@ import {
   ChannelFormat,
   PositionMap,
 } from "@/hooks/zone_metadata";
+import { getImageUrl } from "@/lib/s3_resources";
 
 export const AllSpeakerPositions = ["C", "LR", "CLR"] as const;
 export type SpeakerPositions = (typeof AllSpeakerPositions)[number];
@@ -113,10 +114,13 @@ export const toChannelFormat = (
   }
 };
 
-export const toImageMetadata = (image: IImage): ImageMetadata => {
+export const toImageMetadata = (
+  zoneId: string,
+  image: IImage,
+): ImageMetadata => {
   return {
     imageId: image.imageId,
-    imagePath: image.imageId, // This is wrong
+    imagePath: getImageUrl(zoneId, image.imageId),
   };
 };
 
@@ -137,8 +141,15 @@ export const toZoneMetadata = (zone: IZone): ZoneMetadata => {
     title: zone.title || "No title?",
     description: zone.description ?? undefined,
     zoneId: zone.zoneId,
-    images: zone.images.map(toImageMetadata),
+    images: zone.images.map((image) => toImageMetadata(zone.zoneId, image)),
     irs: zone.irs.map(toIrMetadata),
     coverImageId: zone.coverImageId ?? undefined,
+    attribution: zone.attribution ?? undefined,
+    captureDate: zone.captureDate ?? undefined,
+    coordinate: zone.coordinate ?? undefined,
+    spaceCategory: zone.spaceCategory ?? undefined,
+    generationType: zone.generationType ?? undefined,
+    tags: zone.tags,
+    versionNumber: zone.versionNumber,
   };
 };

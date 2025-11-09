@@ -1,23 +1,18 @@
 import { createContext, FC, ReactNode, useContext, useState } from "react";
 
 import { ZoneMetadata } from "@/hooks/zone_metadata";
-import { IZone } from "@/lib/zones";
+import { IUser, IZone, toZoneMetadata } from "@/lib/zones";
 
 export enum Route {
   Home,
   CreateZone,
-  UserZone,
   Zone,
 }
 
 export type Routes =
   | {
-      target: Route.UserZone;
-      state: ZoneMetadata;
-    }
-  | {
       target: Route.Zone;
-      state: IZone;
+      state: { zone: ZoneMetadata; user?: IUser };
     }
   | {
       target: Route.CreateZone;
@@ -118,7 +113,11 @@ export const useNavigation = () => {
   return {
     navigateToCreateZone: () => push({ target: Route.CreateZone }),
     navigateToUserZone: (zone: ZoneMetadata) =>
-      push({ target: Route.UserZone, state: zone }),
-    navigateToZone: (zone: IZone) => push({ target: Route.Zone, state: zone }),
+      push({ target: Route.Zone, state: { zone: zone } }),
+    navigateToZone: (zone: IZone) =>
+      push({
+        target: Route.Zone,
+        state: { zone: toZoneMetadata(zone), user: zone.user },
+      }),
   };
 };

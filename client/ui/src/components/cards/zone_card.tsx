@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 
 import { UserProfile } from "@/components/user_profile";
 import { IUser } from "@/lib/zones";
-import zone from "@/pages/zone";
 
 export const ZoneCard: FC<{
   user?: IUser;

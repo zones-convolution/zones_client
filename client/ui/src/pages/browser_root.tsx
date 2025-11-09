@@ -1,5 +1,4 @@
-import { ChevronLeft, ChevronRight, Loader } from "lucide-react";
-import { FC } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
@@ -8,11 +7,8 @@ import {
   useBrowserContext,
   useNavigation,
 } from "@/context/browser_context";
-import { useZone } from "@/hooks/use_zone";
 import Browser from "@/pages/browser";
 import CreateZone from "@/pages/create_zone";
-import Search from "@/pages/search";
-import UserZone from "@/pages/user_zone";
 import Zone from "@/pages/zone";
 
 const Outlet = () => {
@@ -23,10 +19,8 @@ const Outlet = () => {
       return <CreateZone />;
     case Route.Home:
       return <Browser />;
-    case Route.UserZone:
-      return <UserZone zone={route.state} />;
     case Route.Zone:
-      return <Zone zone={route.state} />;
+      return <Zone zoneMetadata={route.state.zone} user={route.state.user} />;
   }
 };
 
@@ -41,11 +35,8 @@ const NavigationTitle = () => {
     case Route.Home:
       title = "Browse";
       break;
-    case Route.UserZone:
-      title = route.state.title;
-      break;
     case Route.Zone:
-      title = route.state.title;
+      title = route.state.zone.title;
       break;
   }
 
