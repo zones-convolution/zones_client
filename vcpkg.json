@@ -1,16 +1,20 @@
 {
-  "name" : "zones",
-  "version-string" : "1.0.0",
-  "builtin-baseline" : "223b8d5695bd0615e1eeba393c64770f6faf20e7",
-  "dependencies" : [ {
-    "name" : "catch2",
-    "version>=" : "3.3.2",
-    "$comment" : "    # this is heuristically generated, and may not be correct\n\n    find_package(Catch2 CONFIG REQUIRED)\n\n    target_link_libraries(main PRIVATE Catch2::Catch2 Catch2::Catch2WithMain)\n"
-  }, {
-    "name" : "cpr",
-    "version>=" : "1.10.2+3"
-  }, {
-    "name" : "nlohmann-json",
-    "version>=" : "3.11.2"
-  } ]
+  "name": "zones",
+  "version-string": "1.0.0",
+  "builtin-baseline": "edffab1bcd2cb5b8c17d6ba34d5651ea0bf82979",
+  "dependencies": [
+    {
+      "name": "catch2",
+      "version>=": "3.3.2",
+      "$comment": "    # this is heuristically generated, and may not be correct\n\n    find_package(Catch2 CONFIG REQUIRED)\n\n    target_link_libraries(main PRIVATE Catch2::Catch2 Catch2::Catch2WithMain)\n"
+    },
+    {
+      "name": "cpr",
+      "version>=": "1.10.2+3"
+    },
+    {
+      "name": "nlohmann-json",
+      "version>=": "3.11.2"
+    }
+  ]
 }
