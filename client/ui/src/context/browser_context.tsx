@@ -7,6 +7,7 @@ export enum Route {
   Home,
   CreateZone,
   Zone,
+  User,
 }
 
 export type Routes =
@@ -19,6 +20,9 @@ export type Routes =
     }
   | {
       target: Route.Home;
+    }
+  | {
+      target: Route.User;
     };
 
 interface INavigation {
@@ -119,5 +123,6 @@ export const useNavigation = () => {
         target: Route.Zone,
         state: { zone: toZoneMetadata(zone), user: zone.user },
       }),
+    navigateToUser: () => push({ target: Route.User }),
   };
 };

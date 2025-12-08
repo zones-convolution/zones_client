@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, LucideLibrary } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
@@ -9,6 +9,7 @@ import {
 } from "@/context/browser_context";
 import Browser from "@/pages/browser";
 import CreateZone from "@/pages/create_zone";
+import User from "@/pages/user";
 import Zone from "@/pages/zone";
 
 const Outlet = () => {
@@ -21,6 +22,8 @@ const Outlet = () => {
       return <Browser />;
     case Route.Zone:
       return <Zone zoneMetadata={route.state.zone} user={route.state.user} />;
+    case Route.User:
+      return <User />;
   }
 };
 
@@ -38,6 +41,9 @@ const NavigationTitle = () => {
     case Route.Zone:
       title = route.state.zone.title;
       break;
+    case Route.User:
+      title = "User";
+      break;
   }
 
   return <h2 className="font-thin text-lg">{title}</h2>;
@@ -46,7 +52,7 @@ const NavigationTitle = () => {
 const BrowserRoot = () => {
   const { canNavigateBack, canNavigateForward, forward, back, route } =
     useBrowserContext();
-  const { navigateToCreateZone } = useNavigation();
+  const { navigateToCreateZone, navigateToUser } = useNavigation();
 
   return (
     <div className="flex flex-col gap-0.5 h-full">
@@ -67,9 +73,15 @@ const BrowserRoot = () => {
           <ChevronRight className="w-4 h-4" />
         </Button>
         <NavigationTitle />
-        {route.target == Route.Home && (
+        {route.target == Route.User && (
           <Button className="ml-auto" onClick={navigateToCreateZone}>
             Create Zone
+          </Button>
+        )}
+        {route.target == Route.Home && (
+          <Button className="ml-auto" onClick={navigateToUser}>
+            User
+            <LucideLibrary className="h-4 w-4 ml-2" />
           </Button>
         )}
       </div>
