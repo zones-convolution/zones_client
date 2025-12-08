@@ -26,9 +26,13 @@ void LoadController::Load (const IrSelection & ir_selection,
             if (ir_selection.zone.zone_type == ZoneType::kWeb)
             {
                 WebZonesHelper web_zones_helper;
-                load_result = web_zones_helper.LoadWebZone (ir_selection);
+                auto zone_metadata = web_zones_helper.LoadWebZone (ir_selection);
+                if (zone_metadata.has_value ())
+                    juce::MessageManager::callAsync ([&, zone_metadata]
+                                                     { OnZoneMetadataUpdated (*zone_metadata); });
+                else
+                    load_result = false;
             }
-
             std::lock_guard loading_guard {loading_ir_mutex_};
             std::lock_guard current_guard {current_ir_mutex_};
 

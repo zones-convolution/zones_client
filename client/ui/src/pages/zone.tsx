@@ -25,7 +25,7 @@ const Zone: FC<{ zoneMetadata: ZoneMetadata; user?: IUser }> = ({
   user,
 }) => {
   const { cachedWebZone } = useCachedWebZone(zoneMetadata.zoneId);
-  const profileImageUrl = user?.id && getProfileImageUrl(user.id);
+
   return (
     <div className="h-full overflow-scroll bg-card">
       <div className="flex flex-col gap-4 h-full p-4">

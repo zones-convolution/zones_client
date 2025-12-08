@@ -130,7 +130,7 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (
     , metering_relay_ (processor_container.input_graph_metering_,
                        processor_container.output_graph_metering_)
     , visualiser_relay_ (web_browser_component_, processor_container.visualiser_controller_)
-    , web_zones_relay_ (web_browser_component_)
+    , web_zones_relay_ (web_browser_component_, processor_container.load_controller_)
     , web_browser_component_ (kBaseWebOptions.withOptionsFrom (parameter_relay_)
                                   .withOptionsFrom (engine_relay_)
                                   .withOptionsFrom (player_relay_)

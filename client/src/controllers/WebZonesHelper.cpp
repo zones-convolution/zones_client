@@ -96,11 +96,11 @@ std::vector<ZoneMetadata> WebZonesHelper::GetCachedWebZones () const
     return cached_zones;
 }
 
-bool WebZonesHelper::LoadWebZone (const IrSelection & ir_selection)
+std::optional<ZoneMetadata> WebZonesHelper::LoadWebZone (const IrSelection & ir_selection)
 {
     auto zone_id = ir_selection.zone.zone_id;
     if (! zone_id)
-        return false;
+        return std::nullopt;
 
     auto & target_ir = ir_selection.ir;
     auto zone_metadata_path = GetZoneMetadataPath (*zone_id);
@@ -120,7 +120,7 @@ bool WebZonesHelper::LoadWebZone (const IrSelection & ir_selection)
     if (std::find (irs.begin (), irs.end (), target_ir) != irs.end ())
     {
         // check audio actually exists
-        return true;
+        return ir_selection.zone;
     }
 
     auto position_map = *target_ir.position_map;
@@ -155,7 +155,7 @@ bool WebZonesHelper::LoadWebZone (const IrSelection & ir_selection)
         juce::Thread::sleep (kDownloadRefreshInterval);
 
     if (! download_complete ())
-        return false;
+        return std::nullopt;
 
     irs.push_back (target_ir);
 
@@ -165,5 +165,5 @@ bool WebZonesHelper::LoadWebZone (const IrSelection & ir_selection)
     juce::File {zone_metadata_path.string ()}.create ();
     WriteZoneMetadata (zone_metadata_path, zone_metadata);
 
-    return true;
+    return zone_metadata;
 }
