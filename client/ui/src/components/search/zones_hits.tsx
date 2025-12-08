@@ -7,9 +7,10 @@ import { ZoneCard } from "@/components/cards/zone_card";
 import { useNavigation } from "@/context/browser_context";
 import { useLoadContext } from "@/context/load_context";
 import { useSearchContext } from "@/context/search_context";
+import { useCachedWebZone } from "@/hooks/use_cached_web_zones";
 import { useValidTargetFormats } from "@/hooks/use_valid_target_formats";
 import { doesZoneMatchSelection, getDefaultIrSelection } from "@/lib/irs";
-import { getImageUrl, getProfileImageUrl } from "@/lib/s3_resources";
+import { getImageUrl } from "@/lib/s3_resources";
 import { IZone, toZoneMetadata } from "@/lib/zones";
 
 const ZonesSearchHit: FC<{
@@ -26,6 +27,7 @@ const ZonesSearchHit: FC<{
     zoneMetadata,
     validTargetFormats,
   );
+  const { cachedWebZone } = useCachedWebZone(zone.zoneId);
 
   return (
     <ZoneCard
@@ -40,6 +42,7 @@ const ZonesSearchHit: FC<{
       onLoad={async () => {
         if (defaultIrSelection) await load(defaultIrSelection);
       }}
+      isCached={cachedWebZone.zoneMetadata != undefined}
     />
   );
 };
