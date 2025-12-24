@@ -55,7 +55,7 @@ static void EncodeImageToJPEG (const juce::Image & image, std::vector<std::byte>
     auto raw_data = output_stream.getData ();
     auto data_size = output_stream.getDataSize ();
     image_data.clear ();
-    image_data.reserve (data_size);
+    image_data.resize (data_size);
     std::memcpy (image_data.data (), raw_data, data_size);
 }
 
