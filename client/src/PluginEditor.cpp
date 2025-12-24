@@ -92,12 +92,47 @@ std::vector<std::byte> GetWebViewFileAsBytes (const juce::String & filepath)
 
     return {};
 }
+static std::vector<std::string> split (const std::string & s, char delimiter)
+{
+    std::vector<std::string> tokens;
+    std::stringstream ss (s);
+    std::string item;
+
+    while (std::getline (ss, item, delimiter))
+    {
+        tokens.push_back (item);
+    }
+    return tokens;
+}
+static std::optional<std::pair<std::string, std::string>>
+ParseWebZoneImageURLScheme (const std::string & url)
+{
+    auto parts = split (url, '/');
+
+    if (parts.size () != 4)
+        return std::nullopt;
+
+    if (parts [1] != "web_zone_image")
+        return std::nullopt;
+
+    return std::make_pair (parts [2], parts [3]);
+}
 
 std::optional<juce::WebBrowserComponent::Resource>
 AudioPluginAudioProcessorEditor::GetResource (const juce::String & url)
 {
     if (url == "/visualiser.bin")
         return visualiser_relay_.GetVisualiserResource ();
+
+    if (url.startsWith ("/web_zone_image"))
+    {
+        auto request_parts = ParseWebZoneImageURLScheme (url.toStdString ());
+        if (! request_parts)
+            return std::nullopt;
+        auto [zone_id, image_id] = *request_parts;
+
+        return web_zones_relay_.GetWebZoneImageResource (zone_id, image_id);
+    }
 
     const auto resourceToRetrieve =
         url == "/" ? "index.html" : url.fromFirstOccurrenceOf ("/", false, false);

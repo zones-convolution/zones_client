@@ -16,6 +16,9 @@ public:
     juce::WebBrowserComponent::Options
     buildOptions (const juce::WebBrowserComponent::Options & initialOptions) override;
 
+    [[nodiscard]] std::optional<juce::WebBrowserComponent::Resource>
+    GetWebZoneImageResource (const std::string & zone_id, const std::string & image_id) const;
+
 private:
     rocket::scoped_connection_container connections_;
 

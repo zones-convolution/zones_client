@@ -1,4 +1,5 @@
 import { Config } from "@/lib/config";
+import { juce } from "@/lib/juce";
 
 export interface IS3ResourcePath {
   containerId: string;
@@ -24,13 +25,8 @@ const getIrResourcePath = (
   });
 };
 
-const getImageUrl = (containerId: string, resourceId: string) => {
-  return `${Config.S3_HOST}/images-processed/${getS3ResourcePath({
-    containerId: containerId,
-    resourceId: resourceId,
-    extension: "jpeg",
-  })}`;
-};
+const getImageUrl = (containerId: string, resourceId: string) =>
+  juce.getBackendResourceAddress(`web_zone_image/${containerId}/${resourceId}`);
 
 const getIrUrl = (
   zoneId: string,

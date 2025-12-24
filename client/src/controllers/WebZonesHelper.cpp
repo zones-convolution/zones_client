@@ -4,6 +4,7 @@
 
 static const std::filesystem::path kS3Host = "https://minio.zonesconvolution.com";
 static const std::filesystem::path kImpulseResponsesBucket = "impulse-responses-processed";
+static const std::filesystem::path kImagesBucket = "images-processed";
 
 static std::filesystem::path GetZonesDataDirectory ()
 {
@@ -26,11 +27,27 @@ static std::filesystem::path GetZoneMetadataPath (const std::string & zone_id)
     return zone_resource_directory / (zone_id + ".json");
 }
 
+static std::filesystem::path GetZoneImagesDirectory (const std::string & zone_id)
+{
+    return GetZoneResourceDirectory (zone_id) / "images";
+}
+
+static std::filesystem::path GetCachedZoneImagePath (const std::string & zone_id,
+                                                     const std::string & image_id)
+{
+    return GetZoneImagesDirectory (zone_id) / (image_id + ".jpeg");
+}
 static juce::URL
 GetIrDownloadUrl (const std::string & zone_id, const std::string & ir_id, const std::string & file)
 {
     auto ir_resource_url = kS3Host / kImpulseResponsesBucket / zone_id / ir_id / file;
     return {ir_resource_url.string ()};
+}
+
+static juce::URL GetImageDownloadUrl (const std::string & zone_id, const std::string & image_id)
+{
+    auto image_resource_url = kS3Host / kImagesBucket / zone_id / (image_id + ".jpeg");
+    return {image_resource_url.string ()};
 }
 
 static juce::File
@@ -51,6 +68,16 @@ static std::unique_ptr<juce::URL::DownloadTask> DownloadZoneIr (const std::strin
     auto ir_file = GetIrFile (zone_id, relative_path, file);
     ir_file.create ();
     return download_url.downloadToFile (ir_file, juce::URL::DownloadTaskOptions {});
+}
+
+static std::unique_ptr<juce::URL::DownloadTask> DownloadZoneImage (const std::string & zone_id,
+                                                                   const std::string & image_id)
+{
+    auto download_url = GetImageDownloadUrl (zone_id, image_id);
+    auto image_path = GetCachedZoneImagePath (zone_id, image_id);
+    juce::File image_file {image_path.string ()};
+    image_file.create ();
+    return download_url.downloadToFile (image_file, juce::URL::DownloadTaskOptions {});
 }
 
 std::optional<ZoneMetadata> WebZonesHelper::GetCachedWebZoneMetadata (std::string & zone_id) const
@@ -166,4 +193,44 @@ std::optional<ZoneMetadata> WebZonesHelper::LoadWebZone (const IrSelection & ir_
     WriteZoneMetadata (zone_metadata_path, zone_metadata);
 
     return zone_metadata;
+}
+
+std::optional<juce::Image> WebZonesHelper::LoadWebZoneImage (const std::string & zone_id,
+                                                             const std::string & image_id)
+{
+    auto cached_image = GetCachedWebZoneImage (zone_id, image_id);
+    if (cached_image.has_value ())
+        return cached_image;
+
+    auto image_download_task = DownloadZoneImage (zone_id, image_id);
+
+    static constexpr auto kDownloadTimeout = 10000;
+    auto timeout =
+        juce::Time::getCurrentTime () + juce::RelativeTime::milliseconds (kDownloadTimeout);
+    auto timed_out = [&] { return juce::Time::getCurrentTime () > timeout; };
+
+    static constexpr auto kDownloadRefreshInterval = 200;
+    while (! image_download_task->isFinished () && ! timed_out ())
+        juce::Thread::sleep (kDownloadRefreshInterval);
+
+    if (! image_download_task->isFinished ())
+        return std::nullopt;
+
+    return GetCachedWebZoneImage (zone_id, image_id);
+}
+
+std::optional<juce::Image>
+WebZonesHelper::GetCachedWebZoneImage (const std::string & zone_id,
+                                       const std::string & image_id) const
+{
+    auto image_path = GetCachedZoneImagePath (zone_id, image_id);
+
+    if (! std::filesystem::exists (image_path))
+        return std::nullopt;
+
+    auto image = juce::ImageFileFormat::loadFrom (juce::File {image_path.string ()});
+    if (! image.isValid ())
+        return std::nullopt;
+
+    return image;
 }

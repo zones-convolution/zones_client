@@ -45,3 +45,36 @@ void WebZonesRelay::EmitCachedWebZoneUpdatedEvent (const ZoneMetadata & cached_w
     web_browser_component_.emitEventIfBrowserIsVisible ("on_cached_web_zone_updated",
                                                         {data.dump ()});
 }
+
+static void EncodeImageToJPEG (const juce::Image & image, std::vector<std::byte> & image_data)
+{
+    juce::MemoryOutputStream output_stream;
+    juce::JPEGImageFormat image_format;
+
+    image_format.writeImageToStream (image, output_stream);
+    auto raw_data = output_stream.getData ();
+    auto data_size = output_stream.getDataSize ();
+    image_data.clear ();
+    image_data.reserve (data_size);
+    std::memcpy (image_data.data (), raw_data, data_size);
+}
+
+std::optional<juce::WebBrowserComponent::Resource>
+WebZonesRelay::GetWebZoneImageResource (const std::string & zone_id,
+                                        const std::string & image_id) const
+{
+    juce::WebBrowserComponent::Resource resource;
+    resource.mimeType = "image/jpeg";
+
+    WebZonesHelper web_zones_helper;
+    auto image_load_result = web_zones_helper.LoadWebZoneImage (zone_id, image_id);
+    if (image_load_result.has_value ())
+    {
+        EncodeImageToJPEG (*image_load_result, resource.data);
+        return resource;
+    }
+    else
+    {
+        return std::nullopt;
+    }
+}
