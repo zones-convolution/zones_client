@@ -133,10 +133,10 @@ std::optional<ZoneMetadata> WebZonesHelper::LoadWebZone (const IrSelection & ir_
     auto zone_metadata_path = GetZoneMetadataPath (*zone_id);
 
     std::vector<IrMetadata> irs;
+    ZoneMetadata zone_metadata;
 
     try
     {
-        ZoneMetadata zone_metadata;
         ReadZoneMetadata (zone_metadata_path, zone_metadata);
         irs = zone_metadata.irs;
     }
@@ -144,25 +144,50 @@ std::optional<ZoneMetadata> WebZonesHelper::LoadWebZone (const IrSelection & ir_
     {
     }
 
-    if (std::find (irs.begin (), irs.end (), target_ir) != irs.end ())
-    {
-        // check audio actually exists
-        return ir_selection.zone;
-    }
+    std::set<ImageMetadata> expected_images (ir_selection.zone.images.cbegin (),
+                                             ir_selection.zone.images.cend ());
+    std::set<ImageMetadata> cached_images (zone_metadata.images.cbegin (),
+                                           zone_metadata.images.cend ());
 
-    auto position_map = *target_ir.position_map;
+    std::set<ImageMetadata> image_diff;
+
+    for (const auto & image : expected_images)
+        if (cached_images.find (image) == cached_images.end ())
+            image_diff.insert (image);
 
     std::vector<std::unique_ptr<juce::URL::DownloadTask>> download_tasks;
 
-    if (position_map.centre.has_value ())
-        download_tasks.push_back (DownloadZoneIr (
-            *zone_id, *target_ir.ir_id, target_ir.relative_path.string (), *position_map.centre));
-    if (position_map.left.has_value ())
-        download_tasks.push_back (DownloadZoneIr (
-            *zone_id, *target_ir.ir_id, target_ir.relative_path.string (), *position_map.left));
-    if (position_map.right.has_value ())
-        download_tasks.push_back (DownloadZoneIr (
-            *zone_id, *target_ir.ir_id, target_ir.relative_path.string (), *position_map.right));
+    // instead of checking the metadata as the source of truth, we could go to disk to check the
+    // files actually exist...
+
+    auto has_images_to_download = ! image_diff.empty ();
+    auto has_irs_to_download = std::find (irs.begin (), irs.end (), target_ir) == irs.end ();
+
+    if (! has_images_to_download && ! has_irs_to_download)
+        return ir_selection.zone;
+
+    if (has_images_to_download)
+        for (const auto & image : image_diff)
+            download_tasks.push_back (DownloadZoneImage (*zone_id, image.image_id));
+
+    if (has_irs_to_download)
+    {
+        auto position_map = *target_ir.position_map;
+
+        if (position_map.centre.has_value ())
+            download_tasks.push_back (DownloadZoneIr (*zone_id,
+                                                      *target_ir.ir_id,
+                                                      target_ir.relative_path.string (),
+                                                      *position_map.centre));
+        if (position_map.left.has_value ())
+            download_tasks.push_back (DownloadZoneIr (
+                *zone_id, *target_ir.ir_id, target_ir.relative_path.string (), *position_map.left));
+        if (position_map.right.has_value ())
+            download_tasks.push_back (DownloadZoneIr (*zone_id,
+                                                      *target_ir.ir_id,
+                                                      target_ir.relative_path.string (),
+                                                      *position_map.right));
+    }
 
     auto download_complete = [&]
     {
@@ -186,37 +211,13 @@ std::optional<ZoneMetadata> WebZonesHelper::LoadWebZone (const IrSelection & ir_
 
     irs.push_back (target_ir);
 
-    auto zone_metadata = ir_selection.zone;
+    zone_metadata = ir_selection.zone;
     zone_metadata.irs = irs;
 
     juce::File {zone_metadata_path.string ()}.create ();
     WriteZoneMetadata (zone_metadata_path, zone_metadata);
 
     return zone_metadata;
-}
-
-std::optional<juce::File> WebZonesHelper::LoadWebZoneImage (const std::string & zone_id,
-                                                            const std::string & image_id)
-{
-    auto cached_image = GetCachedWebZoneImage (zone_id, image_id);
-    if (cached_image.has_value ())
-        return cached_image;
-
-    auto image_download_task = DownloadZoneImage (zone_id, image_id);
-
-    static constexpr auto kDownloadTimeout = 10000;
-    auto timeout =
-        juce::Time::getCurrentTime () + juce::RelativeTime::milliseconds (kDownloadTimeout);
-    auto timed_out = [&] { return juce::Time::getCurrentTime () > timeout; };
-
-    static constexpr auto kDownloadRefreshInterval = 200;
-    while (! image_download_task->isFinished () && ! timed_out ())
-        juce::Thread::sleep (kDownloadRefreshInterval);
-
-    if (! image_download_task->isFinished ())
-        return std::nullopt;
-
-    return GetCachedWebZoneImage (zone_id, image_id);
 }
 
 std::optional<juce::File> WebZonesHelper::GetCachedWebZoneImage (const std::string & zone_id,

@@ -53,10 +53,8 @@ WebZonesRelay::GetWebZoneImageResource (const std::string & zone_id,
     juce::WebBrowserComponent::Resource resource;
     resource.mimeType = "image/jpeg";
 
-    DBG ("Getting cached image file.");
-
     WebZonesHelper web_zones_helper;
-    auto image_file_opt = web_zones_helper.LoadWebZoneImage (zone_id, image_id);
+    auto image_file_opt = web_zones_helper.GetCachedWebZoneImage (zone_id, image_id);
 
     if (! image_file_opt.has_value ())
         return std::nullopt;
