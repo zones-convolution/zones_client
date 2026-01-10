@@ -16,14 +16,14 @@ public:
     };
 
     std::optional<ZoneMetadata> LoadWebZone (const IrSelection & ir_selection);
-    std::optional<juce::Image> LoadWebZoneImage (const std::string & zone_id,
-                                                 const std::string & image_id);
+    std::optional<juce::File> LoadWebZoneImage (const std::string & zone_id,
+                                                const std::string & image_id);
 
     [[nodiscard]] std::optional<ZoneMetadata>
     GetCachedWebZoneMetadata (std::string & zone_id) const;
     [[nodiscard]] std::vector<ZoneMetadata> GetCachedWebZones () const;
 
 private:
-    [[nodiscard]] std::optional<juce::Image>
+    [[nodiscard]] std::optional<juce::File>
     GetCachedWebZoneImage (const std::string & zone_id, const std::string & image_id) const;
 };

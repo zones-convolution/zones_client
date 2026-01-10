@@ -195,8 +195,8 @@ std::optional<ZoneMetadata> WebZonesHelper::LoadWebZone (const IrSelection & ir_
     return zone_metadata;
 }
 
-std::optional<juce::Image> WebZonesHelper::LoadWebZoneImage (const std::string & zone_id,
-                                                             const std::string & image_id)
+std::optional<juce::File> WebZonesHelper::LoadWebZoneImage (const std::string & zone_id,
+                                                            const std::string & image_id)
 {
     auto cached_image = GetCachedWebZoneImage (zone_id, image_id);
     if (cached_image.has_value ())
@@ -219,18 +219,11 @@ std::optional<juce::Image> WebZonesHelper::LoadWebZoneImage (const std::string &
     return GetCachedWebZoneImage (zone_id, image_id);
 }
 
-std::optional<juce::Image>
-WebZonesHelper::GetCachedWebZoneImage (const std::string & zone_id,
-                                       const std::string & image_id) const
+std::optional<juce::File> WebZonesHelper::GetCachedWebZoneImage (const std::string & zone_id,
+                                                                 const std::string & image_id) const
 {
     auto image_path = GetCachedZoneImagePath (zone_id, image_id);
-
     if (! std::filesystem::exists (image_path))
         return std::nullopt;
-
-    auto image = juce::ImageFileFormat::loadFrom (juce::File {image_path.string ()});
-    if (! image.isValid ())
-        return std::nullopt;
-
-    return image;
+    return juce::File (image_path.string ());
 }

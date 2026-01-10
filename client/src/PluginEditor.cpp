@@ -130,7 +130,6 @@ AudioPluginAudioProcessorEditor::GetResource (const juce::String & url)
         if (! request_parts)
             return std::nullopt;
         auto [zone_id, image_id] = *request_parts;
-
         return web_zones_relay_.GetWebZoneImageResource (zone_id, image_id);
     }
 
