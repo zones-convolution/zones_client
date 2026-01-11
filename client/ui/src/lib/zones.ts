@@ -5,6 +5,7 @@ import {
   ChannelFormat,
   PositionMap,
 } from "@/hooks/zone_metadata";
+import { juce } from "@/lib/juce";
 import { getImageUrl } from "@/lib/s3_resources";
 
 export const AllSpeakerPositions = ["C", "LR", "CLR"] as const;
@@ -120,7 +121,7 @@ export const toImageMetadata = (
 ): ImageMetadata => {
   return {
     imageId: image.imageId,
-    imagePath: getImageUrl(zoneId, image.imageId),
+    imagePath: "",
   };
 };
 
@@ -131,7 +132,7 @@ export const toIrMetadata = (ir: IImpulseResponse): IrMetadata => {
     title: ir.title,
     irId: ir.irId,
     description: ir.description ?? undefined,
-    relativePath: `impulse-responses/${ir.irId}`,
+    relativePath: `impulse-responses/${ir.irId}`, // This doesn't appear to actually do anything for web-zones
   };
 };
 
@@ -152,4 +153,35 @@ export const toZoneMetadata = (zone: IZone): ZoneMetadata => {
     tags: zone.tags,
     versionNumber: zone.versionNumber,
   };
+};
+
+export const getCachedWebZoneImageUrl = (zoneId: string, imageId: string) =>
+  juce.getBackendResourceAddress(`web_zone_image/${zoneId}/${imageId}`);
+
+const getUserZoneImageUrl = (zoneId: string, imageId: string) =>
+  juce.getBackendResourceAddress(`resolve_user_image_url_here`);
+
+// const resolveImageUrl = (
+//   zone: ZoneMetadata,
+//   image: ImageMetadata,
+//   isCached: boolean,
+// ) => {
+//   switch (zone.zoneType) {
+//     case "user":
+//       return getUserZoneImageUrl("???", image.imageId);
+//     case "web":
+//       return isCached
+//         ? getCachedWebZoneImageUrl(zone.zoneId, image.imageId)
+//         : getImageUrl(zone.zoneId, image.imageId);
+//   }
+// };
+
+export const resolveWebZoneImageUrl = (
+  zoneId: string,
+  imageId: string,
+  isCached: boolean,
+) => {
+  return isCached
+    ? getCachedWebZoneImageUrl(zoneId, imageId)
+    : getImageUrl(zoneId, imageId);
 };

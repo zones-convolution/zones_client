@@ -1,5 +1,4 @@
 import { Config } from "@/lib/config";
-import { juce } from "@/lib/juce";
 
 export interface IS3ResourcePath {
   containerId: string;
@@ -25,17 +24,13 @@ const getIrResourcePath = (
   });
 };
 
-const getCachedImageUrl = (containerId: string, resourceId: string) =>
-  juce.getBackendResourceAddress(`web_zone_image/${containerId}/${resourceId}`);
-
-const getImageUrl = (containerId: string, resourceId: string) => {
+const getImageUrl = (zoneId: string, imageId: string) => {
   return `${Config.S3_HOST}/images-processed/${getS3ResourcePath({
-    containerId: containerId,
-    resourceId: resourceId,
+    containerId: zoneId,
+    resourceId: imageId,
     extension: "jpeg",
   })}`;
 };
-
 const getIrUrl = (
   zoneId: string,
   irId: string,
@@ -48,4 +43,4 @@ const getProfileImageUrl = (userId: string) => {
   return `${Config.S3_HOST}/profile-pictures-processed/${userId}.jpeg`;
 };
 
-export { getIrUrl, getImageUrl, getProfileImageUrl, getCachedImageUrl };
+export { getIrUrl, getImageUrl, getProfileImageUrl };

@@ -40,7 +40,7 @@ const useCachedWebZone = (zoneId?: string): IUseCachedWebZone => {
 
   return {
     cachedWebZone: cachedWebZone,
-    isCached: cachedWebZone != undefined,
+    isCached: cachedWebZone.zoneMetadata != undefined,
   };
 };
 

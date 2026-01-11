@@ -11,13 +11,12 @@ import { useCachedWebZone } from "@/hooks/use_cached_web_zones";
 import { useValidTargetFormats } from "@/hooks/use_valid_target_formats";
 import { doesZoneMatchSelection, getDefaultIrSelection } from "@/lib/irs";
 import { getImageUrl } from "@/lib/s3_resources";
-import { IZone, toZoneMetadata } from "@/lib/zones";
+import { IZone, resolveWebZoneImageUrl, toZoneMetadata } from "@/lib/zones";
 
 const ZonesSearchHit: FC<{
   zone: IZone;
 }> = ({ zone }) => {
   const zoneMetadata = toZoneMetadata(zone);
-  const imageUrl = getImageUrl(zone.zoneId, zone.coverImageId!);
   const { navigateToZone } = useNavigation();
   const { load, loadingIr, currentIr } = useLoadContext();
   const { validTargetFormats } = useValidTargetFormats();
@@ -28,6 +27,11 @@ const ZonesSearchHit: FC<{
     validTargetFormats,
   );
   const { isCached } = useCachedWebZone(zone.zoneId);
+  const imageUrl = resolveWebZoneImageUrl(
+    zone.zoneId,
+    zone.coverImageId!,
+    isCached,
+  );
 
   return (
     <ZoneCard

@@ -7,21 +7,25 @@ import { ZoneDetails } from "@/components/zone_page/zone_details";
 import { ZoneTags } from "@/components/zone_page/zone_tags";
 import { useCachedWebZone } from "@/hooks/use_cached_web_zones";
 import { ZoneMetadata } from "@/hooks/zone_metadata";
-import { IUser } from "@/lib/zones";
-
-const getCoverImageFromMetadata = (zoneMetadata: ZoneMetadata) => {
-  if (!zoneMetadata.coverImageId) return;
-
-  return zoneMetadata.images.find(
-    (image) => image.imageId == zoneMetadata.coverImageId,
-  );
-};
+import { IUser, resolveWebZoneImageUrl } from "@/lib/zones";
 
 const Zone: FC<{ zoneMetadata: ZoneMetadata; user?: IUser }> = ({
   zoneMetadata,
   user,
 }) => {
   const { cachedWebZone, isCached } = useCachedWebZone(zoneMetadata.zoneId);
+
+  const imageUrls = zoneMetadata.images.map((image) =>
+    resolveWebZoneImageUrl(zoneMetadata.zoneId!, image.imageId, isCached),
+  );
+
+  const coverImageUrl =
+    zoneMetadata.coverImageId &&
+    resolveWebZoneImageUrl(
+      zoneMetadata.zoneId!,
+      zoneMetadata.coverImageId,
+      isCached,
+    );
 
   return (
     <div className="h-full overflow-scroll bg-card">
@@ -35,8 +39,8 @@ const Zone: FC<{ zoneMetadata: ZoneMetadata; user?: IUser }> = ({
         {zoneMetadata.images.length > 0 && (
           <div className="h-[300px]">
             <BannerImageGallery
-              imageUrls={zoneMetadata.images.map((image) => image.imagePath)}
-              coverImageUrl={getCoverImageFromMetadata(zoneMetadata)?.imagePath}
+              imageUrls={imageUrls}
+              coverImageUrl={coverImageUrl}
             />
           </div>
         )}
