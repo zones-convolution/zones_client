@@ -6,7 +6,6 @@ import {
   getCachedWebZone,
   cachedWebZoneUpdateListener,
 } from "@/ipc/cached_web_zones_ipc";
-import { engineUpdateListener } from "@/ipc/engine_ipc";
 
 interface IUseCachedWebZones {
   cachedWebZones: ZoneMetadata[];
@@ -26,6 +25,7 @@ const useCachedWebZones = (): IUseCachedWebZones => {
 
 interface IUseCachedWebZone {
   cachedWebZone: ZoneMetadataOptional;
+  isCached: boolean;
 }
 
 const useCachedWebZone = (zoneId?: string): IUseCachedWebZone => {
@@ -40,6 +40,7 @@ const useCachedWebZone = (zoneId?: string): IUseCachedWebZone => {
 
   return {
     cachedWebZone: cachedWebZone,
+    isCached: cachedWebZone != undefined,
   };
 };
 

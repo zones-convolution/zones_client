@@ -27,7 +27,7 @@ const ZonesSearchHit: FC<{
     zoneMetadata,
     validTargetFormats,
   );
-  const { cachedWebZone } = useCachedWebZone(zone.zoneId);
+  const { isCached } = useCachedWebZone(zone.zoneId);
 
   return (
     <ZoneCard
@@ -42,7 +42,7 @@ const ZonesSearchHit: FC<{
       onLoad={async () => {
         if (defaultIrSelection) await load(defaultIrSelection);
       }}
-      isCached={cachedWebZone.zoneMetadata != undefined}
+      isCached={isCached}
     />
   );
 };
