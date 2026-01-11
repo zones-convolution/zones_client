@@ -1,4 +1,4 @@
-import { Loader, MoreHorizontal, Play } from "lucide-react";
+import { Loader, LucideCircleCheck, MoreHorizontal, Play } from "lucide-react";
 import { FC, useEffect, useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
@@ -58,10 +58,11 @@ const SpeakerPositionBadge: FC<{
     </Badge>
   );
 };
-const IrTableRow: FC<{ ir: IrMetadata; zone: ZoneMetadata }> = ({
-  ir,
-  zone,
-}) => {
+const IrTableRow: FC<{
+  ir: IrMetadata;
+  zone: ZoneMetadata;
+  isCached: boolean;
+}> = ({ ir, zone, isCached }) => {
   const { load, currentIr, loadingIr } = useLoadContext();
 
   const { validTargetFormats } = useValidTargetFormats();
@@ -169,11 +170,19 @@ const IrTableRow: FC<{ ir: IrMetadata; zone: ZoneMetadata }> = ({
           </DropdownMenuContent>
         </DropdownMenu>
       </TableCell>
+      <TableCell>
+        {isCached && (
+          <LucideCircleCheck className=" text-green-500  rounded-full h-6 w-6" />
+        )}
+      </TableCell>
     </TableRow>
   );
 };
 
-const IrTable: FC<{ zone: ZoneMetadata }> = ({ zone }) => {
+const IrTable: FC<{
+  zone: ZoneMetadata;
+  cachedZoneMetadata?: ZoneMetadata;
+}> = ({ zone, cachedZoneMetadata }) => {
   const irs = zone.irs;
 
   return (
@@ -191,12 +200,24 @@ const IrTable: FC<{ zone: ZoneMetadata }> = ({ zone }) => {
               <TableHead>Positions</TableHead>
               <TableHead></TableHead>
               <TableHead></TableHead>
+              <TableHead></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {irs.map((ir) => (
-              <IrTableRow ir={ir} zone={zone} key={ir.irId} />
-            ))}
+            {irs.map((ir) => {
+              const isIrCached =
+                cachedZoneMetadata?.irs.some(
+                  (cachedIr) => cachedIr.irId == ir.irId,
+                ) ?? false;
+              return (
+                <IrTableRow
+                  ir={ir}
+                  zone={zone}
+                  key={ir.irId}
+                  isCached={isIrCached}
+                />
+              );
+            })}
           </TableBody>
         </table>
       </CardContent>

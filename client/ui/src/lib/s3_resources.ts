@@ -24,14 +24,13 @@ const getIrResourcePath = (
   });
 };
 
-const getImageUrl = (containerId: string, resourceId: string) => {
+const getImageUrl = (zoneId: string, imageId: string) => {
   return `${Config.S3_HOST}/images-processed/${getS3ResourcePath({
-    containerId: containerId,
-    resourceId: resourceId,
+    containerId: zoneId,
+    resourceId: imageId,
     extension: "jpeg",
   })}`;
 };
-
 const getIrUrl = (
   zoneId: string,
   irId: string,

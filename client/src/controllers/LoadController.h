@@ -13,6 +13,8 @@ public:
     void Load (const IrSelection & ir_selection, const std::function<void (bool)> & callback);
     void LoadFromDisk ();
 
+    rocket::signal<void (const ZoneMetadata & zone_metadata)> OnZoneMetadataUpdated;
+
     rocket::signal<void ()> OnLoadingIrUpdated;
     const std::optional<IrSelection> & GetLoadingIr ();
 

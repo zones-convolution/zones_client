@@ -57,6 +57,11 @@ struct ImageMetadata
     std::string image_id;
     std::string image_path;
 
+    bool operator< (const ImageMetadata & rhs) const
+    {
+        return image_id < rhs.image_id;
+    }
+
     bool operator== (const ImageMetadata & rhs) const
     {
         return std::tie (image_id, image_path) == std::tie (rhs.image_id, rhs.image_path);

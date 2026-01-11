@@ -4,6 +4,7 @@
 
 static const std::filesystem::path kS3Host = "https://minio.zonesconvolution.com";
 static const std::filesystem::path kImpulseResponsesBucket = "impulse-responses-processed";
+static const std::filesystem::path kImagesBucket = "images-processed";
 
 static std::filesystem::path GetZonesDataDirectory ()
 {
@@ -26,11 +27,27 @@ static std::filesystem::path GetZoneMetadataPath (const std::string & zone_id)
     return zone_resource_directory / (zone_id + ".json");
 }
 
+static std::filesystem::path GetZoneImagesDirectory (const std::string & zone_id)
+{
+    return GetZoneResourceDirectory (zone_id) / "images";
+}
+
+static std::filesystem::path GetCachedZoneImagePath (const std::string & zone_id,
+                                                     const std::string & image_id)
+{
+    return GetZoneImagesDirectory (zone_id) / (image_id + ".jpeg");
+}
 static juce::URL
 GetIrDownloadUrl (const std::string & zone_id, const std::string & ir_id, const std::string & file)
 {
     auto ir_resource_url = kS3Host / kImpulseResponsesBucket / zone_id / ir_id / file;
     return {ir_resource_url.string ()};
+}
+
+static juce::URL GetImageDownloadUrl (const std::string & zone_id, const std::string & image_id)
+{
+    auto image_resource_url = kS3Host / kImagesBucket / zone_id / (image_id + ".jpeg");
+    return {image_resource_url.string ()};
 }
 
 static juce::File
@@ -51,6 +68,16 @@ static std::unique_ptr<juce::URL::DownloadTask> DownloadZoneIr (const std::strin
     auto ir_file = GetIrFile (zone_id, relative_path, file);
     ir_file.create ();
     return download_url.downloadToFile (ir_file, juce::URL::DownloadTaskOptions {});
+}
+
+static std::unique_ptr<juce::URL::DownloadTask> DownloadZoneImage (const std::string & zone_id,
+                                                                   const std::string & image_id)
+{
+    auto download_url = GetImageDownloadUrl (zone_id, image_id);
+    auto image_path = GetCachedZoneImagePath (zone_id, image_id);
+    juce::File image_file {image_path.string ()};
+    image_file.create ();
+    return download_url.downloadToFile (image_file, juce::URL::DownloadTaskOptions {});
 }
 
 std::optional<ZoneMetadata> WebZonesHelper::GetCachedWebZoneMetadata (std::string & zone_id) const
@@ -96,20 +123,20 @@ std::vector<ZoneMetadata> WebZonesHelper::GetCachedWebZones () const
     return cached_zones;
 }
 
-bool WebZonesHelper::LoadWebZone (const IrSelection & ir_selection)
+std::optional<ZoneMetadata> WebZonesHelper::LoadWebZone (const IrSelection & ir_selection)
 {
     auto zone_id = ir_selection.zone.zone_id;
     if (! zone_id)
-        return false;
+        return std::nullopt;
 
     auto & target_ir = ir_selection.ir;
     auto zone_metadata_path = GetZoneMetadataPath (*zone_id);
 
     std::vector<IrMetadata> irs;
+    ZoneMetadata zone_metadata;
 
     try
     {
-        ZoneMetadata zone_metadata;
         ReadZoneMetadata (zone_metadata_path, zone_metadata);
         irs = zone_metadata.irs;
     }
@@ -117,25 +144,50 @@ bool WebZonesHelper::LoadWebZone (const IrSelection & ir_selection)
     {
     }
 
-    if (std::find (irs.begin (), irs.end (), target_ir) != irs.end ())
-    {
-        // check audio actually exists
-        return true;
-    }
+    std::set<ImageMetadata> expected_images (ir_selection.zone.images.cbegin (),
+                                             ir_selection.zone.images.cend ());
+    std::set<ImageMetadata> cached_images (zone_metadata.images.cbegin (),
+                                           zone_metadata.images.cend ());
 
-    auto position_map = *target_ir.position_map;
+    std::set<ImageMetadata> image_diff;
+
+    for (const auto & image : expected_images)
+        if (cached_images.find (image) == cached_images.end ())
+            image_diff.insert (image);
 
     std::vector<std::unique_ptr<juce::URL::DownloadTask>> download_tasks;
 
-    if (position_map.centre.has_value ())
-        download_tasks.push_back (DownloadZoneIr (
-            *zone_id, *target_ir.ir_id, target_ir.relative_path.string (), *position_map.centre));
-    if (position_map.left.has_value ())
-        download_tasks.push_back (DownloadZoneIr (
-            *zone_id, *target_ir.ir_id, target_ir.relative_path.string (), *position_map.left));
-    if (position_map.right.has_value ())
-        download_tasks.push_back (DownloadZoneIr (
-            *zone_id, *target_ir.ir_id, target_ir.relative_path.string (), *position_map.right));
+    // instead of checking the metadata as the source of truth, we could go to disk to check the
+    // files actually exist...
+
+    auto has_images_to_download = ! image_diff.empty ();
+    auto has_irs_to_download = std::find (irs.begin (), irs.end (), target_ir) == irs.end ();
+
+    if (! has_images_to_download && ! has_irs_to_download)
+        return ir_selection.zone;
+
+    if (has_images_to_download)
+        for (const auto & image : image_diff)
+            download_tasks.push_back (DownloadZoneImage (*zone_id, image.image_id));
+
+    if (has_irs_to_download)
+    {
+        auto position_map = *target_ir.position_map;
+
+        if (position_map.centre.has_value ())
+            download_tasks.push_back (DownloadZoneIr (*zone_id,
+                                                      *target_ir.ir_id,
+                                                      target_ir.relative_path.string (),
+                                                      *position_map.centre));
+        if (position_map.left.has_value ())
+            download_tasks.push_back (DownloadZoneIr (
+                *zone_id, *target_ir.ir_id, target_ir.relative_path.string (), *position_map.left));
+        if (position_map.right.has_value ())
+            download_tasks.push_back (DownloadZoneIr (*zone_id,
+                                                      *target_ir.ir_id,
+                                                      target_ir.relative_path.string (),
+                                                      *position_map.right));
+    }
 
     auto download_complete = [&]
     {
@@ -155,15 +207,24 @@ bool WebZonesHelper::LoadWebZone (const IrSelection & ir_selection)
         juce::Thread::sleep (kDownloadRefreshInterval);
 
     if (! download_complete ())
-        return false;
+        return std::nullopt;
 
     irs.push_back (target_ir);
 
-    auto zone_metadata = ir_selection.zone;
+    zone_metadata = ir_selection.zone;
     zone_metadata.irs = irs;
 
     juce::File {zone_metadata_path.string ()}.create ();
     WriteZoneMetadata (zone_metadata_path, zone_metadata);
 
-    return true;
+    return zone_metadata;
+}
+
+std::optional<juce::File> WebZonesHelper::GetCachedWebZoneImage (const std::string & zone_id,
+                                                                 const std::string & image_id) const
+{
+    auto image_path = GetCachedZoneImagePath (zone_id, image_id);
+    if (! std::filesystem::exists (image_path))
+        return std::nullopt;
+    return juce::File (image_path.string ());
 }

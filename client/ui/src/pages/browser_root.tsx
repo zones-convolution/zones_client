@@ -1,5 +1,4 @@
-import { ChevronLeft, ChevronRight, Loader } from "lucide-react";
-import { FC } from "react";
+import { ChevronLeft, ChevronRight, LucideLibrary } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
@@ -8,11 +7,9 @@ import {
   useBrowserContext,
   useNavigation,
 } from "@/context/browser_context";
-import { useZone } from "@/hooks/use_zone";
 import Browser from "@/pages/browser";
 import CreateZone from "@/pages/create_zone";
-import Search from "@/pages/search";
-import UserZone from "@/pages/user_zone";
+import User from "@/pages/user";
 import Zone from "@/pages/zone";
 
 const Outlet = () => {
@@ -23,10 +20,10 @@ const Outlet = () => {
       return <CreateZone />;
     case Route.Home:
       return <Browser />;
-    case Route.UserZone:
-      return <UserZone zone={route.state} />;
     case Route.Zone:
-      return <Zone zone={route.state} />;
+      return <Zone zoneMetadata={route.state.zone} user={route.state.user} />;
+    case Route.User:
+      return <User />;
   }
 };
 
@@ -41,11 +38,11 @@ const NavigationTitle = () => {
     case Route.Home:
       title = "Browse";
       break;
-    case Route.UserZone:
-      title = route.state.title;
-      break;
     case Route.Zone:
-      title = route.state.title;
+      title = route.state.zone.title;
+      break;
+    case Route.User:
+      title = "User";
       break;
   }
 
@@ -55,7 +52,7 @@ const NavigationTitle = () => {
 const BrowserRoot = () => {
   const { canNavigateBack, canNavigateForward, forward, back, route } =
     useBrowserContext();
-  const { navigateToCreateZone } = useNavigation();
+  const { navigateToCreateZone, navigateToUser } = useNavigation();
 
   return (
     <div className="flex flex-col gap-0.5 h-full">
@@ -76,9 +73,15 @@ const BrowserRoot = () => {
           <ChevronRight className="w-4 h-4" />
         </Button>
         <NavigationTitle />
-        {route.target == Route.Home && (
+        {route.target == Route.User && (
           <Button className="ml-auto" onClick={navigateToCreateZone}>
             Create Zone
+          </Button>
+        )}
+        {route.target == Route.Home && (
+          <Button className="ml-auto" onClick={navigateToUser}>
+            User
+            <LucideLibrary className="h-4 w-4 ml-2" />
           </Button>
         )}
       </div>

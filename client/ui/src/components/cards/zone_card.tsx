@@ -1,11 +1,10 @@
-import { Eye, Loader, Play } from "lucide-react";
+import { Eye, Loader, LucideCircleCheck, Play } from "lucide-react";
 import { FC } from "react";
 
 import { Button } from "@/components/ui/button";
 
 import { UserProfile } from "@/components/user_profile";
 import { IUser } from "@/lib/zones";
-import zone from "@/pages/zone";
 
 export const ZoneCard: FC<{
   user?: IUser;
@@ -18,6 +17,7 @@ export const ZoneCard: FC<{
   loading: boolean;
   disabled: boolean;
   canLoad: boolean;
+  isCached: boolean;
 }> = ({
   user,
   category,
@@ -29,6 +29,7 @@ export const ZoneCard: FC<{
   loading,
   disabled,
   canLoad,
+  isCached,
 }) => {
   return (
     <div className="w-full h-full relative flex flex-col justify-between">
@@ -40,13 +41,20 @@ export const ZoneCard: FC<{
       )}
       {imageUrl && (
         <img
-          className=" absolute object-cover object-center w-full h-full max-h-full rounded-md"
+          className="absolute object-cover object-center w-full h-full max-h-full rounded-md"
           src={imageUrl}
           alt="gallery-photo"
         />
       )}
 
-      <div className="p-2">{user && <UserProfile {...user} />}</div>
+      <div className="p-2 flex justify-between items-center">
+        {user && <UserProfile {...user} />}
+        {isCached && (
+          <div className="backdrop-blur bg-card/40 h-full aspect-square flex items-center justify-center">
+            <LucideCircleCheck className="text-green-500 h-6 w-6 " />
+          </div>
+        )}
+      </div>
 
       <div className="flex flex-row justify-between">
         <div className="backdrop-blur bg-card/40 p-2 m-2 w-fit h-fit rounded-md">
