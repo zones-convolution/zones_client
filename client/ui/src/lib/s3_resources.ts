@@ -25,8 +25,16 @@ const getIrResourcePath = (
   });
 };
 
-const getImageUrl = (containerId: string, resourceId: string) =>
+const getCachedImageUrl = (containerId: string, resourceId: string) =>
   juce.getBackendResourceAddress(`web_zone_image/${containerId}/${resourceId}`);
+
+const getImageUrl = (containerId: string, resourceId: string) => {
+  return `${Config.S3_HOST}/images-processed/${getS3ResourcePath({
+    containerId: containerId,
+    resourceId: resourceId,
+    extension: "jpeg",
+  })}`;
+};
 
 const getIrUrl = (
   zoneId: string,
@@ -40,4 +48,4 @@ const getProfileImageUrl = (userId: string) => {
   return `${Config.S3_HOST}/profile-pictures-processed/${userId}.jpeg`;
 };
 
-export { getIrUrl, getImageUrl, getProfileImageUrl };
+export { getIrUrl, getImageUrl, getProfileImageUrl, getCachedImageUrl };
