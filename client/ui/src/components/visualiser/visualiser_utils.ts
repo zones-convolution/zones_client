@@ -20,7 +20,7 @@ export const generateRenderTexture = (
   render: Uint8Array,
   sampleRate: number,
 ): DataTexture => {
-  const default_size = defaultWidth * defaultHeight;
+  sampleRate = Math.max(sampleRate, 8000);
   const startBin = Math.floor((20.0 * (defaultHeight * 2.0)) / sampleRate);
   const endBin = Math.ceil((20000 * (defaultHeight * 2.0)) / sampleRate);
   const height = endBin - startBin;

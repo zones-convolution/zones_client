@@ -133,8 +133,6 @@ const XAxis: FC<{ visualiserMetadata: VisualiserMetadata }> = ({
       const timeSeconds =
         visualiserMetadata.baseIrLengthSamples / visualiserMetadata.sampleRate;
 
-      console.log(timeSeconds);
-
       const xScale = scaleLinear()
         .domain([0, maxIrRatio * timeSeconds + 0.5])
         .range([0, width ?? 0]);
