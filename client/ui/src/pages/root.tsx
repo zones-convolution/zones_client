@@ -45,7 +45,7 @@ const Sidebar = () => {
   const metering = useMetering();
 
   return (
-    <div className="bg-card flex flex-col gap-0.5 p-2">
+    <div className="bg-card flex flex-col gap-0.5 p-2 w-44 min-w-44 max-w-44">
       <img src={ZonesLight} className="w-[80px]" alt="Zones Logo Dark" />
       <NavButton to={Tabs.Browser}>
         <Home className="w-4 h-4 mr-4" />
@@ -77,8 +77,10 @@ const Sidebar = () => {
         {currentIr.irSelection && (
           <div className="flex flex-col gap-2">
             <Separator />
-            <span className="text-base">{currentIr.irSelection.ir.title}</span>
-            <span className="text-sm font-thin">
+            <span className="text-base text-wrap">
+              {currentIr.irSelection.ir.title}
+            </span>
+            <span className="text-sm font-thin text-wrap">
               {currentIr.irSelection.zone.title}
             </span>
           </div>
