@@ -50,8 +50,7 @@ VisualiserMetadata VisualiserController::GetMetadata ()
     auto base_sample_rate = last_rendered_state_.base_ir_sample_rate;
     auto ir_engine_sample_rate = last_rendered_state_.sample_rate;
 
-    auto metadata_sample_rate =
-        ir_engine_sample_rate == 0.0 ? base_sample_rate : ir_engine_sample_rate;
+    auto metadata_sample_rate = ir_engine_sample_rate;
 
     auto base_ir_length_samples =
         static_cast<int> (std::ceil (last_rendered_state_.base_ir_buffer->getNumSamples () *

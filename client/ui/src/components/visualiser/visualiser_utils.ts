@@ -53,6 +53,7 @@ export const createScaleTexture = (
   scale: VisualiserScale,
 ) => {
   const data = new Float32Array(defaultHeight);
+  sampleRate = Math.max(sampleRate, 8000);
 
   for (let i = 0; i < defaultHeight; i += 1) {
     switch (scale) {

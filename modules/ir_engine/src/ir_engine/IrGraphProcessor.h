@@ -26,9 +26,9 @@ struct IrGraphState
     std::string param_3;
     std::string base_ir;
     IrGraphProcessor::BoxedBuffer base_ir_buffer;
-    double base_ir_sample_rate;
+    double base_ir_sample_rate = 8000.0f;
     double base_ir_bit_depth;
-    double sample_rate;
+    double sample_rate = 8000.0f;
     int convolver_block_size;
     float room_size;
     float reverb_time_norm;

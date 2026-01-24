@@ -28,18 +28,18 @@ const Graph3D: FC<{ context: IVisualiserContext }> = ({ context }) => {
         context.visualiserMetadata.sampleRate,
       );
     }
-  }, [context.render]);
+  }, [context.render, context.visualiserMetadata]);
 
   useEffect(() => {
     const mat = matRef.current;
     if (mat) {
       mat.uniforms.scale.value = createScaleTexture(
-        44100,
+        context.visualiserMetadata.sampleRate,
         defaultHeight * 2,
         context.scale,
       );
     }
-  }, [context.scale]);
+  }, [context.scale, context.visualiserMetadata]);
 
   useEffect(() => {
     const mat = matRef.current;
