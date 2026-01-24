@@ -46,7 +46,11 @@ const Sidebar = () => {
 
   return (
     <div className="bg-card flex flex-col gap-0.5 p-2 w-44 min-w-44 max-w-44">
-      <img src={ZonesLight} className="w-[80px]" alt="Zones Logo Dark" />
+      <img
+        src={ZonesLight}
+        className="w-[80px] mb-2 ml-4"
+        alt="Zones Logo Dark"
+      />
       <NavButton to={Tabs.Browser}>
         <Home className="w-4 h-4 mr-4" />
         Browse
@@ -77,16 +81,16 @@ const Sidebar = () => {
         {currentIr.irSelection && (
           <div className="flex flex-col gap-2">
             <Separator />
-            <span className="text-base text-wrap">
+            <span className="text-base line-clamp-2 break-words">
               {currentIr.irSelection.ir.title}
             </span>
-            <span className="text-sm font-thin text-wrap">
+            <span className="text-sm font-thin line-clamp-2 break-words">
               {currentIr.irSelection.zone.title}
             </span>
           </div>
         )}
       </div>
-      <div className="h-72 w-full mt-2">
+      <div className="h-64 w-full mt-2">
         <Meter {...metering} />
       </div>
     </div>

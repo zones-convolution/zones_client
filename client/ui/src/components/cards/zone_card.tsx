@@ -56,11 +56,11 @@ export const ZoneCard: FC<{
         )}
       </div>
 
-      <div className="flex flex-row justify-between">
-        <div className="backdrop-blur bg-card/40 p-2 m-2 w-fit h-fit rounded-md">
+      <div className="flex flex-row justify-between ">
+        <div className="backdrop-blur bg-card/40 p-2 m-2 w-fit h-fit rounded-md line-clamp-2 break-words">
           {category}
         </div>
-        <div className="flex gap-2 p-2 w-fit h-fit rounded-md">
+        <div className="flex flex-row gap-2 p-2 w-fit h-full rounded-md items-end">
           {canLoad && (
             <Button
               variant="blur"
