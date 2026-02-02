@@ -1,5 +1,6 @@
 import { Pause, Play, Repeat, Search, Settings } from "lucide-react";
 import React, { FC, ReactNode, useState } from "react";
+import { ErrorBoundary, FallbackProps } from "react-error-boundary";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -195,6 +196,22 @@ const CurrentIrPanel = () => {
   );
 };
 
+const FailedToLoadVisualiser: FC<FallbackProps> = ({
+  error,
+  resetErrorBoundary,
+}) => {
+  return (
+    <div className="flex flex-col gap-2 p-4 h-full items-center justify-center">
+      <h1 className="text-2xl font-bold">Oops!</h1>
+      <p>Sorry, an unexpected error has occurred.</p>
+      <p className="text-destructive">
+        <i>{error.message}</i>
+      </p>
+      <Button onClick={resetErrorBoundary}>Try again</Button>
+    </div>
+  );
+};
+
 const Editor = () => {
   useControlParameterIndexUpdater();
 
@@ -211,40 +228,43 @@ const Editor = () => {
       <div className="flex flex-row gap-0.5 h-full">
         <TimePanel />
         <div className="bg-card relative flex-1">
-          <Tabs defaultValue="2d" className="">
-            <TabsContent
-              value="2d"
-              className="absolute top-0 w-full h-full flex mt-0"
-            >
-              <Visualiser2D context={context} />
-            </TabsContent>
-            <TabsContent
-              value="3d"
-              className="absolute top-0 w-full h-full flex mt-0"
-            >
-              <Visualiser3D context={context} />
-            </TabsContent>
-
-            <div className="absolute top-0 right-0 m-3 flex flex-row justify-around">
-              <Toggle
-                aria-label="Visualiser Controls"
-                className="flex-1 "
-                pressed={showVisualiserControls}
-                onPressedChange={setShowVisualiserControls}
+          <ErrorBoundary fallbackRender={FailedToLoadVisualiser}>
+            <Tabs defaultValue="2d" className="">
+              <TabsContent
+                value="2d"
+                className="absolute top-0 w-full h-full flex mt-0"
               >
-                <Settings className="h-4 w-4" />
-              </Toggle>
-              <TabsList className="flex-1 ml-2">
-                <TabsTrigger value="2d">2D</TabsTrigger>
-                <TabsTrigger value="3d">3D</TabsTrigger>
-              </TabsList>
-            </div>
-            {showVisualiserControls && (
-              <div className=" flex flex-col  h-[80%] absolute bottom-0 right-0 w-[50%]  p-2 overflow-hidden">
-                <VisualiserControls />
+                <Visualiser2D context={context} />
+              </TabsContent>
+              <TabsContent
+                value="3d"
+                className="absolute top-0 w-full h-full flex mt-0"
+              >
+                <Visualiser3D context={context} />
+              </TabsContent>
+
+              <div className="absolute top-0 right-0 m-3 flex flex-row justify-around">
+                <Toggle
+                  aria-label="Visualiser Controls"
+                  className="flex-1 "
+                  pressed={showVisualiserControls}
+                  onPressedChange={setShowVisualiserControls}
+                >
+                  <Settings className="h-4 w-4" />
+                </Toggle>
+                <TabsList className="flex-1 ml-2">
+                  <TabsTrigger value="2d">2D</TabsTrigger>
+                  <TabsTrigger value="3d">3D</TabsTrigger>
+                </TabsList>
               </div>
-            )}
-          </Tabs>
+
+              {showVisualiserControls && (
+                <div className=" flex flex-col  h-[80%] absolute bottom-0 right-0 w-[50%]  p-2 overflow-hidden">
+                  <VisualiserControls />
+                </div>
+              )}
+            </Tabs>
+          </ErrorBoundary>
         </div>
       </div>
       <div className="flex gap-0.5 h-[600px]">
