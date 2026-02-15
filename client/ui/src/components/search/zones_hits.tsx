@@ -42,7 +42,7 @@ const ZonesSearchHit: FC<{
       loading={isLoadingZone}
       disabled={isCurrentZone}
       canLoad={defaultIrSelection != undefined}
-      onView={() => navigateToZone(zone)}
+      onView={() => navigateToZone(toZoneMetadata(zone), zone.user)}
       onLoad={async () => {
         if (defaultIrSelection) await load(defaultIrSelection);
       }}

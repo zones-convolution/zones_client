@@ -10,7 +10,7 @@ import { getUserZoneGradient } from "@/lib/user_zones";
 const User = () => {
   const { userZones } = useUserZones();
   const { load, loadingIr, currentIr } = useLoadContext();
-  const { navigateToUserZone } = useNavigation();
+  const { navigateToZone } = useNavigation();
   const { validTargetFormats } = useValidTargetFormats();
   const { cachedWebZones } = useCachedWebZones();
 
@@ -44,7 +44,7 @@ const User = () => {
                     if (defaultIrSelection) await load(defaultIrSelection);
                   }}
                   onView={() => {
-                    navigateToUserZone(userZone);
+                    navigateToZone(userZone);
                   }}
                   isCached={false}
                 />

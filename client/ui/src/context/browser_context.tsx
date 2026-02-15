@@ -116,12 +116,10 @@ export const useNavigation = () => {
 
   return {
     navigateToCreateZone: () => push({ target: Route.CreateZone }),
-    navigateToUserZone: (zone: ZoneMetadata) =>
-      push({ target: Route.Zone, state: { zone: zone } }),
-    navigateToZone: (zone: IZone) =>
+    navigateToZone: (zone: ZoneMetadata, user?: IUser) =>
       push({
         target: Route.Zone,
-        state: { zone: toZoneMetadata(zone), user: zone.user },
+        state: { zone: zone, user: user },
       }),
     navigateToUser: () => push({ target: Route.User }),
   };
