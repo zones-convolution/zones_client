@@ -34,6 +34,14 @@ export interface ISearchParams {
   search: string | null;
 }
 
+export interface ISearchRepositoryResult {
+  search: ISearchZones;
+  isLoading: boolean;
+}
+export type SearchRepository = (
+  params: ISearchParams,
+) => ISearchRepositoryResult;
+
 interface ISearchContext {
   search: ISearchZones;
   params: ISearchParams;
@@ -53,38 +61,70 @@ const mapWebSearch = (webZoneSearch: ISearchWebZones): ISearchZones => {
   };
 };
 
-const UserZoneRepository = (params: ISearchParams) => {
+export const useUserZoneRepository: SearchRepository = (
+  params: ISearchParams,
+) => {
   const { userZones } = useUserZones();
   const { cachedWebZones } = useCachedWebZones();
 
-  const mergedZones = [...userZones, ...cachedWebZones].sort((a, b) =>
+  const mergedMap = new Map<string | number, ZoneMetadata>();
+  for (const z of [...userZones, ...cachedWebZones]) {
+    const key = (z as any).id ?? z.title;
+    if (!mergedMap.has(key)) mergedMap.set(key, z);
+  }
+  const mergedZones = Array.from(mergedMap.values()).sort((a, b) =>
     a.title.localeCompare(b.title),
   );
+
+  const query = (params.search ?? "").trim().toLowerCase();
+  const filtered = query
+    ? mergedZones.filter((z) => z.title.toLowerCase().includes(query))
+    : mergedZones;
+
+  const start = Math.max(0, (params.page - 1) * params.pageSize);
+  const end = start + params.pageSize;
+  const pageData = filtered.slice(start, end);
+
+  return {
+    search: {
+      data: pageData.map((zone) => ({
+        zone: zone,
+      })),
+      count: filtered.length,
+    },
+    isLoading: false,
+  };
 };
 
-const WebZoneRepository = (params: ISearchParams) => {
+export const useWebZoneRepository: SearchRepository = (
+  params: ISearchParams,
+) => {
   const { data, isLoading } = useSWR<ISearchWebZones>(
     `${Config.API_BASE_URL}/zones?page=${params.page}&pageSize=${params.pageSize}&search=${params.search ?? ""}`,
   );
+
+  return {
+    search: data ? mapWebSearch(data) : { count: 0, data: [] },
+    isLoading,
+  };
 };
 
 export const SearchProvider: FC<{
   children: ReactNode;
-}> = ({ children }) => {
+  repository?: SearchRepository;
+}> = ({ children, repository = useWebZoneRepository }) => {
   const [params, setParams] = useState<ISearchParams>({
     page: 1,
     pageSize: 10,
     search: null,
   });
 
-  const { data, isLoading } = useSWR<ISearchWebZones>(
-    `${Config.API_BASE_URL}/zones?page=${params.page}&pageSize=${params.pageSize}&search=${params.search ?? ""}`,
-  );
+  const { search, isLoading } = repository(params);
 
   return (
     <SearchContext.Provider
       value={{
-        search: data ? mapWebSearch(data) : { count: 0, data: [] },
+        search,
         params,
         setParams,
         isLoading,

@@ -50,8 +50,8 @@ export const ZoneCard: FC<{
       <div className="p-2 flex justify-between items-center">
         {user && <UserProfile {...user} />}
         {isCached && (
-          <div className="backdrop-blur bg-card/40 h-full aspect-square flex items-center justify-center">
-            <LucideCircleCheck className="text-green-500 h-6 w-6 " />
+          <div className="backdrop-blur bg-card/40 h-full aspect-square flex items-center justify-center p-1">
+            <LucideCircleCheck className="text-green-500 h-6 w-6" />
           </div>
         )}
       </div>
