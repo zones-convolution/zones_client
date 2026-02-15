@@ -9,40 +9,44 @@ import { useLoadContext } from "@/context/load_context";
 import { useSearchContext } from "@/context/search_context";
 import { useCachedWebZone } from "@/hooks/use_cached_web_zones";
 import { useValidTargetFormats } from "@/hooks/use_valid_target_formats";
+import { ZoneMetadata } from "@/hooks/zone_metadata";
 import { doesZoneMatchSelection, getDefaultIrSelection } from "@/lib/irs";
 import { getImageUrl } from "@/lib/s3_resources";
-import { IZone, resolveWebZoneImageUrl, toZoneMetadata } from "@/lib/zones";
+import { getUserZoneGradient } from "@/lib/user_zones";
+import {
+  IUser,
+  IZone,
+  resolveWebZoneImageUrl,
+  toZoneMetadata,
+} from "@/lib/zones";
 
 const ZonesSearchHit: FC<{
-  zone: IZone;
-}> = ({ zone }) => {
-  const zoneMetadata = toZoneMetadata(zone);
+  zone: ZoneMetadata;
+  user?: IUser;
+}> = ({ zone, user }) => {
   const { navigateToZone } = useNavigation();
   const { load, loadingIr, currentIr } = useLoadContext();
   const { validTargetFormats } = useValidTargetFormats();
-  let isLoadingZone = doesZoneMatchSelection(zoneMetadata, loadingIr);
-  let isCurrentZone = doesZoneMatchSelection(zoneMetadata, currentIr);
-  let defaultIrSelection = getDefaultIrSelection(
-    zoneMetadata,
-    validTargetFormats,
-  );
+  let isLoadingZone = doesZoneMatchSelection(zone, loadingIr);
+  let isCurrentZone = doesZoneMatchSelection(zone, currentIr);
+  let defaultIrSelection = getDefaultIrSelection(zone, validTargetFormats);
   const { isCached } = useCachedWebZone(zone.zoneId);
-  const imageUrl = resolveWebZoneImageUrl(
-    zone.zoneId,
-    zone.coverImageId!,
-    isCached,
-  );
+  const isWebZone = zone.zoneType == "web";
+  const imageUrl = zone.zoneId
+    ? resolveWebZoneImageUrl(zone.zoneId, zone.coverImageId!, isCached)
+    : undefined;
 
   return (
     <ZoneCard
-      user={zone.user}
+      user={user}
       category={zone.title}
+      gradient={isWebZone ? undefined : getUserZoneGradient(zone)}
       imageUrl={imageUrl}
       rt60={1.2}
       loading={isLoadingZone}
       disabled={isCurrentZone}
       canLoad={defaultIrSelection != undefined}
-      onView={() => navigateToZone(toZoneMetadata(zone), zone.user)}
+      onView={() => navigateToZone(zone, user)}
       onLoad={async () => {
         if (defaultIrSelection) await load(defaultIrSelection);
       }}
@@ -101,10 +105,10 @@ const ZonesHits = () => {
   return (
     <div className="flex flex-col gap-4">
       <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-4 gap-4">
-        {search.data.map((zone) => {
+        {search.data.map(({ zone, user }) => {
           return (
-            <div className="h-[200px]" key={zone.zoneId}>
-              <ZonesSearchHit zone={zone} />
+            <div className="h-[200px]" key={zone.zoneId ?? zone.title}>
+              <ZonesSearchHit zone={zone} user={user} />
             </div>
           );
         })}
@@ -113,4 +117,4 @@ const ZonesHits = () => {
   );
 };
 
-export { ZonesHits };
+export { ZonesHits, ZonesSearchHit };
