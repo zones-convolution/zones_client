@@ -14,6 +14,7 @@ const Preferences = z.object({
 
 const VersionData = z.object({
   versionNumber: z.string(),
+  gitCommitHash: z.string(),
   buildType: z.string(),
 });
 
@@ -44,6 +45,7 @@ export const defaultPreferences: Preferences = {
 };
 export const defaultVersionData: VersionData = {
   versionNumber: "",
+  gitCommitHash: "",
   buildType: "",
 };
 export const defaultBlockSizes: BlockSizes = {

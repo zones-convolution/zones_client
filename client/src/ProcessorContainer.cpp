@@ -27,6 +27,7 @@ ProcessorContainer::ProcessorContainer (juce::AudioProcessor & audio_processor)
 
     preferences_controller_.SetVersion (
         {.version_number = std::string (VERSION),
+         .git_commit_hash = std::string (GIT_COMMIT_HASH),
          .build_type = std::string (DEV_LOCALHOST ? "DEBUG" : "RELEASE")});
 }
 

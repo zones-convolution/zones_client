@@ -109,11 +109,11 @@ const Preferences = () => {
         </div>
       </div>
       <Separator />
-      <div className={"flex flex-row gap-2"}>
-        <div>Version:</div>
-        <div>
-          {versionData.versionNumber}
-          {versionData.buildType == "DEBUG" ? " | DEBUG" : ""}
+      <div className={"flex flex-row gap-2 justify-end"}>
+        <div className={" flex flex-row items-center gap-1"}>
+          <div> {versionData.buildType == "DEBUG" && "DEBUG"}</div>
+          <div>{versionData.versionNumber}</div>
+          <div className={"text-sm"}> ({versionData.gitCommitHash})</div>
         </div>
       </div>
     </div>

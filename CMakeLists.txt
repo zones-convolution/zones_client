@@ -23,11 +23,24 @@ include(cmake/update_from_git.cmake)
 include(cmake/zones_module_common.cmake)
 include(cmake/embed_resources.cmake)
 
+execute_process(
+        COMMAND git rev-parse --short HEAD
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        OUTPUT_VARIABLE GIT_COMMIT_HASH
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
+execute_process(
+        COMMAND git describe --tags --abbrev=0
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        OUTPUT_VARIABLE CURRENT_VERSION
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
 set(PROJECT_NAME "zones_client")
 set(PRODUCT_NAME "Zones")
 set(COMPANY_NAME "Zones")
 set(BUNDLE_ID "com.zones.zones")
-set(CURRENT_VERSION "0.0.1")
 
 add_subdirectory(lib)
 add_subdirectory(modules)

@@ -19,6 +19,7 @@ public:
     struct VersionData
     {
         std::string version_number;
+        std::string git_commit_hash;
         std::string build_type;
     };
 

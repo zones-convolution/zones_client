@@ -6,12 +6,14 @@ using json = nlohmann::json;
 static void from_json (const json & data, PreferencesController::VersionData & version_data)
 {
     data.at ("versionNumber").get_to (version_data.version_number);
+    data.at ("gitCommitHash").get_to (version_data.git_commit_hash);
     data.at ("buildType").get_to (version_data.build_type);
 }
 
 static void to_json (json & data, const PreferencesController::VersionData & version_data)
 {
     data = json {{"versionNumber", version_data.version_number},
+                 {"gitCommitHash", version_data.git_commit_hash},
                  {"buildType", version_data.build_type}};
 }
 
