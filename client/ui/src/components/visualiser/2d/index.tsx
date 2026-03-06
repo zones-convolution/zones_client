@@ -146,7 +146,7 @@ const XAxis: FC<{ visualiserMetadata: VisualiserMetadata }> = ({
   return (
     <div>
       <svg
-        className="w-full absolute h-6 pr-6 pl-12 bottom-0 ml-[-1px]"
+        className="w-full absolute h-6 pr-6 pl-12 bottom-0 ml-[-1px] overflow-visible"
         viewBox={`0 0 ${width} ${height}`}
         preserveAspectRatio="none"
         ref={(el) => {
@@ -257,7 +257,7 @@ const YAxis: FC<{ scale: VisualiserScale }> = ({ scale }) => {
       </svg>
 
       <svg
-        className="h-full absolute w-12 pb-6 pt-6 left-0 "
+        className="h-full absolute w-12 pb-6 pt-6 left-0 overflow-visible "
         viewBox={`0 0 ${width} ${height}`}
         preserveAspectRatio="none"
         ref={(el) => {
