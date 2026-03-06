@@ -57,13 +57,13 @@ const ZonesSearchHit: FC<{
 
 const ZonesNoHits = () => {
   return (
-    <div className="py-10 px-6 text-center">
+    <div className=" flex flex-col items-center gap-4 justify-center h-full">
       <div className="inline-block">
         <div className="flex justify-center items-center rounded-full h-20 w-20 bg-background p-2 text-foreground">
-          <Search className="w-8 h-8 text-white" />
+          <Search className="w-8 h-8 text-white"/>
         </div>
       </div>
-      <h2 className="mt-6 mb-2 text-2xl">No Zones Found</h2>
+      <h2 className="text-2xl">No Zones Found</h2>
       <span className="text-secondary">
         This search had no matching Zones. Please try modifying your search
         term.
