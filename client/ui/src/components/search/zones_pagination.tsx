@@ -157,11 +157,11 @@ export const ZonesPaginationWithLinks = ({
           <PaginationItem>
             <PaginationNext
               href="#"
-              aria-disabled={page === totalPageCount}
+              aria-disabled={totalPageCount == 0 || page === totalPageCount}
               tabIndex={page === totalPageCount ? -1 : undefined}
               onClick={() => buildLink(Math.min(page + 1, totalPageCount))}
               className={
-                page === totalPageCount
+                totalPageCount == 0 || page === totalPageCount
                   ? "pointer-events-none opacity-50"
                   : undefined
               }
