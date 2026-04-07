@@ -5,6 +5,7 @@ import {
   juce,
   removeNativeEventListener,
 } from "@/lib/juce";
+import { withAbort } from "@/lib/abortable";
 
 const PlayerResource = z.enum(["snare", "voice"]);
 export type PlayerResource = z.infer<typeof PlayerResource>;
@@ -37,8 +38,10 @@ const handleReceivePlayerState = (data: any) => {
   return defaultPlayerState;
 };
 
-export const getPlayerState = async () => {
-  return handleReceivePlayerState(await getPlayerStateNative());
+export const getPlayerState = async (options?: { signal?: AbortSignal }) => {
+  return handleReceivePlayerState(
+    await withAbort(getPlayerStateNative(), options?.signal),
+  );
 };
 
 export const updatePlayerState = async (state: PlayerState): Promise<void> => {

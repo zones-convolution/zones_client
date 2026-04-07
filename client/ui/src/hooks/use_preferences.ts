@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 
-import { playerUpdateListener } from "@/ipc/player_ipc";
 import {
   Preferences,
   getPreferences,
@@ -17,6 +16,7 @@ import {
   getBlockSizes,
   blockSizeUpdateListener,
 } from "@/ipc/preferences_ipc";
+import { isAbortError } from "@/lib/abortable";
 
 interface IUsePreferences {
   preferences: Preferences;
@@ -36,10 +36,31 @@ const usePreferences = (): IUsePreferences => {
   const [blockSizes, setBlockSizes] = useState<BlockSizes>(defaultBlockSizes);
 
   useEffect(() => {
-    getPreferences().then(setPreferences);
-    getVersionData().then(setVersionData);
-    getBlockSizes().then(setBlockSizes);
-    return blockSizeUpdateListener(setBlockSizes);
+    const controller = new AbortController();
+    const unsubscribe = blockSizeUpdateListener(setBlockSizes);
+
+    getPreferences({ signal: controller.signal })
+      .then(setPreferences)
+      .catch((error) => {
+        if (!isAbortError(error)) console.error(error);
+      });
+
+    getVersionData({ signal: controller.signal })
+      .then(setVersionData)
+      .catch((error) => {
+        if (!isAbortError(error)) console.error(error);
+      });
+
+    getBlockSizes({ signal: controller.signal })
+      .then(setBlockSizes)
+      .catch((error) => {
+        if (!isAbortError(error)) console.error(error);
+      });
+
+    return () => {
+      controller.abort();
+      unsubscribe();
+    };
   }, []);
 
   const addPath = async () => {

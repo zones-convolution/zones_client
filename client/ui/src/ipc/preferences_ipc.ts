@@ -1,12 +1,11 @@
-import { data } from "autoprefixer";
 import { z } from "zod";
 
-import { PlayerState } from "@/ipc/player_ipc";
 import {
   addNativeEventListener,
   juce,
   removeNativeEventListener,
 } from "@/lib/juce";
+import { withAbort } from "@/lib/abortable";
 
 const Preferences = z.object({
   userPaths: z.array(z.string()),
@@ -63,8 +62,10 @@ const handleReceivePreferences = (data: any) => {
   return defaultPreferences;
 };
 
-export const getPreferences = async () => {
-  return handleReceivePreferences(await getPreferencesNative());
+export const getPreferences = async (options?: { signal?: AbortSignal }) => {
+  return handleReceivePreferences(
+    await withAbort(getPreferencesNative(), options?.signal),
+  );
 };
 
 export const addPreferencesPath = async () => {
@@ -89,8 +90,10 @@ const handleReceiveVersionData = (data: any) => {
   return defaultVersionData;
 };
 
-export const getVersionData = async () => {
-  return handleReceiveVersionData(await getVersionDataNative());
+export const getVersionData = async (options?: { signal?: AbortSignal }) => {
+  return handleReceiveVersionData(
+    await withAbort(getVersionDataNative(), options?.signal),
+  );
 };
 
 const handleReceiveBlockSizes = (data: any) => {
@@ -103,8 +106,10 @@ const handleReceiveBlockSizes = (data: any) => {
   return defaultBlockSizes;
 };
 
-export const getBlockSizes = async () => {
-  return handleReceiveBlockSizes(await getBlockSizesNative());
+export const getBlockSizes = async (options?: { signal?: AbortSignal }) => {
+  return handleReceiveBlockSizes(
+    await withAbort(getBlockSizesNative(), options?.signal),
+  );
 };
 export const setInternalBlockSize = async (blockSize: number) => {
   await setInternalBlockSizeNative(JSON.stringify(blockSize.toString()));

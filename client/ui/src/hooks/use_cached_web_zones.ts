@@ -6,6 +6,7 @@ import {
   getCachedWebZone,
   cachedWebZoneUpdateListener,
 } from "@/ipc/cached_web_zones_ipc";
+import { isAbortError } from "@/lib/abortable";
 
 interface IUseCachedWebZones {
   cachedWebZones: ZoneMetadata[];
@@ -15,7 +16,17 @@ const useCachedWebZones = (): IUseCachedWebZones => {
   const [cachedWebZones, setCachedWebZones] = useState<ZoneMetadata[]>([]);
 
   useEffect(() => {
-    getCachedWebZones().then(setCachedWebZones);
+    const controller = new AbortController();
+
+    getCachedWebZones({ signal: controller.signal })
+      .then(setCachedWebZones)
+      .catch((error) => {
+        if (!isAbortError(error)) console.error(error);
+      });
+
+    return () => {
+      controller.abort();
+    };
   }, []);
 
   return {
@@ -32,10 +43,24 @@ const useCachedWebZone = (zoneId?: string): IUseCachedWebZone => {
   const [cachedWebZone, setCachedWebZone] = useState<ZoneMetadataOptional>({});
 
   useEffect(() => {
-    if (zoneId) {
-      getCachedWebZone(zoneId).then(setCachedWebZone);
-      return cachedWebZoneUpdateListener(zoneId, setCachedWebZone);
+    if (!zoneId) {
+      setCachedWebZone({});
+      return;
     }
+
+    const controller = new AbortController();
+    const unsubscribe = cachedWebZoneUpdateListener(zoneId, setCachedWebZone);
+
+    getCachedWebZone(zoneId, { signal: controller.signal })
+      .then(setCachedWebZone)
+      .catch((error) => {
+        if (!isAbortError(error)) console.error(error);
+      });
+
+    return () => {
+      controller.abort();
+      unsubscribe();
+    };
   }, [zoneId]);
 
   return {

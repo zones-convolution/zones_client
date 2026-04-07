@@ -8,6 +8,7 @@ import {
   updatePlayerState,
   getPlayerState,
 } from "@/ipc/player_ipc";
+import { isAbortError } from "@/lib/abortable";
 
 interface IUsePlayer {
   playerState: PlayerState;
@@ -39,8 +40,19 @@ const usePlayer = (): IUsePlayer => {
   };
 
   useEffect(() => {
-    getPlayerState().then(setPlayerState);
-    return playerUpdateListener(setPlayerState);
+    const controller = new AbortController();
+    const unsubscribe = playerUpdateListener(setPlayerState);
+
+    getPlayerState({ signal: controller.signal })
+      .then(setPlayerState)
+      .catch((error) => {
+        if (!isAbortError(error)) console.error(error);
+      });
+
+    return () => {
+      controller.abort();
+      unsubscribe();
+    };
   }, []);
 
   return {

@@ -1,11 +1,11 @@
 import { z } from "zod";
 
-import { defaultVersionData, VersionData } from "@/ipc/preferences_ipc";
 import {
   addNativeEventListener,
   juce,
   removeNativeEventListener,
 } from "@/lib/juce";
+import { isAbortError, withAbort } from "@/lib/abortable";
 
 const VisualiserMetadata = z.object({
   sampleRate: z.number(),
@@ -19,8 +19,10 @@ const getVisualiserMetadataNative = juce.getNativeFunction(
   "get_visualiser_metadata_native",
 );
 
-export const getVisualiserRender = async () => {
-  const res = await fetch(juce.getBackendResourceAddress("visualiser.bin"));
+export const getVisualiserRender = async (options?: { signal?: AbortSignal }) => {
+  const res = await fetch(juce.getBackendResourceAddress("visualiser.bin"), {
+    signal: options?.signal,
+  });
   return new Uint8Array(await res.arrayBuffer());
 };
 
@@ -39,18 +41,30 @@ const handleReceiveVisualiserMetadata = (data: any) => {
   return defaultVisualiserMetadata;
 };
 
-export const getVisualiserMetadata = async () => {
-  return handleReceiveVisualiserMetadata(await getVisualiserMetadataNative());
+export const getVisualiserMetadata = async (options?: { signal?: AbortSignal }) => {
+  return handleReceiveVisualiserMetadata(
+    await withAbort(getVisualiserMetadataNative(), options?.signal),
+  );
 };
 export const visualiserRenderListener = (
   onRenderUpdate: (state: Uint8Array) => void,
   onVisualiserMetadataUpdate: (state: VisualiserMetadata) => void,
+  options?: { signal?: AbortSignal },
 ) => {
   const listener = addNativeEventListener(
     onVisualiserRenderNative,
-    async (data: any) => {
-      onRenderUpdate(await getVisualiserRender());
-      onVisualiserMetadataUpdate(await getVisualiserMetadata());
+    async () => {
+      try {
+        const render = await getVisualiserRender(options);
+        if (options?.signal?.aborted) return;
+        onRenderUpdate(render);
+
+        const metadata = await getVisualiserMetadata(options);
+        if (options?.signal?.aborted) return;
+        onVisualiserMetadataUpdate(metadata);
+      } catch (error) {
+        if (!isAbortError(error)) console.error(error);
+      }
     },
   );
 

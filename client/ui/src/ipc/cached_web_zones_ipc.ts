@@ -6,6 +6,7 @@ import {
   juce,
   removeNativeEventListener,
 } from "@/lib/juce";
+import { withAbort } from "@/lib/abortable";
 
 const onCachedWebZoneUpdated = "on_cached_web_zone_updated";
 
@@ -23,8 +24,10 @@ const handleReceiveCachedWebZones = (data: any) => {
   return [];
 };
 
-export const getCachedWebZones = async () => {
-  return handleReceiveCachedWebZones(await getCachedWebZonesNative());
+export const getCachedWebZones = async (options?: { signal?: AbortSignal }) => {
+  return handleReceiveCachedWebZones(
+    await withAbort(getCachedWebZonesNative(), options?.signal),
+  );
 };
 
 const getCachedWebZoneNative = juce.getNativeFunction(
@@ -53,9 +56,12 @@ const handleReceiveCachedWebZone = (data: any): ZoneMetadataOptional => {
   return {};
 };
 
-export const getCachedWebZone = async (zoneId: string) => {
+export const getCachedWebZone = async (
+  zoneId: string,
+  options?: { signal?: AbortSignal },
+) => {
   return handleReceiveCachedWebZoneOptional(
-    await getCachedWebZoneNative(JSON.stringify(zoneId)),
+    await withAbort(getCachedWebZoneNative(JSON.stringify(zoneId)), options?.signal),
   );
 };
 

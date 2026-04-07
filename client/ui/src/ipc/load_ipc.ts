@@ -6,6 +6,7 @@ import {
   juce,
   removeNativeEventListener,
 } from "@/lib/juce";
+import { withAbort } from "@/lib/abortable";
 
 const loadIrNative = juce.getNativeFunction("load_ir_native");
 const getLoadingIrNative = juce.getNativeFunction("get_loading_ir_native");
@@ -23,12 +24,16 @@ const handleReceiveIrOptional = (data: any): IrSelectionOptional => {
   return {};
 };
 
-export const getLoadingIr = async () => {
-  return handleReceiveIrOptional(await getLoadingIrNative());
+export const getLoadingIr = async (options?: { signal?: AbortSignal }) => {
+  return handleReceiveIrOptional(
+    await withAbort(getLoadingIrNative(), options?.signal),
+  );
 };
 
-export const getCurrentIr = async () => {
-  return handleReceiveIrOptional(await getCurrentIrNative());
+export const getCurrentIr = async (options?: { signal?: AbortSignal }) => {
+  return handleReceiveIrOptional(
+    await withAbort(getCurrentIrNative(), options?.signal),
+  );
 };
 
 export const loadIr = async (irSelection: IrSelection): Promise<boolean> => {

@@ -16,6 +16,7 @@ import {
   visualiserRenderListener,
   VisualiserMetadata,
 } from "@/ipc/visualiser_ipc";
+import { isAbortError } from "@/lib/abortable";
 
 export const visualiserScales = ["linear", "mel"];
 export type VisualiserScale = (typeof visualiserScales)[number];
@@ -91,9 +92,29 @@ export const VisualiserProvider: FC<{
     useState<VisualiserMetadata>(defaultVisualiserMetadata);
 
   useEffect(() => {
-    getVisualiserMetadata().then(setVisualiserMetadata);
-    getVisualiserRender().then(setRender);
-    return visualiserRenderListener(setRender, setVisualiserMetadata);
+    const controller = new AbortController();
+    const unsubscribe = visualiserRenderListener(
+      setRender,
+      setVisualiserMetadata,
+      { signal: controller.signal },
+    );
+
+    getVisualiserMetadata({ signal: controller.signal })
+      .then(setVisualiserMetadata)
+      .catch((error) => {
+        if (!isAbortError(error)) console.error(error);
+      });
+
+    getVisualiserRender({ signal: controller.signal })
+      .then(setRender)
+      .catch((error) => {
+        if (!isAbortError(error)) console.error(error);
+      });
+
+    return () => {
+      controller.abort();
+      unsubscribe();
+    };
   }, []);
 
   const [sensitivity, setSensitivity] = useState<number>(1.0);

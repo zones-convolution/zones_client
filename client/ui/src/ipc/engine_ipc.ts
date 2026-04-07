@@ -5,6 +5,7 @@ import {
   juce,
   removeNativeEventListener,
 } from "@/lib/juce";
+import { withAbort } from "@/lib/abortable";
 
 const EngineLoading = z.object({
   convolutionEngineLoading: z.boolean(),
@@ -33,8 +34,10 @@ const handleReceiveEngineLoading = (data: any) => {
   return defaultEngineLoading;
 };
 
-export const getEngineLoading = async () => {
-  return handleReceiveEngineLoading(await getEngineLoadingNative());
+export const getEngineLoading = async (options?: { signal?: AbortSignal }) => {
+  return handleReceiveEngineLoading(
+    await withAbort(getEngineLoadingNative(), options?.signal),
+  );
 };
 
 export const engineUpdateListener = (

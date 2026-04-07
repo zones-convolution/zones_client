@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import { ZoneMetadata } from "@/hooks/zone_metadata";
+import { withAbort } from "@/lib/abortable";
 import { juce } from "@/lib/juce";
 
 const getUserZonesNative = juce.getNativeFunction("get_user_zones_native");
@@ -15,6 +16,8 @@ const handleReceiveUserZones = (data: any) => {
   return [];
 };
 
-export const getUserZones = async () => {
-  return handleReceiveUserZones(await getUserZonesNative());
+export const getUserZones = async (options?: { signal?: AbortSignal }) => {
+  return handleReceiveUserZones(
+    await withAbort(getUserZonesNative(), options?.signal),
+  );
 };

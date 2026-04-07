@@ -17,6 +17,7 @@ import {
   loadingIrUpdateListener,
   loadIr,
 } from "@/ipc/load_ipc";
+import { isAbortError } from "@/lib/abortable";
 
 interface ILoadContext {
   load: (irSelection: IrSelection) => Promise<void>;
@@ -49,13 +50,35 @@ export const LoadProvider: FC<{
   };
 
   useEffect(() => {
-    getLoadingIr().then(setLoadingIr);
-    return loadingIrUpdateListener(setLoadingIr);
+    const controller = new AbortController();
+    const unsubscribe = loadingIrUpdateListener(setLoadingIr);
+
+    getLoadingIr({ signal: controller.signal })
+      .then(setLoadingIr)
+      .catch((error) => {
+        if (!isAbortError(error)) console.error(error);
+      });
+
+    return () => {
+      controller.abort();
+      unsubscribe();
+    };
   }, []);
 
   useEffect(() => {
-    getCurrentIr().then(setCurrentIr);
-    return currentIrUpdateListener(setCurrentIr);
+    const controller = new AbortController();
+    const unsubscribe = currentIrUpdateListener(setCurrentIr);
+
+    getCurrentIr({ signal: controller.signal })
+      .then(setCurrentIr)
+      .catch((error) => {
+        if (!isAbortError(error)) console.error(error);
+      });
+
+    return () => {
+      controller.abort();
+      unsubscribe();
+    };
   }, []);
 
   return (

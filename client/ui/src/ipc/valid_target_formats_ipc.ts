@@ -6,6 +6,7 @@ import {
   juce,
   removeNativeEventListener,
 } from "@/lib/juce";
+import { withAbort } from "@/lib/abortable";
 
 const getValidTargetFormatsNative = juce.getNativeFunction(
   "get_valid_target_formats_native",
@@ -24,8 +25,10 @@ const handleReceiveValidTargetFormats = (data: any) => {
   return [];
 };
 
-export const getValidTargetFormats = async () => {
-  return handleReceiveValidTargetFormats(await getValidTargetFormatsNative());
+export const getValidTargetFormats = async (options?: { signal?: AbortSignal }) => {
+  return handleReceiveValidTargetFormats(
+    await withAbort(getValidTargetFormatsNative(), options?.signal),
+  );
 };
 
 export const validTargetFormatsListener = (
