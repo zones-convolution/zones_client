@@ -25,7 +25,7 @@ const getIrResourcePath = (
 };
 
 const getImageUrl = (zoneId: string, imageId: string) => {
-  return `${Config.S3_HOST}/images-processed/${getS3ResourcePath({
+  return `${Config.S3_ENDPOINT_IMAGES}/${getS3ResourcePath({
     containerId: zoneId,
     resourceId: imageId,
     extension: "jpeg",
@@ -36,11 +36,11 @@ const getIrUrl = (
   irId: string,
   position: "centre" | "left" | "right",
 ) => {
-  return `${Config.S3_HOST}/impulse-responses-processed/${getIrResourcePath(zoneId, irId, position)}`;
+  return `${Config.S3_ENDPOINT_IMPULSE_RESPONSES}/${getIrResourcePath(zoneId, irId, position)}`;
 };
 
 const getProfileImageUrl = (userId: string) => {
-  return `${Config.S3_HOST}/profile-pictures-processed/${userId}.jpeg`;
+  return `${Config.S3_ENDPOINT_PROFILE_PICTURES}/${userId}.jpeg`;
 };
 
 export { getIrUrl, getImageUrl, getProfileImageUrl };

@@ -2,9 +2,9 @@
 
 #include <algorithm>
 
-static const std::string kS3Host = "https://minio.zonesconvolution.com";
-static const std::string kImpulseResponsesBucket = "impulse-responses-processed";
-static const std::string kImagesBucket = "images-processed";
+static const std::string kImpulseResponseS3Host =
+    "https://impulse-responses-processed.s3.zonesconvolution.com";
+static const std::string kImagesS3Host = "https://images-processed.s3.zonesconvolution.com";
 
 static std::filesystem::path GetZonesDataDirectory ()
 {
@@ -37,15 +37,16 @@ static std::filesystem::path GetCachedZoneImagePath (const std::string & zone_id
 {
     return GetZoneImagesDirectory (zone_id) / (image_id + ".jpeg");
 }
+
 static juce::URL
 GetIrDownloadUrl (const std::string & zone_id, const std::string & ir_id, const std::string & file)
 {
-    return {kS3Host + "/" + kImpulseResponsesBucket + "/" +  zone_id  + "/" +  ir_id  + "/" + file};
+    return {kImpulseResponseS3Host + "/" + zone_id + "/" + ir_id + "/" + file};
 }
 
 static juce::URL GetImageDownloadUrl (const std::string & zone_id, const std::string & image_id)
 {
-    return {kS3Host  + "/" + kImagesBucket  + "/" +  zone_id  + "/" +  image_id + ".jpeg"};
+    return {kImagesS3Host + "/" + zone_id + "/" + image_id + ".jpeg"};
 }
 
 static juce::File
@@ -188,7 +189,7 @@ std::optional<ZoneMetadata> WebZonesHelper::LoadWebZone (const IrSelection & ir_
     }
 
     for (auto & download_task : download_tasks)
-        if (!download_task)
+        if (! download_task)
             return std::nullopt;
 
     auto download_complete = [&]
