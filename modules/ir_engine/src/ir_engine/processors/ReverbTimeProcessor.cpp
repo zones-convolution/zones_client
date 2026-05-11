@@ -8,7 +8,7 @@ void ReverbTimeProcessor::Process (IrGraphProcessor::BoxedBuffer & input_buffer,
     juce::dsp::AudioBlock<const float> input_block {*buf};
 
     auto num_samples = input_block.getNumSamples ();
-    auto end_sample = (int) std::floor ((float) num_samples * state.reverb_time_norm);
+    auto end_sample = std::max ((int) std::floor ((float) num_samples * state.reverb_time_norm), 1);
 
     output_buffer.setSize (input_buffer->getNumChannels (), end_sample);
     juce::dsp::AudioBlock<float> output_block {output_buffer};
