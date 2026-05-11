@@ -72,6 +72,8 @@ if (NOT DEFINED ENV{CI})
     set(SHOULD_COPY TRUE)
 endif ()
 
+string(REGEX REPLACE "^v" "" CURRENT_VERSION_NUMBER "${CURRENT_VERSION}")
+
 juce_add_plugin(
         ${BINARY}
         PLUGIN_MANUFACTURER_CODE Zone
@@ -79,7 +81,7 @@ juce_add_plugin(
         PRODUCT_NAME "${PRODUCT_NAME}"
         COMPANY_NAME "${COMPANY_NAME}"
         BUNDLE_ID "${BUNDLE_ID}"
-        VERSION "${CURRENT_VERSION}"
+        VERSION "${CURRENT_VERSION_NUMBER}"
         FORMATS ${FORMATS}
         COPY_PLUGIN_AFTER_BUILD ${SHOULD_COPY}
         NEEDS_WEBVIEW2 TRUE
