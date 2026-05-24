@@ -74,6 +74,7 @@ struct ZoneMetadata
     std::string title;
     std::optional<std::string> zone_id;
     std::optional<std::string> description;
+    std::optional<std::string> attribution;
     std::optional<std::string> license;
     std::vector<ImageMetadata> images;
     std::optional<std::string> cover_image_id;
@@ -97,6 +98,7 @@ struct ZoneMetadata
                          title,
                          zone_id,
                          description,
+                         attribution,
                          license,
                          images,
                          cover_image_id,
@@ -105,6 +107,7 @@ struct ZoneMetadata
                                                       rhs.title,
                                                       rhs.zone_id,
                                                       rhs.description,
+                                                      rhs.attribution,
                                                       rhs.license,
                                                       rhs.images,
                                                       rhs.cover_image_id,
