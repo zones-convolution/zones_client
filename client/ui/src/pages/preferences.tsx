@@ -2,6 +2,12 @@ import { PlusCircle, Trash, FolderOpen } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
@@ -9,7 +15,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Separator } from "@/components/ui/separator";
 
 import { usePreferences } from "@/hooks/use_preferences";
 
@@ -40,89 +45,124 @@ const Preferences = () => {
   } = usePreferences();
 
   return (
-    <div className="flex flex-col bg-card p-4 gap-4 h-full">
-      <div className="flex flex-row">
-        <Button onClick={addPath}>
-          Add User Path
-          <PlusCircle className="w-4 h-4 ml-2" />
-        </Button>
-      </div>
-      <div className="flex flex-row justify-between items-center gap-4">
-        <div>Reveal internal zones folder</div>
-        <Button onClick={revealInternalPath}>
-          Reveal
-          <FolderOpen className="w-4 h-4 ml-2" />
-        </Button>
-      </div>
-      <Separator />
-      {preferences.userPaths.map((path) => {
-        return (
-          <div
-            className="flex flex-row justify-between items-center"
-            key={path}
-          >
-            {path}
-            <div className="flex flex-row gap-2">
-              <Button
-                onClick={async () => {
-                  await revealPath(path);
-                }}
-              >
-                Reveal
-                <FolderOpen className="w-4 h-4 ml-2" />
-              </Button>
-              <Button
-                onClick={async () => {
-                  await removePath(path);
-                }}
-              >
-                Remove
-                <Trash className="w-4 h-4 ml-2" />
-              </Button>
+    <div className="flex h-full flex-col gap-4 overflow-auto bg-background p-4">
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-xl">Preferences</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+            <div className="space-y-1">
+              <div className="text-sm font-medium">User zones</div>
+              <div className="text-sm text-muted-foreground">
+                Add local folders that should appear as zones.
+              </div>
+              {preferences.userPaths.length === 0 ? (
+                <div className="text-sm text-muted-foreground">
+                  No folders added.
+                </div>
+              ) : (
+                <div className="space-y-2 pt-1">
+                  {preferences.userPaths.map((path) => {
+                    return (
+                      <div
+                        className="flex flex-col gap-2 rounded-md border p-3 sm:flex-row sm:items-center sm:justify-between"
+                        key={path}
+                      >
+                        <div className="min-w-0 break-all text-sm text-muted-foreground">
+                          {path}
+                        </div>
+                        <div className="flex gap-2">
+                          <Button
+                            onClick={async () => {
+                              await revealPath(path);
+                            }}
+                            size="sm"
+                            variant="outline"
+                          >
+                            Reveal
+                            <FolderOpen className="ml-2 h-4 w-4" />
+                          </Button>
+                          <Button
+                            onClick={async () => {
+                              await removePath(path);
+                            }}
+                            size="sm"
+                            variant="outline"
+                          >
+                            Remove
+                            <Trash className="ml-2 h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
+            <Button onClick={addPath}>
+              Add Folder
+              <PlusCircle className="ml-2 h-4 w-4" />
+            </Button>
           </div>
-        );
-      })}
-      <Separator />
-      <div className={"flex flex-row justify-between"}>
-        <div className={"flex items-center"}>Set internal block size</div>
-        <div className={"flex"}>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              {
-                <Button aria-haspopup="true" size="icon">
+
+          <div className="flex flex-col gap-3 border-t pt-6 sm:flex-row sm:items-center sm:justify-between">
+            <div className="space-y-1">
+              <div className="text-sm font-medium">Downloaded web zones</div>
+              <div className="text-sm text-muted-foreground">
+                Open the internal download folder.
+              </div>
+            </div>
+            <Button onClick={revealInternalPath} size="sm" variant="outline">
+              Reveal Folder
+              <FolderOpen className="ml-2 h-4 w-4" />
+            </Button>
+          </div>
+
+          <div className="flex flex-col gap-3 border-t pt-6 sm:flex-row sm:items-center sm:justify-between">
+            <div className="space-y-1">
+              <div className="text-sm font-medium">Internal block size</div>
+              <div className="text-sm text-muted-foreground">
+                Higher values can reduce CPU spikes, but may add latency.
+              </div>
+            </div>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button aria-haspopup="true" size="sm" variant="outline">
                   {blockSizes.current}
                 </Button>
-              }
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuLabel>Internal Block Size</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              {getValidBlockSizes(blockSizes.maximum).map((validBlockSize) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    className="uppercase"
-                    checked={validBlockSize == blockSizes.current}
-                    onCheckedChange={(checked) => {
-                      if (checked) setBlockSize(validBlockSize);
-                    }}
-                  >
-                    {validBlockSize}
-                  </DropdownMenuCheckboxItem>
-                );
-              })}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      </div>
-      <Separator />
-      <div className={"flex flex-row gap-2 justify-end"}>
-        <div className={" flex flex-row items-center gap-1"}>
-          <div> {versionData.buildType == "DEBUG" && "DEBUG"}</div>
-          <div>{versionData.versionNumber}</div>
-          <div className={"text-sm"}> ({versionData.gitCommitHash})</div>
-        </div>
-      </div>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuLabel>Internal Block Size</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                {getValidBlockSizes(blockSizes.maximum).map((validBlockSize) => {
+                  return (
+                    <DropdownMenuCheckboxItem
+                      className="uppercase"
+                      checked={validBlockSize == blockSizes.current}
+                      key={validBlockSize}
+                      onCheckedChange={(checked) => {
+                        if (checked) setBlockSize(validBlockSize);
+                      }}
+                    >
+                      {validBlockSize}
+                    </DropdownMenuCheckboxItem>
+                  );
+                })}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+
+          <div className="flex flex-col gap-3 border-t pt-4 text-sm sm:flex-row sm:items-center sm:justify-between">
+            <div className="font-medium text-foreground">Plugin version</div>
+            <div className="flex flex-row items-center gap-1 text-muted-foreground">
+              <div>{versionData.buildType == "DEBUG" && "DEBUG"}</div>
+              <div>{versionData.versionNumber}</div>
+              <div>({versionData.gitCommitHash})</div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };
