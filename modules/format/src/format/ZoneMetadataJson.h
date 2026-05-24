@@ -74,6 +74,7 @@ static void from_json (const json & data, ZoneMetadata & zone_metadata)
     data.at ("title").get_to (zone_metadata.title);
     OptionalFromJson (data, "zoneId", zone_metadata.zone_id);
     OptionalFromJson (data, "description", zone_metadata.description);
+    OptionalFromJson (data, "license", zone_metadata.license);
     data.at ("images").get_to (zone_metadata.images);
     OptionalFromJson (data, "coverImageId", zone_metadata.cover_image_id);
     data.at ("irs").get_to (zone_metadata.irs);
@@ -89,6 +90,7 @@ static void to_json (json & data, const ZoneMetadata & zone_metadata)
 
     OptionalToJson (data, "zoneId", zone_metadata.zone_id);
     OptionalToJson (data, "description", zone_metadata.description);
+    OptionalToJson (data, "license", zone_metadata.license);
     OptionalToJson (data, "coverImageId", zone_metadata.cover_image_id);
     OptionalToJson (data, "pathAttribute", zone_metadata.path_attribute);
 }

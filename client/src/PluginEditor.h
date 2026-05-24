@@ -3,6 +3,7 @@
 #include "PluginProcessor.h"
 #include "ProcessorContainer.h"
 #include "preferences/PreferencesController.h"
+#include "relays/BrowserRelay.h"
 #include "relays/EngineRelay.h"
 #include "relays/LoadRelay.h"
 #include "relays/MeteringRelay.h"
@@ -42,6 +43,7 @@ private:
     ProcessorContainer & processor_container_;
 
     ParameterRelay parameter_relay_;
+    BrowserRelay browser_relay_;
     EngineRelay engine_relay_;
     PlayerRelay player_relay_;
     PreferencesRelay preferences_relay_;

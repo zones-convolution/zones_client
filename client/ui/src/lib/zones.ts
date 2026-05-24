@@ -36,6 +36,9 @@ export const GenerationTypes = [
 
 export type GenerationType = (typeof GenerationTypes)[number];
 
+export const ZoneLicenses = ["CC0_1_0", "CC_BY_4_0"] as const;
+export type ZoneLicense = (typeof ZoneLicenses)[number];
+
 export const ZonesChannelFormats = ["MONO", "STEREO", "FOA"] as const;
 export type ZonesChannelFormat = (typeof ZonesChannelFormats)[number];
 
@@ -76,6 +79,7 @@ export interface IZone {
   coordinate: ICoordinate | null;
   spaceCategory: string | null;
   generationType: GenerationType | null;
+  license: ZoneLicense | null;
   tags: string[];
   coverImageId: string | null;
   status: ZoneStatus;
@@ -150,6 +154,7 @@ export const toZoneMetadata = (zone: IZone): ZoneMetadata => {
     coordinate: zone.coordinate ?? undefined,
     spaceCategory: zone.spaceCategory ?? undefined,
     generationType: zone.generationType ?? undefined,
+    license: zone.license ?? undefined,
     tags: zone.tags,
     versionNumber: zone.versionNumber,
   };

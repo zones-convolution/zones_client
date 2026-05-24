@@ -154,6 +154,7 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (
     , processor_ (processor)
     , processor_container_ (processor_container)
     , parameter_relay_ (web_browser_component_)
+    , browser_relay_ ()
     , engine_relay_ (web_browser_component_,
                      processor_container.ir_engine_,
                      processor_container.convolution_engine_)
@@ -166,9 +167,10 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (
     , visualiser_relay_ (web_browser_component_, processor_container.visualiser_controller_)
     , web_zones_relay_ (web_browser_component_, processor_container.load_controller_)
     , web_browser_component_ (kBaseWebOptions.withOptionsFrom (parameter_relay_)
-                                  .withOptionsFrom (engine_relay_)
-                                  .withOptionsFrom (player_relay_)
-                                  .withOptionsFrom (preferences_relay_)
+                                   .withOptionsFrom (browser_relay_)
+                                   .withOptionsFrom (engine_relay_)
+                                   .withOptionsFrom (player_relay_)
+                                   .withOptionsFrom (preferences_relay_)
                                   .withOptionsFrom (user_zones_relay_)
                                   .withOptionsFrom (load_relay_)
                                   .withOptionsFrom (metering_relay_)

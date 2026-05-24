@@ -22,6 +22,8 @@ set(SOURCES
         src/ProcessorContainer.h
         src/ProcessorContainer.cpp
         src/WithJuceEventLoop.h
+        src/relays/BrowserRelay.h
+        src/relays/BrowserRelay.cpp
         src/relays/EngineRelay.h
         src/relays/EngineRelay.cpp
         src/relays/PlayerRelay.h
@@ -141,6 +143,5 @@ if (NOT DEV_LOCALHOST AND NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
     target_compile_definitions(${PROJECT_NAME} PRIVATE ZIPPED_FILES_PREFIX="${ZIPPED_FILES_PREFIX}/")
     embed_resources(${PROJECT_NAME} ui/build/${WEBVIEW_FILES_ZIP_NAME})
 endif ()
-
 
 

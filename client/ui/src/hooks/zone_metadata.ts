@@ -60,6 +60,7 @@ const ZoneMetadata = z.object({
     .optional(),
   spaceCategory: z.string().optional(),
   generationType: z.string().optional(),
+  license: z.string().optional(),
   tags: z.array(z.string()).optional(),
   versionNumber: z.number().optional(),
 });

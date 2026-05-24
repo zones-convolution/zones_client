@@ -1,9 +1,11 @@
 import { ChannelFormat } from "@/hooks/zone_metadata";
-import { GenerationType, SpeakerPositions } from "@/lib/zones";
+import { GenerationType, SpeakerPositions, ZoneLicense } from "@/lib/zones";
 
 interface IZoneOption {
   label: string;
   value: string;
+  href?: string;
+  description?: string;
 }
 
 export type IZoneOptions = IZoneOption[];
@@ -100,6 +102,23 @@ export const GenerationTypeOptions: IZoneOptions = [
   {
     label: "Reverb Device",
     value: "REVERB_DEVICE" as GenerationType,
+  },
+];
+
+export const ZoneLicenseOptions: IZoneOptions = [
+  {
+    label: "CC0 1.0 Universal",
+    value: "CC0_1_0" as ZoneLicense,
+    href: "https://creativecommons.org/publicdomain/zero/1.0/",
+    description:
+      "Waives copyright and related rights as far as possible, allowing reuse without attribution.",
+  },
+  {
+    label: "Creative Commons Attribution 4.0 International",
+    value: "CC_BY_4_0" as ZoneLicense,
+    href: "https://creativecommons.org/licenses/by/4.0/",
+    description:
+      "Allows reuse and adaptation for any purpose, provided appropriate attribution is given.",
   },
 ];
 
