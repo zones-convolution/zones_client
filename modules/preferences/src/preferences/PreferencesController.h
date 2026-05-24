@@ -14,6 +14,7 @@ public:
     void AddUserPath (std::function<void (Preferences)> add_path_callback);
     [[nodiscard]] Preferences RemoveUserPath (const std::filesystem::path & user_path) const;
     void RevealUserPath (const std::filesystem::path & user_path);
+    void RevealInternalZonesPath ();
     [[nodiscard]] Preferences GetPreferences () const;
 
     struct VersionData

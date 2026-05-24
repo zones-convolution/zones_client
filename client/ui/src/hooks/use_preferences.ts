@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 
-import { playerUpdateListener } from "@/ipc/player_ipc";
 import {
   Preferences,
   getPreferences,
@@ -8,6 +7,7 @@ import {
   addPreferencesPath,
   removePreferencesPath,
   revealPreferencesPath,
+  revealInternalZonesPath,
   getVersionData,
   VersionData,
   defaultVersionData,
@@ -26,6 +26,7 @@ interface IUsePreferences {
   addPath: () => Promise<void>;
   removePath: (path: string) => Promise<void>;
   revealPath: (path: string) => Promise<void>;
+  revealInternalPath: () => Promise<void>;
 }
 
 const usePreferences = (): IUsePreferences => {
@@ -62,6 +63,7 @@ const usePreferences = (): IUsePreferences => {
     addPath: addPath,
     removePath: removePath,
     revealPath: revealPreferencesPath,
+    revealInternalPath: revealInternalZonesPath,
   };
 };
 

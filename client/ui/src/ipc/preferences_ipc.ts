@@ -1,7 +1,5 @@
-import { data } from "autoprefixer";
 import { z } from "zod";
 
-import { PlayerState } from "@/ipc/player_ipc";
 import {
   addNativeEventListener,
   juce,
@@ -30,6 +28,9 @@ export type BlockSizes = z.infer<typeof BlockSizes>;
 const addUserPathNative = juce.getNativeFunction("add_user_path_native");
 const removeUserPathNative = juce.getNativeFunction("remove_user_path_native");
 const revealUserPathNative = juce.getNativeFunction("reveal_user_path_native");
+const revealInternalZonesPathNative = juce.getNativeFunction(
+  "reveal_internal_zones_path_native",
+);
 const getPreferencesNative = juce.getNativeFunction("get_preferences_native");
 
 const getVersionDataNative = juce.getNativeFunction("get_version_data_native");
@@ -77,6 +78,10 @@ export const removePreferencesPath = async (path: string) => {
 
 export const revealPreferencesPath = async (path: string) => {
   await revealUserPathNative(path);
+};
+
+export const revealInternalZonesPath = async () => {
+  await revealInternalZonesPathNative();
 };
 
 const handleReceiveVersionData = (data: any) => {

@@ -63,6 +63,11 @@ void PreferencesController::RevealUserPath (const std::filesystem::path & user_p
         juce::File (path_it->string ()).revealToUser ();
 }
 
+void PreferencesController::RevealInternalZonesPath ()
+{
+    Preferences::GetZonesDataDirectory ().getChildFile ("zones").revealToUser ();
+}
+
 void PreferencesController::SetVersion (const PreferencesController::VersionData & version_data)
 {
     version_data_ = version_data;

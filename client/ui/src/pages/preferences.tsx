@@ -1,5 +1,4 @@
-import { PlusCircle, Trash, FolderOpen, MoreHorizontal } from "lucide-react";
-import { number } from "zod";
+import { PlusCircle, Trash, FolderOpen } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -36,6 +35,7 @@ const Preferences = () => {
     setBlockSize,
     addPath,
     revealPath,
+    revealInternalPath,
     removePath,
   } = usePreferences();
 
@@ -45,6 +45,13 @@ const Preferences = () => {
         <Button onClick={addPath}>
           Add User Path
           <PlusCircle className="w-4 h-4 ml-2" />
+        </Button>
+      </div>
+      <div className="flex flex-row justify-between items-center gap-4">
+        <div>Reveal internal zones folder</div>
+        <Button onClick={revealInternalPath}>
+          Reveal
+          <FolderOpen className="w-4 h-4 ml-2" />
         </Button>
       </div>
       <Separator />

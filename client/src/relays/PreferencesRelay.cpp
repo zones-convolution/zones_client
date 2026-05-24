@@ -82,6 +82,14 @@ PreferencesRelay::buildOptions (const juce::WebBrowserComponent::Options & initi
                                  JUCE_ASSERT_MESSAGE_THREAD;
                                  complete ({});
                              })
+        .withNativeFunction ("reveal_internal_zones_path_native",
+                             [&] (auto & var, auto complete)
+                             {
+                                 preferences_controller_.RevealInternalZonesPath ();
+
+                                 JUCE_ASSERT_MESSAGE_THREAD;
+                                 complete ({});
+                             })
         .withNativeFunction ("get_preferences_native",
                              [&] (auto & var, auto complete)
                              {
