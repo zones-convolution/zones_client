@@ -47,15 +47,20 @@ bool IsTargetSupported (const juce::AudioChannelSet & channel_set, TargetFormat 
     }
 }
 
-std::vector<TargetFormat> GetTargetFormatsForChannelSet (const juce::AudioChannelSet & channel_set)
+std::vector<TargetFormat>
+GetTargetFormatsForChannelSet (const juce::AudioChannelSet & input_channel_set,
+                               const juce::AudioChannelSet & output_channel_set)
 {
-    if (channel_set == juce::AudioChannelSet::mono ())
+    if (output_channel_set == juce::AudioChannelSet::mono ())
         return {TargetFormat::kMono};
-    if (channel_set == juce::AudioChannelSet::stereo ())
-        return {TargetFormat::kStereo, TargetFormat::kTrueStereo};
-    if (channel_set == juce::AudioChannelSet::ambisonic (1))
+    if (output_channel_set == juce::AudioChannelSet::stereo ())
+        if (input_channel_set == juce::AudioChannelSet::mono ())
+            return {TargetFormat::kStereo, TargetFormat::kTrueStereo};
+    if (input_channel_set == juce::AudioChannelSet::stereo ())
+        return {TargetFormat::kTrueStereo, TargetFormat::kStereo};
+    if (output_channel_set == juce::AudioChannelSet::ambisonic (1))
         return {TargetFormat::kFoa};
-    if (channel_set == juce::AudioChannelSet::quadraphonic ())
+    if (output_channel_set == juce::AudioChannelSet::quadraphonic ())
         return {TargetFormat::kQuadraphonic, TargetFormat::kFoa};
 
     return {};

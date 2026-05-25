@@ -30,7 +30,7 @@ import {
   TargetFormat,
   ZoneMetadata,
 } from "@/hooks/zone_metadata";
-import { getDefaultTarget, irSupportsTarget } from "@/lib/formats";
+import { irSupportsTarget } from "@/lib/formats";
 import { doesIrMatchSelection } from "@/lib/irs";
 import { cn } from "@/lib/utils";
 
@@ -74,7 +74,7 @@ const IrTableRow: FC<{
   const [target, setTarget] = useState<TargetFormat | undefined>();
 
   useEffect(() => {
-    setTarget(getDefaultTarget(validTargets));
+    setTarget(validTargets.at(0));
   }, [validTargetFormats]);
 
   let isLoadingIr = doesIrMatchSelection(zone, ir, loadingIr);

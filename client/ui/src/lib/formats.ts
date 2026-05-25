@@ -49,11 +49,4 @@ const irSupportsTarget = (ir: IrMetadata, target: TargetFormat) => {
   }
 };
 
-const getDefaultTarget = (
-  validTargets: TargetFormat[],
-): TargetFormat | undefined => {
-  if (validTargets.includes("trueStereo")) return "trueStereo";
-  return validTargets.at(0);
-};
-
-export { irSupportsTarget, getDefaultTarget };
+export { irSupportsTarget };

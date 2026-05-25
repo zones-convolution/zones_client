@@ -40,11 +40,13 @@ void ProcessorContainer::Prepare (double sampleRate,
                                  static_cast<juce::uint32> (layout.getMainOutputChannels ())};
     graph_.Prepare (spec, layout);
 
+    auto input_channel_set = layout.getMainInputChannelSet ();
     auto output_channel_set = layout.getMainOutputChannelSet ();
     auto state = ir_controller_.GetCurrentGraphState ();
     if (! IsTargetSupported (output_channel_set, state.target_format))
         convolution_engine_.Clear ();
-    load_controller_.UpdateValidTargetFormats (GetTargetFormatsForChannelSet (output_channel_set));
+    load_controller_.UpdateValidTargetFormats (
+        GetTargetFormatsForChannelSet (input_channel_set, output_channel_set));
 
     ir_controller_.Prepare (spec);
     preferences_controller_.SetMaxBlockSize (samplesPerBlock);
