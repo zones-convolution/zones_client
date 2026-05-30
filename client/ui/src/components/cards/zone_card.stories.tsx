@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { fn } from "@storybook/test";
 
-import Forest1 from "@/assets/forest-1.png";
+import ZonesLight from "@/assets/zones_light.svg";
 import { ZoneCard } from "@/components/cards/zone_card";
 
 const meta: Meta<typeof ZoneCard> = {
@@ -31,7 +31,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    imageUrl: Forest1,
+    imageUrl: ZonesLight,
     category: "Forest",
     rt60: 12.86,
     loading: false,

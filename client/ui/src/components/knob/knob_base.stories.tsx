@@ -1,5 +1,6 @@
 import { mapFrom01Linear, mapTo01Linear } from "@dsp-ts/math";
 import { Meta, StoryObj } from "@storybook/react";
+import { fn } from "@storybook/test";
 import React, { useState } from "react";
 
 import { KnobBase, KnobBaseProps } from "@/components/knob/knob_base";
@@ -13,8 +14,10 @@ const meta: Meta<typeof KnobBase> = {
     valueMax: { control: "number" },
     valueRaw: { control: "number" },
     orientation: { control: "radio", options: ["vertical", "horizontal"] },
-    onMouseDown: { action: "mouse down" },
-    onRawValueCommit: { action: "raw value commit" },
+  },
+  args: {
+    onMouseDown: fn(),
+    onRawValueCommit: fn(),
   },
   parameters: {
     layout: "centered",
