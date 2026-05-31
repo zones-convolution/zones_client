@@ -92,6 +92,7 @@ const KnobBase = ({
         valueRawRoundFn={valueRawRoundFn}
         valueRawDisplayFn={valueRawDisplayFn}
         dragSensitivity={dragSensitivity}
+        axis="xy"
         orientation={orientation}
         mapTo01={mapTo01}
         mapFrom01={mapFrom01}
