@@ -12,7 +12,7 @@ import {
   ticks,
 } from "d3";
 import { FC, useEffect, useMemo, useRef, useState } from "react";
-import { FrontSide, GLSL3, ShaderMaterial } from "three";
+import { DataTexture, FrontSide, GLSL3, ShaderMaterial } from "three";
 import { number } from "zod";
 
 import {
@@ -31,54 +31,77 @@ import { VisualiserMetadata } from "@/ipc/visualiser_ipc";
 import frag from "./visualiser.frag";
 import vert from "./visualiser.vert";
 
-const Graph2D: FC<{ context: IVisualiserContext }> = ({ context }) => {
+const Graph2D: FC<{
+  context: IVisualiserContext;
+}> = ({ context }) => {
   const viewport = useThree((state) => state.viewport);
+  const invalidate = useThree((state) => state.invalidate);
 
   const matRef = useRef<ShaderMaterial>(null);
+  const sampleRate = context.visualiserMetadata.sampleRate;
 
   useEffect(() => {
-    const mat = matRef.current;
-    if (mat && context.render) {
-      mat.uniforms.render.value = generateRenderTexture(
-        context.render,
-        context.visualiserMetadata.sampleRate,
-      );
+    const applyRender = (nextRender: Uint8Array) => {
+      const mat = matRef.current;
+      if (!mat) return;
+
+      const texture = generateRenderTexture(nextRender, sampleRate);
+      replaceTexture(mat, "render", texture);
+      invalidate();
+    };
+
+    const initialRender = context.getLatestRender();
+    if (initialRender) {
+      applyRender(initialRender);
     }
-  }, [context.render, context.visualiserMetadata]);
+
+    return context.subscribeToRender(applyRender);
+  }, [context, sampleRate, invalidate]);
 
   useEffect(() => {
     const mat = matRef.current;
     if (mat) {
-      mat.uniforms.scale.value = createScaleTexture(
-        context.visualiserMetadata.sampleRate,
-        defaultHeight * 2,
-        context.scale,
-      );
+      const texture = createScaleTexture(sampleRate, defaultHeight * 2, context.scale);
+      replaceTexture(mat, "scale", texture);
+      invalidate();
     }
-  }, [context.scale, context.visualiserMetadata]);
+  }, [context.scale, sampleRate, invalidate]);
 
   useEffect(() => {
     const mat = matRef.current;
     if (mat) {
-      mat.uniforms.colourMap.value = createColourMapTexture(
-        generateColourMap(context.colourMap),
-      );
+      const texture = createColourMapTexture(generateColourMap(context.colourMap));
+      replaceTexture(mat, "colourMap", texture);
+      invalidate();
     }
-  }, [context.colourMap]);
+  }, [context.colourMap, invalidate]);
 
   useEffect(() => {
     const mat = matRef.current;
     if (mat) {
       mat.uniforms.sensitivity.value = context.sensitivity;
+      invalidate();
     }
-  }, [context.sensitivity]);
+  }, [context.sensitivity, invalidate]);
 
   useEffect(() => {
     const mat = matRef.current;
     if (mat) {
       mat.uniforms.contrast.value = context.contrast;
+      invalidate();
     }
-  }, [context.contrast]);
+  }, [context.contrast, invalidate]);
+
+  useEffect(() => {
+    return () => {
+      const mat = matRef.current;
+      if (!mat) return;
+
+      disposeTexture(mat.uniforms.render.value as DataTexture | null);
+      disposeTexture(mat.uniforms.scale.value as DataTexture | null);
+      disposeTexture(mat.uniforms.colourMap.value as DataTexture | null);
+    };
+  }, []);
 
   const uniforms = useMemo(
     () => ({
@@ -91,12 +114,12 @@ const Graph2D: FC<{ context: IVisualiserContext }> = ({ context }) => {
       scale: {
         value: null,
       },
-      contrast: {
-        value: context.contrast,
-      },
-      sensitivity: {
-        value: context.sensitivity,
-      },
+        contrast: {
+          value: context.contrast,
+        },
+        sensitivity: {
+          value: context.sensitivity,
+        },
       render: {
         value: null,
       },
@@ -282,7 +305,7 @@ const Visualiser2D: FC<{ context: IVisualiserContext }> = ({ context }) => {
         }}
       >
         <div className="absolute w-full h-full pt-6 pl-12 pr-6 pb-6">
-          <Canvas className="min-w-0 min-h-0 flex-1 shrink" orthographic>
+          <Canvas className="min-w-0 min-h-0 flex-1 shrink" orthographic frameloop="demand">
             <Graph2D context={context} />
           </Canvas>
         </div>
@@ -293,6 +316,27 @@ const Visualiser2D: FC<{ context: IVisualiserContext }> = ({ context }) => {
       </div>
     </div>
   );
+};
+
+const replaceTexture = (
+  material: ShaderMaterial,
+  uniformKey: "render" | "scale" | "colourMap",
+  texture: DataTexture,
+) => {
+  const previousTexture = material.uniforms[uniformKey].value as
+    | DataTexture
+    | null
+    | undefined;
+
+  if (previousTexture && previousTexture !== texture) {
+    previousTexture.dispose();
+  }
+
+  material.uniforms[uniformKey].value = texture;
+};
+
+const disposeTexture = (texture: DataTexture | null | undefined) => {
+  texture?.dispose();
 };
 
 export { Visualiser2D };

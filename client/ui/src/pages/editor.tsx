@@ -196,10 +196,10 @@ const CurrentIrPanel = () => {
   );
 };
 
-const FailedToLoadVisualiser: FC<FallbackProps> = ({
+const FailedToLoadVisualiser = ({
   error,
   resetErrorBoundary,
-}) => {
+}: FallbackProps): React.JSX.Element => {
   return (
     <div className="flex flex-col gap-2 p-4 h-full items-center justify-center">
       <h1 className="text-2xl font-bold">Oops!</h1>

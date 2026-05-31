@@ -74,7 +74,7 @@ const IrTableRow: FC<{
   const [target, setTarget] = useState<TargetFormat | undefined>();
 
   useEffect(() => {
-    setTarget(validTargets.at(0));
+    setTarget(validTargets[0]);
   }, [validTargetFormats]);
 
   let isLoadingIr = doesIrMatchSelection(zone, ir, loadingIr);
