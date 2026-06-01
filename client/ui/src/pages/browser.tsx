@@ -13,8 +13,7 @@ import { useOnline } from "@/hooks/use_online";
 const OfflineBrowser = () => {
   const { navigateToUser } = useNavigation();
   return (
-    <div className="flex flex-col gap-4 bg-card h-full">
-      <div className=" flex flex-col items-center gap-4 justify-center h-full">
+    <div className="flex h-full flex-col items-center justify-center gap-4 text-center">
         <div className="inline-block">
           <div className="flex justify-center items-center rounded-full h-20 w-20 bg-background p-2 text-foreground">
             <LucideWifiOff className="w-8 h-8 text-white" />
@@ -29,7 +28,6 @@ const OfflineBrowser = () => {
             Go To User Page <LucideLibrary className="w-4 h-4 ml-2" />
           </Button>
         </div>
-      </div>
     </div>
   );
 };
@@ -39,7 +37,7 @@ const Browser = () => {
 
   if (!isOnline) return <OfflineBrowser />;
   return (
-    <div className="flex flex-col gap-4 bg-card h-full py-4 px-8 overflow-auto">
+    <div className="flex min-h-full flex-col gap-4">
       <SearchProvider repository={useWebZoneRepository}>
         <ZonesSearchBox />
         <ZonesHits />

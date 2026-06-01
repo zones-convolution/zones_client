@@ -20,16 +20,16 @@ export const UserProfile: FC<IUser> = ({ name, id }) => {
   const imageUrl = getProfileImageUrl(id);
 
   return (
-    <div className="flex flex-row items-center backdrop-blur bg-card/40 w-fit">
-      <Avatar className="h-8 w-8 rounded-lg">
-        <AvatarImage src={imageUrl} alt={name ?? ""} />
+    <div className="flex h-10 w-fit flex-row items-center rounded-md bg-card/40 px-1.5 backdrop-blur">
+      <Avatar className="h-7 w-7 rounded-lg">
+        <AvatarImage className="rounded-lg" src={imageUrl} alt={name ?? ""} />
         {name && (
           <AvatarFallback className="rounded-lg">
             {getInitials(name)}
           </AvatarFallback>
         )}
       </Avatar>
-      <div className="w-fit h-fit font-thin text-sm mx-2">{name}</div>
+      <div className="mx-2 h-fit w-fit text-sm font-thin leading-none">{name}</div>
     </div>
   );
 };

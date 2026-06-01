@@ -1,6 +1,7 @@
 import { ChevronLeft, ChevronRight, LucideLibrary } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 
 import {
   Route,
@@ -55,39 +56,47 @@ const BrowserRoot = () => {
   const { navigateToCreateZone, navigateToUser } = useNavigation();
 
   return (
-    <div className="flex h-full min-h-0 flex-col gap-0.5">
-      <div className="flex w-full bg-card p-2 items-center">
-        <Button
-          variant="ghost"
-          onClick={() => back()}
-          disabled={!canNavigateBack}
-        >
-          <ChevronLeft className="w-4 h-4" />
-        </Button>
-        <Button
-          variant="ghost"
-          className="mr-4"
-          onClick={() => forward()}
-          disabled={!canNavigateForward}
-        >
-          <ChevronRight className="w-4 h-4" />
-        </Button>
-        <NavigationTitle />
-        {route.target == Route.User && (
-          <Button className="ml-auto" onClick={navigateToCreateZone}>
-            Create Zone
+    <div className="flex h-full min-h-0 flex-col gap-page-gutter p-page-gutter">
+      <Card className="rounded-md py-0" size="sm">
+        <CardContent className="flex items-center px-2 py-1">
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            onClick={() => back()}
+            disabled={!canNavigateBack}
+          >
+            <ChevronLeft className="w-4 h-4" />
           </Button>
-        )}
-        {route.target == Route.Home && (
-          <Button className="ml-auto" onClick={navigateToUser}>
-            User
-            <LucideLibrary className="h-4 w-4 ml-2" />
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            className="mr-3"
+            onClick={() => forward()}
+            disabled={!canNavigateForward}
+          >
+            <ChevronRight className="w-4 h-4" />
           </Button>
-        )}
-      </div>
-      <div className="min-h-0 min-w-0 flex-1 overflow-hidden">
-        <Outlet />
-      </div>
+          <NavigationTitle />
+          {route.target == Route.User && (
+            <Button className="ml-auto" size="sm" onClick={navigateToCreateZone}>
+              Create Zone
+            </Button>
+          )}
+          {route.target == Route.Home && (
+            <Button className="ml-auto" size="sm" onClick={navigateToUser}>
+              User
+              <LucideLibrary className="h-4 w-4 ml-2" />
+            </Button>
+          )}
+        </CardContent>
+      </Card>
+      <Card className="min-h-0 min-w-0 flex-1 rounded-md">
+        <CardContent className="h-full p-0">
+          <div className="h-full min-h-0 min-w-0 overflow-x-hidden overflow-y-auto p-4">
+            <Outlet />
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };

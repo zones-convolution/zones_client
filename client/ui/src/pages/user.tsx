@@ -8,7 +8,7 @@ import {
 
 const User = () => {
   return (
-    <div className="flex flex-col gap-4 bg-card h-full py-4 px-8 overflow-auto ">
+    <div className="flex min-h-full flex-col gap-4">
       <SearchProvider repository={useUserZoneRepository}>
         <ZonesSearchBox />
         <ZonesHits />

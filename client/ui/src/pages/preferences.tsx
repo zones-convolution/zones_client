@@ -45,8 +45,8 @@ const Preferences = () => {
   } = usePreferences();
 
   return (
-    <div className="flex h-full flex-col gap-4 overflow-auto bg-background p-4">
-      <Card>
+    <div className="flex h-full flex-col gap-page-gutter overflow-auto bg-background p-page-gutter">
+      <Card className="rounded-md">
         <CardHeader>
           <CardTitle className="text-xl">Preferences</CardTitle>
         </CardHeader>

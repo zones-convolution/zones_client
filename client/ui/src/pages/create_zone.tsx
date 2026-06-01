@@ -25,7 +25,7 @@ const CreateZone = () => {
   const { back } = useBrowserContext();
 
   return (
-    <div className="h-full bg-card overflow-y-auto p-2">
+    <div className="min-h-full">
       <div className="w-full">
         <FormProvider {...form}>
           <form

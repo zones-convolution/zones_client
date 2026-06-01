@@ -31,6 +31,14 @@ import { VisualiserMetadata } from "@/ipc/visualiser_ipc";
 import frag from "./visualiser.frag";
 import vert from "./visualiser.vert";
 
+const axisStrokeColour = "var(--muted-foreground)";
+const axisTextColour = "var(--foreground)";
+
+const applyAxisTheme = (selection: any) => {
+  selection.selectAll("path, line").attr("stroke", axisStrokeColour);
+  selection.selectAll("text").attr("fill", axisTextColour);
+};
+
 const Graph2D: FC<{
   context: IVisualiserContext;
 }> = ({ context }) => {
@@ -163,6 +171,7 @@ const XAxis: FC<{ visualiserMetadata: VisualiserMetadata }> = ({
         Math.floor((width ?? 0) / 100.0) * 2,
       );
       svg.call(xAxis);
+      applyAxisTheme(svg);
     }
   }, [width, visualiserMetadata]);
 
@@ -183,7 +192,7 @@ const XAxis: FC<{ visualiserMetadata: VisualiserMetadata }> = ({
           y="22"
           transform="rotate(-90, 5, 12)"
           textAnchor="middle"
-          fill="hsl(var(--foreground))"
+          fill={axisTextColour}
           fontSize="10"
         >
           sec
@@ -231,6 +240,7 @@ const YAxis: FC<{ scale: VisualiserScale }> = ({ scale }) => {
 
           yAxisGroup.call(yAxis);
           yAxisGroup.attr("transform", "translate(47, 0)").call(yAxis);
+          applyAxisTheme(yAxisGroup);
 
           break;
         }
@@ -259,6 +269,7 @@ const YAxis: FC<{ scale: VisualiserScale }> = ({ scale }) => {
           yAxisGroup.call(yAxis);
 
           yAxisGroup.attr("transform", "translate(47, 0)").call(yAxis);
+          applyAxisTheme(yAxisGroup);
           break;
         }
       }
@@ -272,7 +283,7 @@ const YAxis: FC<{ scale: VisualiserScale }> = ({ scale }) => {
           x="32"
           y="8"
           textAnchor="middle"
-          fill="hsl(var(--foreground))"
+          fill={axisTextColour}
           fontSize="10"
         >
           Hz
