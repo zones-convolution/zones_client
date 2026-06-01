@@ -25,7 +25,7 @@ const ZoneDetails: FC<{ zone: ZoneMetadata; user?: IUser }> = ({
         <div className="grid items-center gap-4">
           <div className="grid flex-1 auto-rows-min gap-0.5">
             <div className="text-sm text-muted-foreground">Zone name</div>
-            <div className="flex items-baseline gap-1 text-xl font-bold tabular-nums leading-none">
+            <div className="text-xl font-bold leading-tight break-words">
               {zone.title}
             </div>
           </div>
@@ -34,7 +34,7 @@ const ZoneDetails: FC<{ zone: ZoneMetadata; user?: IUser }> = ({
               <div className="text-sm text-muted-foreground">
                 Zone description
               </div>
-              <div className="flex items-baseline gap-1 text-xl font-bold tabular-nums leading-none">
+              <div className="text-xl font-bold leading-tight break-words">
                 {zone.description}
               </div>
             </div>
@@ -42,7 +42,7 @@ const ZoneDetails: FC<{ zone: ZoneMetadata; user?: IUser }> = ({
           {zone.attribution && (
             <div className="grid flex-1 auto-rows-min gap-0.5">
               <div className="text-sm text-muted-foreground">Attribution</div>
-              <div className="flex items-baseline gap-1 text-xl font-bold tabular-nums leading-none">
+              <div className="text-xl font-bold leading-tight break-words">
                 {zone.attribution}
               </div>
             </div>
@@ -75,7 +75,7 @@ const ZoneDetails: FC<{ zone: ZoneMetadata; user?: IUser }> = ({
           {zone.captureDate && (
             <div className="grid flex-1 auto-rows-min gap-0.5">
               <div className="text-sm text-muted-foreground">Capture Date</div>
-              <div className="flex items-baseline gap-1 text-xl font-bold tabular-nums leading-none">
+              <div className="text-xl font-bold leading-tight">
                 {zone.captureDate &&
                   new Date(zone.captureDate).toLocaleDateString()}
               </div>
@@ -84,7 +84,7 @@ const ZoneDetails: FC<{ zone: ZoneMetadata; user?: IUser }> = ({
           {user && (
             <div className="grid flex-1 auto-rows-min gap-0.5">
               <div className="text-sm text-muted-foreground">Profile</div>
-              <div className="flex items-baseline gap-1 text-xl font-bold tabular-nums leading-none">
+              <div className="min-w-0">
                 <UserProfile {...user} />
               </div>
             </div>

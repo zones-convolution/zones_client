@@ -55,7 +55,7 @@ const BrowserRoot = () => {
   const { navigateToCreateZone, navigateToUser } = useNavigation();
 
   return (
-    <div className="flex flex-col gap-0.5 h-full">
+    <div className="flex h-full min-h-0 flex-col gap-0.5">
       <div className="flex w-full bg-card p-2 items-center">
         <Button
           variant="ghost"
@@ -85,7 +85,9 @@ const BrowserRoot = () => {
           </Button>
         )}
       </div>
-      <Outlet />
+      <div className="min-h-0 min-w-0 flex-1 overflow-hidden">
+        <Outlet />
+      </div>
     </div>
   );
 };

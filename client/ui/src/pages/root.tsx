@@ -4,7 +4,7 @@ import { SWRConfig } from "swr";
 
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Toaster } from "@/components/ui/toaster";
+import { Toaster } from "@/components/ui/sonner";
 
 import ZonesLight from "@/assets/zones_light.svg";
 import { Meter } from "@/components/meter";

@@ -1,11 +1,10 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Download } from "lucide-react";
-import { useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
-import { Form } from "@/components/ui/form";
 import { Separator } from "@/components/ui/separator";
-import { useToast } from "@/components/ui/use-toast";
 
 import { IrForm } from "@/components/create/ir_form";
 import { ZoneMetadataForm } from "@/components/create/zone_metadata_form";
@@ -24,23 +23,21 @@ const CreateZone = () => {
     },
   });
   const { back } = useBrowserContext();
-  const { toast } = useToast();
 
   return (
     <div className="h-full bg-card overflow-y-auto p-2">
       <div className="w-full">
-        <Form {...form}>
+        <FormProvider {...form}>
           <form
             onSubmit={form.handleSubmit(async (data) => {
               const result = await createZone(data);
               if (result) {
-                toast({
-                  title: `${data.metadata.title} Created!`,
+                toast.success(`${data.metadata.title} Created!`, {
+                  description: "Zone created successfully.",
                 });
                 back(true);
               } else {
-                toast({
-                  title: "Error Creating Zone",
+                toast.error("Error Creating Zone", {
                   description: `Maybe the form is incomplete?`,
                 });
               }
@@ -55,7 +52,7 @@ const CreateZone = () => {
               Create Zone <Download className="w-4 h-4 ml-2" />
             </Button>
           </form>
-        </Form>
+        </FormProvider>
       </div>
     </div>
   );

@@ -28,8 +28,8 @@ const Zone: FC<{ zoneMetadata: ZoneMetadata; user?: IUser }> = ({
     );
 
   return (
-    <div className="h-full overflow-scroll bg-card">
-      <div className="flex flex-col gap-4 h-full p-4">
+    <div className="h-full min-w-0 overflow-x-hidden overflow-y-auto bg-card">
+      <div className="flex min-h-full min-w-0 flex-col gap-4 p-4">
         <div className="flex flex-row justify-between">
           <h1 className="text-xl">{zoneMetadata.title}</h1>
           {isCached && (
@@ -37,7 +37,7 @@ const Zone: FC<{ zoneMetadata: ZoneMetadata; user?: IUser }> = ({
           )}
         </div>
         {zoneMetadata.images.length > 0 && (
-          <div className="h-[300px]">
+          <div className="h-[300px] min-w-0 max-w-full overflow-hidden">
             <BannerImageGallery
               imageUrls={imageUrls}
               coverImageUrl={coverImageUrl}

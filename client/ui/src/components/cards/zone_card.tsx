@@ -63,7 +63,9 @@ export const ZoneCard: FC<{
         <div className="flex flex-row gap-2 p-2 w-fit h-full rounded-md items-end">
           {canLoad && (
             <Button
-              variant="blur"
+              variant="outline"
+              size="icon"
+              className="backdrop-blur-md bg-background/70 border-border/60 shadow-sm"
               onClick={onLoad}
               disabled={loading || disabled}
             >
@@ -74,7 +76,12 @@ export const ZoneCard: FC<{
               )}
             </Button>
           )}
-          <Button variant="blur" onClick={onView}>
+          <Button
+            variant="outline"
+            size="icon"
+            className="backdrop-blur-md bg-background/70 border-border/60 shadow-sm"
+            onClick={onView}
+          >
             <Eye className="w-4 h-4" />
           </Button>
         </div>

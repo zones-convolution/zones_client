@@ -20,7 +20,7 @@ const ZoneTags: FC<{ zone: ZoneMetadata }> = ({ zone }) => {
         <div className="grid items-center gap-4">
           <div className="grid flex-1 auto-rows-min gap-0.5">
             <div className="text-sm text-muted-foreground">Generation type</div>
-            <div className="flex items-baseline gap-1 text-xl font-bold tabular-nums leading-none">
+            <div className="text-xl font-bold leading-tight break-words">
               {
                 GenerationTypeOptions.find(
                   (gen) => gen.value == zone.generationType,
@@ -31,7 +31,7 @@ const ZoneTags: FC<{ zone: ZoneMetadata }> = ({ zone }) => {
 
           <div className="grid flex-1 auto-rows-min gap-0.5">
             <div className="text-sm text-muted-foreground">Space category</div>
-            <div className="flex items-baseline gap-1 text-xl font-bold tabular-nums leading-none">
+            <div className="text-xl font-bold leading-tight break-words">
               {
                 SpaceCategoryOptions.find(
                   (space) => space.value == zone.spaceCategory,
@@ -41,7 +41,7 @@ const ZoneTags: FC<{ zone: ZoneMetadata }> = ({ zone }) => {
           </div>
           <div className="grid flex-1 auto-rows-min gap-0.5">
             <div className="text-sm text-muted-foreground">Tags</div>
-            <div className="flex items-baseline gap-2 text-xl font-bold tabular-nums leading-none">
+            <div className="flex flex-wrap items-center gap-2 text-xl font-bold leading-tight">
               {zone.tags?.map((tag, index) => {
                 const tagLabel = TagOptions.find(
                   (opt) => opt.value == tag,
