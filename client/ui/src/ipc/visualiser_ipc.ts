@@ -50,7 +50,10 @@ export const visualiserRenderListener = (
     onVisualiserRenderNative,
     async (data: any) => {
       onRenderUpdate(await getVisualiserRender());
-      onVisualiserMetadataUpdate(await getVisualiserMetadata());
+
+      if (data) {
+        onVisualiserMetadataUpdate(handleReceiveVisualiserMetadata(data));
+      }
     },
   );
 

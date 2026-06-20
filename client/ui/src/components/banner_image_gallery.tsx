@@ -9,8 +9,8 @@ interface IBannerImageGalleryItem {
 
 const BannerImageGalleryItem: FC<IBannerImageGalleryItem> = ({ imageUrl }) => {
   return (
-    <div className="overflow-hidden relative w-full h-full">
-      <img className="object-cover w-full h-full absolute" src={imageUrl} />
+    <div className="relative h-full w-full overflow-hidden">
+      <img className="absolute inset-0 h-full w-full object-cover" src={imageUrl} />
     </div>
   );
 };
@@ -45,7 +45,7 @@ const BannerImageGallery: FC<IBannerImageGallery> = ({
 
   if (coverImageUrl)
     return (
-      <div className="gap-2 grid grid-cols-4 rounded-md overflow-hidden h-full w-full">
+      <div className="grid h-full w-full min-w-0 max-w-full grid-cols-4 gap-2 overflow-hidden rounded-md">
         <div
           className={cn("row-span-2 col-span-4", {
             "md:col-span-2": filteredImageCount >= 2,

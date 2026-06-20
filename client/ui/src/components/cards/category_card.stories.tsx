@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 
-import Forest1 from "@/assets/forest-1.png";
+import ZonesLight from "@/assets/zones_light.svg";
 import { CategoryCard } from "@/components/cards/category_card";
 
 const meta: Meta<typeof CategoryCard> = {
@@ -23,7 +23,7 @@ type Story = StoryObj<typeof meta>;
 
 export const CategoryCardStory: Story = {
   args: {
-    imageUrl: Forest1,
+    imageUrl: ZonesLight,
     category: "Forest",
     rt60: 12.86,
   },

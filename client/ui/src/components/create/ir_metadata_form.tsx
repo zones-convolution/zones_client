@@ -1,15 +1,13 @@
 import { Folder, MinusCircle } from "lucide-react";
 import { FC, useState } from "react";
-import { useFormContext, useWatch } from "react-hook-form";
+import { Controller, useFormContext, useWatch } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
 import {
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+  Field,
+  FieldError,
+  FieldLabel,
+} from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -113,46 +111,49 @@ const IrMetadataForm: FC<{
 
   return (
     <div className="flex flex-col gap-2">
-      <FormField
-        control={control}
+      <Controller
         name={`metadata.irs.${index}.title`}
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Title</FormLabel>
-            <FormControl>
-              <Input placeholder="Title" {...field} />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
+        control={control}
+        render={({ field, fieldState }) => (
+          <Field data-invalid={fieldState.invalid}>
+            <FieldLabel htmlFor={field.name}>Title</FieldLabel>
+            <Input
+              id={field.name}
+              placeholder="Title"
+              {...field}
+              aria-invalid={fieldState.invalid}
+            />
+            <FieldError errors={[fieldState.error]} />
+          </Field>
         )}
       />
-      <FormField
-        control={control}
+      <Controller
         name={`metadata.irs.${index}.description`}
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Description</FormLabel>
-            <FormControl>
-              <Textarea placeholder="Description" {...field} />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
+        control={control}
+        render={({ field, fieldState }) => (
+          <Field data-invalid={fieldState.invalid}>
+            <FieldLabel htmlFor={field.name}>Description</FieldLabel>
+            <Textarea
+              id={field.name}
+              placeholder="Description"
+              {...field}
+              aria-invalid={fieldState.invalid}
+            />
+            <FieldError errors={[fieldState.error]} />
+          </Field>
         )}
       />
 
-      <FormField
-        control={control}
+      <Controller
         name={`metadata.irs.${index}.channelFormat`}
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Channel Format</FormLabel>
-            <FormControl>
+        control={control}
+        render={({ field, fieldState }) => (
+          <Field data-invalid={fieldState.invalid}>
+            <FieldLabel htmlFor={field.name}>Channel Format</FieldLabel>
               <Select onValueChange={field.onChange} value={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                </FormControl>
+                <SelectTrigger id={field.name} aria-invalid={fieldState.invalid}>
+                  <SelectValue />
+                </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="foa">FOA</SelectItem>
                   <SelectItem value="mono">Mono</SelectItem>
@@ -160,35 +161,29 @@ const IrMetadataForm: FC<{
                   <SelectItem value="quadraphonic">Quadraphonic</SelectItem>
                 </SelectContent>
               </Select>
-            </FormControl>
-            <FormMessage />
-          </FormItem>
+            <FieldError errors={[fieldState.error]} />
+          </Field>
         )}
       />
 
-      <FormItem>
-        <FormLabel>Speaker Positions</FormLabel>
-        <FormControl>
+      <Field>
+        <FieldLabel>Speaker Positions</FieldLabel>
           <Select
             value={speakerPosition}
             onValueChange={(value) => {
               setSpeakerPosition(value as SpeakerPosition);
             }}
           >
-            <FormControl>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-            </FormControl>
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
             <SelectContent>
               <SelectItem value="C">C</SelectItem>
               <SelectItem value="LR">LR</SelectItem>
               <SelectItem value="CLR">CLR</SelectItem>
             </SelectContent>
           </Select>
-        </FormControl>
-        <FormMessage />
-      </FormItem>
+      </Field>
 
       {speakerPositionsPicker}
 

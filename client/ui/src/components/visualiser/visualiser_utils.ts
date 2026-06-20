@@ -1,11 +1,9 @@
-import { useThree } from "@react-three/fiber";
 import colormap from "colormap";
 import {
   DataTexture,
   FloatType,
   RedFormat,
   RGBAFormat,
-  ClampToEdgeWrapping,
 } from "three";
 
 import {
@@ -16,11 +14,13 @@ import {
 export const defaultWidth = 1024;
 export const defaultHeight = 512;
 
+const minimumSampleRate = 8000;
+
 export const generateRenderTexture = (
   render: Uint8Array,
   sampleRate: number,
 ): DataTexture => {
-  sampleRate = Math.max(sampleRate, 8000);
+  sampleRate = Math.max(sampleRate, minimumSampleRate);
   const startBin = Math.floor((20.0 * (defaultHeight * 2.0)) / sampleRate);
   const endBin = Math.ceil((20000 * (defaultHeight * 2.0)) / sampleRate);
   const height = endBin - startBin;
@@ -28,7 +28,7 @@ export const generateRenderTexture = (
 
   const data = new Uint8Array(size);
 
-  let numChannels = render.length / defaultHeight;
+  const numChannels = render.length / defaultHeight;
 
   for (let channel = 0; channel < numChannels; ++channel) {
     const channelOffset = channel * defaultHeight;
@@ -53,7 +53,7 @@ export const createScaleTexture = (
   scale: VisualiserScale,
 ) => {
   const data = new Float32Array(defaultHeight);
-  sampleRate = Math.max(sampleRate, 8000);
+  sampleRate = Math.max(sampleRate, minimumSampleRate);
 
   for (let i = 0; i < defaultHeight; i += 1) {
     switch (scale) {

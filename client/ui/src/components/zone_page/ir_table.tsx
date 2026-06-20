@@ -74,7 +74,7 @@ const IrTableRow: FC<{
   const [target, setTarget] = useState<TargetFormat | undefined>();
 
   useEffect(() => {
-    setTarget(validTargets.at(0));
+    setTarget(validTargets[0]);
   }, [validTargetFormats]);
 
   let isLoadingIr = doesIrMatchSelection(zone, ir, loadingIr);
@@ -96,14 +96,14 @@ const IrTableRow: FC<{
   return (
     <TableRow key={ir.irId}>
       <TableCell
-        className={cn("font-medium", {
+        className={cn("font-medium whitespace-normal break-words", {
           "text-muted-foreground": isDisabled,
         })}
       >
         {ir.title}
       </TableCell>
       <TableCell
-        className={cn("font-medium", {
+        className={cn("max-w-0 font-medium whitespace-normal break-words", {
           "text-muted-foreground": isDisabled,
         })}
       >
@@ -191,11 +191,11 @@ const IrTable: FC<{
         <CardTitle>Impulse Responses</CardTitle>
       </CardHeader>
       <CardContent className="space-y-8">
-        <table className={cn("w-full caption-bottom text-sm")}>
+        <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[100px]">Title</TableHead>
-              <TableHead>Description</TableHead>
+              <TableHead className="w-[140px] whitespace-normal">Title</TableHead>
+              <TableHead className="whitespace-normal">Description</TableHead>
               <TableHead>Channel Format</TableHead>
               <TableHead>Positions</TableHead>
               <TableHead></TableHead>
@@ -219,7 +219,7 @@ const IrTable: FC<{
               );
             })}
           </TableBody>
-        </table>
+        </Table>
       </CardContent>
     </Card>
   );

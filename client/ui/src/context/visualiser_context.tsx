@@ -3,9 +3,12 @@ import {
   Dispatch,
   FC,
   ReactNode,
+  useCallback,
+  useRef,
   SetStateAction,
   useContext,
   useEffect,
+  useMemo,
   useState,
 } from "react";
 
@@ -69,8 +72,9 @@ export const visualiserColourMaps = [
 export type VisualiserColourMap = (typeof visualiserColourMaps)[number];
 
 export interface IVisualiserContext {
-  render?: Uint8Array;
   visualiserMetadata: VisualiserMetadata;
+  getLatestRender: () => Uint8Array | undefined;
+  subscribeToRender: (listener: (render: Uint8Array) => void) => () => void;
   sensitivity: number;
   setSensitivity: Dispatch<SetStateAction<number>>;
   contrast: number;
@@ -86,39 +90,65 @@ const VisualiserContext = createContext<IVisualiserContext | null>(null);
 export const VisualiserProvider: FC<{
   children: ReactNode;
 }> = ({ children }) => {
-  const [render, setRender] = useState<Uint8Array | undefined>();
   const [visualiserMetadata, setVisualiserMetadata] =
     useState<VisualiserMetadata>(defaultVisualiserMetadata);
+  const renderRef = useRef<Uint8Array | undefined>(undefined);
+  const renderListenersRef = useRef(new Set<(render: Uint8Array) => void>());
+
+  const publishRender = useCallback((nextRender: Uint8Array) => {
+    renderRef.current = nextRender;
+
+    for (const listener of renderListenersRef.current) {
+      listener(nextRender);
+    }
+  }, []);
 
   useEffect(() => {
     getVisualiserMetadata().then(setVisualiserMetadata);
-    getVisualiserRender().then(setRender);
-    return visualiserRenderListener(setRender, setVisualiserMetadata);
-  }, []);
+    getVisualiserRender().then(publishRender);
+    return visualiserRenderListener(publishRender, (nextMetadata) => {
+      setVisualiserMetadata((currentMetadata) => {
+        if (
+          currentMetadata.sampleRate === nextMetadata.sampleRate &&
+          currentMetadata.baseIrLengthSamples ===
+            nextMetadata.baseIrLengthSamples
+        ) {
+          return currentMetadata;
+        }
+
+        return nextMetadata;
+      });
+    });
+  }, [publishRender]);
 
   const [sensitivity, setSensitivity] = useState<number>(1.0);
   const [contrast, setContrast] = useState<number>(200.0);
   const [scale, setScale] = useState<VisualiserScale>("mel");
   const [colourMap, setColourMap] = useState<VisualiserColourMap>("viridis");
 
-  return (
-    <VisualiserContext.Provider
-      value={{
-        render: render,
-        visualiserMetadata: visualiserMetadata,
-        sensitivity: sensitivity,
-        contrast: contrast,
-        setSensitivity: setSensitivity,
-        setContrast: setContrast,
-        scale: scale,
-        setScale: setScale,
-        colourMap: colourMap,
-        setColourMap: setColourMap,
-      }}
-    >
-      {children}
-    </VisualiserContext.Provider>
+  const value = useMemo(
+    () => ({
+      visualiserMetadata,
+      getLatestRender: () => renderRef.current,
+      subscribeToRender: (listener: (render: Uint8Array) => void) => {
+        renderListenersRef.current.add(listener);
+        return () => {
+          renderListenersRef.current.delete(listener);
+        };
+      },
+      sensitivity,
+      contrast,
+      setSensitivity,
+      setContrast,
+      scale,
+      setScale,
+      colourMap,
+      setColourMap,
+    }),
+    [visualiserMetadata, sensitivity, contrast, scale, colourMap],
   );
+
+  return <VisualiserContext.Provider value={value}>{children}</VisualiserContext.Provider>;
 };
 
 export const useVisualiserContext = () => {

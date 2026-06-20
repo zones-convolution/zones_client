@@ -3,8 +3,9 @@ import React, { FC, ReactNode } from "react";
 import { SWRConfig } from "swr";
 
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Toaster } from "@/components/ui/toaster";
+import { Toaster } from "@/components/ui/sonner";
 
 import ZonesLight from "@/assets/zones_light.svg";
 import { Meter } from "@/components/meter";
@@ -45,54 +46,60 @@ const Sidebar = () => {
   const metering = useMetering();
 
   return (
-    <div className="bg-card flex flex-col gap-0.5 p-2 w-44 min-w-44 max-w-44">
-      <img
-        src={ZonesLight}
-        className="w-[80px] mb-2 ml-4"
-        alt="Zones Logo Dark"
-      />
-      <NavButton to={Tabs.Browser}>
-        <Home className="w-4 h-4 mr-4" />
-        Browse
-      </NavButton>
-      <NavButton to={Tabs.Editor}>
-        <Target className="w-4 h-4 mr-4" />
-        Edit
-      </NavButton>
-      <NavButton to={Tabs.Preferences}>
-        <Settings className="w-4 h-4 mr-4" />
-        Preferences
-      </NavButton>
-
-      <div className="flex flex-col gap-4 mt-auto overflow-hidden">
-        {irEngineLoading && (
-          <div className="flex items-center">
-            <Loader className="w-4 h-4 animate-spin mr-2 shrink-0" /> Impulse
+    <div className="h-full w-44 min-w-44 max-w-44 p-page-gutter pr-0">
+      <Card className="flex h-full rounded-md">
+        <CardContent className="flex h-full flex-col p-page-gutter">
+          <img
+            src={ZonesLight}
+            className="mb-2 ml-4 w-[80px]"
+            alt="Zones Logo Dark"
+          />
+          <div className="flex flex-col gap-0.5">
+            <NavButton to={Tabs.Browser}>
+              <Home className="w-4 h-4 mr-4" />
+              Browse
+            </NavButton>
+            <NavButton to={Tabs.Editor}>
+              <Target className="w-4 h-4 mr-4" />
+              Edit
+            </NavButton>
+            <NavButton to={Tabs.Preferences}>
+              <Settings className="w-4 h-4 mr-4" />
+              Preferences
+            </NavButton>
           </div>
-        )}
 
-        {convolutionEngineLoading && (
-          <div className="flex items-center">
-            <Loader className="w-4 h-4 animate-spin mr-2 shrink-0" />
-            <p className="line-clamp-1">Convolver</p>
-          </div>
-        )}
+          <div className="mt-auto flex flex-col gap-4 overflow-hidden">
+            {irEngineLoading && (
+              <div className="flex items-center">
+                <Loader className="w-4 h-4 animate-spin mr-2 shrink-0" /> Impulse
+              </div>
+            )}
 
-        {currentIr.irSelection && (
-          <div className="flex flex-col gap-2">
-            <Separator />
-            <span className="text-base line-clamp-2 break-words">
-              {currentIr.irSelection.ir.title}
-            </span>
-            <span className="text-sm font-thin line-clamp-2 break-words">
-              {currentIr.irSelection.zone.title}
-            </span>
+            {convolutionEngineLoading && (
+              <div className="flex items-center">
+                <Loader className="w-4 h-4 animate-spin mr-2 shrink-0" />
+                <p className="line-clamp-1">Convolver</p>
+              </div>
+            )}
+
+            {currentIr.irSelection && (
+              <div className="flex flex-col gap-2">
+                <Separator />
+                <span className="text-base line-clamp-2 break-words">
+                  {currentIr.irSelection.ir.title}
+                </span>
+                <span className="text-sm font-thin line-clamp-2 break-words">
+                  {currentIr.irSelection.zone.title}
+                </span>
+              </div>
+            )}
           </div>
-        )}
-      </div>
-      <div className="h-64 w-full mt-2">
-        <Meter {...metering} />
-      </div>
+          <div className="mt-2 h-64 w-full">
+            <Meter {...metering} />
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };
@@ -106,7 +113,7 @@ const Root = () => {
       data-theme="dark"
     >
       <Sidebar />
-      <div className="w-full ml-0.5">
+      <div className="min-w-0 flex-1 overflow-hidden">
         {tab == Tabs.Browser ? (
           <BrowserRoot />
         ) : tab == Tabs.Editor ? (

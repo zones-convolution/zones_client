@@ -28,29 +28,27 @@ const Zone: FC<{ zoneMetadata: ZoneMetadata; user?: IUser }> = ({
     );
 
   return (
-    <div className="h-full overflow-scroll bg-card">
-      <div className="flex flex-col gap-4 h-full p-4">
-        <div className="flex flex-row justify-between">
-          <h1 className="text-xl">{zoneMetadata.title}</h1>
-          {isCached && (
-            <LucideCircleCheck className=" text-green-500  rounded-full h-6 w-6" />
-          )}
-        </div>
-        {zoneMetadata.images.length > 0 && (
-          <div className="h-[300px]">
-            <BannerImageGallery
-              imageUrls={imageUrls}
-              coverImageUrl={coverImageUrl}
-            />
-          </div>
+    <div className="flex min-h-full min-w-0 flex-col gap-4">
+      <div className="flex flex-row justify-between">
+        <h1 className="text-xl">{zoneMetadata.title}</h1>
+        {isCached && (
+          <LucideCircleCheck className=" text-green-500  rounded-full h-6 w-6" />
         )}
-        <IrTable
-          zone={zoneMetadata}
-          cachedZoneMetadata={cachedWebZone.zoneMetadata}
-        />
-        <ZoneDetails zone={zoneMetadata} user={user} />
-        {zoneMetadata.tags && <ZoneTags zone={zoneMetadata} />}
       </div>
+      {zoneMetadata.images.length > 0 && (
+        <div className="h-[300px] min-w-0 max-w-full overflow-hidden">
+          <BannerImageGallery
+            imageUrls={imageUrls}
+            coverImageUrl={coverImageUrl}
+          />
+        </div>
+      )}
+      <IrTable
+        zone={zoneMetadata}
+        cachedZoneMetadata={cachedWebZone.zoneMetadata}
+      />
+      <ZoneDetails zone={zoneMetadata} user={user} />
+      {zoneMetadata.tags && <ZoneTags zone={zoneMetadata} />}
     </div>
   );
 };

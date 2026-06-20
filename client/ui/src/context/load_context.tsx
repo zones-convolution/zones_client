@@ -6,8 +6,7 @@ import {
   useEffect,
   useState,
 } from "react";
-
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 
 import { IrSelection, IrSelectionOptional } from "@/hooks/zone_metadata";
 import {
@@ -29,8 +28,6 @@ const LoadContext = createContext<ILoadContext | null>(null);
 export const LoadProvider: FC<{
   children: ReactNode;
 }> = ({ children }) => {
-  const { toast } = useToast();
-
   const [loadingIr, setLoadingIr] = useState<IrSelectionOptional>({});
 
   const [currentIr, setCurrentIr] = useState<IrSelectionOptional>({});
@@ -38,13 +35,12 @@ export const LoadProvider: FC<{
   const load = async (irSelection: IrSelection) => {
     const result = await loadIr(irSelection);
     if (result)
-      toast({
-        description: `Ir loaded, ${irSelection.ir.title}.`,
+      toast.success("Ir loaded", {
+        description: irSelection.ir.title,
       });
     else
-      toast({
-        variant: "destructive",
-        description: `Failed to load ir, ${irSelection.ir.title}.`,
+      toast.error("Failed to load ir", {
+        description: irSelection.ir.title,
       });
   };
 

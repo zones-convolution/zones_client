@@ -3,6 +3,7 @@ import React, { FC, ReactNode, useState } from "react";
 import { ErrorBoundary, FallbackProps } from "react-error-boundary";
 
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -29,23 +30,25 @@ import { getUserZoneGradient } from "@/lib/user_zones";
 import { getCachedWebZoneImageUrl } from "@/lib/zones";
 
 const Panel: FC<{ children: ReactNode }> = ({ children }) => (
-  <div className="flex flex-col flex-1 gap-4 bg-card p-4 rounded-md w-full">
+  <Card className="flex w-full flex-1 overflow-hidden rounded-md">
     {children}
-  </div>
+  </Card>
 );
 
 const PanelHeading: FC<{ children: ReactNode }> = ({ children }) => {
-  return <div className="uppercase absolute">{children}</div>;
+  return <CardTitle className="uppercase tracking-wide">{children}</CardTitle>;
 };
 
 const PanelContent: FC<{ children: ReactNode }> = ({ children }) => {
-  return <div className="flex flex-row justify-around h-full">{children}</div>;
+  return <CardContent className="flex h-full flex-1 flex-row justify-around">{children}</CardContent>;
 };
 
 const IOPanel = () => {
   return (
     <Panel>
-      <PanelHeading>IO</PanelHeading>
+      <CardHeader>
+        <PanelHeading>IO</PanelHeading>
+      </CardHeader>
       <PanelContent>
         <Knob identifier={Parameters.Input} />
         <Knob identifier={Parameters.DryWetMix} />
@@ -58,7 +61,9 @@ const IOPanel = () => {
 const EQPanel = () => {
   return (
     <Panel>
-      <PanelHeading>EQ</PanelHeading>
+      <CardHeader>
+        <PanelHeading>EQ</PanelHeading>
+      </CardHeader>
       <PanelContent>
         <Knob identifier={Parameters.Bass} />
         <Knob identifier={Parameters.Treble} />
@@ -70,7 +75,9 @@ const EQPanel = () => {
 const MainPanel = () => {
   return (
     <Panel>
-      <PanelHeading>MAIN</PanelHeading>
+      <CardHeader>
+        <PanelHeading>MAIN</PanelHeading>
+      </CardHeader>
       <PanelContent>
         <Knob
           identifier={Parameters.ReverbTime}
@@ -90,7 +97,9 @@ const ListenPanel = () => {
 
   return (
     <Panel>
-      <PanelHeading>LISTEN</PanelHeading>
+      <CardHeader>
+        <PanelHeading>LISTEN</PanelHeading>
+      </CardHeader>
       <PanelContent>
         <div className="flex gap-2 items-center grow">
           <Button
@@ -131,7 +140,9 @@ const ListenPanel = () => {
 const TimePanel = () => {
   return (
     <Panel>
-      <PanelHeading>TIME</PanelHeading>
+      <CardHeader>
+        <PanelHeading>TIME</PanelHeading>
+      </CardHeader>
       <PanelContent>
         <Knob identifier={Parameters.PreDelay} showMidpointIndicator={false} />
         <Knob identifier={Parameters.Trim} showMidpointIndicator={false} />
@@ -149,41 +160,38 @@ const CurrentIrPanel = () => {
 
   if (zone?.zoneId && zone?.coverImageId)
     return (
-      <div className="flex-1 h-full w-full relative flex items-end">
+      <Card className="relative flex h-full w-full flex-1 items-end overflow-hidden rounded-md py-0">
         <div className="absolute w-full h-full">
           <BannerImageGalleryItem
             imageUrl={getCachedWebZoneImageUrl(zone.zoneId, zone.coverImageId)}
           />
         </div>
-        <div className="backdrop-blur bg-card/40 p-2 m-2 w-fit rounded-md h-fit">
+        <div className="m-2 w-fit rounded-md bg-card/40 p-2 backdrop-blur">
           {zone?.title}
         </div>
-      </div>
+      </Card>
     );
 
   if (zone?.title)
     return (
-      <div className="flex-1 h-full w-full relative flex items-end">
+      <Card className="relative flex h-full w-full flex-1 items-end overflow-hidden rounded-md py-0">
         <div
           className="absolute w-full h-full"
           style={{ backgroundImage: getUserZoneGradient(zone) }}
         />
-        <div className="backdrop-blur bg-card/40 p-2 m-2 w-fit rounded-md h-fit">
+        <div className="m-2 w-fit rounded-md bg-card/40 p-2 backdrop-blur">
           {zone?.title}
         </div>
-      </div>
+      </Card>
     );
 
   return (
-    <div className="flex-1 bg-card">
-      <div className="py-10 px-6 text-center">
+    <Card className="flex-1 rounded-md">
+      <CardContent className="flex h-full flex-col items-center justify-center gap-6 py-10 text-center">
         <h2 className="mt-6 mb-2 text-2xl">No Zone Loaded</h2>
         <span className="text-secondary">
           Head over to browse to get started!
         </span>
-      </div>
-
-      <div className="flex justify-center">
         <Button
           onClick={() => {
             setTab(ZoneTab.Browser);
@@ -191,15 +199,15 @@ const CurrentIrPanel = () => {
         >
           Browse <Search className="w-4 h-4 ml-2" />
         </Button>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 };
 
-const FailedToLoadVisualiser: FC<FallbackProps> = ({
+const FailedToLoadVisualiser = ({
   error,
   resetErrorBoundary,
-}) => {
+}: FallbackProps): React.JSX.Element => {
   return (
     <div className="flex flex-col gap-2 p-4 h-full items-center justify-center">
       <h1 className="text-2xl font-bold">Oops!</h1>
@@ -220,16 +228,16 @@ const Editor = () => {
     useState<boolean>(false);
 
   return (
-    <div className="flex flex-col gap-0.5 h-full">
-      <div className="flex flex-row gap-0.5 h-full">
+    <div className="flex h-full flex-col gap-page-gutter p-page-gutter">
+      <div className="flex h-full flex-row gap-page-gutter">
         <MainPanel />
         <CurrentIrPanel />
       </div>
-      <div className="flex flex-row gap-0.5 h-full">
+      <div className="flex h-full flex-row gap-page-gutter">
         <TimePanel />
-        <div className="bg-card relative flex-1">
+        <Card className="relative flex-1 overflow-hidden rounded-md">
           <ErrorBoundary fallbackRender={FailedToLoadVisualiser}>
-            <Tabs defaultValue="2d" className="">
+            <Tabs defaultValue="2d" className="h-full">
               <TabsContent
                 value="2d"
                 className="absolute top-0 w-full h-full flex mt-0"
@@ -265,9 +273,9 @@ const Editor = () => {
               )}
             </Tabs>
           </ErrorBoundary>
-        </div>
+        </Card>
       </div>
-      <div className="flex gap-0.5 h-[600px]">
+      <div className="flex h-[600px] gap-page-gutter">
         <IOPanel />
         <EQPanel />
         <ListenPanel />

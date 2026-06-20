@@ -45,12 +45,12 @@ const Preferences = () => {
   } = usePreferences();
 
   return (
-    <div className="flex h-full flex-col gap-4 overflow-auto bg-background p-4">
-      <Card>
+    <div className="flex h-full min-h-0 flex-col gap-page-gutter p-page-gutter">
+      <Card className="min-h-0 flex-1 overflow-hidden rounded-md">
         <CardHeader>
           <CardTitle className="text-xl">Preferences</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-6">
+        <CardContent className="h-full overflow-y-auto space-y-6">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div className="space-y-1">
               <div className="text-sm font-medium">User zones</div>

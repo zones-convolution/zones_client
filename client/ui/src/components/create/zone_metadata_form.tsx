@@ -1,15 +1,13 @@
 import { Settings } from "lucide-react";
 import { useEffect } from "react";
-import { useFormContext } from "react-hook-form";
+import { Controller, useFormContext } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
 import {
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+  Field,
+  FieldError,
+  FieldLabel,
+} from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -35,39 +33,32 @@ const ZoneMetadataForm = () => {
   const { setTab } = useTabsContext();
   return (
     <>
-      <FormField
-        control={control}
+      <Controller
         name="metadata.title"
+        control={control}
         render={({ field }) => (
-          <FormItem>
-            <FormLabel>Title</FormLabel>
-            <FormControl>
-              <Input placeholder="Title" {...field} />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
+          <Field>
+            <FieldLabel htmlFor={field.name}>Title</FieldLabel>
+            <Input id={field.name} placeholder="Title" {...field} />
+          </Field>
         )}
       />
-      <FormField
-        control={control}
+      <Controller
         name="metadata.description"
+        control={control}
         render={({ field }) => (
-          <FormItem>
-            <FormLabel>Description</FormLabel>
-            <FormControl>
-              <Textarea placeholder="Description" {...field} />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
+          <Field>
+            <FieldLabel htmlFor={field.name}>Description</FieldLabel>
+            <Textarea id={field.name} placeholder="Description" {...field} />
+          </Field>
         )}
       />
-      <FormField
-        control={control}
+      <Controller
         name="path"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>User Path</FormLabel>
-            <FormControl>
+        control={control}
+        render={({ field, fieldState }) => (
+          <Field data-invalid={fieldState.invalid}>
+            <FieldLabel htmlFor={field.name}>User Path</FieldLabel>
               <div className="flex flex-row gap-2 items-center justify-between">
                 {noUserPaths ? (
                   <span className="italic font-thin">
@@ -75,11 +66,9 @@ const ZoneMetadataForm = () => {
                   </span>
                 ) : (
                   <Select onValueChange={field.onChange} value={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                    </FormControl>
+                    <SelectTrigger id={field.name} aria-invalid={fieldState.invalid}>
+                      <SelectValue />
+                    </SelectTrigger>
                     <SelectContent>
                       {preferences.userPaths.map((path) => (
                         <SelectItem value={path} key={path}>
@@ -100,9 +89,8 @@ const ZoneMetadataForm = () => {
                   <Settings className="w-4 h-4 ml-2" />
                 </Button>
               </div>
-            </FormControl>
-            <FormMessage />
-          </FormItem>
+            <FieldError errors={[fieldState.error]} />
+          </Field>
         )}
       />
     </>
