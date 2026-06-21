@@ -19,29 +19,23 @@
   </a>
 <p align="center">
 
-### This project is still under development and has not seen production use. We **DO NOT RECOMMEND** using this yet.
-
 # Zones Convolution - Spaces On Demand
 
-Zones convolution allows users to find and share impulse responses captured in
-great sounding and unique spaces. Inspired by the
-[Open Air library](https://www.openair.hosted.york.ac.uk) and the popular
-[Altiverb](https://www.audioease.com/altiverb/) plugin, Zones extends their
-capabilities by providing; a simple, intuitive interface to tag, categorise and
-upload IRs, and a VST/AU plugin to search and convolve these IRs directly in the
-box!
+Zones is a library of impulse responses, available to use and edit directly in your DAW.
+The library is built on user uploaded recordings and is free to access with our VST/AU plugin.
 
-> The Zones library, plugin and convolver will be available for **free**, with an optimistic
-> launch of late 2024.
 
-This repository contains the source code of the companion audio plugin and also includes technical documentation about
-the plugin's architecture.
+
+> Pre-release builds are available to download on
+> our [releases page](https://github.com/zones-convolution/zones_client/releases)
+
+
 
 ---
 
 ## Demo Video
 
-[![Zones Convolution Demo](https://img.youtube.com/vi/xisb5PGXl1M/0.jpg)](https://www.youtube.com/watch?v=xisb5PGXl1M)
+[![Zones Convolution Demo](https://img.youtube.com/vi/FZFda7nxWAI/0.jpg)](https://www.youtube.com/watch?v=FZFda7nxWAI)
 
 ---
 
