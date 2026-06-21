@@ -22,6 +22,3 @@
 [submodule "lib/melatonin_audio_sparklines"]
 	path = lib/melatonin_audio_sparklines
 	url = git@github.com:sudara/melatonin_audio_sparklines.git
-[submodule "lib/react-knob-headless"]
-	path = lib/react-knob-headless
-	url = git@github.com:zones-convolution/react-knob-headless.git
