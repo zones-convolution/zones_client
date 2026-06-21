@@ -3,9 +3,13 @@ description: "Setup Node and build UI"
 runs:
   using: "composite"
   steps:
-    - uses: actions/setup-node@v4
+    - uses: actions/setup-node@v5
       with:
-        node-version: 20
+        node-version: 24
+    - name: Build react-knob-headless
+      working-directory: ./lib/react-knob-headless
+      shell: bash
+      run: npm ci && npm run build:package
     - name: Install and Build UI
       working-directory: ./client/ui
       shell: bash
