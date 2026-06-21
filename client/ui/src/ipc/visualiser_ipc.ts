@@ -48,12 +48,9 @@ export const visualiserRenderListener = (
 ) => {
   const listener = addNativeEventListener(
     onVisualiserRenderNative,
-    async (data: any) => {
+    async () => {
       onRenderUpdate(await getVisualiserRender());
-
-      if (data) {
-        onVisualiserMetadataUpdate(handleReceiveVisualiserMetadata(data));
-      }
+      onVisualiserMetadataUpdate(await getVisualiserMetadata());
     },
   );
 
