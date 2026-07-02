@@ -150,6 +150,7 @@ void PlayerProcessor::SetPlayerState (const Player::PlayerState & new_player_sta
     auto gain = std::clamp (new_player_state.gain, 0.f, 2.f);
     smoothed_gain_.setTargetValue (gain);
     player_state_.gain = gain;
+    new_resource_ = new_player_state.resource;
 
     auto new_playing_state = new_player_state.playing;
     if (! new_playing_state)
@@ -163,16 +164,14 @@ void PlayerProcessor::SetPlayerState (const Player::PlayerState & new_player_sta
         player_state_.playing = new_playing_state;
     }
 
-    auto new_resource = new_player_state.resource;
-    if (player_state_.resource != new_resource && player_state_.playing)
+    if (player_state_.resource != new_resource_ && player_state_.playing)
     {
         is_stopping_ = true;
         smoothed_gain_.setTargetValue (0.f);
-        new_resource_ = new_resource;
     }
     else
     {
-        player_state_.resource = new_resource;
+        player_state_.resource = new_resource_;
     }
 
     notification_queue_.PushCommand (player_state_);
