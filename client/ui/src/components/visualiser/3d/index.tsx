@@ -10,9 +10,7 @@ import {
   generateColourMap,
   generateRenderTexture,
 } from "@/components/visualiser/visualiser_utils";
-import {
-  IVisualiserContext,
-} from "@/context/visualiser_context";
+import { IVisualiserContext } from "@/context/visualiser_context";
 
 import frag from "./visualiser.frag";
 import vert from "./visualiser.vert";
@@ -47,7 +45,11 @@ const Graph3D: FC<{
   useEffect(() => {
     const mat = matRef.current;
     if (mat) {
-      const texture = createScaleTexture(sampleRate, defaultHeight * 2, context.scale);
+      const texture = createScaleTexture(
+        sampleRate,
+        defaultHeight * 2,
+        context.scale,
+      );
       replaceTexture(mat, "scale", texture);
       invalidate();
     }
@@ -56,7 +58,9 @@ const Graph3D: FC<{
   useEffect(() => {
     const mat = matRef.current;
     if (mat) {
-      const texture = createColourMapTexture(generateColourMap(context.colourMap));
+      const texture = createColourMapTexture(
+        generateColourMap(context.colourMap),
+      );
       replaceTexture(mat, "colourMap", texture);
       invalidate();
     }
@@ -100,12 +104,12 @@ const Graph3D: FC<{
       scale: {
         value: null,
       },
-        contrast: {
-          value: context.contrast,
-        },
-        sensitivity: {
-          value: context.sensitivity,
-        },
+      contrast: {
+        value: context.contrast,
+      },
+      sensitivity: {
+        value: context.sensitivity,
+      },
     }),
     [],
   );
@@ -139,7 +143,6 @@ const Visualiser3D: FC<{ context: IVisualiserContext }> = ({ context }) => {
           frameloop="demand"
         >
           <Graph3D context={context} />
-          <axesHelper />
           <OrbitControls />
         </Canvas>
       </div>

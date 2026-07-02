@@ -40,7 +40,11 @@ const PanelHeading: FC<{ children: ReactNode }> = ({ children }) => {
 };
 
 const PanelContent: FC<{ children: ReactNode }> = ({ children }) => {
-  return <CardContent className="flex h-full flex-1 flex-row justify-around">{children}</CardContent>;
+  return (
+    <CardContent className="flex h-full flex-1 flex-row justify-around">
+      {children}
+    </CardContent>
+  );
 };
 
 const IOPanel = () => {
@@ -187,8 +191,8 @@ const CurrentIrPanel = () => {
 
   return (
     <Card className="flex-1 rounded-md">
-      <CardContent className="flex h-full flex-col items-center justify-center gap-6 py-10 text-center">
-        <h2 className="mt-6 mb-2 text-2xl">No Zone Loaded</h2>
+      <CardContent className="flex h-full flex-col items-center justify-center gap-4 text-center">
+        <h2 className=" text-2xl">No Zone Loaded</h2>
         <span className="text-secondary">
           Head over to browse to get started!
         </span>
