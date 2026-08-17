@@ -31,7 +31,21 @@ void MonoFormatter::Format (const std::filesystem::path & load_path,
 
             {
                 IrReader ir_reader;
-                ir_reader.ReadIrData (load_path, *ir_format_data.position_map.centre, ir_data);
+
+                IrData centre_position;
+                ir_reader.ReadIrData (
+                    load_path, *ir_format_data.position_map.centre, centre_position);
+
+                auto num_samples = centre_position.buffer.getNumSamples ();
+                ir_data.buffer.setSize (1, num_samples);
+                ir_data.buffer.clear ();
+
+                juce::dsp::AudioBlock<float> ir_block {ir_data.buffer};
+                juce::dsp::AudioBlock<float> centre_block {centre_position.buffer};
+
+                ir_block.copyFrom (centre_block);
+
+                CopyIrDataMeta (ir_data, centre_position);
             }
             break;
         case TargetFormat::kStereo:
@@ -40,16 +54,20 @@ void MonoFormatter::Format (const std::filesystem::path & load_path,
             {
                 IrReader ir_reader;
 
-                IrData mono_ir_data;
-                ir_reader.ReadIrData (load_path, *ir_format_data.position_map.centre, mono_ir_data);
+                IrData centre_position;
+                ir_reader.ReadIrData (
+                    load_path, *ir_format_data.position_map.centre, centre_position);
 
-                CopyIrDataMeta (ir_data, mono_ir_data);
-                ir_data.buffer.setSize (2, mono_ir_data.buffer.getNumSamples ());
+ir_data.buffer.setSize (2, centre_position.buffer.getNumSamples ());
+                ir_data.buffer.clear ();
+
                 juce::dsp::AudioBlock<float> ir_block {ir_data.buffer};
                 ir_block.getSingleChannelBlock (0).copyFrom (
-                    juce::dsp::AudioBlock<float> {mono_ir_data.buffer});
+                    juce::dsp::AudioBlock<float> {centre_position.buffer});
                 ir_block.getSingleChannelBlock (1).copyFrom (
-                    juce::dsp::AudioBlock<float> {mono_ir_data.buffer});
+                    juce::dsp::AudioBlock<float> {centre_position.buffer});
+
+                CopyIrDataMeta (ir_data, centre_position);
             }
             break;
         case TargetFormat::kQuadraphonic:
@@ -59,19 +77,23 @@ void MonoFormatter::Format (const std::filesystem::path & load_path,
             {
                 IrReader ir_reader;
 
-                IrData mono_ir_data;
-                ir_reader.ReadIrData (load_path, *ir_format_data.position_map.centre, mono_ir_data);
-
-                CopyIrDataMeta (ir_data, mono_ir_data);
+                IrData centre_position;
+                ir_reader.ReadIrData (
+                    load_path, *ir_format_data.position_map.centre, centre_position);
 
                 auto num_ir_data_channels = 4;
-                ir_data.buffer.setSize (num_ir_data_channels, mono_ir_data.buffer.getNumSamples ());
+                ir_data.buffer.setSize (num_ir_data_channels,
+                                        centre_position.buffer.getNumSamples ());
+                ir_data.buffer.clear ();
+
                 juce::dsp::AudioBlock<float> ir_block {ir_data.buffer};
                 for (auto channel_index = 0; channel_index < num_ir_data_channels; ++channel_index)
                 {
                     ir_block.getSingleChannelBlock (channel_index)
-                        .copyFrom (juce::dsp::AudioBlock<float> {mono_ir_data.buffer});
+                        .copyFrom (juce::dsp::AudioBlock<float> {centre_position.buffer});
                 }
+
+                CopyIrDataMeta (ir_data, centre_position);
             }
             break;
     }

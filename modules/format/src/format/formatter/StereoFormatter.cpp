@@ -40,6 +40,7 @@ void StereoFormatter::Format (const std::filesystem::path & load_path,
 
                 auto num_samples = centre_position.buffer.getNumSamples ();
                 ir_data.buffer.setSize (1, num_samples);
+                ir_data.buffer.clear ();
 
                 juce::dsp::AudioBlock<float> ir_block {ir_data.buffer};
                 juce::dsp::AudioBlock<float> centre_block {centre_position.buffer};
@@ -63,6 +64,8 @@ void StereoFormatter::Format (const std::filesystem::path & load_path,
                     load_path, *ir_format_data.position_map.right, right_position);
 
                 ir_data.buffer.setSize (1, left_position.buffer.getNumSamples ());
+                ir_data.buffer.clear ();
+
                 juce::dsp::AudioBlock<float> ir_block {ir_data.buffer};
                 ir_block.copyFrom (
                     juce::dsp::AudioBlock<float> {left_position.buffer}.getSingleChannelBlock (0));
@@ -78,7 +81,21 @@ void StereoFormatter::Format (const std::filesystem::path & load_path,
             if (ir_format_data.position_map.centre.has_value ())
             {
                 IrReader ir_reader;
-                ir_reader.ReadIrData (load_path, *ir_format_data.position_map.centre, ir_data);
+
+                IrData centre_position;
+                ir_reader.ReadIrData (
+                    load_path, *ir_format_data.position_map.centre, centre_position);
+
+                auto num_samples = centre_position.buffer.getNumSamples ();
+                ir_data.buffer.setSize (2, num_samples);
+                ir_data.buffer.clear ();
+
+                juce::dsp::AudioBlock<float> ir_block {ir_data.buffer};
+                juce::dsp::AudioBlock<float> centre_block {centre_position.buffer};
+
+                ir_block.copyFrom (centre_block);
+
+                CopyIrDataMeta (ir_data, centre_position);
             }
             else if (ir_format_data.position_map.right.has_value () &&
                      ir_format_data.position_map.left.has_value ())
@@ -92,15 +109,18 @@ void StereoFormatter::Format (const std::filesystem::path & load_path,
                 ir_reader.ReadIrData (
                     load_path, *ir_format_data.position_map.right, right_position);
 
-                ir_data.buffer.makeCopyOf (left_position.buffer);
+                auto num_samples = left_position.buffer.getNumSamples ();
+                ir_data.buffer.setSize (2, num_samples);
+                ir_data.buffer.clear ();
 
                 juce::dsp::AudioBlock<float> ir_block {ir_data.buffer};
+                ir_block.copyFrom (juce::dsp::AudioBlock<float> {left_position.buffer});
                 ir_block.add (juce::dsp::AudioBlock<float> {right_position.buffer});
                 ir_block.multiplyBy (0.5f);
 
                 CopyIrDataMeta (ir_data, left_position);
             }
-            
+
             break;
         case TargetFormat::kTrueStereo:
             if (ir_format_data.position_map.right.has_value () &&
@@ -116,7 +136,9 @@ void StereoFormatter::Format (const std::filesystem::path & load_path,
                     load_path, *ir_format_data.position_map.right, right_position);
 
                 ir_data.buffer.setSize (4, left_position.buffer.getNumSamples ());
+                ir_data.buffer.clear ();
                 juce::dsp::AudioBlock<float> ir_block {ir_data.buffer};
+
                 ir_block.copyFrom (juce::dsp::AudioBlock<float> {left_position.buffer});
                 ir_block.getSubsetChannelBlock (2, 2).copyFrom (
                     juce::dsp::AudioBlock<float> {right_position.buffer});
