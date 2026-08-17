@@ -1,4 +1,9 @@
-import { ChevronLeft, ChevronRight, LucideLibrary } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  LucideLibrary,
+  LucideZap,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -8,6 +13,7 @@ import {
   useBrowserContext,
   useNavigation,
 } from "@/context/browser_context";
+import { useQuickLoad } from "@/hooks/use_quick_load";
 import Browser from "@/pages/browser";
 import CreateZone from "@/pages/create_zone";
 import User from "@/pages/user";
@@ -54,6 +60,7 @@ const BrowserRoot = () => {
   const { canNavigateBack, canNavigateForward, forward, back, route } =
     useBrowserContext();
   const { navigateToCreateZone, navigateToUser } = useNavigation();
+  const handleQuickLoad = useQuickLoad();
 
   return (
     <div className="flex h-full min-h-0 flex-col gap-page-gutter p-page-gutter">
@@ -77,17 +84,29 @@ const BrowserRoot = () => {
             <ChevronRight className="w-4 h-4" />
           </Button>
           <NavigationTitle />
-          {route.target == Route.User && (
-            <Button className="ml-auto" size="sm" onClick={navigateToCreateZone}>
-              Create Zone
-            </Button>
-          )}
-          {route.target == Route.Home && (
-            <Button className="ml-auto" size="sm" onClick={navigateToUser}>
-              User
-              <LucideLibrary className="h-4 w-4 ml-2" />
-            </Button>
-          )}
+          <div className="ml-auto flex items-center gap-2">
+            {route.target != Route.CreateZone && (
+              <Button className="ml-auto" size="sm" onClick={handleQuickLoad}>
+                Quick Load
+                <LucideZap className="h-4 w-4 ml-2" />
+              </Button>
+            )}
+            {route.target == Route.User && (
+              <Button
+                className="ml-auto"
+                size="sm"
+                onClick={navigateToCreateZone}
+              >
+                Create Zone
+              </Button>
+            )}
+            {route.target == Route.Home && (
+              <Button className="ml-auto" size="sm" onClick={navigateToUser}>
+                User
+                <LucideLibrary className="h-4 w-4 ml-2" />
+              </Button>
+            )}
+          </div>
         </CardContent>
       </Card>
       <Card className="min-h-0 min-w-0 flex-1 rounded-md">
